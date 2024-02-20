@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/constants/app_colors.dart';
-import 'package:project/constants/app_constants.dart';
+import 'package:project/config/config.dart';
 import 'package:project/widgets/custom_page_indicator.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -34,8 +33,8 @@ class BodyMainMenu extends StatelessWidget {
               children: [
                 Image.asset(
                   'assets/images/toyota7.png',
-                  width: AppConstants.buttonMainMenuWidth,
-                  height: AppConstants.buttonMainMenuHeight,
+                  width: AppConfig.buttonMainMenuWidth,
+                  height: AppConfig.buttonMainMenuHeight,
                 ),
                 const SizedBox(
                   child: Text(
@@ -53,9 +52,9 @@ class BodyMainMenu extends StatelessWidget {
               ],
             ),
             const CustomButton(
-                width: AppConstants.buttonMainMenuWidth,
-                height: AppConstants.buttonMainMenuHeight,
-                color: AppColors.buttonColor),
+                width: AppConfig.buttonMainMenuWidth,
+                height: AppConfig.buttonMainMenuHeight,
+                color: AppConfig.buttonColor),
           ],
         ),
         const SizedBox(
@@ -65,13 +64,13 @@ class BodyMainMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CustomButton(
-                width: AppConstants.buttonMainMenuWidth,
-                height: AppConstants.buttonMainMenuHeight,
-                color: AppColors.buttonColor),
+                width: AppConfig.buttonMainMenuWidth,
+                height: AppConfig.buttonMainMenuHeight,
+                color: AppConfig.buttonColor),
             CustomButton(
-                width: AppConstants.buttonMainMenuWidth,
-                height: AppConstants.buttonMainMenuHeight,
-                color: AppColors.buttonColor),
+                width: AppConfig.buttonMainMenuWidth,
+                height: AppConfig.buttonMainMenuHeight,
+                color: AppConfig.buttonColor),
           ],
         ),
         const SizedBox(height: 30),
@@ -79,13 +78,13 @@ class BodyMainMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             CustomButton(
-                width: AppConstants.buttonMainMenuWidth,
-                height: AppConstants.buttonMainMenuHeight,
-                color: AppColors.buttonColor),
+                width: AppConfig.buttonMainMenuWidth,
+                height: AppConfig.buttonMainMenuHeight,
+                color: AppConfig.buttonColor),
             CustomButton(
-                width: AppConstants.buttonMainMenuWidth,
-                height: AppConstants.buttonMainMenuHeight,
-                color: AppColors.buttonColor),
+                width: AppConfig.buttonMainMenuWidth,
+                height: AppConfig.buttonMainMenuHeight,
+                color: AppConfig.buttonColor),
           ],
         ),
         const SizedBox(height: 30),

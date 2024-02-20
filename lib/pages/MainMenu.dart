@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project/widgets/widget_body/custom_body_mainmenu.dart';
-import 'package:project/widgets/custom_bottom_login.dart';
-import 'package:project/widgets/widget_title/custom_title_home.dart';
-import 'package:project/widgets/widget_appBar/custom_appBar.dart';
-import 'package:project/widgets/widget_top_banner/custom_top_banner.dart';
+import 'package:project/config/config.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class MainMenuPage extends StatelessWidget {
@@ -47,6 +44,135 @@ class MainMenuPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CustomTitle extends StatelessWidget {
+  final String text;
+
+  const CustomTitle({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Color.fromARGB(255, 216, 30, 16),
+          fontFamily: 'Roboto',
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          height: 1.17,
+          letterSpacing: 0,
+        ),
+      ),
+    );
+  }
+}
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  // ignore: overridden_fields
+  final Key? key;
+
+  // ignore: prefer_const_constructors_in_immutables
+  CustomAppBar({this.key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Image.asset(
+        AppConfig.appBarImagePath,
+        width: 300,
+      ),
+      centerTitle: false,
+    );
+  }
+
+  @override
+  // ignore: prefer_const_constructors
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+
+class CustomCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 460,
+      height: 50,
+      margin: const EdgeInsets.only(top: 10),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color(0xFFBC2925),
+            Color(0xFFE96327),
+          ],
+        ),
+        // Đặt border radius cho card
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.only(right: 10),
+            child: const Icon(
+              Icons.person,
+              color: Colors.white,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(right: 10),
+            child: const Text(
+              'Account',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                height: 1.17,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+          // ignore: avoid_unnecessary_containers
+          Container(
+            child: const Icon(
+              Icons.arrow_drop_down,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Custombottom extends StatelessWidget {
+  final String text;
+
+  const Custombottom({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Color(0xFF000000),
+          fontFamily: 'Roboto',
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          height: 1.33,
+          letterSpacing: 0,
+        ),
       ),
     );
   }

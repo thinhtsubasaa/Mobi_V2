@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/widget_body/map.dart';
+import 'package:project/widgets/map.dart';
 
 class CustomTrackingXeVitri extends StatelessWidget {
   @override
@@ -62,19 +62,6 @@ class CustomTrackingXeVitri extends StatelessWidget {
               child: Stack(
                 children: [
                   HomePage(),
-                  // Positioned(
-                  //   right: 100,
-                  //   top:
-                  //       210, // Adjust the top position to center the line vertically
-                  //   child: Container(
-                  //     width: 250, // Set the width to match the container width
-                  //     height:
-                  //         1, // Set the height to the desired thickness of the line
-                  //     child: CustomPaint(
-                  //       painter: DashedLinePainter(),
-                  //     ), // Set the color of the line
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -82,67 +69,5 @@ class CustomTrackingXeVitri extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class DashedLinePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1.0
-      ..strokeCap = StrokeCap.square;
-
-    double dashWidth = 5.0;
-    double dashSpace = 5.0;
-
-    double startY = size.height / 2;
-    double endX = size.width;
-
-    for (double offsetX = 0;
-        offsetX < endX - 39; // Trừ đi chiều rộng của hộp tròn
-        offsetX += (dashWidth + dashSpace)) {
-      canvas.drawLine(
-          Offset(offsetX, startY), Offset(offsetX + dashWidth, startY), paint);
-    }
-
-    // Vẽ hộp tròn ở cuối
-    paint.color = const Color(0xFF7F7F7F); // Màu nền của hộp tròn
-    paint.strokeWidth = 10.0;
-    paint.style = PaintingStyle.fill;
-
-    double circleRadius = 5.0; // Bán kính của hộp tròn
-
-    double circleOffsetX =
-        endX - 28 + circleRadius; // Điều chỉnh vị trí X của hộp tròn
-    canvas.drawCircle(Offset(circleOffsetX, startY), circleRadius, paint);
-    double circleOffsetY =
-        endX - 220 + circleRadius; // Điều chỉnh vị trí X của hộp tròn
-    canvas.drawCircle(Offset(circleOffsetY, startY), circleRadius, paint);
-
-    // Vẽ hộp tròn to bao quanh
-    Paint outerCircleBackgroundPaint = Paint()
-      ..color =
-          const Color.fromARGB(0, 165, 165, 162) // Màu nền của hộp tròn to
-      ..strokeWidth = 3.0
-      ..style = PaintingStyle.fill;
-
-    double outerCircleRadius = 18.5; // Bán kính của hộp tròn to
-    canvas.drawCircle(Offset(circleOffsetX, startY), outerCircleRadius,
-        outerCircleBackgroundPaint);
-
-    // Vẽ đường viền xung quanh hộp tròn to
-    Paint outerCircleBorderPaint = Paint()
-      ..color = Colors.red // Màu đường viền của hộp tròn to
-      ..strokeWidth = 3.0
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawCircle(Offset(circleOffsetX, startY), outerCircleRadius,
-        outerCircleBorderPaint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }

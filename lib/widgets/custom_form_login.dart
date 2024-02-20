@@ -1,8 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:project/constants/app_colors.dart';
-import 'package:project/constants/app_constants.dart';
+import 'package:project/config/config.dart';
 import 'package:project/pages/MainMenu.dart';
 import 'package:project/services/auth_service.dart';
 
@@ -176,12 +173,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryColor,
+            backgroundColor: AppConfig.primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
             fixedSize:
-                const Size(AppConstants.buttonWidth, AppConstants.buttonHeight),
+                const Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
           ),
           child: const Text(
             "ĐĂNG NHẬP",
