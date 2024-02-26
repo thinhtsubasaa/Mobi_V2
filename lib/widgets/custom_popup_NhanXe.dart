@@ -14,9 +14,9 @@ class PopUp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        alignment: Alignment.bottomCenter,
         width: 380,
-        height: 550,
-        margin: EdgeInsets.only(top: 23, left: 20),
+        height: 710,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white
@@ -75,11 +75,53 @@ class PopUp extends StatelessWidget {
               ),
             ),
             Container(
+              padding: EdgeInsets.all(10), // Padding cho container chính
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Tiêu đề
+                  Text(
+                    'Thông Tin Xác Nhận',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      height: 1.56,
+                    ),
+                  ),
+                  const Divider(height: 1, color: Color(0xFFA71C20)),
+                  SizedBox(
+                      height:
+                          10), // Khoảng cách giữa tiêu đề và các container phía dưới
+                  // Container chứa TextBox 1
+                  Container(
+                    height: 132, // Chiều cao của container
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomInputBox(text: "Người nhận"),
+                        SizedBox(height: 4),
+                        CustomInputBox(text: "Nơi nhận xe"),
+                        SizedBox(height: 4),
+                        CustomInputBox(
+                          text: "Người nhận",
+                        ),
+                        SizedBox(height: 4),
+                        CustomInputBox(
+                          text: "Ghi chú",
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
               child: Column(
                 children: [
                   // Box 1
                   Container(
-                    padding: const EdgeInsets.only(top: 80),
                     margin:
                         const EdgeInsets.all(10), // Khoảng cách giữa các box
 
@@ -101,40 +143,6 @@ class PopUp extends StatelessWidget {
                                 color: Color(0xFFA71C20),
                               ),
                             ),
-                            const SizedBox(width: 55),
-                            // Button
-                            Container(
-                              width: 70,
-                              height: 14,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color(0xFF428FCA),
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  // Xử lý sự kiện khi nút được nhấn
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors
-                                      .transparent, // Đặt màu nền của nút là trong suốt
-                                  padding: const EdgeInsets.all(
-                                      0), // Đặt khoảng trống bên trong nút
-                                ),
-                                child: const Text(
-                                  'Chờ nhận',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    height:
-                                        1.125, // Corresponds to line-height of 9px
-                                    letterSpacing: 0,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            )
                           ],
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
@@ -227,7 +235,7 @@ class PopUp extends StatelessWidget {
 
                                   // Text 1
                                   Text(
-                                    'Nhà máy:',
+                                    'Số máy:',
                                     style: TextStyle(
                                       fontFamily: 'Comfortaa',
                                       fontSize: 15,
@@ -240,10 +248,10 @@ class PopUp extends StatelessWidget {
                                   SizedBox(height: 5),
                                   // Text 2
                                   Text(
-                                    'THACO MAZDA',
+                                    '----------------',
                                     style: TextStyle(
                                       fontFamily: 'Comfortaa',
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       height: 1.125,
                                       letterSpacing: 0,
@@ -256,44 +264,217 @@ class PopUp extends StatelessWidget {
                           ),
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                        SizedBox(
-                          height: 190,
-                        ),
-                        Container(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Xử lý sự kiện khi nút được nhấn
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary:
-                                  const Color(0xFFE96327), // Màu nền của nút
-                              fixedSize: const Size(
-                                  320, 33), // Kích thước cố định của nút
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    5), // Độ cong của góc nút
-                              ),
-                              // Khoảng cách giữa nút và văn bản
-                            ),
-                            child: const Text(
-                              'XÁC NHẬN',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+            SizedBox(height: 115),
+            Container(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                children: [
+                  SizedBox(
+                      height:
+                          10), // Khoảng cách giữa nội dung pop-up và nút "XÁC NHẬN"
+                  ElevatedButton(
+                    onPressed: () {
+                      // Xử lý sự kiện khi nút được nhấn
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFF00B528), // Màu nền của nút
+                      fixedSize:
+                          const Size(380, 50), // Kích thước cố định của nút
+                      padding: EdgeInsets
+                          .zero, // Bỏ padding mặc định của ElevatedButton
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(5), // Độ cong của góc nút
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 10), // Sát lề trái
+                          child: Text(
+                            'KIỂM TRA OPTION THEO XE',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 20,
+                              height: 23.07 / 19.0,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                            child:
+                                Container()), // Container để tạo ra khoảng trống giữa văn bản và icon
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(right: 10), // Sát lề phải
+                          child: Icon(
+                            Icons.edit, // Icon "edit"
+                            color: Colors.white, // Màu của icon
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10), // Khoảng cách giữa các nút
+                  ElevatedButton(
+                    onPressed: () {
+                      // Xử lý sự kiện khi nút được nhấn
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFFFF0000), // Màu nền của nút
+                      fixedSize:
+                          const Size(380, 45), // Kích thước cố định của nút
+                      padding: EdgeInsets
+                          .zero, // Bỏ padding mặc định của ElevatedButton
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(5), // Độ cong của góc nút
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 10), // Sát lề trái
+                          child: Text(
+                            'KIỂM TRA HẠNG MỤC KHÁC',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 20,
+                              height: 23.07 / 19.0,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                            child:
+                                Container()), // Container để tạo ra khoảng trống giữa văn bản và icon
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(right: 10), // Sát lề phải
+                          child: Icon(
+                            Icons.edit, // Icon "edit"
+                            color: Colors.white, // Màu của icon
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 7),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Xử lý sự kiện khi nút được nhấn
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: const Color(0xFFE96327), // Màu nền của nút
+                      fixedSize:
+                          const Size(350, 30), // Kích thước cố định của nút
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(5), // Độ cong của góc nút
+                      ),
+                    ),
+                    child: const Text(
+                      'XÁC NHẬN',
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 17,
+                        height: 20.07 / 17.0,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomInputBox extends StatelessWidget {
+  final String text;
+
+  CustomInputBox({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 30,
+      width: 304,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(
+          color: Color(0xFF818180),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFF6C6C7),
+                border: Border(
+                  right: BorderSide(
+                    color: Color(0xFF818180),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  text,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: 'Comfortaa',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    height: 18 / 16, // line-height
+                    letterSpacing: 0,
+
+                    color: Color(0xFF000000),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              color: Colors.white,
+              child: Center(
+                child: Text(
+                  '',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: 'Comfortaa',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    height: 18 / 16, // line-height
+                    letterSpacing: 0,
+
+                    color: Color(0xFF000000),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

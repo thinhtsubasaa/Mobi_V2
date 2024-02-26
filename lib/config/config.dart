@@ -2,6 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppConfig {
+  static const appName = "WMS_MOBI";
+  static const apiUrl = "http://14.241.134.199:8021";
+
   // Colors
   static const Color primaryColor = Color(0xFFA71C20);
   static const Color titleColor = Color.fromARGB(255, 216, 30, 16);

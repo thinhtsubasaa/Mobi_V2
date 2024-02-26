@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:project/config/config.dart';
+import 'package:project/blocs/app_bloc.dart';
+import 'package:project/blocs/user_bloc.dart';
+import 'package:project/models/icon_data.dart';
 import 'package:project/pages/MainMenu.dart';
+import 'package:project/services/app_service.dart';
 import 'package:project/services/auth_service.dart';
+import 'package:project/utils/next_screen.dart';
+import 'package:project/utils/snackbar.dart';
+import 'package:project/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomLoginForm extends StatelessWidget {
@@ -26,21 +35,86 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  late AppBloc _ab;
+  late UserBloc _ub;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+  var formKey = GlobalKey<FormState>();
+  var userNameCtrl = TextEditingController();
+  var passwordCtrl = TextEditingController();
   String selectedDomain = 'thilogi.com.vn';
-  void login(String username, password, domain) async {
-    Map<String, dynamic> result =
-        await ApiService.login(username, password, domain);
+  final _btnController = RoundedLoadingButtonController();
 
-    if (result['success']) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MainMenuPage()),
-      );
+  bool offsecureText = true;
+  Icon lockIcon = LockIcon().lock;
+
+  final TextEditingController _diaChiApi = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _ab = Provider.of<AppBloc>(context, listen: false);
+    _ub = Provider.of<UserBloc>(context, listen: false);
+
+    setState(() {
+      _diaChiApi.text = _ab.apiUrl;
+    });
+  }
+
+  void _onlockPressed() {
+    if (offsecureText == true) {
+      setState(() {
+        offsecureText = false;
+        lockIcon = LockIcon().open;
+      });
     } else {
-      // Handle login failure
-      print('Login failed: ${result['error']}');
+      setState(() {
+        offsecureText = true;
+        lockIcon = LockIcon().lock;
+      });
+    }
+  }
+
+  Future _login() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setString('apiUrl', _ab.apiUrl);
+    if (userNameCtrl.text.isEmpty) {
+      _btnController.reset();
+      // ignore: use_build_context_synchronously
+      openSnackBar(context, 'username is required'.trim());
+    } else if (passwordCtrl.text.isEmpty) {
+      _btnController.reset();
+      // ignore: use_build_context_synchronously
+      openSnackBar(context, 'password is required'.trim());
+    } else {
+      AppService().checkInternet().then((hasInternet) async {
+        if (!hasInternet!) {
+          _btnController.reset();
+          openSnackBar(context, 'no internet'.trim());
+        } else {
+          final AuthService asb = context.read<AuthService>();
+          await asb
+              .login(userNameCtrl.text, passwordCtrl.text, selectedDomain)
+              .then((_) {
+            if (asb.user != null) {
+              _ub
+                  .saveUserData(asb.user!)
+                  .then((_) => _ub.setSignIn())
+                  .then((_) {
+                _btnController.success();
+                nextScreenReplace(context, MainMenuPage());
+              });
+            } else {
+              if (asb.hasError) {
+                openSnackBar(context, asb.errorCode);
+              } else {
+                openSnackBar(
+                    context, 'username or password is incorrect'.trim());
+              }
+              _btnController.reset();
+            }
+          });
+        }
+      });
     }
   }
 
@@ -67,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           width: 254,
           height: 55,
           child: TextFormField(
-            controller: usernameController,
+            controller: userNameCtrl,
             decoration: InputDecoration(
               contentPadding:
                   EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -98,7 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           width: 254,
           height: 55,
           child: TextFormField(
-            controller: passwordController,
+            controller: passwordCtrl,
             decoration: InputDecoration(
               contentPadding:
                   EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -164,33 +238,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         const SizedBox(height: 40),
-        ElevatedButton(
-          onPressed: () {
-            login(
-              usernameController.text.toString(), // Change this line
-              passwordController.text.toString(),
-              selectedDomain,
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppConfig.primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            fixedSize:
-                const Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
-          ),
-          child: const Text(
-            "ĐĂNG NHẬP",
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Roboto',
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              height: 1.16,
-              letterSpacing: 0,
-            ),
-          ),
+        loadingButton(
+          context,
+          _btnController,
+          _login,
+          'Đăng nhập',
+          Theme.of(context).primaryColor,
+          Colors.black,
         ),
       ],
     );

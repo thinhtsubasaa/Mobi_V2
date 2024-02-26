@@ -8,6 +8,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 class LoginPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
