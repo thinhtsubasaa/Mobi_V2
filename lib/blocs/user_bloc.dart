@@ -36,6 +36,7 @@ class UserBloc extends ChangeNotifier {
   String? get refreshToken => _refreshToken;
 
   Future saveUserData(UserModel userModel) async {
+    // ignore: unnecessary_null_comparison
     if (userModel != null) {
       final SharedPreferences sp = await SharedPreferences.getInstance();
       sp.setString('id', userModel.id ?? '');

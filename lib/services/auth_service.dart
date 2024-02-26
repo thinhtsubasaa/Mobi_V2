@@ -72,7 +72,7 @@ class AuthService extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        print('du lieu :  ${data["id"]}');
+        print('du lieu :  ${data}');
         // var data = decodedData["data"];
 
         // var info = data["info"];

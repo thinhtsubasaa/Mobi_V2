@@ -1,6 +1,4 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:project/pages/nhanxe/NhanXe2.dart';
 import 'package:project/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:project/blocs/app_bloc.dart';
@@ -32,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: NhanXe2Page(),
+        home: MyHomePage(),
       ),
     );
   }

@@ -67,7 +67,7 @@ class NhanXe2Page extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: CustomPopUpNhanXe(),
+            child: PopUp(),
           ),
         ],
       ),
@@ -83,11 +83,11 @@ class CustomTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20),
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color.fromARGB(255, 216, 30, 16),
           fontFamily: 'Roboto',
           fontSize: 24,
@@ -156,11 +156,11 @@ class Custombottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      padding: const EdgeInsets.only(left: 20, right: 20),
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: Color(0xFF000000),
           fontFamily: 'Roboto',
           fontSize: 15,
@@ -195,8 +195,8 @@ class CustomCardVIN extends StatelessWidget {
           Container(
             width: 76.48,
             height: 48,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
@@ -287,8 +287,7 @@ class CustomCardQLKhoXe extends StatelessWidget {
                 fontFamily: 'Roboto',
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                height:
-                    28 / 24, // Tính line-height dựa trên fontSize và lineHeight
+                height: 28 / 24,
                 letterSpacing: 0,
                 color: Colors.white,
               ),
