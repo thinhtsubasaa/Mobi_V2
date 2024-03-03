@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:project/blocs/user_bloc.dart';
 import 'package:project/config/config.dart';
 import 'package:project/widgets/widget_body/custom_body_QLKhoxe.dart';
+import 'package:provider/provider.dart';
 
 // ignore: use_key_in_widget_constructors
 class QLKhoXePage extends StatelessWidget {
@@ -150,7 +152,42 @@ class Custombottom extends StatelessWidget {
 }
 
 // ignore: use_key_in_widget_constructors
-class CustomCardQLKhoXe extends StatelessWidget {
+class CustomCardQLKhoXe extends StatefulWidget {
+  const CustomCardQLKhoXe({super.key});
+
+  @override
+  State<CustomCardQLKhoXe> createState() => _CustomCardState();
+}
+
+class _CustomCardState extends State<CustomCardQLKhoXe>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+  late UserBloc _ub;
+  String _fullName = "No name";
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: 3);
+    _tabController!.addListener(_handleTabChange);
+    _ub = Provider.of<UserBloc>(context, listen: false);
+    setState(() {
+      _fullName = _ub.name!;
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  void _handleTabChange() {
+    if (_tabController!.indexIsChanging) {
+      // Call the action when the tab changes
+      // print('Tab changed to: ${_tabController!.index}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -198,8 +235,8 @@ class CustomCardQLKhoXe extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.only(right: 10),
-                child: const Text(
-                  'Account',
+                child: Text(
+                  _fullName ?? "No name",
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Comfortaa',

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:project/pages/Home.dart';
+import 'package:project/pages/MainMenu.dart';
 import 'package:project/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:project/blocs/app_bloc.dart';
 import 'package:project/blocs/user_bloc.dart';
-import 'package:project/pages/home.dart';
+import 'package:project/pages/nhanxe/NhanXe.dart';
 
 void main() {
   runApp(MyApp());

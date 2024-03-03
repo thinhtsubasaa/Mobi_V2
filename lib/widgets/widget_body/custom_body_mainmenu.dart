@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/config/config.dart';
+import 'package:project/pages/MainMenu.dart';
+import 'package:project/pages/qlkho/QLKhoXe.dart';
+import 'package:project/utils/next_screen.dart';
 import 'package:project/widgets/custom_page_indicator.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -31,10 +34,21 @@ class BodyMainMenu extends StatelessWidget {
           children: [
             Column(
               children: [
-                Image.asset(
-                  'assets/images/toyota7.png',
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
+                IconButton(
+                  onPressed: () {
+                    nextScreenReplace(context, QLKhoXePage());
+                  },
+                  icon: Image.asset(
+                    'assets/images/toyota7.png',
+                    width: AppConfig.buttonMainMenuWidth,
+                    height: AppConfig.buttonMainMenuHeight,
+                  ),
+                  iconSize: AppConfig
+                      .buttonMainMenuWidth, // Kích thước của biểu tượng
+                  padding:
+                      EdgeInsets.zero, // Xóa padding mặc định của IconButton
+                  alignment:
+                      Alignment.center, // Căn chỉnh hình ảnh vào giữa nút
                 ),
                 const SizedBox(
                   child: Text(

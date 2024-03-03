@@ -85,7 +85,7 @@ class RequestHelper {
 
   postData(endpoint, data) async {
     await _getInfo();
-    var response = await http.post(Uri.parse(API + endpoint),
+    var response = await http.post(Uri.parse(apiUrl + endpoint),
         body: jsonEncode(data), headers: _setHeaders());
     return response;
   }
@@ -93,7 +93,7 @@ class RequestHelper {
   getData(endpoint) async {
     await _getInfo();
     var response =
-        await http.get(Uri.parse(API + endpoint), headers: _setHeaders());
+        await http.get(Uri.parse(apiUrl + endpoint), headers: _setHeaders());
     return response;
   }
 
@@ -101,5 +101,11 @@ class RequestHelper {
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
+        'ApiKey': 'qtsx2023',
       };
+  var headers = {
+    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
+  };
+  var apiUrl =
+      "https://qtsxautoapi.thacochulai.vn/api/KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=RN2B12SAARM134483";
 }

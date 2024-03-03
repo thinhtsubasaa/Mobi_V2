@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "http://14.241.134.199:8021";
+  String _apiUrl = "https://qtsxautoapi.thacochulai.vn";
   String get apiUrl => _apiUrl;
 
   String? _chuyenId;
@@ -12,6 +12,8 @@ class AppBloc extends ChangeNotifier {
 
   String? _tenChuyen;
   String? get tenChuyen => _tenChuyen;
+  String? _tenSanPham;
+  String? get tenSanPham => _tenSanPham;
 
   String? _tenNhomChucNang;
   String? get tenNhomChucNang => _tenNhomChucNang;
@@ -41,15 +43,18 @@ class AppBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveData(String? cId, String tC, String tNcn, bool isNhapKho) async {
+  Future saveData(
+      String? cId, String tC, String tSp, String tNcn, bool isNhapKho) async {
     await _initPrefs();
     await _pref!.setString('chuyenId', cId!.toString());
     await _pref!.setString('tenChuyen', tC);
+    await _pref!.setString('tenSanPham', tSp);
     await _pref!.setString('tenNhomChucNang', tNcn);
     await _pref!.setBool('_isNhapKho', isNhapKho);
 
     _chuyenId = cId;
     _tenChuyen = tC;
+    _tenSanPham = tSp;
     _tenNhomChucNang = tNcn;
     _isNhapKho = isNhapKho;
     notifyListeners();
@@ -59,6 +64,7 @@ class AppBloc extends ChangeNotifier {
     await _initPrefs();
     _chuyenId = _pref!.getString('chuyenId');
     _tenChuyen = _pref!.getString('tenChuyen');
+    _tenSanPham = _pref!.getString('tenSanPham');
     _tenNhomChucNang = _pref!.getString('tenNhomChucNang');
     _isNhapKho = _pref!.getBool('isNhapKho') ?? false;
     _appVersion = _pref!.getString('appVersion');
