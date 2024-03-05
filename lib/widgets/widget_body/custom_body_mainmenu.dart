@@ -9,13 +9,12 @@ import 'package:project/widgets/custom_page_indicator.dart';
 class CustomBodyMainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-          // ignore: prefer_const_constructors
-          color: Color.fromRGBO(246, 198, 199, 0.2), // Đặt màu nền cho phần này
-          child: BodyMainMenu()),
-    );
+    return Container(
+        width: 300,
+        height: 410,
+        // ignore: prefer_const_constructors
+        color: Color.fromRGBO(246, 198, 199, 0.2), // Đặt màu nền cho phần này
+        child: BodyMainMenu());
   }
 }
 

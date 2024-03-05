@@ -30,7 +30,7 @@ class TabItem extends StatelessWidget {
           ),
         ),
         Container(
-          width: 170,
+          width: 150,
           height: 3,
           decoration: BoxDecoration(
             color: backgroundColor,

@@ -16,11 +16,13 @@ class MainMenuPage extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       // ignore: prefer_const_constructors
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: Column(
-        children: [
-          Expanded(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
             // ignore: avoid_unnecessary_containers
-            child: Container(
+            Container(
+              width: 330,
+              height: 700,
               child: Column(
                 children: [
                   CustomCard(),
@@ -46,8 +48,8 @@ class MainMenuPage extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

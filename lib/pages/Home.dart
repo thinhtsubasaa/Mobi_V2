@@ -1,35 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:project/config/config.dart';
 import 'package:project/pages/Login.dart';
+import '../utils/next_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_const_constructors
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: Column(
-        children: [
-          Expanded(
-            // ignore: avoid_unnecessary_containers
-            child: Container(
-              child: Column(
-                children: [
-                  CustomImage(imagePath: AppConfig.homeImagePath),
-                  const SizedBox(height: 10),
-                  customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
-                  const SizedBox(height: 10),
-                  CustomImage(imagePath: AppConfig.bottomHomeImagePath),
-                  const SizedBox(height: 15),
-                  CustomButton(onPressed: () {
-                    // Handle button press
-                  }),
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            CustomImage(imagePath: AppConfig.homeImagePath),
+            const SizedBox(height: 10),
+            customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+            const SizedBox(height: 10),
+            CustomImage(imagePath: AppConfig.bottomHomeImagePath),
+            const SizedBox(height: 15),
+            CustomButton(onPressed: () {
+              // Handle button press
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -76,14 +69,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        // Call the provided onPressed callback
-        onPressed();
-
-        // Navigate to a new screen after the button is pressed
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
-        );
+        nextScreen(context, LoginPage());
       },
       style: ElevatedButton.styleFrom(
         fixedSize: Size(AppConfig.buttonWidth, AppConfig.buttonHeight),

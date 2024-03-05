@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:project/config/config.dart';
+import 'package:project/pages/nhanxe/NhanXe.dart';
 import 'package:project/widgets/custom_page_indicator.dart';
+import 'package:project/utils/next_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
-      child: BodyQLKhoXe(),
-    );
+    return Container(width: 340, height: 500, child: BodyQLKhoXe());
   }
 }
 
@@ -51,19 +51,47 @@ class BodyQLKhoXe extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/images/car1.png',
-                            width: 60,
-                            height: 65,
-                          ),
-                          Transform.translate(
-                            offset: const Offset(0, -15),
-                            child: Image.asset(
-                              'assets/images/car2.png',
-                              width: 50,
-                              height: 55,
+                          IconButton(
+                            onPressed: () {
+                              nextScreenReplace(context, NhanXePage());
+                            },
+                            icon: Stack(
+                              children: [
+                                Image.asset(
+                                  'assets/images/car1.png',
+                                  width: 60,
+                                  height: 65,
+                                ),
+                                Positioned(
+                                  top: -15,
+                                  child: Image.asset(
+                                    'assets/images/car2.png',
+                                    width: 50, // 50/60 = 0.833
+                                    height: 55, // 55/65 = 0.846
+                                  ),
+                                ),
+                              ],
                             ),
+
+                            iconSize: 60, // Kích thước của biểu tượng
+                            padding: EdgeInsets
+                                .zero, // Xóa padding mặc định của IconButton
+                            alignment: Alignment
+                                .center, // Căn chỉnh hình ảnh vào giữa nút
                           ),
+                          // Image.asset(
+                          //   'assets/images/car1.png',
+                          //   width: 60,
+                          //   height: 65,
+                          // ),
+                          // Transform.translate(
+                          //   offset: const Offset(0, -15),
+                          //   child: Image.asset(
+                          //     'assets/images/car2.png',
+                          //     width: 50,
+                          //     height: 55,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

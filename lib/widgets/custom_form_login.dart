@@ -11,19 +11,19 @@ import 'package:project/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomLoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-          // ignore: prefer_const_constructors
-          color: Color.fromRGBO(246, 198, 199, 0.2),
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: SignUpScreen()),
-    );
+    return Container(
+        width: 100.w,
+        height: 75.h,
+        // ignore: prefer_const_constructors
+        color: Color.fromRGBO(246, 198, 199, 0.2),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: SignUpScreen());
   }
 }
 
@@ -123,7 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.only(top: 60),
+          padding: EdgeInsets.only(top: 20),
           child: Text(
             "Tài khoản",
             style: TextStyle(
@@ -139,12 +139,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 254,
-          height: 55,
+          height: 50,
           child: TextFormField(
             controller: userNameCtrl,
             decoration: InputDecoration(
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -155,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 10),
         const Text(
           "Mật khẩu",
           style: TextStyle(
@@ -170,12 +170,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 254,
-          height: 55,
+          height: 50,
           child: TextFormField(
             controller: passwordCtrl,
+            obscureText: offsecureText,
+            keyboardType: TextInputType.text,
             decoration: InputDecoration(
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -186,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 25),
+        const SizedBox(height: 10),
         const Text(
           "Domain",
           style: TextStyle(
@@ -201,12 +203,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 254,
-          height: 55,
+          height: 50,
           child: DropdownButtonFormField(
             value: selectedDomain,
             decoration: InputDecoration(
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
@@ -237,7 +239,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             },
           ),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 15),
         loadingButton(
           context,
           _btnController,
@@ -246,6 +248,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Theme.of(context).primaryColor,
           Colors.black,
         ),
+        const SizedBox(height: 5),
       ],
     );
   }

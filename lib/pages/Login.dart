@@ -3,6 +3,7 @@ import 'package:project/widgets/custom_form_login.dart';
 import 'package:project/config/config.dart';
 import 'package:project/pages/Guess.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class LoginPage extends StatelessWidget {
@@ -12,48 +13,45 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       // ignore: prefer_const_constructors
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: Column(
-        children: [
-          Expanded(
-            // ignore: avoid_unnecessary_containers
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: 100.w,
               child: Column(
                 children: [
                   CustomLoginForm(),
                   const SizedBox(height: 20),
                   const CustomTitleLogin(text: 'DÀNH CHO KHÁCH HÀNG'),
                   const SizedBox(height: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      color:
-                          const Color(0x21428FCA), // Đặt màu nền cho phần này
-                      padding: const EdgeInsets.symmetric(horizontal: 50),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 15),
-                          const Custombottom(
-                              text:
-                                  "Tìm hiểu về THILOGI và các Dịch vụ\n Theo dõi Thông tin Đơn hàng"),
-                          const SizedBox(height: 30),
-                          PageIndicator(
-                              currentPage: currentPage, pageCount: pageCount),
-                          const SizedBox(height: 20),
-                          CustomButtonLogin(onPressed: () {
-                            // Handle button press
-                          }),
-                        ],
-                      ),
+                  Container(
+                    width: 100.w,
+                    height: 55.h,
+                    color: const Color(0x21428FCA), // Đặt màu nền cho phần này
+                    padding: const EdgeInsets.symmetric(horizontal: 50),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 15),
+                        const Custombottom(
+                            text:
+                                "Tìm hiểu về THILOGI và các Dịch vụ\n Theo dõi Thông tin Đơn hàng"),
+                        const SizedBox(height: 30),
+                        PageIndicator(
+                            currentPage: currentPage, pageCount: pageCount),
+                        const SizedBox(height: 20),
+                        CustomButtonLogin(onPressed: () {
+                          // Handle button press
+                        }),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -75,7 +73,7 @@ class CustomTitleLogin extends StatelessWidget {
         style: TextStyle(
           color: Color(0xFF0469B9),
           fontFamily: 'Roboto',
-          fontSize: 24,
+          fontSize: 20,
           fontWeight: FontWeight.w700,
           height: 1.17,
           letterSpacing: 0,

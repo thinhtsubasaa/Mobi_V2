@@ -9,47 +9,47 @@ class QLKhoXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_const_constructors
-      appBar: CustomAppBarQLKhoXe(key: Key('customAppBarQLKhoXe')),
-      body: Column(
-        children: [
-          Expanded(
-            // ignore: avoid_unnecessary_containers
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      AppConfig.backgroundImagePath), // Đường dẫn đến ảnh nền
-                  fit: BoxFit.cover, // Cách ảnh nền sẽ được hiển thị
+        // ignore: prefer_const_constructors
+        appBar: CustomAppBarQLKhoXe(key: Key('customAppBarQLKhoXe')),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: 340,
+                height: 800,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                        AppConfig.backgroundImagePath), // Đường dẫn đến ảnh nền
+                    fit: BoxFit.cover, // Cách ảnh nền sẽ được hiển thị
+                  ),
                 ),
-              ),
-              child: Column(
-                children: [
-                  CustomCardQLKhoXe(),
-                  CustomBodyQLKhoXe(),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: const Column(
-                        children: [
-                          CustomTitle(
-                              text: 'QUẢN LÝ\n KHO XE THÀNH PHẨM\n (WMS)'),
-                          SizedBox(height: 10),
-                          Custombottom(
-                              text:
-                                  "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
-                        ],
+                child: Column(
+                  children: [
+                    CustomCardQLKhoXe(),
+                    CustomBodyQLKhoXe(),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: const Column(
+                          children: [
+                            CustomTitle(
+                                text: 'QUẢN LÝ\n KHO XE THÀNH PHẨM\n (WMS)'),
+                            SizedBox(height: 10),
+                            Custombottom(
+                                text:
+                                    "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
 
