@@ -19,16 +19,20 @@ class ScanBloc extends ChangeNotifier {
 
   String? _message;
   String? get message => _message;
-
-  Future<void> getData(String qrCode) async {
+  var headers = {
+    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
+  };
+  Future<void> getData(String qrcode) async {
     _isLoading = true;
     _data = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrCode');
+          .getData('KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode');
+      print("du lieu : ${response.statusCode} ");
       if (response.statusCode == 200) {
         // Nếu server trả về một response OK, parse và gán dữ liệu vào _data
         var decodedData = jsonDecode(response.body);
+
         if (decodedData["data"] != null) {
           _data = ScanModel.fromJson(decodedData["data"]);
         } else {
@@ -51,8 +55,7 @@ class ScanBloc extends ChangeNotifier {
     _isLoading = true;
     try {
       var newScanData = scanData;
-      newScanData.chuyenId =
-          newScanData.chuyenId == 'null' ? null : newScanData.chuyenId;
+      newScanData.id = newScanData.id == 'null' ? null : newScanData.id;
       final http.Response response = await requestHelper.postData(
           'KhoThanhPham/TraCuuXeThanhPham_Thilogi1', newScanData.toJson());
       var decodedData = jsonDecode(response.body);

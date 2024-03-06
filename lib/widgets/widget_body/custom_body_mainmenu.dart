@@ -35,7 +35,7 @@ class BodyMainMenu extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {
-                    nextScreenReplace(context, QLKhoXePage());
+                    nextScreen(context, QLKhoXePage());
                   },
                   icon: Image.asset(
                     'assets/images/toyota7.png',

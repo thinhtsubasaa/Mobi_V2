@@ -4,22 +4,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "http://172.20.10.200:8021";
+  String _apiUrl = "https://qtsxautoapi.thacochulai.vn";
   String get apiUrl => _apiUrl;
 
-  String? _chuyenId;
-  String? get chuyenId => _chuyenId;
+  String? _id;
+  String? get id => _id;
+  String? _soKhung;
+  String? get soKhung => _soKhung;
 
-  String? _tenChuyen;
-  String? get tenChuyen => _tenChuyen;
+  String? _tenKho;
+  String? get tenKho => _tenKho;
   String? _tenSanPham;
   String? get tenSanPham => _tenSanPham;
 
-  String? _tenNhomChucNang;
-  String? get tenNhomChucNang => _tenNhomChucNang;
-
-  bool _isNhapKho = false;
-  bool get isNhapKho => _isNhapKho;
+  String? _tenMau;
+  String? get tenMau => _tenMau;
 
   String? _appVersion = '1.0.0';
   String? get appVersion => _appVersion;
@@ -44,38 +43,39 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future saveData(
-      String? cId, String tC, String tSp, String tNcn, bool isNhapKho) async {
+      String? iD, String sK, String tK, String tSp, String tM) async {
     await _initPrefs();
-    await _pref!.setString('chuyenId', cId!.toString());
-    await _pref!.setString('tenChuyen', tC);
+    await _pref!.setString('soKhung', iD!.toString());
+    await _pref!.setString('soKhung', sK);
+    await _pref!.setString('tenKho', tK);
     await _pref!.setString('tenSanPham', tSp);
-    await _pref!.setString('tenNhomChucNang', tNcn);
-    await _pref!.setBool('_isNhapKho', isNhapKho);
+    await _pref!.setString('tenMau', tM);
 
-    _chuyenId = cId;
-    _tenChuyen = tC;
+    _id = iD.toString();
+    _soKhung = sK;
+    _tenKho = tK;
     _tenSanPham = tSp;
-    _tenNhomChucNang = tNcn;
-    _isNhapKho = isNhapKho;
+    _tenMau = tM;
     notifyListeners();
   }
 
   Future getData() async {
     await _initPrefs();
-    _chuyenId = _pref!.getString('chuyenId');
-    _tenChuyen = _pref!.getString('tenChuyen');
+    _id = _pref!.getString('id');
+    _soKhung = _pref!.getString('soKhung');
+    _tenKho = _pref!.getString('tenKho');
     _tenSanPham = _pref!.getString('tenSanPham');
-    _tenNhomChucNang = _pref!.getString('tenNhomChucNang');
-    _isNhapKho = _pref!.getBool('isNhapKho') ?? false;
+    _tenMau = _pref!.getString('tenMau');
     _appVersion = _pref!.getString('appVersion');
     notifyListeners();
   }
 
   Future clearData() async {
-    _chuyenId = null;
-    _tenChuyen = null;
-    _tenNhomChucNang = null;
-    _isNhapKho = false;
+    _id = null;
+    _soKhung = null;
+    _tenKho = null;
+    _tenSanPham = null;
+    _tenMau = null;
     notifyListeners();
   }
 }

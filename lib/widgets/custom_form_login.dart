@@ -101,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) => _ub.setSignIn())
                   .then((_) {
                 _btnController.success();
-                nextScreenReplace(context, MainMenuPage());
+                nextScreen(context, MainMenuPage());
               });
             } else {
               if (asb.hasError) {

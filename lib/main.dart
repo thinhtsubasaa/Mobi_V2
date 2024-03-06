@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project/blocs/scan_bloc.dart';
 import 'package:project/pages/Home.dart';
 import 'package:project/pages/MainMenu.dart';
 import 'package:project/pages/nhanxe/NhanXe.dart';
@@ -26,6 +27,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<AuthService>(
             create: (context) => AuthService(),
+          ),
+          ChangeNotifierProvider<ScanBloc>(
+            create: (context) => ScanBloc(),
           ),
         ],
         child: MaterialApp(

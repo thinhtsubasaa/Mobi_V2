@@ -125,16 +125,14 @@ class CustomButtonLogin extends StatelessWidget {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  // ignore: overridden_fields
   final Key? key;
 
-  // ignore: prefer_const_constructors_in_immutables
-  CustomAppBar({this.key}) : super(key: key);
+  const CustomAppBar({this.key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Image.asset(
         AppConfig.appBarImagePath,
         width: 300,
@@ -144,7 +142,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  // ignore: prefer_const_constructors
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 

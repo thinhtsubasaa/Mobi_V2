@@ -53,7 +53,7 @@ class BodyQLKhoXe extends StatelessWidget {
                         children: [
                           IconButton(
                             onPressed: () {
-                              nextScreenReplace(context, NhanXePage());
+                              nextScreen(context, NhanXePage());
                             },
                             icon: Stack(
                               children: [
