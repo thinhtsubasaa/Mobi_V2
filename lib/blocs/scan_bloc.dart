@@ -1,70 +1,60 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:project/models/scan.dart';
-import 'package:project/services/request_helper.dart';
+import 'package:flutter/foundation.dart';
+import 'package:Thilogi/models/scan.dart';
+import 'package:Thilogi/services/request_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  ScanModel? _data;
-  ScanModel? get data => _data;
+  String? _soKhung;
+  String? get soKhung => _soKhung;
 
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
+  String? _id;
+  String? get id => _id;
 
-  bool _success = false;
-  bool get success => _success;
+  String? _tenSanPham;
+  String? get tenSanPham => _tenSanPham;
 
-  String? _message;
-  String? get message => _message;
-  var headers = {
-    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
-  };
-  Future<void> getData(String qrcode) async {
-    _isLoading = true;
-    _data = null;
-    try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode');
-      print("du lieu : ${response.statusCode} ");
-      if (response.statusCode == 200) {
-        // Nếu server trả về một response OK, parse và gán dữ liệu vào _data
-        var decodedData = jsonDecode(response.body);
+  String? _tenMau;
+  String? get tenMau => _tenMau;
 
-        if (decodedData["data"] != null) {
-          _data = ScanModel.fromJson(decodedData["data"]);
-        } else {
-          _data = null;
-        }
-        _success = decodedData["success"];
-        _message = decodedData["message"];
-      } else {
-        // Nếu server không trả về response thành công, gán _success = false và thông báo lỗi
-        _success = false;
-        _message = 'Failed to load data';
-      }
-    } catch (e) {
-      // Nếu có lỗi xảy ra trong quá trình gọi API, gán _success = false và thông báo lỗi
-      _message = e.toString();
+  String? _tenKho;
+  String? get tenKho => _tenKho;
+
+  String? _soMay;
+  String? get soMay => _soMay;
+
+  Future saveScanData(ScanModel scanModel) async {
+    // ignore: unnecessary_null_comparison
+    if (scanModel != null) {
+      final SharedPreferences sp = await SharedPreferences.getInstance();
+      sp.setString('id', scanModel.id ?? '');
+      sp.setString('soKhung', scanModel.soKhung ?? '');
+      sp.setString('tenSanPham', scanModel.tenSanPham ?? '');
+      sp.setString('tenMau', scanModel.tenMau ?? '');
+      sp.setString('tenKho', scanModel.tenKho ?? '');
+      sp.setString('soMay', scanModel.soMay ?? '');
+
+      _id = scanModel.id;
+      _soKhung = scanModel.soKhung;
+      _tenSanPham = scanModel.tenSanPham;
+      _tenMau = scanModel.tenMau;
+      _tenKho = scanModel.tenKho;
+      _soMay = scanModel.soMay;
+
+      notifyListeners();
     }
   }
 
-  Future postData(ScanModel scanData) async {
-    _isLoading = true;
-    try {
-      var newScanData = scanData;
-      newScanData.id = newScanData.id == 'null' ? null : newScanData.id;
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/TraCuuXeThanhPham_Thilogi1', newScanData.toJson());
-      var decodedData = jsonDecode(response.body);
-      _isLoading = false;
-      _success = decodedData["success"];
-    } catch (e) {
-      _message = e.toString();
-      _isLoading = false;
-      notifyListeners();
-    }
+  Future getScanData() async {
+    final SharedPreferences sp = await SharedPreferences.getInstance();
+    _id = sp.getString('id');
+    _soKhung = sp.getString('soKhung');
+    _tenSanPham = sp.getString('tenSanPham');
+    _tenMau = sp.getString('tenMau');
+    _tenKho = sp.getString('tenKho');
+    _soMay = sp.getString('soMay');
+
+    notifyListeners();
   }
 }

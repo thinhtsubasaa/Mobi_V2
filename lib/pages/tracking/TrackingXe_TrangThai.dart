@@ -1,56 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:project/config/config.dart';
-import 'package:project/widgets/widget_body/custom_body_trackingxe.dart';
-import 'package:project/widgets/widget_tabs/custom_tabs_TrackingXe_TrangThai.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
+
 class TrackingXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_const_constructors
-      appBar: CustomAppBarQLKhoXe(key: Key('customAppBarQLKhoXe')),
-      body: Column(
-        children: [
-          Expanded(
-            // ignore: avoid_unnecessary_containers
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      AppConfig.backgroundImagePath), // Đường dẫn đến ảnh nền
-                  fit: BoxFit.cover, // Cách ảnh nền sẽ được hiển thị
-                ),
-              ),
-              child: Column(
+      appBar: CustomAppBarQLKhoXe(key: const Key('customAppBarQLKhoXe')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Stack(
                 children: [
-                  CustomCardQLKhoXe(),
-                  CustomCardVIN(),
-                  SizedBox(height: 10),
-                  CustomTabsTracking(),
-                  SizedBox(height: 10),
-                  CustomTrackingXe(),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      child: const Column(
-                        children: [
-                          CustomTitle(text: 'TRACKING XE THÀNH PHẨM'),
-                          SizedBox(height: 10),
-                          Custombottom(
-                              text:
-                                  "Tìm kiếm xe theo Đơn hàng/ Số VIN\n Theo dõi vị trí xe trong quá trình vận chuyển giao xe"),
-                        ],
+                  // Background Image
+                  Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(AppConfig.backgroundImagePath),
+                        fit: BoxFit.cover,
                       ),
+                    ),
+                    child: Column(
+                      children: [
+                        CustomCardQLKhoXe(),
+                        CustomCardVIN(),
+                        SizedBox(height: 10),
+                        TabsNhanXeTracking(),
+                        SizedBox(height: 10),
+                        CustomTrackingXe(),
+                        const SizedBox(height: 20),
+                        Container(
+                          child: Column(
+                            children: [
+                              CustomTitle(text: 'TRACKING XE THÀNH PHẨM'),
+                              SizedBox(height: 10),
+                              Custombottom(
+                                text:
+                                    "Tìm kiếm xe theo Đơn hàng/ Số VIN Theo dõi vị trí xe trong quá trình vận chuyển giao xe",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -77,6 +81,69 @@ class CustomTitle extends StatelessWidget {
           letterSpacing: 0,
         ),
       ),
+    );
+  }
+}
+
+class TabsNhanXeTracking extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TabItem(
+          label: 'Trạng thái vận chuyển',
+          textColor: const Color(0xFF818180),
+          backgroundColor: const Color(0xFF7F7F7F),
+        ),
+        TabItem(
+          label: 'Vị trí trên đường',
+          textColor: const Color(0xFF428FCA),
+          backgroundColor: const Color(0xFFF6C6C7),
+        ),
+      ],
+    );
+  }
+}
+
+class TabItem extends StatelessWidget {
+  final String label;
+  final Color textColor;
+  final Color backgroundColor;
+
+  const TabItem({
+    required this.label,
+    required this.textColor,
+    required this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(top: 10, bottom: 5),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              height: 1.14,
+              letterSpacing: 0,
+              color: textColor,
+            ),
+          ),
+        ),
+        Container(
+          width: 150,
+          height: 3,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -128,12 +195,13 @@ class CustomAppBarQLKhoXe extends StatelessWidget
   // ignore: prefer_const_constructors
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
+
 class CustomCardQLKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 460,
-      height: 50,
+      width: 100.w,
+      height: 6.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -202,12 +270,13 @@ class CustomCardQLKhoXe extends StatelessWidget {
     );
   }
 }
+
 class CustomCardVIN extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 360,
-      height: 50,
+      width: 90.w,
+      height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         // Đặt border radius cho card
@@ -222,8 +291,8 @@ class CustomCardVIN extends StatelessWidget {
         children: [
           // Phần Text 1
           Container(
-            width: 76.48,
-            height: 48,
+            width: 20.w,
+            height: 8.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -257,14 +326,14 @@ class CustomCardVIN extends StatelessWidget {
             'MALA851CBHM557809',
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               height: 1.11,
               letterSpacing: 0,
               color: Color(0xFFA71C20),
             ),
           ),
-          const SizedBox(width: 3),
+
           // Phần Icon Barcode
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
@@ -285,6 +354,7 @@ class CustomCardVIN extends StatelessWidget {
     );
   }
 }
+
 class Custombottom extends StatelessWidget {
   final String text;
 

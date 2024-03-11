@@ -21,7 +21,9 @@ class RequestHelper {
 
   loginAction(data) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    Map<String, String> headers = {"Content-type": "application/json"};
+    Map<String, String> headers = {
+      "Content-type": "application/json",
+    };
     return await http.post(
       Uri.parse('${sp.getString('apiUrl')}/token'),
       headers: headers,
@@ -101,11 +103,5 @@ class RequestHelper {
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
-        'ApiKey': 'qtsx2023',
       };
-  var headers = {
-    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
-  };
-  // var apiUrl =
-  //     "KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=";
 }

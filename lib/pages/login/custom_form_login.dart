@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:project/blocs/app_bloc.dart';
-import 'package:project/blocs/user_bloc.dart';
-import 'package:project/models/icon_data.dart';
-import 'package:project/pages/MainMenu.dart';
-import 'package:project/services/app_service.dart';
-import 'package:project/services/auth_service.dart';
-import 'package:project/utils/next_screen.dart';
-import 'package:project/utils/snackbar.dart';
-import 'package:project/widgets/loading_button.dart';
+import 'package:Thilogi/blocs/app_bloc.dart';
+import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/models/icon_data.dart';
+import 'package:Thilogi/pages/menu/MainMenu.dart';
+import 'package:Thilogi/services/app_service.dart';
+import 'package:Thilogi/services/auth_service.dart';
+import 'package:Thilogi/utils/next_screen.dart';
+import 'package:Thilogi/utils/snackbar.dart';
+import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +19,6 @@ class CustomLoginForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         width: 100.w,
-        height: 75.h,
         // ignore: prefer_const_constructors
         color: Color.fromRGBO(246, 198, 199, 0.2),
         padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -77,6 +76,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future _login() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     sp.setString('apiUrl', _ab.apiUrl);
+    print('Username: ${userNameCtrl.text}');
+    print('Password: ${passwordCtrl.text}');
     if (userNameCtrl.text.isEmpty) {
       _btnController.reset();
       // ignore: use_build_context_synchronously
@@ -138,8 +139,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: 10),
         Container(
-          width: 254,
-          height: 50,
+          width: 70.w,
+          height: 7.h,
           child: TextFormField(
             controller: userNameCtrl,
             decoration: InputDecoration(
@@ -169,8 +170,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: 10),
         Container(
-          width: 254,
-          height: 50,
+          width: 70.w,
+          height: 7.h,
           child: TextFormField(
             controller: passwordCtrl,
             obscureText: offsecureText,
@@ -202,8 +203,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         const SizedBox(height: 10),
         Container(
-          width: 254,
-          height: 50,
+          width: 70.w,
+          height: 7.h,
           child: DropdownButtonFormField(
             value: selectedDomain,
             decoration: InputDecoration(

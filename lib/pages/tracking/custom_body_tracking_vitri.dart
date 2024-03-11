@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/map.dart';
+import 'package:Thilogi/widgets/map.dart';
 
 class CustomTrackingXeVitri extends StatelessWidget {
   @override
@@ -54,7 +54,7 @@ class CustomTrackingXeVitri extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 50,
+            left: 45,
             top: 0,
             child: Container(
               width: 320,

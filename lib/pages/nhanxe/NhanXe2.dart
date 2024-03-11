@@ -1,75 +1,101 @@
 import 'package:flutter/material.dart';
-import 'package:project/config/config.dart';
-import 'package:project/widgets/custom_popup_NhanXe.dart';
-import 'package:project/widgets/widget_tabs/custom_tabs_NhanXe2.dart';
+import 'package:Thilogi/config/config.dart';
+
+import 'package:Thilogi/pages/nhanxe/popup/custom_popup_NhanXe.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:sizer/sizer.dart';
 
 class NhanXe2Page extends StatelessWidget {
+  String? soKhung;
+  String? soMay;
+  String? tenMau;
+  String? tenSanPham;
+  String? ngayXuatKhoView;
+  String? tenTaiXe;
+  String? ghiChu;
+  String? tenKho;
+  List phuKien;
+
+  NhanXe2Page(
+      {required this.soKhung,
+      required this.soMay,
+      required this.tenMau,
+      required this.tenSanPham,
+      required this.ngayXuatKhoView,
+      required this.tenTaiXe,
+      required this.ghiChu,
+      required this.tenKho,
+      required this.phuKien});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarQLKhoXe(key: const Key('customAppBarQLKhoXe')),
-      body: Stack(
-        children: [
-          // Background Image
-          Positioned.fill(
-            child: ColorFiltered(
-              colorFilter: ColorFilter.mode(
-                Colors.black
-                    .withOpacity(0.8), // Adjust the opacity here for darkness
-                BlendMode.srcATop,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
               ),
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(AppConfig.backgroundImagePath),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Main Content
-          Column(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    CustomCardQLKhoXe(),
-                    CustomCardVIN(),
-                    CustomTabsTwo(),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      flex: 1,
-                      // ignore: avoid_unnecessary_containers
+              child: Stack(
+                children: [
+                  // Background Image
+                  Positioned.fill(
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.8),
+                        BlendMode.srcATop,
+                      ),
                       child: Container(
-                        child: const Column(
-                          children: [
-                            CustomTitle(text: 'KIỂM TRA - NHẬN XE'),
-                            SizedBox(height: 10),
-                            Custombottom(
-                              text:
-                                  "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
-                            ),
-                          ],
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(AppConfig.backgroundImagePath),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+                  ),
 
-          // Popup
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: PopUp(),
-          ),
-        ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: 5.0.h), // 5% of the screen's height
+                      // CustomCardQLKhoXe(),
+                      CustomCardVIN(),
+                      SizedBox(height: 2.0.h),
+                      CustomTitle(text: 'KIỂM TRA - NHẬN XE'),
+                      SizedBox(height: 1.0.h),
+                      Custombottom(
+                        text:
+                            "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
+                      ),
+                    ],
+                  ),
+
+                  // Popup
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: PopUp(
+                      soKhung: soKhung ?? "",
+                      soMay: soMay ?? "",
+                      tenMau: tenMau ?? "",
+                      tenSanPham: tenSanPham ?? "",
+                      ngayXuatKhoView: ngayXuatKhoView ?? "",
+                      tenTaiXe: tenTaiXe ?? "",
+                      ghiChu: ghiChu ?? "",
+                      tenKho: tenKho ?? "",
+                      phuKien: phuKien ?? [],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -83,14 +109,14 @@ class CustomTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20),
+      padding: EdgeInsets.symmetric(horizontal: 5.0.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: const TextStyle(
+        style: TextStyle(
           color: Color.fromARGB(255, 216, 30, 16),
           fontFamily: 'Roboto',
-          fontSize: 24,
+          fontSize: 24.0.sp, // Responsive font size
           fontWeight: FontWeight.w700,
           height: 1.17,
           letterSpacing: 0,
@@ -112,12 +138,13 @@ class CustomAppBarQLKhoXe extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(
             AppConfig.QLKhoImagePath,
-            width: 300,
+            width: 100.w,
           ),
           // ignore: avoid_unnecessary_containers
           Container(
@@ -177,7 +204,7 @@ class CustomCardVIN extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 360,
+      width: 334,
       height: 50,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -228,7 +255,7 @@ class CustomCardVIN extends StatelessWidget {
             'MALA851CBHM557809',
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               height: 1.11,
               letterSpacing: 0,

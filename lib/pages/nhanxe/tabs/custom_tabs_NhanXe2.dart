@@ -26,13 +26,13 @@ class TabsNhanXe extends StatelessWidget {
               child: const Text(
                 'Danh sách chờ',
                 style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  height: 1.14, // Corresponds to line-height of 16px
-                  letterSpacing: 0,
-                  color: Color(0xFF428FCA), // Màu chữ
-                ),
+                    fontFamily: 'Comfortaa',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    height: 1.14, // Corresponds to line-height of 16px
+                    letterSpacing: 0,
+                    color: Color(0xFF818180) // Màu chữ
+                    ),
               ),
             ),
             Container(
@@ -59,7 +59,7 @@ class TabsNhanXe extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   height: 1.14, // Corresponds to line-height of 16px
                   letterSpacing: 0,
-                  color: Color(0xFF818180), // Màu chữ
+                  color: Color(0xFF428FCA), // Màu chữ
                 ),
               ),
             ),

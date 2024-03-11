@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/widget_body/custom_body_mainmenu.dart';
-import 'package:project/config/config.dart';
+import 'package:Thilogi/pages/menu/custom_body_mainmenu.dart';
+import 'package:Thilogi/config/config.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
-import '../blocs/user_bloc.dart';
+import '../../blocs/user_bloc.dart';
 
-// ignore: use_key_in_widget_constructors
 class MainMenuPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
@@ -13,43 +13,42 @@ class MainMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      // ignore: prefer_const_constructors
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // ignore: avoid_unnecessary_containers
-            Container(
-              width: 330,
-              height: 700,
-              child: Column(
-                children: [
-                  CustomCard(),
-                  CustomBodyMainMenu(),
-                  const SizedBox(height: 20),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.white,
-                      child: const Column(
-                        children: [
-                          CustomTitle(
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: 100.w,
+                  child: Column(
+                    children: [
+                      // CustomCard(),
+                      CustomBodyMainMenu(),
+                      const SizedBox(height: 20),
+                      Container(
+                        color: Colors.white,
+                        child: const Column(
+                          children: [
+                            CustomTitle(
                               text:
-                                  'HỆ THỐNG QUẢN LÝ \n NGUỒN LỰC DOANH NGHIỆP\n(ERP)'),
-                          SizedBox(height: 10),
-                          Custombottom(
+                                  'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
+                            ),
+                            SizedBox(height: 10),
+                            Custombottom(
                               text:
-                                  "Hệ thống bao gồm nhiều chức năng quản trị nghiệp vụ/ Dịch vụ của các Tổng công ty/ Công ty/ Đơn vị trực thuộc THILOGI"),
-                        ],
+                                  "Hệ thống bao gồm nhiều chức năng quản trị nghiệp vụ/ Dịch vụ của các Tổng công ty/ Công ty/ Đơn vị trực thuộc THILOGI",
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -62,15 +61,15 @@ class CustomTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color.fromARGB(255, 216, 30, 16),
           fontFamily: 'Roboto',
-          fontSize: 24,
+          fontSize: 20.sp,
           fontWeight: FontWeight.w700,
           height: 1.17,
           letterSpacing: 0,
@@ -82,11 +81,9 @@ class CustomTitle extends StatelessWidget {
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
-  // ignore: overridden_fields
   final Key? key;
 
-  // ignore: prefer_const_constructors_in_immutables
-  CustomAppBar({this.key}) : super(key: key);
+  const CustomAppBar({this.key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +98,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  // ignore: prefer_const_constructors
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
@@ -144,9 +140,7 @@ class _CustomCardState extends State<CustomCard>
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 460,
-      height: 50,
-      margin: const EdgeInsets.only(top: 10),
+      height: 8.h,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
@@ -156,33 +150,31 @@ class _CustomCardState extends State<CustomCard>
             Color(0xFFE96327),
           ],
         ),
-        // Đặt border radius cho card
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            padding: const EdgeInsets.only(right: 10),
+            padding: EdgeInsets.only(right: 5.w),
             child: const Icon(
               Icons.person,
               color: Colors.white,
             ),
           ),
           Container(
-            padding: const EdgeInsets.only(right: 10),
+            padding: EdgeInsets.only(right: 5.w),
             child: Text(
               _fullName ?? "No name",
               style: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Comfortaa',
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w400,
                 height: 1.17,
                 letterSpacing: 0,
               ),
             ),
           ),
-          // ignore: avoid_unnecessary_containers
           Container(
             child: const Icon(
               Icons.arrow_drop_down,
@@ -202,15 +194,15 @@ class Custombottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color(0xFF000000),
           fontFamily: 'Roboto',
-          fontSize: 15,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w400,
           height: 1.33,
           letterSpacing: 0,

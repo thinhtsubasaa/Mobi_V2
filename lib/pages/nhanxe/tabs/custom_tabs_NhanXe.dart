@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/widget_tabs/widget_tabs_item/custom_tabs_item.dart';
-
-class CustomTabs extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: TabsNhanXe(),
-    );
-  }
-}
+import 'package:Thilogi/widgets/widget_tab/widget_tabs_item/custom_tabs_item.dart';
 
 class TabsNhanXe extends StatelessWidget {
   @override

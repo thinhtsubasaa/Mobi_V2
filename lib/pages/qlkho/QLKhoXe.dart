@@ -1,55 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:project/blocs/user_bloc.dart';
-import 'package:project/config/config.dart';
-import 'package:project/widgets/widget_body/custom_body_QLKhoxe.dart';
+import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/qlkho/custom_body_QLKhoxe.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
 class QLKhoXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // ignore: prefer_const_constructors
-        appBar: CustomAppBarQLKhoXe(key: Key('customAppBarQLKhoXe')),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: 340,
-                height: 800,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                        AppConfig.backgroundImagePath), // Đường dẫn đến ảnh nền
-                    fit: BoxFit.cover, // Cách ảnh nền sẽ được hiển thị
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    CustomCardQLKhoXe(),
-                    CustomBodyQLKhoXe(),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: const Column(
-                          children: [
-                            CustomTitle(
-                                text: 'QUẢN LÝ\n KHO XE THÀNH PHẨM\n (WMS)'),
-                            SizedBox(height: 10),
-                            Custombottom(
-                                text:
-                                    "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
-                          ],
-                        ),
+      appBar: CustomAppBarQLKhoXe(key: Key('customAppBarQLKhoXe')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 100.w,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(AppConfig.backgroundImagePath),
+                        // Đường dẫn đến ảnh nền
+                        fit: BoxFit.cover,
+                        // Cách ảnh nền sẽ được hiển thị
                       ),
                     ),
-                  ],
-                ),
+                    child: Column(
+                      children: [
+                        // CustomCardQLKhoXe(),
+                        CustomBodyQLKhoXe(),
+                        const SizedBox(height: 20),
+                        Container(
+                          child: const Column(
+                            children: [
+                              CustomTitle(
+                                  text: 'QUẢN LÝ KHO XE THÀNH PHẨM (WMS)'),
+                              SizedBox(height: 10),
+                              Custombottom(
+                                  text:
+                                      "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -60,15 +67,15 @@ class CustomTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color.fromARGB(255, 216, 30, 16),
           fontFamily: 'Roboto',
-          fontSize: 24,
+          fontSize: 22.sp,
           fontWeight: FontWeight.w700,
           height: 1.17,
           letterSpacing: 0,
@@ -81,11 +88,9 @@ class CustomTitle extends StatelessWidget {
 class CustomAppBarQLKhoXe extends StatelessWidget
     implements PreferredSizeWidget {
   @override
-  // ignore: overridden_fields
   final Key? key;
 
-  // ignore: prefer_const_constructors_in_immutables
-  CustomAppBarQLKhoXe({this.key}) : super(key: key);
+  const CustomAppBarQLKhoXe({this.key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,19 +103,18 @@ class CustomAppBarQLKhoXe extends StatelessWidget
             AppConfig.QLKhoImagePath,
             width: 300,
           ),
-          // ignore: avoid_unnecessary_containers
           Container(
-            child: const Padding(
-              padding: EdgeInsets.only(left: 50),
+            child: Padding(
+              padding: EdgeInsets.only(left: 5.w),
               child: Text(
                 'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFFBC2925), // Màu chữ
-                  height: 16 / 14, // Tính line-height
+                  color: Color(0xFFBC2925),
+                  height: 16 / 14,
                   letterSpacing: 0,
                 ),
               ),
@@ -123,7 +127,6 @@ class CustomAppBarQLKhoXe extends StatelessWidget
   }
 
   @override
-  // ignore: prefer_const_constructors
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
@@ -134,15 +137,15 @@ class Custombottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color(0xFF000000),
           fontFamily: 'Roboto',
-          fontSize: 15,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w400,
           height: 1.33,
           letterSpacing: 0,
@@ -152,7 +155,6 @@ class Custombottom extends StatelessWidget {
   }
 }
 
-// ignore: use_key_in_widget_constructors
 class CustomCardQLKhoXe extends StatefulWidget {
   const CustomCardQLKhoXe({super.key});
 
@@ -165,6 +167,7 @@ class _CustomCardState extends State<CustomCardQLKhoXe>
   TabController? _tabController;
   late UserBloc _ub;
   String _fullName = "No name";
+
   @override
   void initState() {
     super.initState();
@@ -192,8 +195,8 @@ class _CustomCardState extends State<CustomCardQLKhoXe>
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 460,
-      height: 50,
+      width: 100.w,
+      height: 7.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -204,22 +207,19 @@ class _CustomCardState extends State<CustomCardQLKhoXe>
             Color(0xFFBC2925),
           ],
         ),
-        // Đặt border radius cho card
       ),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween, // Đặt giữa các thành phần
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            padding: const EdgeInsets.only(left: 10),
-            child: const Text(
+            padding: EdgeInsets.only(left: 5.w),
+            child: Text(
               'WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 24,
+                fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                height:
-                    28 / 24, // Tính line-height dựa trên fontSize và lineHeight
+                height: 28 / 24,
                 letterSpacing: 0,
                 color: Colors.white,
               ),
@@ -228,29 +228,28 @@ class _CustomCardState extends State<CustomCardQLKhoXe>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.only(right: 10),
-                child: const Icon(
+                padding: EdgeInsets.only(right: 5.w),
+                child: Icon(
                   Icons.person,
                   color: Colors.white,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: 5.w),
                 child: Text(
                   _fullName ?? "No name",
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Comfortaa',
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
                     height: 1.17,
                     letterSpacing: 0,
                   ),
                 ),
               ),
-              // ignore: avoid_unnecessary_containers
               Container(
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_drop_down,
                   color: Colors.white,
                 ),

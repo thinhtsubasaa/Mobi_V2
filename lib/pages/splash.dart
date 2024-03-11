@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:project/blocs/user_bloc.dart';
-import 'package:project/config/config.dart';
-import 'package:project/pages/Login.dart';
-import 'package:project/pages/MainMenu.dart';
+import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/login/Login.dart';
+import 'package:Thilogi/pages/menu/MainMenu.dart';
 import 'package:provider/provider.dart';
 
 // import '../blocs/user_bloc.dart';

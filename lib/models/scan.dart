@@ -1,45 +1,69 @@
 class ScanModel {
   String? id;
-  String soKhung;
-  String? chuyenId;
-  String barCodeId;
-  String tenSanPham;
-  String tenMau;
-  String maCode;
-  String? ngay;
+  String? soKhung;
+  String? tenSanPham;
+  String? tenMau;
+  String? tenKho;
+  String? soMay;
+  String? ngayXuatKhoView;
+  String? tenTaiXe;
+  String? ghiChu;
+  List<PhuKien>? phuKien;
 
   ScanModel({
     this.id,
-    required this.soKhung,
-    this.chuyenId,
-    required this.barCodeId,
-    required this.tenSanPham,
-    required this.tenMau,
-    required this.maCode,
-    this.ngay,
+    this.soKhung,
+    this.tenSanPham,
+    this.tenMau,
+    this.tenKho,
+    this.soMay,
+    this.ngayXuatKhoView,
+    this.tenTaiXe,
+    this.ghiChu,
+    this.phuKien,
   });
+  @override
+  String toString() {
+    return 'ScanModel(id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayXuatKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu, phuKien: $phuKien)';
+  }
 
   factory ScanModel.fromJson(Map<String, dynamic> json) {
     return ScanModel(
       id: json["id"],
       soKhung: json["soKhung"],
-      chuyenId: json["chuyenId"],
-      barCodeId: json["barCodeId"],
       tenSanPham: json["tenSanPham"],
       tenMau: json["tenMau"],
-      maCode: json["maCode"],
-      ngay: json["ngay"],
+      tenKho: json["tenKho"],
+      soMay: json["soMay"],
+      ngayXuatKhoView: json["ngayXuatKhoView"],
+      tenTaiXe: json["tenTaiXe"],
+      ghiChu: json["ghiChu"],
+      phuKien:
+          (json['phuKien'] as List).map((e) => PhuKien.fromJson(e)).toList(),
     );
   }
+}
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'soKhung': soKhung,
-        'chuyenId': chuyenId,
-        'barCodeId': barCodeId,
-        'tenSanPham': tenSanPham,
-        'tenMau': tenMau,
-        'maCode': maCode,
-        'ngay': ngay,
-      };
+class PhuKien {
+  String? phuKien_Id;
+  String? giaTri;
+  String? tenPhuKien;
+
+  PhuKien({
+    this.phuKien_Id,
+    this.giaTri,
+    this.tenPhuKien,
+  });
+  @override
+  String toString() {
+    return 'ScanModel(phuKien_Id: $phuKien_Id, giaTri: $giaTri, tenPhuKien: $tenPhuKien)';
+  }
+
+  factory PhuKien.fromJson(Map<String, dynamic> json) {
+    return PhuKien(
+      phuKien_Id: json['phuKien_Id'],
+      giaTri: json['giaTri'],
+      tenPhuKien: json['tenPhuKien'],
+    );
+  }
 }

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "https://qtsxautoapi.thacochulai.vn";
+  String _apiUrl = "http://10.17.40.172:5000";
   String get apiUrl => _apiUrl;
 
   String? _id;

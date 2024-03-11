@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:project/widgets/custom_form_login.dart';
-import 'package:project/config/config.dart';
-import 'package:project/pages/Guess.dart';
+import 'package:Thilogi/pages/login/custom_form_login.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/guess/Guess.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
 
-// ignore: use_key_in_widget_constructors, must_be_immutable
 class LoginPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
@@ -13,45 +13,60 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_const_constructors
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: 100.w,
-              child: Column(
-                children: [
-                  CustomLoginForm(),
-                  const SizedBox(height: 20),
-                  const CustomTitleLogin(text: 'DÀNH CHO KHÁCH HÀNG'),
-                  const SizedBox(height: 20),
-                  Container(
-                    width: 100.w,
-                    height: 55.h,
-                    color: const Color(0x21428FCA), // Đặt màu nền cho phần này
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        const Custombottom(
-                            text:
-                                "Tìm hiểu về THILOGI và các Dịch vụ\n Theo dõi Thông tin Đơn hàng"),
-                        const SizedBox(height: 30),
-                        PageIndicator(
-                            currentPage: currentPage, pageCount: pageCount),
-                        const SizedBox(height: 20),
-                        CustomButtonLogin(onPressed: () {
-                          // Handle button press
-                        }),
-                      ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Container(
+                width: 100.w,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 100.w,
+                      child: Column(
+                        children: [
+                          CustomLoginForm(),
+                          SizedBox(height: 20),
+                          CustomTitleLogin(text: 'DÀNH CHO KHÁCH HÀNG'),
+                          SizedBox(height: 20),
+                          Container(
+                            width: 100.w,
+                            color: const Color(0x21428FCA),
+                            padding: const EdgeInsets.symmetric(horizontal: 50),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 15),
+                                Custombottom(
+                                  text:
+                                      "Tìm hiểu về THILOGI và các Dịch vụ Theo dõi Thông tin Đơn hàng",
+                                ),
+                                SizedBox(height: 30),
+                                PageIndicator(
+                                  currentPage: currentPage,
+                                  pageCount: pageCount,
+                                ),
+                                SizedBox(height: 20),
+                                CustomButtonLogin(onPressed: () {
+                                  // Handle button press
+                                  nextScreen(context, GuessPage());
+                                }),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -60,20 +75,19 @@ class LoginPage extends StatelessWidget {
 class CustomTitleLogin extends StatelessWidget {
   final String text;
 
-  // ignore: use_key_in_widget_constructors
   const CustomTitleLogin({required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color(0xFF0469B9),
           fontFamily: 'Roboto',
-          fontSize: 20,
+          fontSize: 20.sp,
           fontWeight: FontWeight.w700,
           height: 1.17,
           letterSpacing: 0,
@@ -91,16 +105,7 @@ class CustomButtonLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        // Call the provided onPressed callback
-        onPressed();
-
-        // Navigate to a new screen after the button is pressed
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GuessPage()),
-        );
-      },
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         fixedSize: Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
         backgroundColor: Color(0xFF428FCA),
@@ -114,7 +119,7 @@ class CustomButtonLogin extends StatelessWidget {
         style: TextStyle(
           color: Colors.white,
           fontFamily: 'Roboto',
-          fontSize: 16,
+          fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           height: 1.16,
           letterSpacing: 0,
@@ -135,7 +140,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       title: Image.asset(
         AppConfig.appBarImagePath,
-        width: 300,
       ),
       centerTitle: false,
     );
@@ -178,14 +182,14 @@ class Custombottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
           color: Color(0xFF000000),
           fontFamily: 'Roboto',
-          fontSize: 15,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w400,
           height: 1.33,
           letterSpacing: 0,

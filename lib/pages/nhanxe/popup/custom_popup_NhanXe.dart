@@ -1,14 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:Thilogi/blocs/chucnang.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
+import 'package:Thilogi/utils/next_screen.dart';
+import 'package:sizer/sizer.dart';
+import 'package:http/http.dart' as http;
+import 'package:Thilogi/models/scan.dart';
+import 'package:Thilogi/services/request_helper.dart';
 
 // ignore: use_key_in_widget_constructors
 class PopUp extends StatelessWidget {
+  String soKhung;
+  String soMay;
+  String tenMau;
+  String tenSanPham;
+  String ngayXuatKhoView;
+  String tenTaiXe;
+  String ghiChu;
+  String tenKho;
+  List phuKien;
+
+  PopUp(
+      {required this.soKhung,
+      required this.soMay,
+      required this.tenMau,
+      required this.tenSanPham,
+      required this.ngayXuatKhoView,
+      required this.tenTaiXe,
+      required this.ghiChu,
+      required this.tenKho,
+      required this.phuKien});
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
         alignment: Alignment.bottomCenter,
-        width: 380,
-        height: 710,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white.withOpacity(0.9),
@@ -26,7 +54,7 @@ class PopUp extends StatelessWidget {
             _buildTopBar(),
             _buildInputFields(),
             _buildCarDetails(),
-            _buildButtons(),
+            _buildButtons(context),
           ],
         ),
       ),
@@ -35,8 +63,7 @@ class PopUp extends StatelessWidget {
 
   Widget _buildTopBar() {
     return Container(
-      width: 380,
-      height: 50,
+      height: 8.h,
       padding: const EdgeInsets.all(8),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -87,20 +114,29 @@ class PopUp extends StatelessWidget {
           ),
           const Divider(height: 1, color: Color(0xFFA71C20)),
           const SizedBox(height: 10),
-          SizedBox(
-            height: 132,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomInputBox(text: "Người nhận"),
-                const SizedBox(height: 4),
-                CustomInputBox(text: "Nơi nhận xe"),
-                const SizedBox(height: 4),
-                CustomInputBox(text: "Người nhận"),
-                const SizedBox(height: 4),
-                CustomInputBox(text: "Ghi chú"),
-              ],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomInputBox(
+                text: "Ngày nhận",
+                ngayXuatKhoView: ngayXuatKhoView,
+              ),
+              const SizedBox(height: 4),
+              CustomInputBox(
+                text: "Nơi nhận xe",
+                tenKho: tenKho,
+              ),
+              const SizedBox(height: 4),
+              CustomInputBox(
+                text: "Người nhận",
+                tenTaiXe: tenTaiXe,
+              ),
+              const SizedBox(height: 4),
+              CustomInputBox(
+                text: "Ghi chú",
+                ghiChu: ghiChu,
+              ),
+            ],
           ),
         ],
       ),
@@ -112,18 +148,18 @@ class PopUp extends StatelessWidget {
       children: [
         // Box 1
         Container(
-          margin: const EdgeInsets.all(10), // Khoảng cách giữa các box
+          margin: EdgeInsets.all(10), // Khoảng cách giữa các box
           child: Column(
             children: [
-              const Row(
+              Row(
                 children: [
                   // Text
                   Text(
-                    'MAZDA CX 5 DELUX MT',
+                    tenSanPham,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontFamily: 'Coda Caption',
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                       height: 1.56, // Corresponds to line-height of 28px
                       letterSpacing: 0,
@@ -135,7 +171,7 @@ class PopUp extends StatelessWidget {
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Row(
+                child: Row(
                   children: [
                     SizedBox(width: 10),
                     // Text 1
@@ -158,7 +194,7 @@ class PopUp extends StatelessWidget {
                         SizedBox(height: 5),
                         // Text 2
                         Text(
-                          'MALA851CBHM557809',
+                          soKhung,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 16,
@@ -171,7 +207,7 @@ class PopUp extends StatelessWidget {
                       ],
                     ),
 
-                    SizedBox(width: 85), // Khoảng cách giữa hai Text
+                    SizedBox(width: 60), // Khoảng cách giữa hai Text
 
                     // Text 2
                     Column(
@@ -192,10 +228,10 @@ class PopUp extends StatelessWidget {
                         SizedBox(height: 5),
                         // Text 2
                         Text(
-                          'Đỏ',
+                          tenMau,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             height: 1.125,
                             letterSpacing: 0,
@@ -210,7 +246,7 @@ class PopUp extends StatelessWidget {
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Row(
+                child: Row(
                   children: [
                     SizedBox(width: 10),
                     Column(
@@ -233,7 +269,7 @@ class PopUp extends StatelessWidget {
                         SizedBox(height: 5),
                         // Text 2
                         Text(
-                          '----------------',
+                          soMay,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 18,
@@ -252,22 +288,32 @@ class PopUp extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(height: 10.h),
       ],
     );
   }
 
-  Widget _buildButtons() {
-    return Expanded(
+  Widget _buildButtons(BuildContext context) {
+    final ChucnangService _cv = ChucnangService();
+    return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           ElevatedButton(
             onPressed: () {
-              // Xử lý sự kiện khi nút được nhấn
+              nextScreen(
+                context,
+                NhanXe3Page(
+                  soKhung: soKhung, // hoặc giá trị mặc định khác nếu thích
+                  tenMau: tenMau,
+                  tenSanPham: tenSanPham,
+                  phuKien: phuKien,
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00B528),
-              fixedSize: const Size(380, 50),
+              fixedSize: Size(100.w, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -280,7 +326,7 @@ class PopUp extends StatelessWidget {
                     'KIỂM TRA OPTION THEO XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -288,7 +334,7 @@ class PopUp extends StatelessWidget {
                 ),
                 Expanded(child: Container()),
                 const Padding(
-                  padding: EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(right: 5),
                   child: Icon(
                     Icons.edit,
                     color: Colors.white,
@@ -297,51 +343,15 @@ class PopUp extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 7),
           ElevatedButton(
             onPressed: () {
-              // Xử lý sự kiện khi nút được nhấn
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF0000),
-              fixedSize: const Size(380, 45),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            child: Row(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'KIỂM TRA HẠNG MỤC KHÁC',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Expanded(child: Container()),
-                const Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 7),
-          ElevatedButton(
-            onPressed: () {
-              // Xử lý sự kiện khi nút được nhấn
+              _cv.getData(context, soKhung);
+              print("so Khung: ${soKhung}");
             },
             style: ElevatedButton.styleFrom(
               primary: const Color(0xFFE96327),
-              fixedSize: const Size(350, 30),
+              fixedSize: Size(100.w, 30),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -365,14 +375,43 @@ class PopUp extends StatelessWidget {
 
 class CustomInputBox extends StatelessWidget {
   final String text;
+  final String? ngayXuatKhoView;
+  final String? tenKho;
+  final String? tenTaiXe;
+  final String? ghiChu;
 
-  CustomInputBox({required this.text});
+  CustomInputBox({
+    required this.text,
+    this.ngayXuatKhoView,
+    this.tenKho,
+    this.tenTaiXe,
+    this.ghiChu,
+  });
 
   @override
   Widget build(BuildContext context) {
+    String displayText = '';
+
+    // Chọn dữ liệu phù hợp để hiển thị
+    switch (text) {
+      case 'Ngày nhận':
+        displayText = ngayXuatKhoView ?? '';
+        break;
+      case 'Nơi nhận xe':
+        displayText = tenKho ?? '';
+        break;
+      case 'Người nhận':
+        displayText = tenTaiXe ?? '';
+        break;
+      case 'Ghi chú':
+        displayText = ghiChu ?? '';
+        break;
+      default:
+        break;
+    }
+
     return Container(
-      height: 30,
-      width: 304,
+      height: 5.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
@@ -412,13 +451,13 @@ class CustomInputBox extends StatelessWidget {
             flex: 1,
             child: Container(
               color: Colors.white,
-              child: const Center(
+              child: Center(
                 child: Text(
-                  '',
+                  displayText,
                   textAlign: TextAlign.left,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Comfortaa',
-                    fontSize: 16,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF000000),
                   ),

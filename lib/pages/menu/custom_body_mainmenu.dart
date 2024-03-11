@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:project/config/config.dart';
-import 'package:project/pages/MainMenu.dart';
-import 'package:project/pages/qlkho/QLKhoXe.dart';
-import 'package:project/utils/next_screen.dart';
-import 'package:project/widgets/custom_page_indicator.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
+import 'package:Thilogi/utils/next_screen.dart';
+import 'package:Thilogi/widgets/custom_page_indicator.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyMainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 300,
-        height: 410,
+        width: 100.w,
+
         // ignore: prefer_const_constructors
         color: Color.fromRGBO(246, 198, 199, 0.2), // Đặt màu nền cho phần này
         child: BodyMainMenu());

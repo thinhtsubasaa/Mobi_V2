@@ -41,8 +41,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:project/models/user.dart';
-import 'package:project/services/request_helper.dart';
+import 'package:Thilogi/models/user.dart';
+import 'package:Thilogi/services/request_helper.dart';
 
 class AuthService extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();

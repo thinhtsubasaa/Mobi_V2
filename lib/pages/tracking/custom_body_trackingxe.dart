@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomTrackingXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 340,
-      height: 450,
+      width: 90.w,
+      height: 60.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(10),
@@ -24,8 +25,8 @@ class CustomTrackingXe extends StatelessWidget {
             left: 0, // Adjust left position as needed
             top: 0, // Adjust top position as needed
             child: Container(
-              width: 60,
-              height: 450, // Adjust the height to your preference
+              width: 15.w,
+              height: 60.h,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10),

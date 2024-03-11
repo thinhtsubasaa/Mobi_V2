@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
+import '../config/config.dart';
+
 Widget loadingButton(
     context, controller, action, title, valueColor, textColor) {
   return RoundedLoadingButton(
@@ -9,7 +11,7 @@ Widget loadingButton(
     controller: controller,
     onPressed: () => action(),
     width: MediaQuery.of(context).size.width * 1.0,
-    color: Colors.white,
+    color: AppConfig.primaryColor,
     valueColor: valueColor,
     borderRadius: 10,
     elevation: 0,
@@ -20,7 +22,7 @@ Widget loadingButton(
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: textColor,
+            color: Colors.white,
           ),
         ).tr()
       ],

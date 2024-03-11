@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:project/config/config.dart';
-import 'package:project/pages/Login.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/login/Login.dart';
+import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
 
-// ignore: use_key_in_widget_constructors
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            CustomImage(imagePath: AppConfig.homeImagePath),
-            const SizedBox(height: 10),
-            customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
-            const SizedBox(height: 10),
-            CustomImage(imagePath: AppConfig.bottomHomeImagePath),
-            const SizedBox(height: 15),
-            CustomButton(onPressed: () {
-              // Handle button press
-            }),
-          ],
-        ),
+      body: ListView(
+        children: [
+          CustomImage(imagePath: AppConfig.homeImagePath),
+          const SizedBox(height: 5),
+          customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+          const SizedBox(height: 5),
+          CustomImage(imagePath: AppConfig.bottomHomeImagePath),
+          const SizedBox(
+              height: 65), // Khoảng cách để làm cho nút không che phần body
+          // Thêm khoảng cách tương ứng với chiều cao của nút
+        ],
       ),
+      floatingActionButton: CustomButton(onPressed: () {
+        nextScreen(context, LoginPage());
+      }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
@@ -51,7 +52,7 @@ Widget customTitle(String text) {
       style: TextStyle(
         color: Color.fromARGB(255, 216, 30, 16),
         fontFamily: 'Roboto',
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: FontWeight.w700,
         height: 1.17,
         letterSpacing: 0,
@@ -107,7 +108,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Image.asset(
         AppConfig.appBarImagePath,
-        width: 300,
       ),
       centerTitle: false,
     );

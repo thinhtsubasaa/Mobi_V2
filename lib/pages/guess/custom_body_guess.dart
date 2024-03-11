@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyGuess extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
-      child: Container(
-          // ignore: prefer_const_constructors
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color.fromRGBO(246, 198, 199, 0.2),
-                Color.fromRGBO(66, 143, 202, 0.2),
-              ],
-            ),
-          ), // Đặt màu nền cho phần này
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: MainButton()),
-    );
+    return Container(
+        height: 60.h,
+
+        // ignore: prefer_const_constructors
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromRGBO(246, 198, 199, 0.2),
+              Color.fromRGBO(66, 143, 202, 0.2),
+            ],
+          ),
+        ), // Đặt màu nền cho phần này
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: MainButton());
   }
 }
 
@@ -35,8 +35,8 @@ class MainButton extends StatelessWidget {
             // Xử lý khi button 1 được nhấn
           },
           child: Container(
-            width: 145,
-            height: 155,
+            width: 35.w,
+            height: 30.h,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
@@ -68,14 +68,14 @@ class MainButton extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 38), // Khoảng cách giữa 2 button
+        SizedBox(width: 5.w),
         GestureDetector(
           onTap: () {
             // Xử lý khi button 1 được nhấn
           },
           child: Container(
-            width: 145,
-            height: 155,
+            width: 35.w,
+            height: 30.h,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [

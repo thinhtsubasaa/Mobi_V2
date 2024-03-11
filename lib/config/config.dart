@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class AppConfig {
   static const appName = "WMS_MOBI";
-  static const apiUrl = "http://172.20.10.200:8021";
+  static const apiUrl = "http://10.17.40.172:5000";
 
   // Colors
   static const Color primaryColor = Color(0xFFA71C20);
