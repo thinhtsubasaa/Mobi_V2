@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ChucnangService extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -39,45 +41,24 @@ class ChucnangService extends ChangeNotifier {
         // _success = decodedData["success"];
         // _message = decodedData["message"];
         notifyListeners();
-        showDialog(
+        QuickAlert.show(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Thành công"),
-              content: Text(response.body), // Hiển thị dữ liệu từ response.body
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Đóng"),
-                ),
-              ],
-            );
-          },
+          type: QuickAlertType.success,
+          text: "Nhận xe thành công",
         );
       } else {
+        String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
-        showDialog(
+        QuickAlert.show(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Thành công"),
-              content: Text(response.body), // Hiển thị dữ liệu từ response.body
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Đóng"),
-                ),
-              ],
-            );
-          },
+          type: QuickAlertType.error,
+          title: '',
+          text: errorMessage,
         );
       }
     } catch (e) {
       _hasError = true;
+      _isLoading = false;
       _message = e.toString();
       _errorCode = e.toString();
       notifyListeners();

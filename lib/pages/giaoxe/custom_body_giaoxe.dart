@@ -1,29 +1,32 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/services/khoxe_service.dart';
+import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
+
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../services/image_service.dart';
 
 class CustomBodyGiaoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyBaiXeScreen());
+    return Container(child: BodyGiaoXeScreen());
   }
 }
 
-class BodyBaiXeScreen extends StatefulWidget {
-  const BodyBaiXeScreen({Key? key}) : super(key: key);
+class BodyGiaoXeScreen extends StatefulWidget {
+  const BodyGiaoXeScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyBaiXeScreenState createState() => _BodyBaiXeScreenState();
+  _BodyGiaoXeScreenState createState() => _BodyGiaoXeScreenState();
 }
 
-class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
+class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     with SingleTickerProviderStateMixin {
   static RequestHelper requestHelper = RequestHelper();
   String? selectedKho;
@@ -37,8 +40,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String barcodeScanResult = '';
   TabController? _tabController;
   late KhoThanhPhamBloc _bl;
-  late KhoXeService _kl;
   String _tenKhoXe = "no";
+  File? _selectImage;
+  List<File> _selectedImages = [];
+  late ImageService _imageService;
 
   @override
   void initState() {
@@ -46,7 +51,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _tabController = TabController(vsync: this, length: 3);
     _tabController!.addListener(_handleTabChange);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
-    _kl = Provider.of<KhoXeService>(context, listen: false);
+    _imageService = Provider.of<ImageService>(context, listen: false);
 
     // setState(() {
     //   _tenKhoXe = _kl.tenKhoXe!;
@@ -116,7 +121,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           const SizedBox(width: 10),
           // Phần Text 2
           Text(
-            barcodeScanResult.isNotEmpty ? barcodeScanResult : 'Scan a barcode',
+            barcodeScanResult.isNotEmpty
+                ? barcodeScanResult
+                : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,
@@ -402,6 +409,70 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             ),
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 150,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _selectedImages.length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.file(
+                                          _selectedImages[index],
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                MaterialButton(
+                                  color: Colors.red,
+                                  child: Text(
+                                    "Ảnh",
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _imageService.pickImage(
+                                        context, _selectedImages);
+                                  },
+                                ),
+                                SizedBox(height: 10),
+                                MaterialButton(
+                                  color: Colors.red,
+                                  child: Text(
+                                    "Lưu",
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Gọi phương thức uploadImages từ _imageService và chuyển danh sách _selectedImages
+                                    _imageService
+                                        .uploadImages(_selectedImages)
+                                        .then((_) {})
+                                        .catchError((error) {
+                                      print("Error uploading images: $error");
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),

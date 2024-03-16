@@ -1,9 +1,15 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+    package="com.example.project">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <application
         android:label="THILOGI"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -30,7 +36,8 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCp-0M2Mwr2TJNCI2uV6FpEqgzOnTfY1ng"/> 
+        <meta-data 
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCp-0M2Mwr2TJNCI2uV6FpEqgzOnTfY1ng"/> 
     </application>
 </manifest>

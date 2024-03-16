@@ -4,11 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "http://10.17.40.172:5000";
+  String _apiUrl = "https://apiwms.thilogi.click";
   String get apiUrl => _apiUrl;
 
   String? _id;
   String? get id => _id;
+
+  String? _Kho_Id;
+  String? get Kho_Id => Kho_Id;
   String? _soKhung;
   String? get soKhung => _soKhung;
 
@@ -42,16 +45,18 @@ class AppBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveData(
-      String? iD, String sK, String tK, String tSp, String tM) async {
+  Future saveData(String? iD, String kiD, String sK, String tK, String tSp,
+      String tM) async {
     await _initPrefs();
-    await _pref!.setString('soKhung', iD!.toString());
+    await _pref!.setString('id', iD!.toString());
+    await _pref!.setString('Kho_Id', kiD!.toString());
     await _pref!.setString('soKhung', sK);
     await _pref!.setString('tenKho', tK);
     await _pref!.setString('tenSanPham', tSp);
     await _pref!.setString('tenMau', tM);
 
     _id = iD.toString();
+    _Kho_Id = kiD.toString();
     _soKhung = sK;
     _tenKho = tK;
     _tenSanPham = tSp;
@@ -62,6 +67,7 @@ class AppBloc extends ChangeNotifier {
   Future getData() async {
     await _initPrefs();
     _id = _pref!.getString('id');
+    _Kho_Id = _pref!.getString('kho_Id');
     _soKhung = _pref!.getString('soKhung');
     _tenKho = _pref!.getString('tenKho');
     _tenSanPham = _pref!.getString('tenSanPham');
@@ -72,6 +78,7 @@ class AppBloc extends ChangeNotifier {
 
   Future clearData() async {
     _id = null;
+    _Kho_Id = null;
     _soKhung = null;
     _tenKho = null;
     _tenSanPham = null;

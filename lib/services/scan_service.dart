@@ -16,6 +16,14 @@ class ScanService extends ChangeNotifier {
 
   String? _errorCode;
   String? get errorCode => _errorCode;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _success = false;
+  bool get success => _success;
+
+  String? _message;
+  String? get message => _message;
 
   var headers = {
     'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
@@ -36,15 +44,24 @@ class ScanService extends ChangeNotifier {
         // var info = data["info"];
 
         _scan = ScanModel(
+          key: decodedData["key"],
           id: decodedData['id'],
           soKhung: decodedData['soKhung'],
+          maSanPham: decodedData['maSanPham'],
           tenSanPham: decodedData['tenSanPham'],
+          soMay: decodedData['soMay'],
+          maMau: decodedData['maMau'],
           tenMau: decodedData['tenMau'],
           tenKho: decodedData['tenKho'],
-          soMay: decodedData['soMay'],
+          maViTri: decodedData['maViTri'],
+          tenViTri: decodedData['tenViTri'],
+          mauSon: decodedData['mauSon'],
           ngayXuatKhoView: decodedData['ngayXuatKhoView'],
           tenTaiXe: decodedData['tenTaiXe'],
           ghiChu: decodedData['ghiChu'],
+          Kho_Id: decodedData['Kho_Id'],
+          BaiXe_Id: decodedData['BaiXe_Id'],
+          viTri_Id: decodedData['viTri_Id'],
           phuKien: (decodedData['phuKien'] as List<dynamic>)
               .map((item) => PhuKien.fromJson(item))
               .toList(),
@@ -57,4 +74,23 @@ class ScanService extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Future postData(ScanModel scanData) async {
+  //   _isLoading = true;
+  //   try {
+  //     var newScanData = scanData;
+  //     newScanData.soKhung =
+  //         newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+  //     final http.Response response = await requestHelper.postData(
+  //         'KhoThanhPham/NhapKhoBai', newScanData.toJson());
+  //     var decodedData = jsonDecode(response.body);
+  //     print("data: ${decodedData}");
+  //     _isLoading = false;
+  //     _success = decodedData["success"];
+  //   } catch (e) {
+  //     _message = e.toString();
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 }

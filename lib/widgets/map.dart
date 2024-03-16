@@ -40,8 +40,10 @@ class _HomePageState extends State<HomePage> {
     });
     _location?.onLocationChanged.listen((newLocation) {
       _currentLocation = newLocation;
-      moveToPosition(LatLng(
-          _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+      Timer(Duration(seconds: 2), () {
+        moveToPosition(LatLng(
+            _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+      });
     });
   }
 
@@ -49,6 +51,8 @@ class _HomePageState extends State<HomePage> {
     GoogleMapController mapController = await _googleMapController.future;
     mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: latLng, zoom: 15)));
+
+    print('New Position: ${latLng}');
   }
 
   @override
@@ -77,7 +81,13 @@ class _HomePageState extends State<HomePage> {
                 spreadRadius: 4,
                 blurRadius: 6)
           ]),
-      child: ClipOval(child: Image.asset("assets/images/map.png")),
+      child: Center(
+        child: Icon(
+          Icons.person,
+          color: Colors.blue, // Màu của biểu tượng người dùng
+          size: 30, // Kích thước của biểu tượng người dùng
+        ),
+      ),
     );
   }
 

@@ -34,9 +34,14 @@ class PopUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Center(
       child: Container(
         alignment: Alignment.bottomCenter,
+        constraints: BoxConstraints(
+          maxHeight: screenHeight *
+              0.9, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white.withOpacity(0.9),
@@ -52,9 +57,18 @@ class PopUp extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTopBar(),
-            _buildInputFields(),
-            _buildCarDetails(),
-            _buildButtons(context),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInputFields(),
+                    _buildCarDetails(),
+                    _buildButtons(context),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -350,7 +364,7 @@ class PopUp extends StatelessWidget {
               print("so Khung: ${soKhung}");
             },
             style: ElevatedButton.styleFrom(
-              primary: const Color(0xFFE96327),
+              backgroundColor: const Color(0xFFE96327),
               fixedSize: Size(100.w, 30),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),

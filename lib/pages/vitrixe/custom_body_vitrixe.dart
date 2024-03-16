@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/services/khoxe_service.dart';
+import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -38,7 +37,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String barcodeScanResult = '';
   TabController? _tabController;
   late KhoThanhPhamBloc _bl;
-  late KhoXeService _kl;
+
   String _tenKhoXe = "no";
 
   @override
@@ -47,7 +46,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _tabController = TabController(vsync: this, length: 3);
     _tabController!.addListener(_handleTabChange);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
-    _kl = Provider.of<KhoXeService>(context, listen: false);
 
     // setState(() {
     //   _tenKhoXe = _kl.tenKhoXe!;
@@ -117,7 +115,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           const SizedBox(width: 10),
           // Phần Text 2
           Text(
-            barcodeScanResult.isNotEmpty ? barcodeScanResult : 'Scan a barcode',
+            barcodeScanResult.isNotEmpty
+                ? barcodeScanResult
+                : '          Scan a barcode         ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,

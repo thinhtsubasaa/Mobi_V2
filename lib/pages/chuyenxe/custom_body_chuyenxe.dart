@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
-import 'package:Thilogi/blocs/khoxe_bloc.dart';
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/services/khoxe_service.dart';
+import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -13,18 +11,18 @@ import 'package:sizer/sizer.dart';
 class CustomBodyChuyenXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyBaiXeScreen());
+    return Container(child: BodyChuyenXeScreen());
   }
 }
 
-class BodyBaiXeScreen extends StatefulWidget {
-  const BodyBaiXeScreen({Key? key}) : super(key: key);
+class BodyChuyenXeScreen extends StatefulWidget {
+  const BodyChuyenXeScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyBaiXeScreenState createState() => _BodyBaiXeScreenState();
+  _BodyChuyenXeScreenState createState() => _BodyChuyenXeScreenState();
 }
 
-class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
+class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     with SingleTickerProviderStateMixin {
   static RequestHelper requestHelper = RequestHelper();
   String? selectedKho;
@@ -38,7 +36,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String barcodeScanResult = '';
   TabController? _tabController;
   late KhoThanhPhamBloc _bl;
-  late KhoXeService _kl;
   String _tenKhoXe = "no";
 
   @override
@@ -47,7 +44,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _tabController = TabController(vsync: this, length: 3);
     _tabController!.addListener(_handleTabChange);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
-    _kl = Provider.of<KhoXeService>(context, listen: false);
 
     // setState(() {
     //   _tenKhoXe = _kl.tenKhoXe!;
@@ -117,7 +113,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           const SizedBox(width: 10),
           // Phần Text 2
           Text(
-            barcodeScanResult.isNotEmpty ? barcodeScanResult : 'Scan a barcode',
+            barcodeScanResult.isNotEmpty
+                ? barcodeScanResult
+                : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,

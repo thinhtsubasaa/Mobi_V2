@@ -40,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var formKey = GlobalKey<FormState>();
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
+  bool obscureText = true;
   String selectedDomain = 'thilogi.com.vn';
   final _btnController = RoundedLoadingButtonController();
 
@@ -140,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 70.w,
-          height: 7.h,
+          height: 8.h,
           child: TextFormField(
             controller: userNameCtrl,
             decoration: InputDecoration(
@@ -171,10 +172,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 70.w,
-          height: 7.h,
+          height: 8.h,
           child: TextFormField(
             controller: passwordCtrl,
-            obscureText: offsecureText,
+            obscureText: obscureText,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               contentPadding:
@@ -185,6 +186,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(color: Colors.black),
+              ),
+              // Sử dụng suffixIcon để thêm biểu tượng con mắt
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
+                  setState(() {
+                    obscureText = !obscureText;
+                  });
+                },
               ),
             ),
           ),
@@ -204,7 +218,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SizedBox(height: 10),
         Container(
           width: 70.w,
-          height: 7.h,
+          height: 8.h,
           child: DropdownButtonFormField(
             value: selectedDomain,
             decoration: InputDecoration(
@@ -240,7 +254,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             },
           ),
         ),
-        const SizedBox(height: 15),
+        const SizedBox(height: 10),
         loadingButton(
           context,
           _btnController,

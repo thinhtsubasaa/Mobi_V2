@@ -3,6 +3,7 @@ import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
+import '../widgets/custom_title.dart';
 
 class MyHomePage extends StatelessWidget {
   @override
@@ -41,24 +42,6 @@ class CustomImage extends StatelessWidget {
       fit: BoxFit.cover,
     );
   }
-}
-
-Widget customTitle(String text) {
-  return Padding(
-    padding: EdgeInsets.only(left: 20, right: 20),
-    child: Text(
-      text,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        color: Color.fromARGB(255, 216, 30, 16),
-        fontFamily: 'Roboto',
-        fontSize: 22,
-        fontWeight: FontWeight.w700,
-        height: 1.17,
-        letterSpacing: 0,
-      ),
-    ),
-  );
 }
 
 class CustomButton extends StatelessWidget {

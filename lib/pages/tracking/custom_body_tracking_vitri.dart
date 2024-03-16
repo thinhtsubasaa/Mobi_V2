@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:Thilogi/widgets/map.dart';
+import 'package:sizer/sizer.dart';
 
 class CustomTrackingXeVitri extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 340,
-      height: 470,
+      width: 90.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(10),
@@ -22,8 +22,8 @@ class CustomTrackingXeVitri extends StatelessWidget {
         children: [
           Positioned(
             child: Container(
-              width: 55,
-              height: 470,
+              width: 14.w,
+              height: 43.h,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(10),
@@ -54,11 +54,11 @@ class CustomTrackingXeVitri extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 45,
+            left: 40,
             top: 0,
             child: Container(
-              width: 320,
-              height: 470,
+              width: 90.w,
+              height: 60.h,
               child: Stack(
                 children: [
                   HomePage(),

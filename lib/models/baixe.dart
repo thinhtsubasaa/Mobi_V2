@@ -1,15 +1,18 @@
-class KhoThanhPhamModel {
+class BaiXeModel {
   String? id;
-  String? soKhung;
-  String? tenSanPham;
-  String? tenMau;
-  String? soMay;
+  String? tenBaiXe;
+  String? tenKhoXe;
 
-  KhoThanhPhamModel({
+  BaiXeModel({
     this.id,
-    this.soKhung,
-    this.tenSanPham,
-    this.tenMau,
-    this.soMay,
+    this.tenBaiXe,
+    this.tenKhoXe,
   });
+  factory BaiXeModel.fromJson(Map<String, dynamic> json) {
+    return BaiXeModel(
+      id: json["id"].toString(),
+      tenBaiXe: json["tenBaiXe"],
+      tenKhoXe: json["tenKhoXe"],
+    );
+  }
 }

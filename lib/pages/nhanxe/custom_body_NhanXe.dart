@@ -116,7 +116,9 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
           const SizedBox(width: 10),
           // Phần Text 2
           Text(
-            barcodeScanResult.isNotEmpty ? barcodeScanResult : 'Scan a barcode',
+            barcodeScanResult.isNotEmpty
+                ? barcodeScanResult
+                : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,
@@ -168,15 +170,15 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     setState(() {
       _loading = true;
     });
-    _sv.getData(value).then((_) {
+    _sb.getData(value).then((_) {
       setState(() {
         _qrData = value;
-        if (_sv.scan == null) {
+        if (_sb.scan == null) {
           _qrData = '';
           _qrDataController.text = '';
         }
         _loading = false;
-        _data = _sv.scan;
+        _data = _sb.scan;
       });
     });
   }
@@ -214,16 +216,18 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                     child: Container(
                       margin: const EdgeInsets.only(right: 10),
                       height: 8.h,
-                      child: Text(
-                        _data != null ? _data!.tenSanPham ?? "" : "",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontFamily: 'Coda Caption',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 1.56,
-                          letterSpacing: 0,
-                          color: Color(0xFFA71C20),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          _data != null ? _data!.tenSanPham ?? "" : "",
+                          style: TextStyle(
+                            fontFamily: 'Coda Caption',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            height: 1.56,
+                            letterSpacing: 0,
+                            color: Color(0xFFA71C20),
+                          ),
                         ),
                       ),
                     ),
@@ -236,24 +240,27 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       borderRadius: BorderRadius.circular(10),
                       color: const Color(0xFF428FCA),
                     ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Xử lý sự kiện khi nút được nhấn
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        padding: const EdgeInsets.all(0),
-                      ),
-                      child: const Text(
-                        'Chờ nhận',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                          height: 1.125,
-                          letterSpacing: 0,
-                          color: Colors.white,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Xử lý sự kiện khi nút được nhấn
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          padding: const EdgeInsets.all(0),
+                        ),
+                        child: const Text(
+                          'Chờ nhận',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            height: 1.125,
+                            letterSpacing: 0,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -273,7 +280,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       _data != null ? _data!.soKhung ?? "" : "",
                     ),
 
-                    SizedBox(width: 10.w), // Khoảng cách giữa hai Text
+                    SizedBox(width: 8.w), // Khoảng cách giữa hai Text
                     showInfoXe(
                       'Màu:',
                       _data != null ? _data!.tenMau ?? "" : "",

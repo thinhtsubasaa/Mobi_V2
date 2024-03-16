@@ -3,14 +3,12 @@ class KhoXeModel {
   String? maKhoXe;
   String? tenKhoXe;
   bool? isLogistic;
-  String? soMay;
 
   KhoXeModel({
     this.id,
     this.maKhoXe,
     this.tenKhoXe,
     this.isLogistic,
-    this.soMay,
   });
   factory KhoXeModel.fromJson(Map<String, dynamic> json) {
     return KhoXeModel(

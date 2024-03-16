@@ -1,14 +1,29 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:Thilogi/models/vitri.dart';
+import 'package:Thilogi/utils/snackbar.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
-import 'package:Thilogi/blocs/khoxe_bloc.dart';
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/services/khoxe_service.dart';
+import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:geolocator/geolocator.dart';
+
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:http/http.dart' as http;
+import 'package:Thilogi/models/baixe.dart';
+import 'package:Thilogi/models/khoxe.dart';
+import '../../blocs/app_bloc.dart';
+import '../../services/app_service.dart';
+import '../../widgets/map.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+
+import 'package:quickalert/quickalert.dart';
 
 class CustomBodyBaiXe extends StatelessWidget {
   @override
@@ -25,45 +40,185 @@ class BodyBaiXeScreen extends StatefulWidget {
 }
 
 class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
+  String? KhoXeId;
+  String? BaiXeId;
+  String? ViTriId;
   String? selectedKho;
-  List<String> khoList = ['Vị trí 1', 'Vị trí 2', 'Vị trí 3'];
   String _qrData = '';
   final _qrDataController = TextEditingController();
   Timer? _debounce;
-  List<String>? _results = [];
+
   KhoThanhPhamModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
-  TabController? _tabController;
   late KhoThanhPhamBloc _bl;
-  late KhoXeService _kl;
-  String _tenKhoXe = "no";
+
+  late AppBloc _ab;
+  late HomePage _hp;
+
+  // static RequestHelper requestHelper = RequestHelper();
+
+  List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
+  List<KhoXeModel>? get khoxeList => _khoxeList;
+  List<BaiXeModel>? _baixeList; // Định nghĩa danh sách khoxeList ở đây
+  List<BaiXeModel>? get baixeList => _baixeList;
+
+  List<ViTriModel>? _vitriList; // Định nghĩa danh sách khoxeList ở đây
+  List<ViTriModel>? get vitriList => _vitriList;
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _success = false;
+  bool get success => _success;
+
+  String? _message;
+  String? get message => _message;
+
+  Completer<GoogleMapController> _googleMapController = Completer();
+  CameraPosition? _cameraPosition;
+  Location? _location;
+  LocationData? _currentLocation;
+
+  // @override
+  // void initState() {
+  //   _init();
+  //   super.initState();
+  // }
+
+  _init() async {
+    _location = Location();
+    _cameraPosition = CameraPosition(
+        target: LatLng(
+            0, 0), // this is just the example lat and lng for initializing
+        zoom: 15);
+    _initLocation();
+  }
+
+  //function to listen when we move position
+  _initLocation() {
+    //use this to go to current location instead
+    _location?.getLocation().then((location) {
+      _currentLocation = location;
+    });
+    _location?.onLocationChanged.listen((newLocation) {
+      _currentLocation = newLocation;
+      Timer(Duration(seconds: 2), () {
+        moveToPosition(LatLng(
+            _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+      });
+    });
+  }
+
+  moveToPosition(LatLng latLng) async {
+    GoogleMapController mapController = await _googleMapController.future;
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15)));
+
+    print('New Position: ${latLng}');
+  }
 
   @override
   void initState() {
+    _init();
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-    _tabController!.addListener(_handleTabChange);
+
+    _ab = Provider.of<AppBloc>(context, listen: false);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
-    _kl = Provider.of<KhoXeService>(context, listen: false);
 
-    // setState(() {
-    //   _tenKhoXe = _kl.tenKhoXe!;
-    // });
+    setState(() {
+      _loading = true;
+    });
   }
 
-  @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
+  // void getLocation() async {
+  //   await Geolocator.checkPermission();
+  //   await Geolocator.requestPermission();
+
+  //   Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.low);
+  //   print("ss");
+  //   print(position);
+  // }
+
+  void getData() async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        // var data = decodedData["data"];
+        // var info = data["info"];
+
+        _khoxeList = (decodedData as List)
+            .map((item) => KhoXeModel.fromJson(item))
+            .toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = true;
+        });
+      }
+
+      // notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      // notifyListeners();
+    }
   }
 
-  void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
-      // Call the action when the tab changes
-      // print('Tab changed to: ${_tabController!.index}');
+  void getBaiXeList(String KhoXeId) async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: ${decodedData}");
+        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
+        _baixeList = (decodedData as List)
+            .map((item) => BaiXeModel.fromJson(item))
+            .toList();
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = true;
+        });
+      }
+    } catch (e) {
+      // Xử lý lỗi khi gọi API
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getViTriList(String BaiXeId) async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_WMS_Kho_ViTri?baiXe_Id=$BaiXeId');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body)['result'];
+        print("data: ${decodedData}");
+        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
+        _vitriList = (decodedData as List)
+            .map((item) => ViTriModel.fromJson(item))
+            .toList();
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = true;
+        });
+      }
+    } catch (e) {
+      // Xử lý lỗi khi gọi API
+      _hasError = true;
+      _errorCode = e.toString();
     }
   }
 
@@ -99,7 +254,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               children: [
                 // Text trong cột
                 Text(
-                  'Số khung\n (VIN)',
+                  "Số Khung (VIN)",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Comfortaa',
@@ -117,7 +272,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           const SizedBox(width: 10),
           // Phần Text 2
           Text(
-            barcodeScanResult.isNotEmpty ? barcodeScanResult : 'Scan a barcode',
+            barcodeScanResult.isNotEmpty
+                ? barcodeScanResult
+                : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 15,
@@ -165,6 +322,48 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     });
   }
 
+  Future<void> postData(KhoThanhPhamModel scanData) async {
+    _isLoading = true;
+
+    try {
+      var newScanData = scanData;
+      newScanData.soKhung =
+          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      print("print data: ${newScanData.soKhung}");
+      final http.Response response = await requestHelper.postData(
+          'KhoThanhPham/NhapKhoBai', newScanData.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+        // _isLoading = false;
+        // _success = decodedData["success"];
+
+        notifyListeners();
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          text: "Nhập kho thành công",
+        );
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: '',
+          text: errorMessage,
+        );
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   _onScan(value) {
     setState(() {
       _loading = true;
@@ -176,14 +375,65 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           _qrData = '';
           _qrDataController.text = '';
         }
+
         _loading = false;
         _data = _bl.baixe;
       });
     });
   }
 
+  _onSave() {
+    setState(() {
+      _loading = true;
+    });
+
+    _data?.Kho_Id = KhoXeId;
+    _data?.BaiXe_Id = BaiXeId;
+    _data?.viTri_Id = ViTriId;
+    _data?.key = _bl.baixe?.key;
+    _data?.id = _bl.baixe?.id;
+    _data?.soKhung = _bl.baixe?.soKhung;
+    _data?.tenSanPham = _bl.baixe?.tenSanPham;
+    _data?.maSanPham = _bl.baixe?.maSanPham;
+    _data?.soMay = _bl.baixe?.soMay;
+    _data?.maMau = _bl.baixe?.maMau;
+    _data?.tenMau = _bl.baixe?.tenMau;
+    _data?.tenKho = _bl.baixe?.tenKho;
+    _data?.maViTri = _currentLocation?.toString();
+    _data?.tenViTri = _bl.baixe?.tenViTri;
+    _data?.mauSon = _bl.baixe?.mauSon;
+    _data?.ngayNhapKhoView = _bl.baixe?.ngayNhapKhoView;
+
+    print("Kho_ID:${_data?.Kho_Id}");
+    print("Bai_ID:${_data?.BaiXe_Id}");
+    print("SoKhung:${_data?.maViTri}");
+    // call api
+
+    AppService().checkInternet().then((hasInternet) {
+      if (!hasInternet!) {
+        openSnackBar(context, 'no internet'.tr());
+      } else {
+        postData(_data!).then((_) {
+          // if (_bl.success) {
+          //   openSnackBar(context, "Lưu thành công");
+          // } else {
+          //   openSnackBar(context, "Lưu thất bại");
+          // }
+          setState(() {
+            _data = null;
+            _qrData = '';
+            _qrDataController.text = '';
+            _loading = false;
+          });
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getData();
+
     return Container(
         child: Column(
       children: [
@@ -225,35 +475,223 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InfoRow(
-                            labelText: "Kho Xe",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 9.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(
+                                    color: const Color(0xFF818180),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 20.w,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF6C6C7),
+                                        border: Border(
+                                          right: BorderSide(
+                                            color: Color(0xFF818180),
+                                            width: 1,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Kho Xe",
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xFF000000),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: DropdownButtonFormField<String>(
+                                        items: _khoxeList?.map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item.id,
+                                            child: Container(
+                                              padding:
+                                                  EdgeInsets.only(left: 15.sp),
+                                              child: Text(
+                                                item.tenKhoXe ?? "",
+                                                style: const TextStyle(
+                                                  fontFamily: 'Comfortaa',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF000000),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: KhoXeId,
+                                        onChanged: (newValue) async {
+                                          setState(() {
+                                            KhoXeId = newValue;
+                                          });
+                                          if (newValue != null) {
+                                            getBaiXeList(newValue);
+                                            print("object : ${KhoXeId}");
+                                          }
+                                          ;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          InfoRow(
-                            labelText: "Bãi Xe",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
+                          const SizedBox(height: 4),
+                          Container(
+                            height: 9.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: const Color(0xFF818180),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 20.w,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF6C6C7),
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Color(0xFF818180),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Bãi Xe",
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF000000),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: DropdownButtonFormField<String>(
+                                    items: _baixeList?.map((item) {
+                                      return DropdownMenuItem<String>(
+                                        value: item.id,
+                                        child: Container(
+                                          padding: EdgeInsets.only(left: 15.sp),
+                                          child: Text(
+                                            item.tenBaiXe ?? "",
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF000000),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value: BaiXeId,
+                                    onChanged: (newValue) async {
+                                      setState(() {
+                                        BaiXeId = newValue;
+                                      });
+                                      if (newValue != null) {
+                                        getViTriList(newValue);
+                                        print("object : ${BaiXeId}");
+                                      }
+                                      ;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          InfoRow(
-                            labelText: "Vị trí",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
+                          const SizedBox(height: 4),
+                          Container(
+                            height: 9.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: const Color(0xFF818180),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 20.w,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF6C6C7),
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Color(0xFF818180),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Vị trí",
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF000000),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: DropdownButtonFormField<String>(
+                                    items: _vitriList?.map((item) {
+                                      return DropdownMenuItem<String>(
+                                        value: item.id,
+                                        child: Container(
+                                          padding: EdgeInsets.only(left: 15.sp),
+                                          child: Text(
+                                            item.tenViTri ?? "",
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF000000),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value: ViTriId,
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        ViTriId = newValue;
+                                      });
+                                      print("object : ${ViTriId}");
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -262,7 +700,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 ),
                 Column(
                   children: [
-                    // Box 1
                     Container(
                       margin: EdgeInsets.all(10), // Khoảng cách giữa các box
                       child: Column(
@@ -291,12 +728,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             child: Row(
                               children: [
                                 SizedBox(width: 10),
-                                // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(width: 10),
-                                    // Text 1
                                     Text(
                                       'Số khung (VIN):',
                                       style: TextStyle(
@@ -309,7 +744,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soKhung ?? "" : "",
                                       style: TextStyle(
@@ -323,15 +757,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                   ],
                                 ),
-
-                                SizedBox(
-                                    width: 60), // Khoảng cách giữa hai Text
-
-                                // Text 2
+                                SizedBox(width: 40),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Màu:',
                                       style: TextStyle(
@@ -344,7 +773,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.tenMau ?? "" : "",
                                       style: TextStyle(
@@ -371,8 +799,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(width: 10),
-
-                                    // Text 1
                                     Text(
                                       'Số máy:',
                                       style: TextStyle(
@@ -385,7 +811,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soMay ?? "" : "",
                                       style: TextStyle(
@@ -408,101 +833,34 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     ),
                   ],
                 ),
-
-                // _buildButtons(context),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(90.w, 50),
+                            backgroundColor: Colors.red,
+                          ),
+                          onPressed: ViTriId != null ? _onSave : null,
+                          child: Text("Nhập kho",
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ))),
+                      SizedBox(height: 10),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ],
     ));
-  }
-}
-
-class InfoRow extends StatelessWidget {
-  final String labelText;
-  final List<String> itemList;
-  final String? selectedValue;
-  final ValueChanged<String?> onChanged;
-
-  const InfoRow({
-    required this.labelText,
-    required this.itemList,
-    required this.selectedValue,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 7.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(
-              color: const Color(0xFF818180),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6C6C7),
-                    border: Border(
-                      right: BorderSide(
-                        color: Color(0xFF818180),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      labelText,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF000000),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: DropdownButtonFormField<String>(
-                  value: selectedValue,
-                  onChanged: onChanged,
-                  items: itemList.map((item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 15.w),
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF000000),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 4),
-      ],
-    );
   }
 }

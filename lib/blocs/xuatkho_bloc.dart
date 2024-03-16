@@ -1,15 +1,16 @@
 import 'dart:convert';
 
+import 'package:Thilogi/models/xuatkho.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 
-class KhoThanhPhamBloc extends ChangeNotifier {
+class XuatKhoBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  KhoThanhPhamModel? _baixe;
-  KhoThanhPhamModel? get baixe => _baixe;
+  XuatKhoModel? _xuatkho;
+  XuatKhoModel? get xuatkho => _xuatkho;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -28,16 +29,16 @@ class KhoThanhPhamBloc extends ChangeNotifier {
   Future<void> getData(String qrcode) async {
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetSoKhungNhapKhoBaimobi?SoKhung=$qrcode');
+          .getData('KhoThanhPham/GetSoKhungXuatKhomobi?SoKhung=$qrcode');
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        print("data: ${decodedData}");
 
         // var data = decodedData["data"];
 
         // var info = data["info"];
 
-        _baixe = KhoThanhPhamModel(
+        _xuatkho = XuatKhoModel(
           key: decodedData["key"],
           id: decodedData['id'],
           soKhung: decodedData['soKhung'],
@@ -53,9 +54,14 @@ class KhoThanhPhamBloc extends ChangeNotifier {
           ngayNhapKhoView: decodedData['ngayNhapKhoView'],
           tenTaiXe: decodedData['tenTaiXe'],
           ghiChu: decodedData['ghiChu'],
-          Kho_Id: decodedData['Kho_Id'],
-          BaiXe_Id: decodedData['BaiXe_Id'],
-          viTri_Id: decodedData['viTri_Id'],
+          maKho: decodedData['maKho'],
+          kho_Id: decodedData['kho_Id'],
+          Diadiem_Id: decodedData['Diadiem_Id'],
+          phuongThucVanChuyen_Id: decodedData['phuongThucVanChuyen_Id'],
+          loaiPhuongTien_Id: decodedData['loaiPhuongTien_Id'],
+          danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
+          bienSo_Id: decodedData['bienSo_Id'],
+          taiXe_Id: decodedData['taiXe_Id'],
           // latLng: decodedData['latLng'],
         );
       }
@@ -63,29 +69,6 @@ class KhoThanhPhamBloc extends ChangeNotifier {
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
-      notifyListeners();
-    }
-  }
-
-  Future<void> postData(KhoThanhPhamModel scanData) async {
-    _isLoading = true;
-    try {
-      var newScanData = scanData;
-      newScanData.soKhung =
-          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      print("print data: ${newScanData.soKhung}");
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/NhapKhoBai', newScanData.toJson());
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-
-        print("data: ${decodedData}");
-        _isLoading = false;
-        _success = decodedData["success"];
-      }
-    } catch (e) {
-      _message = e.toString();
-      _isLoading = false;
       notifyListeners();
     }
   }

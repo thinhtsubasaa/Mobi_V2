@@ -1,3 +1,6 @@
+import 'package:Thilogi/blocs/xuatkho_bloc.dart';
+import 'package:Thilogi/pages/login/Login.dart';
+import 'package:Thilogi/services/image_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
@@ -11,7 +14,6 @@ import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:Thilogi/pages/tracking/TrackingXe_TrangThai.dart';
 import 'package:Thilogi/services/auth_service.dart';
-import 'package:Thilogi/services/khoxe_service.dart';
 import 'package:Thilogi/services/scan_service.dart';
 import 'package:provider/provider.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
@@ -49,8 +51,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<KhoXeBloc>(
             create: (context) => KhoXeBloc(),
           ),
-          ChangeNotifierProvider<KhoXeService>(
-            create: (context) => KhoXeService(),
+          ChangeNotifierProvider<ImageService>(
+            create: (context) => ImageService(),
+          ),
+          ChangeNotifierProvider<XuatKhoBloc>(
+            create: (context) => XuatKhoBloc(),
           ),
         ],
         child: MaterialApp(
@@ -59,7 +64,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: QLKhoXePage(),
+          home: MyHomePage(),
         ),
       ),
     );

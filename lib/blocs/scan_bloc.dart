@@ -1,60 +1,96 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  String? _soKhung;
-  String? get soKhung => _soKhung;
+  ScanModel? _scan;
+  ScanModel? get scan => _scan;
 
-  String? _id;
-  String? get id => _id;
+  bool _hasError = false;
+  bool get hasError => _hasError;
 
-  String? _tenSanPham;
-  String? get tenSanPham => _tenSanPham;
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
 
-  String? _tenMau;
-  String? get tenMau => _tenMau;
+  bool _success = false;
+  bool get success => _success;
 
-  String? _tenKho;
-  String? get tenKho => _tenKho;
+  String? _message;
+  String? get message => _message;
 
-  String? _soMay;
-  String? get soMay => _soMay;
+  var headers = {
+    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
+  };
+  Future<void> getData(String qrcode) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "https://qtsxautoapi.thacochulai.vn/api/KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode"), // Thay thế với URL thực tế của bạn
+        headers: headers,
+      );
 
-  Future saveScanData(ScanModel scanModel) async {
-    // ignore: unnecessary_null_comparison
-    if (scanModel != null) {
-      final SharedPreferences sp = await SharedPreferences.getInstance();
-      sp.setString('id', scanModel.id ?? '');
-      sp.setString('soKhung', scanModel.soKhung ?? '');
-      sp.setString('tenSanPham', scanModel.tenSanPham ?? '');
-      sp.setString('tenMau', scanModel.tenMau ?? '');
-      sp.setString('tenKho', scanModel.tenKho ?? '');
-      sp.setString('soMay', scanModel.soMay ?? '');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
 
-      _id = scanModel.id;
-      _soKhung = scanModel.soKhung;
-      _tenSanPham = scanModel.tenSanPham;
-      _tenMau = scanModel.tenMau;
-      _tenKho = scanModel.tenKho;
-      _soMay = scanModel.soMay;
+        // var data = decodedData["data"];
 
+        // var info = data["info"];
+
+        _scan = ScanModel(
+          key: decodedData["key"],
+          id: decodedData['id'],
+          soKhung: decodedData['soKhung'],
+          maSanPham: decodedData['maSanPham'],
+          tenSanPham: decodedData['tenSanPham'],
+          soMay: decodedData['soMay'],
+          maMau: decodedData['maMau'],
+          tenMau: decodedData['tenMau'],
+          tenKho: decodedData['tenKho'],
+          maViTri: decodedData['maViTri'],
+          tenViTri: decodedData['tenViTri'],
+          mauSon: decodedData['mauSon'],
+          ngayXuatKhoView: decodedData['ngayXuatKhoView'],
+          tenTaiXe: decodedData['tenTaiXe'],
+          ghiChu: decodedData['ghiChu'],
+          Kho_Id: decodedData['Kho_Id'],
+          BaiXe_Id: decodedData['BaiXe_Id'],
+          viTri_Id: decodedData['viTri_Id'],
+          phuKien: (decodedData['phuKien'] as List<dynamic>)
+              .map((item) => PhuKien.fromJson(item))
+              .toList(),
+        );
+      }
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
       notifyListeners();
     }
   }
 
-  Future getScanData() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    _id = sp.getString('id');
-    _soKhung = sp.getString('soKhung');
-    _tenSanPham = sp.getString('tenSanPham');
-    _tenMau = sp.getString('tenMau');
-    _tenKho = sp.getString('tenKho');
-    _soMay = sp.getString('soMay');
-
-    notifyListeners();
-  }
+  // Future postData(ScanModel scanData) async {
+  //   _isLoading = true;
+  //   try {
+  //     var newScanData = scanData;
+  //     newScanData.soKhung =
+  //         newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+  //     final http.Response response = await requestHelper.postData(
+  //         'KhoThanhPham/NhapKhoBai', newScanData.toJson());
+  //     var decodedData = jsonDecode(response.body);
+  //     print("data: ${decodedData}");
+  //     _isLoading = false;
+  //     _success = decodedData["success"];
+  //   } catch (e) {
+  //     _message = e.toString();
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  // }
 }
