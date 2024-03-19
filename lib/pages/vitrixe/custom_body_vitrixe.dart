@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
-import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:provider/provider.dart';
@@ -35,34 +34,20 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   KhoThanhPhamModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
-  TabController? _tabController;
-  late KhoThanhPhamBloc _bl;
 
-  String _tenKhoXe = "no";
+  late KhoThanhPhamBloc _bl;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-    _tabController!.addListener(_handleTabChange);
-    _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
 
-    // setState(() {
-    //   _tenKhoXe = _kl.tenKhoXe!;
-    // });
+    _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
   }
 
   @override
   void dispose() {
-    _tabController?.dispose();
+    // _tabController?.dispose();
     super.dispose();
-  }
-
-  void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
-      // Call the action when the tab changes
-      // print('Tab changed to: ${_tabController!.index}');
-    }
   }
 
   Widget CardVin() {
@@ -103,9 +88,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     fontFamily: 'Comfortaa',
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
-                    letterSpacing: 0,
-
                     color: Colors.white,
                   ),
                 ),
@@ -122,8 +104,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               fontFamily: 'Comfortaa',
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              height: 1.11,
-              letterSpacing: 0,
               color: Color(0xFFA71C20),
             ),
           ),
@@ -277,9 +257,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   fontFamily: 'Coda Caption',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
-                                  height:
-                                      1.56, // Corresponds to line-height of 28px
-                                  letterSpacing: 0,
                                   color: Color(0xFFA71C20),
                                 ),
                               ),
@@ -303,8 +280,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -316,16 +291,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFA71C20),
                                       ),
                                     ),
                                   ],
                                 ),
 
-                                SizedBox(
-                                    width: 60), // Khoảng cách giữa hai Text
+                                SizedBox(width: 60),
 
                                 // Text 2
                                 Column(
@@ -338,8 +310,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -351,8 +321,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFFF0007),
                                       ),
                                     ),
@@ -379,8 +347,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -392,8 +358,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFA71C20),
                                       ),
                                     ),

@@ -31,7 +31,7 @@ class GiaoXePage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CustomCard(),
+                        // CustomCard(),
                         SizedBox(height: 5),
                         CustomBodyGiaoXe(),
                         const SizedBox(height: 20),

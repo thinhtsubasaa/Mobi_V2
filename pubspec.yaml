@@ -47,6 +47,7 @@ dependencies:
   multi_image_picker: ^4.8.1
   quickalert: ^1.1.0
   geolocator: ^11.0.0
+  flutter_datawedge: ^1.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

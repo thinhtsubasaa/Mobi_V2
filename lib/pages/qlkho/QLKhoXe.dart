@@ -36,7 +36,7 @@ class QLKhoXePage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CustomCard(),
+                        // CustomCard(),
                         CustomBodyQLKhoXe(),
                         const SizedBox(height: 20),
                         Container(

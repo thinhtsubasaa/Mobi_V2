@@ -30,7 +30,7 @@ class VitriXePage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CustomCard(),
+                        // CustomCard(),
                         SizedBox(height: 5),
                         CustomBodyBaiXe(),
                         SizedBox(height: 20),

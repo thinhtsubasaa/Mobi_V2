@@ -12,6 +12,8 @@ class XuatKhoModel {
   String? tenViTri;
   String? mauSon;
   String? soMay;
+  String? lat;
+  String? long;
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
@@ -31,6 +33,8 @@ class XuatKhoModel {
       this.maViTri,
       this.tenViTri,
       this.maSanPham,
+      this.lat,
+      this.long,
       this.soKhung,
       this.tenSanPham,
       this.tenMau,
@@ -54,30 +58,31 @@ class XuatKhoModel {
 
   factory XuatKhoModel.fromJson(Map<String, dynamic> json) {
     return XuatKhoModel(
-      key: json["key"],
-      id: json["id"],
-      soKhung: json["soKhung"],
-      maSanPham: json["maSanPham"],
-      tenSanPham: json["tenSanPham"],
-      soMay: json["soMay"],
-      maMau: json["maMau"],
-      tenMau: json["tenMau"],
-      tenKho: json["tenKho"],
-      maViTri: json["maViTri"],
-      tenViTri: json["tenViTr"],
-      mauSon: json["mauSon"],
-      ngayNhapKhoView: json["ngayNhapKhoView"],
-      tenTaiXe: json["tenTaiXe"],
-      ghiChu: json["ghiChu"],
-      maKho: json["maKho"],
-      taiXe_Id: json["taiXe_Id"],
-      bienSo_Id: json["bienSo_Id"],
-      danhSachPhuongTien_Id: json["danhSachPhuongTien_Id"],
-      loaiPhuongTien_Id: json["loaiPhuongTien_Id"],
-      phuongThucVanChuyen_Id: json["phuongThucVanChuyen_Id"],
-      Diadiem_Id: json["Diadiem_Id"],
-      kho_Id: json["kho_Id"],
-    );
+        key: json["key"],
+        id: json["id"],
+        soKhung: json["soKhung"],
+        maSanPham: json["maSanPham"],
+        tenSanPham: json["tenSanPham"],
+        soMay: json["soMay"],
+        maMau: json["maMau"],
+        tenMau: json["tenMau"],
+        tenKho: json["tenKho"],
+        maViTri: json["maViTri"],
+        tenViTri: json["tenViTr"],
+        mauSon: json["mauSon"],
+        ngayNhapKhoView: json["ngayNhapKhoView"],
+        tenTaiXe: json["tenTaiXe"],
+        ghiChu: json["ghiChu"],
+        maKho: json["maKho"],
+        taiXe_Id: json["taiXe_Id"],
+        bienSo_Id: json["bienSo_Id"],
+        danhSachPhuongTien_Id: json["danhSachPhuongTien_Id"],
+        loaiPhuongTien_Id: json["loaiPhuongTien_Id"],
+        phuongThucVanChuyen_Id: json["phuongThucVanChuyen_Id"],
+        Diadiem_Id: json["Diadiem_Id"],
+        kho_Id: json["kho_Id"],
+        lat: json["lat"],
+        long: json["long"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -100,9 +105,8 @@ class XuatKhoModel {
         "loaiPhuongTien_Id": loaiPhuongTien_Id,
         "danhSachPhuongTien_Id": danhSachPhuongTien_Id,
         "bienSo_Id": bienSo_Id,
-        "taiXe_Id": taiXe_Id
-        // 'latLng': latLng != null
-        //     ? {'latitude': latLng!.latitude, 'longitude': latLng!.longitude}
-        //     : null,
+        "taiXe_Id": taiXe_Id,
+        "lat": lat,
+        "long": long
       };
 }

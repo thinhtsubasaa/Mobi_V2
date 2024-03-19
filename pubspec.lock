@@ -206,6 +206,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  flutter_datawedge:
+    dependency: "direct main"
+    description:
+      name: flutter_datawedge
+      sha256: "7fe53c0aaacf891921a9dfb5e5355c4ae5b5a7d3db4d1f6113de2bf1ce25fa69"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -810,6 +818,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  strict_json:
+    dependency: transitive
+    description:
+      name: strict_json
+      sha256: "7933f3bd539d70f4b0a2531a253c51a1c0440e14d3e5b6e9a19f0e6e02c384e0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.1"
   string_scanner:
     dependency: transitive
     description:

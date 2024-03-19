@@ -31,7 +31,7 @@ class ChuyenXePage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomCard(),
+                    // CustomCard(),
                     SizedBox(height: 10),
                     CustomBodyChuyenXe(),
                     const SizedBox(height: 20),

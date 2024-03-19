@@ -24,7 +24,7 @@ class MainMenuPage extends StatelessWidget {
                   width: 100.w,
                   child: Column(
                     children: [
-                      CustomCard(),
+                      // CustomCard(),
                       CustomBodyMainMenu(),
                       const SizedBox(height: 20),
                       Container(

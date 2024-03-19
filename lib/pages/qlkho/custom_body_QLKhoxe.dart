@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
@@ -7,8 +6,6 @@ import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
-
-import '../khoxe/khoxe.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
@@ -89,10 +86,7 @@ class BodyQLKhoXe extends StatelessWidget {
                     'KIỂM TRA NHẬN XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
-                      fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )
@@ -153,8 +147,6 @@ class BodyQLKhoXe extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )
@@ -222,8 +214,6 @@ class BodyQLKhoXe extends StatelessWidget {
                         fontFamily: 'Comfortaa',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        height: 13 / 12,
-                        letterSpacing: 0,
                         color: Color(0xFFA71C20),
                       ),
                     ),
@@ -280,8 +270,6 @@ class BodyQLKhoXe extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )

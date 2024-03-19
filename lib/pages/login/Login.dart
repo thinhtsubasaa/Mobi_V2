@@ -99,7 +99,6 @@ class CustomButtonLogin extends StatelessWidget {
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,
           height: 1.16,
-          letterSpacing: 0,
         ),
       ),
     );

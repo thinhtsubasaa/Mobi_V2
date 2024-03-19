@@ -31,7 +31,7 @@ class BaiXePage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomCard(),
+                    // CustomCard(),
                     SizedBox(height: 10),
                     CustomBodyBaiXe(),
                     const SizedBox(height: 20),

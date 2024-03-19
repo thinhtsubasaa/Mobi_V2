@@ -33,7 +33,7 @@ class KhoXePage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomCard(),
+                    // CustomCard(),
                     SizedBox(height: 10),
                     CustomBodyKhoXe(),
                     const SizedBox(height: 20),

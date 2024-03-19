@@ -8,6 +8,8 @@ class KhoThanhPhamModel {
   String? tenMau;
   String? tenKho;
   String? maViTri;
+  String? lat;
+  String? long;
   String? tenViTri;
   String? mauSon;
   String? soMay;
@@ -25,6 +27,8 @@ class KhoThanhPhamModel {
     this.mauSon,
     this.maViTri,
     this.tenViTri,
+    this.lat,
+    this.long,
     this.Kho_Id,
     this.BaiXe_Id,
     this.viTri_Id,
@@ -63,6 +67,8 @@ class KhoThanhPhamModel {
       Kho_Id: json["Kho_Id"],
       BaiXe_Id: json["BaiXe_Id"],
       viTri_Id: json["viTri_Id"],
+      lat: json["lat"],
+      long: json["long"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -82,8 +88,7 @@ class KhoThanhPhamModel {
         'Kho_Id': Kho_Id,
         'BaiXe_Id': BaiXe_Id,
         'viTri_Id': viTri_Id,
-        // 'latLng': latLng != null
-        //     ? {'latitude': latLng!.latitude, 'longitude': latLng!.longitude}
-        //     : null,
+        'lat': lat,
+        'long': long,
       };
 }

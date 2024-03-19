@@ -1,50 +1,50 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class KhoXeBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  String? _fullName;
-  String? get name => _fullName;
+  List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
+  List<KhoXeModel>? get khoxeList => _khoxeList;
 
-  String? _id;
-  String? get id => _id;
+  bool _hasError = false;
+  bool get hasError => _hasError;
 
-  String? _maKhoXe;
-  String? get maxKhoXe => _maKhoXe;
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+  int? _statusCode;
+  int? get statusCode => _statusCode;
 
-  String? _tenKhoXe;
-  String? get tenKhoXe => _tenKhoXe;
+  Future<void> getData() async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body)['dataList'];
+        print("data: ${decodedData}");
 
-  bool _isLogistic = false;
-  bool get isLogistic => _isLogistic;
+        // var data = decodedData["data"];
 
-  Future saveKhoXeData(KhoXeModel khoxeModel) async {
-    // ignore: unnecessary_null_comparison
-    if (khoxeModel != null) {
-      final SharedPreferences sp = await SharedPreferences.getInstance();
-      sp.setString('id', khoxeModel.id ?? '');
-      sp.setString('maKhoXe', khoxeModel.maKhoXe ?? '');
-      sp.setString('tenKhoXe', khoxeModel.tenKhoXe ?? '');
-      sp.setBool('isLogistic', khoxeModel.isLogistic ?? false);
+        // var info = data["info"];
 
-      _id = khoxeModel.id;
-      _maKhoXe = khoxeModel.maKhoXe;
-      _tenKhoXe = khoxeModel.tenKhoXe;
-      _isLogistic = khoxeModel.isLogistic ?? false;
-
+        _khoxeList = [
+          KhoXeModel(
+            id: decodedData['id'],
+            maKhoXe: decodedData['maKhoXe'],
+            tenKhoXe: decodedData['tenKhoXe'],
+            isLogistic: decodedData['isLogistic'],
+          )
+        ];
+      }
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
       notifyListeners();
     }
-  }
-
-  Future getKhoXeData() async {
-    final SharedPreferences sp = await SharedPreferences.getInstance();
-    _id = sp.getString('id');
-    _maKhoXe = sp.getString('maKhoXe');
-    _tenKhoXe = sp.getString('tenKhoXe');
-    _isLogistic = sp.getBool('isLogistic')!;
-    notifyListeners();
   }
 }

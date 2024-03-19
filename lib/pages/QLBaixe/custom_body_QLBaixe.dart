@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/vitrixe/vitrixe.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
@@ -75,33 +72,28 @@ class BodyQLKhoXe extends StatelessWidget {
                               ),
                             ],
                           ),
-
-                          iconSize: 60, // Kích thước của biểu tượng
-                          padding: EdgeInsets
-                              .zero, // Xóa padding mặc định của IconButton
-                          alignment: Alignment
-                              .center, // Căn chỉnh hình ảnh vào giữa nút
+                          iconSize: 60,
+                          padding: EdgeInsets.zero,
+                          alignment: Alignment.center,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
+                  const SizedBox(height: 8),
                   const Text(
                     'NHẬP BÃI XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
+                      height: 13 / 12,
                       letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )
                 ],
               ),
-
-              const SizedBox(width: 20), // Khoảng cách giữa 2 button
-
+              const SizedBox(width: 20),
               Column(
                 children: [
                   Container(
@@ -147,15 +139,13 @@ class BodyQLKhoXe extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
+                  const SizedBox(height: 8),
                   const Text(
                     'ĐIỀU CHUYỂN XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )
@@ -213,8 +203,7 @@ class BodyQLKhoXe extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
+                  const SizedBox(height: 8),
                   const Center(
                     child: Text(
                       'XUẤT KHO XE',
@@ -223,8 +212,6 @@ class BodyQLKhoXe extends StatelessWidget {
                         fontFamily: 'Comfortaa',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        height: 13 / 12,
-                        letterSpacing: 0,
                         color: Color(0xFFA71C20),
                       ),
                     ),
@@ -274,15 +261,13 @@ class BodyQLKhoXe extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
+                  const SizedBox(height: 8),
                   const Text(
                     'VỊ TRÍ XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      height: 13 / 12, // Line height as a ratio of font size
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   )

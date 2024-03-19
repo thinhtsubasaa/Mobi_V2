@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
+import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
 import 'package:Thilogi/pages/login/Login.dart';
-import 'package:Thilogi/services/image_service.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
+import 'package:Thilogi/blocs/image_bloc.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
@@ -14,7 +19,6 @@ import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:Thilogi/pages/tracking/TrackingXe_TrangThai.dart';
 import 'package:Thilogi/services/auth_service.dart';
-import 'package:Thilogi/services/scan_service.dart';
 import 'package:provider/provider.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
@@ -42,9 +46,6 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<ScanBloc>(
             create: (context) => ScanBloc(),
           ),
-          ChangeNotifierProvider<ScanService>(
-            create: (context) => ScanService(),
-          ),
           ChangeNotifierProvider<KhoThanhPhamBloc>(
             create: (context) => KhoThanhPhamBloc(),
           ),
@@ -57,14 +58,20 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<XuatKhoBloc>(
             create: (context) => XuatKhoBloc(),
           ),
+          ChangeNotifierProvider<GiaoXeBloc>(
+            create: (context) => GiaoXeBloc(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Thilogi ',
+          routes: {
+            'qlKho': (context) => QLKhoXePage(),
+          },
+          title: 'THILOGI ',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: MyHomePage(),
+          home: BaiXePage(),
         ),
       ),
     );

@@ -35,7 +35,7 @@ class TrackingXePage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CustomCard(),
+                        // CustomCard(),
                         CustomCardVIN(),
                         SizedBox(height: 10),
                         TabNhanXeScreen(),

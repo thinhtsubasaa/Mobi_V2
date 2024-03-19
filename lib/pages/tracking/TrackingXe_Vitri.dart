@@ -35,7 +35,7 @@ class TrackingXeVitriPage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomCard(),
+                    // CustomCard(),
                     CustomCardVIN(),
                     SizedBox(height: 10),
                     TabNhanXeScreen(),
@@ -217,7 +217,6 @@ class CustomCardVIN extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     height: 1.08, // Corresponds to line-height of 13px
-                    letterSpacing: 0,
 
                     color: Colors.white,
                   ),

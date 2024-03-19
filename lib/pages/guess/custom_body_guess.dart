@@ -61,8 +61,6 @@ class MainButton extends StatelessWidget {
                   fontFamily: 'Comfortaa',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  height: 1.14, // Line height (16/14)
-                  letterSpacing: 0,
                 ),
               ),
             ),
@@ -100,8 +98,6 @@ class MainButton extends StatelessWidget {
                   fontFamily: 'Comfortaa',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  height: 1.14, // Line height (16/14)
-                  letterSpacing: 0,
                 ),
               ),
             ),

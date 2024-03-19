@@ -27,6 +27,8 @@ class XuatKhoBloc extends ChangeNotifier {
   String? get message => _message;
 
   Future<void> getData(String qrcode) async {
+    _isLoading = true;
+    _xuatkho = null;
     try {
       final http.Response response = await requestHelper
           .getData('KhoThanhPham/GetSoKhungXuatKhomobi?SoKhung=$qrcode');
@@ -35,36 +37,40 @@ class XuatKhoBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
 
         // var data = decodedData["data"];
-
         // var info = data["info"];
-
-        _xuatkho = XuatKhoModel(
-          key: decodedData["key"],
-          id: decodedData['id'],
-          soKhung: decodedData['soKhung'],
-          maSanPham: decodedData['maSanPham'],
-          tenSanPham: decodedData['tenSanPham'],
-          soMay: decodedData['soMay'],
-          maMau: decodedData['maMau'],
-          tenMau: decodedData['tenMau'],
-          tenKho: decodedData['tenKho'],
-          maViTri: decodedData['maViTri'],
-          tenViTri: decodedData['tenViTri'],
-          mauSon: decodedData['mauSon'],
-          ngayNhapKhoView: decodedData['ngayNhapKhoView'],
-          tenTaiXe: decodedData['tenTaiXe'],
-          ghiChu: decodedData['ghiChu'],
-          maKho: decodedData['maKho'],
-          kho_Id: decodedData['kho_Id'],
-          Diadiem_Id: decodedData['Diadiem_Id'],
-          phuongThucVanChuyen_Id: decodedData['phuongThucVanChuyen_Id'],
-          loaiPhuongTien_Id: decodedData['loaiPhuongTien_Id'],
-          danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
-          bienSo_Id: decodedData['bienSo_Id'],
-          taiXe_Id: decodedData['taiXe_Id'],
-          // latLng: decodedData['latLng'],
-        );
+        if (decodedData != null) {
+          _xuatkho = XuatKhoModel(
+            key: decodedData["key"],
+            id: decodedData['id'],
+            soKhung: decodedData['soKhung'],
+            maSanPham: decodedData['maSanPham'],
+            tenSanPham: decodedData['tenSanPham'],
+            soMay: decodedData['soMay'],
+            maMau: decodedData['maMau'],
+            tenMau: decodedData['tenMau'],
+            tenKho: decodedData['tenKho'],
+            maViTri: decodedData['maViTri'],
+            tenViTri: decodedData['tenViTri'],
+            mauSon: decodedData['mauSon'],
+            ngayNhapKhoView: decodedData['ngayNhapKhoView'],
+            tenTaiXe: decodedData['tenTaiXe'],
+            ghiChu: decodedData['ghiChu'],
+            maKho: decodedData['maKho'],
+            kho_Id: decodedData['kho_Id'],
+            Diadiem_Id: decodedData['Diadiem_Id'],
+            phuongThucVanChuyen_Id: decodedData['phuongThucVanChuyen_Id'],
+            loaiPhuongTien_Id: decodedData['loaiPhuongTien_Id'],
+            danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
+            bienSo_Id: decodedData['bienSo_Id'],
+            taiXe_Id: decodedData['taiXe_Id'],
+            // latLng: decodedData['latLng'],
+          );
+        }
+      } else {
+        _xuatkho = null; // Gán _scan thành null nếu không có dữ liệu
+        _isLoading = false;
       }
+
       notifyListeners();
     } catch (e) {
       _hasError = true;

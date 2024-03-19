@@ -6,12 +6,11 @@ import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:Thilogi/pages/nhanxe/tabs/custom_tabs_NhanXe.dart';
+import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../blocs/app_bloc.dart';
+import 'package:flutter_datawedge/flutter_datawedge.dart';
 import '../../blocs/scan_bloc.dart';
-import '../../services/scan_service.dart';
 import '../../utils/next_screen.dart';
 
 class CustomBodyNhanXe extends StatelessWidget {
@@ -31,7 +30,6 @@ class BodyNhanxeScreen extends StatefulWidget {
 class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     with SingleTickerProviderStateMixin {
   static RequestHelper requestHelper = RequestHelper();
-  late AppBloc _ab;
 
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -40,30 +38,32 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   ScanModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
-  TabController? _tabController;
   late ScanBloc _sb;
-  late ScanService _sv;
+
+  late FlutterDataWedge dataWedge;
+  late StreamSubscription<ScanResult> scanSubscription;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-    _tabController!.addListener(_handleTabChange);
     _sb = Provider.of<ScanBloc>(context, listen: false);
-    _sv = Provider.of<ScanService>(context, listen: false);
+    dataWedge = FlutterDataWedge(profileName: "Example Profile");
+
+    // Subscribe to scan results
+    scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
+      setState(() {
+        barcodeScanResult = result.data;
+      });
+      print(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult);
+    });
   }
 
   @override
   void dispose() {
-    _tabController?.dispose();
+    scanSubscription.cancel();
+    // dataWedge.dispose();
     super.dispose();
-  }
-
-  void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
-      // Call the action when the tab changes
-      // print('Tab changed to: ${_tabController!.index}');
-    }
   }
 
   Widget CardVin() {
@@ -105,7 +105,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     height: 1.08, // Corresponds to line-height of 13px
-                    letterSpacing: 0,
 
                     color: Colors.white,
                   ),
@@ -113,7 +112,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 6),
           // Phần Text 2
           Text(
             barcodeScanResult.isNotEmpty
@@ -121,7 +120,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
               height: 1.11,
               letterSpacing: 0,
@@ -152,11 +151,11 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   }
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
-    print(barcodeScanResult);
+    print("Sokhungg:${barcodeScanResult}");
     // Process the barcode scan result here
     setState(() {
       _qrData = '';
-      _qrDataController.text = barcodeScanResult;
+      _qrDataController.text = '';
       _data = null;
       Future.delayed(const Duration(seconds: 1), () {
         _qrData = barcodeScanResult;
@@ -182,6 +181,40 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       });
     });
   }
+  // void _handleBarcodeScanResult(String barcodeScanResult) {
+  //   print("111:${barcodeScanResult}");
+  //   setState(() {
+  //     if (barcodeScanResult.isEmpty) {
+  //       _qrData = '';
+  //       _qrDataController.text = '';
+  //       _data = null;
+  //     } else {
+  //       _qrData = barcodeScanResult;
+  //       _qrDataController.text = barcodeScanResult;
+  //       _onScan(barcodeScanResult);
+  //     }
+  //   });
+  // }
+
+  // _onScan(value) {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   _sb.getData(value).then((_) {
+  //     setState(() {
+  //       if (_sb.scan == null) {
+  //         _qrData = '';
+  //         _qrDataController.text = '';
+  //         _data = null;
+  //       } else {
+  //         _qrData = value;
+  //         _qrDataController.text = value;
+  //         _data = _sb.scan;
+  //       }
+  //       _loading = false;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -224,8 +257,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             fontFamily: 'Coda Caption',
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            height: 1.56,
-                            letterSpacing: 0,
                             color: Color(0xFFA71C20),
                           ),
                         ),
@@ -257,8 +288,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             fontFamily: 'Comfortaa',
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Colors.white,
                           ),
                         ),
@@ -329,7 +358,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       borderRadius:
                           BorderRadius.circular(5), // Độ cong của góc nút
                     ),
-                    // Khoảng cách giữa nút và văn bản
                   ),
                   child: const Text(
                     'NHẬN XE',
@@ -360,8 +388,6 @@ Widget showInfoXe(String title, String value) {
           fontFamily: 'Comfortaa',
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          height: 1.08,
-          letterSpacing: 0,
           color: Color(0xFF818180),
         ),
       ),
@@ -371,8 +397,6 @@ Widget showInfoXe(String title, String value) {
           fontFamily: 'Comfortaa',
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          height: 1.125,
-          letterSpacing: 0,
           color: Color(0xFFA71C20),
         ),
       )

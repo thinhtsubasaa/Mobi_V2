@@ -1,15 +1,11 @@
-import 'dart:convert';
-
+import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/scan.dart';
-import 'package:Thilogi/services/request_helper.dart';
 
-// ignore: use_key_in_widget_constructors
+// ignore: use_key_in_widget_constructors, must_be_immutable
 class PopUp extends StatelessWidget {
   String soKhung;
   String soMay;
@@ -40,7 +36,7 @@ class PopUp extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         constraints: BoxConstraints(
           maxHeight: screenHeight *
-              0.9, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+              0.8, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -56,7 +52,7 @@ class PopUp extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTopBar(),
+            _buildTopBar(context),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -64,20 +60,20 @@ class PopUp extends StatelessWidget {
                   children: [
                     _buildInputFields(),
                     _buildCarDetails(),
-                    _buildButtons(context),
                   ],
                 ),
               ),
             ),
+            _buildButtons(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Container(
-      height: 8.h,
+      height: 10.h,
       padding: const EdgeInsets.all(8),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -97,14 +93,13 @@ class PopUp extends StatelessWidget {
               fontSize: 30,
               fontWeight: FontWeight.w700,
               color: Colors.white,
-              height: 36 / 30,
-              letterSpacing: 0.0,
             ),
           ),
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
               // Add functionality for the close button
+              nextScreenReplace(context, NhanXePage());
             },
           ),
         ],
@@ -175,8 +170,6 @@ class PopUp extends StatelessWidget {
                       fontFamily: 'Coda Caption',
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      height: 1.56, // Corresponds to line-height of 28px
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   ),
@@ -200,8 +193,6 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            height: 1.08,
-                            letterSpacing: 0,
                             color: Color(0xFF818180),
                           ),
                         ),
@@ -213,15 +204,13 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Color(0xFFA71C20),
                           ),
                         ),
                       ],
                     ),
 
-                    SizedBox(width: 60), // Khoảng cách giữa hai Text
+                    SizedBox(width: 40),
 
                     // Text 2
                     Column(
@@ -234,8 +223,6 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            height: 1.08,
-                            letterSpacing: 0,
                             color: Color(0xFF818180),
                           ),
                         ),
@@ -247,8 +234,6 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Color(0xFFFF0007),
                           ),
                         ),
@@ -267,7 +252,6 @@ class PopUp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(width: 10),
-
                         // Text 1
                         Text(
                           'Số máy:',
@@ -275,8 +259,6 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            height: 1.08,
-                            letterSpacing: 0,
                             color: Color(0xFF818180),
                           ),
                         ),
@@ -288,8 +270,6 @@ class PopUp extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Color(0xFFA71C20),
                           ),
                         ),
@@ -311,7 +291,6 @@ class PopUp extends StatelessWidget {
     final ChucnangService _cv = ChucnangService();
     return Container(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           ElevatedButton(
             onPressed: () {

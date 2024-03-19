@@ -10,6 +10,8 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
 import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:flutter_datawedge/flutter_datawedge.dart';
+import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:provider/provider.dart';
@@ -20,7 +22,8 @@ import 'package:Thilogi/models/khoxe.dart';
 import '../../blocs/app_bloc.dart';
 import '../../services/app_service.dart';
 import '../../widgets/map.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
+    as GeoLocationAccuracy;
 import 'package:location/location.dart';
 
 import 'package:quickalert/quickalert.dart';
@@ -45,6 +48,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String? KhoXeId;
   String? BaiXeId;
   String? ViTriId;
+  String? lat;
+  String? long;
   String? selectedKho;
   String _qrData = '';
   final _qrDataController = TextEditingController();
@@ -81,72 +86,44 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   String? _message;
   String? get message => _message;
-
-  Completer<GoogleMapController> _googleMapController = Completer();
-  CameraPosition? _cameraPosition;
-  Location? _location;
-  LocationData? _currentLocation;
-
-  // @override
-  // void initState() {
-  //   _init();
-  //   super.initState();
-  // }
-
-  _init() async {
-    _location = Location();
-    _cameraPosition = CameraPosition(
-        target: LatLng(
-            0, 0), // this is just the example lat and lng for initializing
-        zoom: 15);
-    _initLocation();
-  }
-
-  //function to listen when we move position
-  _initLocation() {
-    //use this to go to current location instead
-    _location?.getLocation().then((location) {
-      _currentLocation = location;
-    });
-    _location?.onLocationChanged.listen((newLocation) {
-      _currentLocation = newLocation;
-      Timer(Duration(seconds: 2), () {
-        moveToPosition(LatLng(
-            _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
-      });
-    });
-  }
-
-  moveToPosition(LatLng latLng) async {
-    GoogleMapController mapController = await _googleMapController.future;
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 15)));
-
-    print('New Position: ${latLng}');
-  }
+  late FlutterDataWedge dataWedge;
+  late StreamSubscription<ScanResult> scanSubscription;
 
   @override
   void initState() {
-    _init();
     super.initState();
 
     _ab = Provider.of<AppBloc>(context, listen: false);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
 
-    setState(() {
-      _loading = true;
+    dataWedge = FlutterDataWedge(profileName: "Example Profile");
+
+    // Subscribe to scan results
+    scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
+      setState(() {
+        barcodeScanResult = result.data;
+      });
+      print(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult);
     });
   }
 
-  // void getLocation() async {
-  //   await Geolocator.checkPermission();
-  //   await Geolocator.requestPermission();
+  @override
+  void dispose() {
+    scanSubscription.cancel();
+    // dataWedge.dispose();
+    super.dispose();
+  }
 
-  //   Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.low);
-  //   print("ss");
-  //   print(position);
-  // }
+  void getLocation() async {
+    await Geolocator.checkPermission();
+    await Geolocator.requestPermission();
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low);
+    print("ss");
+    print(position);
+  }
 
   void getData() async {
     try {
@@ -260,16 +237,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     fontFamily: 'Comfortaa',
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
-                    letterSpacing: 0,
-
                     color: Colors.white,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 7),
           // Phần Text 2
           Text(
             barcodeScanResult.isNotEmpty
@@ -277,10 +251,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 : '       Scan a barcode       ',
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
-              height: 1.11,
-              letterSpacing: 0,
               color: Color(0xFFA71C20),
             ),
           ),
@@ -399,34 +371,54 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _data?.maMau = _bl.baixe?.maMau;
     _data?.tenMau = _bl.baixe?.tenMau;
     _data?.tenKho = _bl.baixe?.tenKho;
-    _data?.maViTri = _currentLocation?.toString();
+    _data?.tenViTri = _bl.baixe?.tenViTri;
+    _data?.mauSon = _bl.baixe?.mauSon;
+    _data?.ngayNhapKhoView = _bl.baixe?.ngayNhapKhoView;
     _data?.tenViTri = _bl.baixe?.tenViTri;
     _data?.mauSon = _bl.baixe?.mauSon;
     _data?.ngayNhapKhoView = _bl.baixe?.ngayNhapKhoView;
 
-    print("Kho_ID:${_data?.Kho_Id}");
-    print("Bai_ID:${_data?.BaiXe_Id}");
-    print("SoKhung:${_data?.maViTri}");
-    // call api
+    // Get location here
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
+      // Assuming `_data` is not null
+      setState(() {
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
+      });
+      // print("latLng:${lat}");
+      _data?.lat = lat;
+      _data?.long = long;
+      print("lat: ${_data?.lat}");
+      print("long: ${_data?.long}");
+      print("Kho_ID:${_data?.Kho_Id}");
+      print("Bai_ID:${_data?.BaiXe_Id}");
 
-    AppService().checkInternet().then((hasInternet) {
-      if (!hasInternet!) {
-        openSnackBar(context, 'no internet'.tr());
-      } else {
-        postData(_data!).then((_) {
-          // if (_bl.success) {
-          //   openSnackBar(context, "Lưu thành công");
-          // } else {
-          //   openSnackBar(context, "Lưu thất bại");
-          // }
-          setState(() {
-            _data = null;
-            _qrData = '';
-            _qrDataController.text = '';
-            _loading = false;
+      // call api
+
+      AppService().checkInternet().then((hasInternet) {
+        if (!hasInternet!) {
+          openSnackBar(context, 'no internet'.tr());
+        } else {
+          postData(_data!).then((_) {
+            // if (_bl.success) {
+            //   openSnackBar(context, "Lưu thành công");
+            // } else {
+            //   openSnackBar(context, "Lưu thất bại");
+            // }
+            setState(() {
+              _data = null;
+              _qrData = '';
+              _qrDataController.text = '';
+              _loading = false;
+            });
           });
-        });
-      }
+        }
+      });
+    }).catchError((error) {
+      // Handle error while getting location
+      print("Error getting location: $error");
     });
   }
 
@@ -475,82 +467,76 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 9.h,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: const Color(0xFF818180),
-                                    width: 1,
+                          Container(
+                            height: 9.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: const Color(0xFF818180),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 20.w,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF6C6C7),
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Color(0xFF818180),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Kho Xe",
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF000000),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 20.w,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFF6C6C7),
-                                        border: Border(
-                                          right: BorderSide(
-                                            color: Color(0xFF818180),
-                                            width: 1,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Kho Xe",
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            fontFamily: 'Comfortaa',
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color(0xFF000000),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: DropdownButtonFormField<String>(
-                                        items: _khoxeList?.map((item) {
-                                          return DropdownMenuItem<String>(
-                                            value: item.id,
-                                            child: Container(
-                                              padding:
-                                                  EdgeInsets.only(left: 15.sp),
-                                              child: Text(
-                                                item.tenKhoXe ?? "",
-                                                style: const TextStyle(
-                                                  fontFamily: 'Comfortaa',
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Color(0xFF000000),
-                                                ),
-                                              ),
+                                Expanded(
+                                  flex: 1,
+                                  child: DropdownButtonFormField<String>(
+                                    items: _khoxeList?.map((item) {
+                                      return DropdownMenuItem<String>(
+                                        value: item.id,
+                                        child: Container(
+                                          padding: EdgeInsets.only(left: 15.sp),
+                                          child: Text(
+                                            item.tenKhoXe ?? "",
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFF000000),
                                             ),
-                                          );
-                                        }).toList(),
-                                        value: KhoXeId,
-                                        onChanged: (newValue) async {
-                                          setState(() {
-                                            KhoXeId = newValue;
-                                          });
-                                          if (newValue != null) {
-                                            getBaiXeList(newValue);
-                                            print("object : ${KhoXeId}");
-                                          }
-                                          ;
-                                        },
-                                      ),
-                                    ),
-                                  ],
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    value: KhoXeId,
+                                    onChanged: (newValue) async {
+                                      setState(() {
+                                        KhoXeId = newValue;
+                                      });
+                                      if (newValue != null) {
+                                        getBaiXeList(newValue);
+                                        print("object : ${KhoXeId}");
+                                      }
+                                      ;
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Container(
@@ -714,9 +700,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   fontFamily: 'Coda Caption',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
-                                  height:
-                                      1.56, // Corresponds to line-height of 28px
-                                  letterSpacing: 0,
                                   color: Color(0xFFA71C20),
                                 ),
                               ),
@@ -738,8 +721,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -750,14 +731,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFA71C20),
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 40),
+                                SizedBox(width: 35),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -767,8 +746,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -779,8 +756,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFFF0007),
                                       ),
                                     ),
@@ -805,8 +780,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.08,
-                                        letterSpacing: 0,
                                         color: Color(0xFF818180),
                                       ),
                                     ),
@@ -817,8 +790,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        height: 1.125,
-                                        letterSpacing: 0,
                                         color: Color(0xFFA71C20),
                                       ),
                                     ),

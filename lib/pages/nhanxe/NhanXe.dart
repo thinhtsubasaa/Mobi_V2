@@ -4,7 +4,6 @@ import 'package:Thilogi/pages/nhanxe/custom_body_NhanXe.dart';
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_bottom.dart';
-import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -31,7 +30,7 @@ class NhanXePage extends StatelessWidget {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomCard(),
+                    // CustomCard(),
                     SizedBox(height: 10),
                     CustomBodyNhanXe(),
                     const SizedBox(height: 20),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/login/Login.dart';
-import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
 import '../widgets/custom_title.dart';
 
@@ -12,7 +11,7 @@ class MyHomePage extends StatelessWidget {
       appBar: CustomAppBar(key: Key('customAppBar')),
       body: ListView(
         children: [
-          CustomImage(imagePath: AppConfig.homeImagePath),
+          const CustomImage(imagePath: AppConfig.homeImagePath),
           const SizedBox(height: 5),
           customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
           const SizedBox(height: 5),

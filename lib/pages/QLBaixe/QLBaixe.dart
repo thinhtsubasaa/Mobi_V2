@@ -34,7 +34,7 @@ class QLBaiXePage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        CustomCard(),
+                        // CustomCard(),
                         CustomBodyQLBaiXe(),
                         const SizedBox(height: 20),
                         Container(

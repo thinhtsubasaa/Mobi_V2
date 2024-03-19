@@ -107,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               });
             } else {
               if (asb.hasError) {
-                openSnackBar(context, asb.errorCode);
+                print("lỗi: ${asb.errorCode}");
               } else {
                 openSnackBar(
                     context, 'username or password is incorrect'.trim());
@@ -133,8 +133,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fontFamily: 'Roboto',
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              height: 1.17,
-              letterSpacing: 0,
             ),
           ),
         ),
@@ -165,8 +163,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             fontFamily: 'Roboto',
             fontSize: 15,
             fontWeight: FontWeight.w400,
-            height: 1.17,
-            letterSpacing: 0,
           ),
         ),
         const SizedBox(height: 10),
@@ -212,7 +208,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             fontSize: 15,
             fontWeight: FontWeight.w400,
             height: 1.17,
-            letterSpacing: 0,
           ),
         ),
         const SizedBox(height: 10),

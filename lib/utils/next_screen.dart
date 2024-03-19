@@ -4,6 +4,10 @@ void nextScreen(context, page) {
   Navigator.push(context, MaterialPageRoute(builder: (builder) => page));
 }
 
+void backScreen(context, page) {
+  Navigator.pop(context, MaterialPageRoute(builder: (builder) => page));
+}
+
 void nextScreenCloseOthers(context, page) {
   Navigator.pushAndRemoveUntil(
     context,

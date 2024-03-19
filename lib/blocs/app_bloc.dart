@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/scan.dart';
+
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
   String _apiUrl = "https://apiwms.thilogi.click";
   String get apiUrl => _apiUrl;
+
+  ScanModel? _scan;
+  ScanModel? get scan => _scan;
 
   String? _id;
   String? get id => _id;
@@ -77,12 +82,12 @@ class AppBloc extends ChangeNotifier {
   }
 
   Future clearData() async {
-    _id = null;
-    _Kho_Id = null;
-    _soKhung = null;
-    _tenKho = null;
-    _tenSanPham = null;
-    _tenMau = null;
+    _scan?.id = null;
+    _scan?.Kho_Id = null;
+    _scan?.soKhung = null;
+    _scan?.tenKho = null;
+    _scan?.tenSanPham = null;
+    _scan?.tenMau = null;
     notifyListeners();
   }
 }

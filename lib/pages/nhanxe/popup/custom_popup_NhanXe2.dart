@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
-import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -64,7 +62,7 @@ class PopUp2 extends StatelessWidget {
 
   Widget _buildTopBar() {
     return Container(
-      height: 8.h,
+      height: 10.h,
       padding: const EdgeInsets.all(8),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -84,8 +82,6 @@ class PopUp2 extends StatelessWidget {
               fontSize: 30,
               fontWeight: FontWeight.w700,
               color: Colors.white,
-              height: 36 / 30,
-              letterSpacing: 0.0,
             ),
           ),
           IconButton(
@@ -138,8 +134,6 @@ class PopUp2 extends StatelessWidget {
                       fontFamily: 'Coda Caption',
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      height: 1.56, // Corresponds to line-height of 28px
-                      letterSpacing: 0,
                       color: Color(0xFFA71C20),
                     ),
                   ),
@@ -163,8 +157,6 @@ class PopUp2 extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            height: 1.08,
-                            letterSpacing: 0,
                             color: Color(0xFF818180),
                           ),
                         ),
@@ -176,8 +168,6 @@ class PopUp2 extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Color(0xFFA71C20),
                           ),
                         ),
@@ -210,8 +200,6 @@ class PopUp2 extends StatelessWidget {
                             fontFamily: 'Comfortaa',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            height: 1.125,
-                            letterSpacing: 0,
                             color: Color(0xFFFF0007),
                           ),
                         ),
@@ -233,7 +221,7 @@ class PopUp2 extends StatelessWidget {
     int index = 0; // Biến đếm số thứ tự
     return Container(
       width: 100.w,
-      height: 100.h,
+      // height: 100.h,
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,13 +234,12 @@ class PopUp2 extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 10),
           Table(
             border: TableBorder.all(),
             columnWidths: {
-              0: FlexColumnWidth(0.2), // Cột 'TT' chiếm 20% chiều ngang
-              1: FlexColumnWidth(0.6), // Cột 'Tên Option' chiếm 60% chiều ngang
-              2: FlexColumnWidth(0.2), // Cột 'Số lượng' chiếm 20% chiều ngang
+              0: FlexColumnWidth(0.25), // Cột 'TT' chiếm 20% chiều ngang
+              1: FlexColumnWidth(0.5), // Cột 'Tên Option' chiếm 60% chiều ngang
+              2: FlexColumnWidth(0.25), // Cột 'Số lượng' chiếm 20% chiều ngang
             },
             children: [
               TableRow(

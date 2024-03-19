@@ -11,7 +11,6 @@ class CustomBodyMainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         width: 100.w,
-
         // ignore: prefer_const_constructors
         color: Color.fromRGBO(246, 198, 199, 0.2), // Đặt màu nền cho phần này
         child: BodyMainMenu());
@@ -56,8 +55,6 @@ class BodyMainMenu extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      height: 13 / 12,
-                      letterSpacing: 0,
                       color: Colors.red,
                     ),
                   ),
@@ -70,9 +67,7 @@ class BodyMainMenu extends StatelessWidget {
                 color: AppConfig.buttonColor),
           ],
         ),
-        const SizedBox(
-          height: 30,
-        ),
+        const SizedBox(height: 30),
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
