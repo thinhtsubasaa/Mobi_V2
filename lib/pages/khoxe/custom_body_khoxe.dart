@@ -263,8 +263,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         color: Colors.white, // Màu nền của card
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Phần Text 1
           Container(
             width: 20.w,
             height: 8.h,
@@ -275,42 +275,40 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
               ),
               color: Color(0xFFA71C20),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text trong cột
-                Text(
-                  'Số khung\n (VIN)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
-                    letterSpacing: 0,
-
-                    color: Colors.white,
-                  ),
+            child: Center(
+              child: Text(
+                'Số khung\n (VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.08, // Corresponds to line-height of 13px
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(width: 5),
-          // Phần Text 2
-          Text(
-            barcodeScanResult.isNotEmpty
-                ? barcodeScanResult
-                : '       Scan a barcode       ',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              height: 1.11,
-              letterSpacing: 0,
-              color: Color(0xFFA71C20),
+          SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(5),
+              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
+              // ),
+              child: Text(
+                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFA71C20),
+                ),
+              ),
             ),
           ),
-
+          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -483,7 +481,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -519,35 +517,39 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _diadiemList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenDiaDiem ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items: _diadiemList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenDiaDiem ?? "",
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: DiaDiemId,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        DiaDiemId = newValue;
-                                      });
-                                      // if (newValue != null) {
-                                      //   getBaiXeList(newValue);
+                                        );
+                                      }).toList(),
+                                      value: DiaDiemId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          DiaDiemId = newValue;
+                                        });
+                                        // if (newValue != null) {
+                                        //   getBaiXeList(newValue);
 
-                                      // }
-                                      ;
-                                    },
+                                        // }
+                                        ;
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -555,7 +557,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -578,7 +580,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Phương thức vận chuyển",
+                                      "Phương thức\nvận chuyển",
                                       textAlign: TextAlign.left,
                                       style: const TextStyle(
                                         fontFamily: 'Comfortaa',
@@ -591,37 +593,41 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items:
-                                        _phuongthucvanchuyenList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenPhuongThucVanChuyen ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items:
+                                          _phuongthucvanchuyenList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenPhuongThucVanChuyen ?? "",
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: PhuongThucVanChuyenId,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        PhuongThucVanChuyenId = newValue;
-                                      });
-                                      // if (newValue != null) {
-                                      //   getDanhSachPhuongTienList(newValue);
-                                      //   print(
-                                      //       "object : ${PhuongThucVanChuyenId}");
-                                      // }
-                                      // ;
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: PhuongThucVanChuyenId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          PhuongThucVanChuyenId = newValue;
+                                        });
+                                        // if (newValue != null) {
+                                        //   getDanhSachPhuongTienList(newValue);
+                                        //   print(
+                                        //       "object : ${PhuongThucVanChuyenId}");
+                                        // }
+                                        // ;
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -629,7 +635,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -652,7 +658,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Loại phương tiện",
+                                      "Loại phương\ntiện",
                                       textAlign: TextAlign.left,
                                       style: const TextStyle(
                                         fontFamily: 'Comfortaa',
@@ -665,31 +671,35 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _loaiphuongtienList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenLoaiPhuongTien ?? "",
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items: _loaiphuongtienList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenLoaiPhuongTien ?? "",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: LoaiPhuongTienId,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        LoaiPhuongTienId = newValue;
-                                      });
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: LoaiPhuongTienId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          LoaiPhuongTienId = newValue;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -697,7 +707,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -720,7 +730,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                   ),
                                   child: Center(
                                     child: Text(
-                                      "Danh sách phương tiện",
+                                      "Danh sách\nphương tiện",
                                       textAlign: TextAlign.left,
                                       style: const TextStyle(
                                         fontFamily: 'Comfortaa',
@@ -733,31 +743,36 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _danhsachphuongtienList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.bienSo ?? "",
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items:
+                                          _danhsachphuongtienList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.bienSo ?? "",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: DanhSachPhuongTienId,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        DanhSachPhuongTienId = newValue;
-                                      });
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: DanhSachPhuongTienId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          DanhSachPhuongTienId = newValue;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],

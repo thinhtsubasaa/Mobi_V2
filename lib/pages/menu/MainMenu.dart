@@ -62,12 +62,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: false,
-      title: Image.asset(
-        AppConfig.appBarImagePath,
-        width: 300,
+      // automaticallyImplyLeading: false,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.appBarImagePath,
+            width: 70.w,
+          ),
+        ],
       ),
-      centerTitle: false,
     );
   }
 

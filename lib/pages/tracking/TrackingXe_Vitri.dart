@@ -117,19 +117,19 @@ class _TabNhanXeScreenState extends State<TabNhanXeScreen>
         controller: _tabController,
         tabs: [
           TabItem(
-            label: 'Trạng thái vận chuyển',
-            textColor: const Color(0xFF818180),
-            backgroundColor: const Color(0xFF7F7F7F),
-            onTap: () {
-              nextScreen(context, TrackingXePage());
-            },
-          ),
-          TabItem(
             label: 'Vị trí trên đường',
             textColor: const Color(0xFF428FCA),
             backgroundColor: const Color(0xFFF6C6C7),
             onTap: () {
               nextScreen(context, TrackingXeVitriPage());
+            },
+          ),
+          TabItem(
+            label: 'Trạng thái vận chuyển',
+            textColor: const Color(0xFF818180),
+            backgroundColor: const Color(0xFF7F7F7F),
+            onTap: () {
+              nextScreen(context, TrackingXePage());
             },
           ),
         ],
@@ -158,14 +158,13 @@ class TabItem extends StatelessWidget {
       child: Column(
         children: [
           Container(
+            padding: const EdgeInsets.only(top: 10, bottom: 5),
             child: Text(
               label,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
-                height: 1.14,
-                letterSpacing: 0,
                 color: textColor,
               ),
             ),
@@ -193,6 +192,7 @@ class CustomCardVIN extends StatelessWidget {
         color: Colors.white, // Màu nền của card
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Phần Text 1
           Container(
@@ -205,36 +205,38 @@ class CustomCardVIN extends StatelessWidget {
               ),
               color: Color(0xFFA71C20),
             ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text trong cột
-                Text(
-                  'Số Khung\n(VIN)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
+            child: Center(
+              child:
+                  // Text trong cột
+                  Text(
+                'Số Khung\n(VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.08, // Corresponds to line-height of 13px
 
-                    color: Colors.white,
-                  ),
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
+
           const SizedBox(width: 10),
-          // Phần Text 2
-          const Text(
-            'MALA851CBHM557809',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              height: 1.11,
-              letterSpacing: 0,
-              color: Color(0xFFA71C20),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              // Phần Text 2
+              child: Text(
+                'MALA851CBHM557809',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFA71C20),
+                ),
+              ),
             ),
           ),
 

@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: BaiXePage(),
+          home: MainMenuPage(),
         ),
       ),
     );

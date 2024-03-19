@@ -214,8 +214,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         color: Colors.white, // Màu nền của card
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Phần Text 1
           Container(
             width: 20.w,
             height: 8.h,
@@ -226,37 +226,40 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               ),
               color: Color(0xFFA71C20),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text trong cột
-                Text(
-                  "Số Khung (VIN)",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                  ),
+            child: Center(
+              child: Text(
+                'Số khung\n (VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.08, // Corresponds to line-height of 13px
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(width: 7),
-          // Phần Text 2
-          Text(
-            barcodeScanResult.isNotEmpty
-                ? barcodeScanResult
-                : '       Scan a barcode       ',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFFA71C20),
+          SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(5),
+              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
+              // ),
+              child: Text(
+                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFA71C20),
+                ),
+              ),
             ),
           ),
-
+          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -468,7 +471,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -504,35 +507,40 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _khoxeList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenKhoXe ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      isDense: true,
+                                      items: _khoxeList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenKhoXe ?? "",
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: KhoXeId,
-                                    onChanged: (newValue) async {
-                                      setState(() {
-                                        KhoXeId = newValue;
-                                      });
-                                      if (newValue != null) {
-                                        getBaiXeList(newValue);
-                                        print("object : ${KhoXeId}");
-                                      }
-                                      ;
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: KhoXeId,
+                                      onChanged: (newValue) async {
+                                        setState(() {
+                                          KhoXeId = newValue;
+                                        });
+                                        if (newValue != null) {
+                                          getBaiXeList(newValue);
+                                          print("object : ${KhoXeId}");
+                                        }
+                                        ;
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -540,7 +548,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -576,35 +584,39 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _baixeList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenBaiXe ?? "",
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items: _baixeList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenBaiXe ?? "",
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: BaiXeId,
-                                    onChanged: (newValue) async {
-                                      setState(() {
-                                        BaiXeId = newValue;
-                                      });
-                                      if (newValue != null) {
-                                        getViTriList(newValue);
-                                        print("object : ${BaiXeId}");
-                                      }
-                                      ;
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: BaiXeId,
+                                      onChanged: (newValue) async {
+                                        setState(() {
+                                          BaiXeId = newValue;
+                                        });
+                                        if (newValue != null) {
+                                          getViTriList(newValue);
+                                          print("object : ${BaiXeId}");
+                                        }
+                                        ;
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -612,7 +624,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 9.h,
+                            height: 8.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -648,32 +660,36 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 ),
                                 Expanded(
                                   flex: 1,
-                                  child: DropdownButtonFormField<String>(
-                                    items: _vitriList?.map((item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.id,
-                                        child: Container(
-                                          padding: EdgeInsets.only(left: 15.sp),
-                                          child: Text(
-                                            item.tenViTri ?? "",
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF000000),
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5.h),
+                                    child: DropdownButtonFormField<String>(
+                                      items: _vitriList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenViTri ?? "",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    value: ViTriId,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        ViTriId = newValue;
-                                      });
-                                      print("object : ${ViTriId}");
-                                    },
+                                        );
+                                      }).toList(),
+                                      value: ViTriId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          ViTriId = newValue;
+                                        });
+                                        print("object : ${ViTriId}");
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],

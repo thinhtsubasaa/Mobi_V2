@@ -42,12 +42,12 @@ class PopUp2 extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTopBar(), // Đặt phần này ở đây để nó không cuộn cùng nội dung
+            _buildInputFields(),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildInputFields(),
                     _buildCarDetails(),
                     _buildTableOptions(),
                   ],
@@ -221,7 +221,7 @@ class PopUp2 extends StatelessWidget {
     int index = 0; // Biến đếm số thứ tự
     return Container(
       width: 100.w,
-      // height: 100.h,
+      height: 90.h,
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

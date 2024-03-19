@@ -65,8 +65,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         color: Colors.white, // Màu nền của card
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Phần Text 1
           Container(
             width: 20.w,
             height: 8.h,
@@ -77,37 +77,40 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               ),
               color: Color(0xFFA71C20),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Text trong cột
-                Text(
-                  'Số khung\n (VIN)',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white,
-                  ),
+            child: Center(
+              child: Text(
+                'Số khung\n (VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  height: 1.08, // Corresponds to line-height of 13px
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(width: 10),
-          // Phần Text 2
-          Text(
-            barcodeScanResult.isNotEmpty
-                ? barcodeScanResult
-                : '          Scan a barcode         ',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFFA71C20),
+          SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(5),
+              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
+              // ),
+              child: Text(
+                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFA71C20),
+                ),
+              ),
             ),
           ),
-
+          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
