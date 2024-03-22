@@ -132,7 +132,7 @@ class PopUp2 extends StatelessWidget {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontFamily: 'Coda Caption',
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFFA71C20),
                     ),
@@ -155,7 +155,7 @@ class PopUp2 extends StatelessWidget {
                           'Số khung (VIN):',
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF818180),
                           ),
@@ -166,7 +166,7 @@ class PopUp2 extends StatelessWidget {
                           soKhung,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFFA71C20),
                           ),
@@ -174,7 +174,7 @@ class PopUp2 extends StatelessWidget {
                       ],
                     ),
 
-                    SizedBox(width: 60), // Khoảng cách giữa hai Text
+                    SizedBox(width: 40), // Khoảng cách giữa hai Text
 
                     // Text 2
                     Column(

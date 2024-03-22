@@ -99,34 +99,28 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
-                  height: 1.08, // Corresponds to line-height of 13px
                   color: Colors.white,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 10),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
+              // padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -180,40 +174,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       });
     });
   }
-  // void _handleBarcodeScanResult(String barcodeScanResult) {
-  //   print("111:${barcodeScanResult}");
-  //   setState(() {
-  //     if (barcodeScanResult.isEmpty) {
-  //       _qrData = '';
-  //       _qrDataController.text = '';
-  //       _data = null;
-  //     } else {
-  //       _qrData = barcodeScanResult;
-  //       _qrDataController.text = barcodeScanResult;
-  //       _onScan(barcodeScanResult);
-  //     }
-  //   });
-  // }
-
-  // _onScan(value) {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   _sb.getData(value).then((_) {
-  //     setState(() {
-  //       if (_sb.scan == null) {
-  //         _qrData = '';
-  //         _qrDataController.text = '';
-  //         _data = null;
-  //       } else {
-  //         _qrData = value;
-  //         _qrDataController.text = value;
-  //         _data = _sb.scan;
-  //       }
-  //       _loading = false;
-  //     });
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +206,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 children: [
                   Expanded(
                     child: Container(
-                      margin: const EdgeInsets.only(left: 10, right: 10),
                       height: 8.h,
                       child: Align(
                         alignment: Alignment.center,
@@ -297,10 +256,10 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               ),
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
-                height: 9.h,
+                height: 13.h,
                 padding: const EdgeInsets.all(5),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Text 1
                     showInfoXe(
@@ -308,22 +267,19 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       _data != null ? _data!.soKhung ?? "" : "",
                     ),
 
-                    SizedBox(width: 8.w), // Khoảng cách giữa hai Text
                     showInfoXe(
                       'Màu:',
                       _data != null ? _data!.tenMau ?? "" : "",
                     ),
-                    SizedBox(width: 5.w),
                   ],
                 ),
               ),
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
-                height: 9.h,
+                height: 13.h,
                 padding: const EdgeInsets.all(5),
                 child: Row(
                   children: [
-                    SizedBox(width: 5.w),
                     showInfoXe(
                       'Nhà máy',
                       _data != null ? _data!.tenKho ?? "" : "",
@@ -336,7 +292,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 padding: EdgeInsets.all(10),
                 child: ElevatedButton(
                   onPressed: () {
-                    nextScreen(
+                    nextScreenReplace(
                         context,
                         NhanXe2Page(
                           soKhung: _data!.soKhung ?? "",
@@ -378,27 +334,30 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 }
 
 Widget showInfoXe(String title, String value) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        title,
-        style: const TextStyle(
-          fontFamily: 'Comfortaa',
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF818180),
+  return Container(
+    padding: EdgeInsets.only(top: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Comfortaa',
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF818180),
+          ),
         ),
-      ),
-      Text(
-        value,
-        style: const TextStyle(
-          fontFamily: 'Comfortaa',
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFFA71C20),
-        ),
-      )
-    ],
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Comfortaa',
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFFA71C20),
+          ),
+        )
+      ],
+    ),
   );
 }

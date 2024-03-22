@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:Thilogi/models/giaoxe.dart';
-import 'package:Thilogi/models/xuatkho.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -20,7 +20,6 @@ import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../blocs/giaoxe_bloc.dart';
-import '../../blocs/xuatkho_bloc.dart';
 import '../../models/diadiem.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
@@ -241,10 +240,10 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
               ),
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 10),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              // padding: EdgeInsets.symmetric(horizontal: 10),
               // decoration: BoxDecoration(
               //   borderRadius: BorderRadius.circular(5),
               //   border: Border.all(color: Color(0xFFA71C20), width: 1),
@@ -253,14 +252,13 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -402,7 +400,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withOpacity(1),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x40000000),
@@ -433,7 +431,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 8.h,
+                            height: 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -470,7 +468,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5.h),
+                                    padding: EdgeInsets.only(top: 5),
                                     child: DropdownButtonFormField<String>(
                                       items: _diadiemList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -509,7 +507,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 8.h,
+                            height: 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -546,7 +544,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5.h),
+                                    padding: EdgeInsets.only(top: 5),
                                     child: DropdownButtonFormField<String>(
                                       items:
                                           _phuongthucvanchuyenList?.map((item) {
@@ -616,13 +614,12 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(width: 10),
                                 // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: 10),
                                     // Text 1
                                     Text(
                                       'Số khung (VIN):',
@@ -646,9 +643,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                     ),
                                   ],
                                 ),
-
-                                SizedBox(
-                                    width: 50), // Khoảng cách giữa hai Text
 
                                 // Text 2
                                 Column(
@@ -685,12 +679,9 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                             padding: const EdgeInsets.all(10),
                             child: Row(
                               children: [
-                                SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: 10),
-
                                     // Text 1
                                     Text(
                                       'Số máy:',

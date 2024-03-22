@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
 import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
@@ -61,6 +62,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<GiaoXeBloc>(
             create: (context) => GiaoXeBloc(),
           ),
+          ChangeNotifierProvider<DieuChuyenBloc>(
+            create: (context) => DieuChuyenBloc(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -71,7 +75,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: MainMenuPage(),
+          home: MyHomePage(),
         ),
       ),
     );

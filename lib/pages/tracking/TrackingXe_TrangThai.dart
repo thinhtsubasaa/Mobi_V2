@@ -12,7 +12,6 @@ import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 // ignore: use_key_in_widget_constructors
-
 class TrackingXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -131,7 +130,7 @@ class _TabNhanXeScreenState extends State<TabNhanXeScreen>
             textColor: const Color(0xFF818180),
             backgroundColor: const Color(0xFFF6C6C7),
             onTap: () {
-              nextScreen(context, TrackingXeVitriPage());
+              // nextScreen(context, TrackingXeVitriPage());
             },
           ),
         ],

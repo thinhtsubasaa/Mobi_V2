@@ -9,10 +9,8 @@ Widget customTitle(String text) {
       style: TextStyle(
         color: Color.fromARGB(255, 216, 30, 16),
         fontFamily: 'Roboto',
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: FontWeight.w700,
-        height: 1.17,
-        letterSpacing: 0,
       ),
     ),
   );

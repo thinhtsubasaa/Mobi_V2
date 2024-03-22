@@ -1,5 +1,6 @@
 import 'package:Thilogi/pages/tracking/TrackingXe_TrangThai.dart';
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
+import 'package:Thilogi/pages/vitrixe/custom_body_vitrixe.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -13,52 +14,104 @@ import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 // ignore: use_key_in_widget_constructors
+// class TrackingXeVitriPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: customAppBar(),
+//       body: LayoutBuilder(
+//         builder: (context, constraints) {
+//           return SingleChildScrollView(
+//             child: ConstrainedBox(
+//               constraints: BoxConstraints(
+//                 minHeight: constraints.maxHeight,
+//               ),
+//               child: Container(
+//                 decoration: const BoxDecoration(
+//                   image: DecorationImage(
+//                     image: AssetImage(AppConfig.backgroundImagePath),
+//                     fit: BoxFit.cover,
+//                   ),
+//                 ),
+//                 child: Column(
+//                   children: [
+//                     CustomCard(),
+//                     CustomCardVIN(),
+//                     SizedBox(height: 10),
+//                     TabNhanXeScreen(),
+//                     SizedBox(height: 10),
+//                     CustomTrackingXeVitri(),
+//                     const SizedBox(height: 20),
+//                     Container(
+//                       width: 100.w,
+//                       child: Column(
+//                         children: [
+//                           customTitle('TRACKING XE THÀNH PHẨM'),
+//                           SizedBox(height: 10),
+//                           customBottom(
+//                               "Tìm kiếm xe theo Đơn hàng/ Số VIN Theo dõi vị trí xe trong quá trình vận chuyển giao xe"),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
+
 class TrackingXeVitriPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: customAppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-              ),
+      body: Column(
+        children: [
+          CustomCard(),
+          Expanded(
+            child: SingleChildScrollView(
               child: Container(
+                width: 100.w,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AppConfig.backgroundImagePath),
+                    // Đường dẫn đến ảnh nền
                     fit: BoxFit.cover,
+                    // Cách ảnh nền sẽ được hiển thị
                   ),
                 ),
-                padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    // CustomCard(),
                     CustomCardVIN(),
                     SizedBox(height: 10),
                     TabNhanXeScreen(),
-                    SizedBox(height: 10),
                     CustomTrackingXeVitri(),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: 100.w,
-                      child: Column(
-                        children: [
-                          customTitle('TRACKING XE THÀNH PHẨM'),
-                          SizedBox(height: 10),
-                          customBottom(
-                              "Tìm kiếm xe theo Đơn hàng/ Số VIN Theo dõi vị trí xe trong quá trình vận chuyển giao xe"),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
             ),
-          );
-        },
+          ),
+          BottomContent(),
+        ],
+      ),
+    );
+  }
+}
+
+class BottomContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 10.h,
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: customTitle(
+          'TRACKING XE THÀNH PHẨM',
+        ),
       ),
     );
   }
@@ -96,23 +149,7 @@ class _TabNhanXeScreenState extends State<TabNhanXeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return
-        //  Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     TabItem(
-        //       label: 'Trạng thái vận chuyển',
-        //       textColor: const Color(0xFF818180),
-        //       backgroundColor: const Color(0xFF7F7F7F),
-        //     ),
-        //     TabItem(
-        //       label: 'Vị trí trên đường',
-        //       textColor: const Color(0xFF428FCA),
-        //       backgroundColor: const Color(0xFFF6C6C7),
-        //     ),
-        //   ],
-        // );
-        Material(
+    return Material(
       child: TabBar(
         controller: _tabController,
         tabs: [
@@ -163,7 +200,7 @@ class TabItem extends StatelessWidget {
               label,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: textColor,
               ),
@@ -180,7 +217,7 @@ class CustomCardVIN extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 90.w,
-      height: 8.h,
+      height: 7.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         // Đặt border radius cho card
@@ -226,13 +263,13 @@ class CustomCardVIN extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              // padding: EdgeInsets.symmetric(horizontal: 10),
               // Phần Text 2
               child: Text(
                 'MALA851CBHM557809',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFFA71C20),
                 ),
@@ -260,3 +297,138 @@ class CustomCardVIN extends StatelessWidget {
     );
   }
 }
+
+// class TrackingXeVitriPage extends StatefulWidget {
+//   const TrackingXeVitriPage({super.key});
+
+//   @override
+//   State<TrackingXeVitriPage> createState() => _TrackingXeVitriPageState();
+// }
+
+// class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
+//     with SingleTickerProviderStateMixin {
+//   TabController? _tabController;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _tabController = TabController(vsync: this, length: 2);
+//     _tabController!.addListener(_handleTabChange);
+//   }
+
+//   @override
+//   void dispose() {
+//     _tabController?.dispose();
+//     super.dispose();
+//   }
+
+//   void _handleTabChange() {
+//     if (_tabController!.indexIsChanging) {
+//       // Call the action when the tab changes
+//       // print('Tab changed to: ${_tabController!.index}');
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         // automaticallyImplyLeading: false,
+//         title: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Image.asset(
+//               AppConfig.QLKhoImagePath,
+//               width: 70.w,
+//             ),
+//             Container(
+//               child: Text(
+//                 'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   fontFamily: 'Roboto',
+//                   fontSize: 14.sp,
+//                   fontWeight: FontWeight.w700,
+//                   color: Color(0xFFBC2925),
+//                   height: 16 / 14,
+//                   letterSpacing: 0,
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//         bottom: TabBar(
+//           controller: _tabController,
+//           tabs: const [
+//             Tab(icon: Icon(Icons.home), text: 'Vị trí trên đường'),
+//             Tab(icon: Icon(Icons.history), text: 'Trạng thái vận chuyển'),
+//           ],
+//         ),
+//       ),
+//       body: Container(
+//         decoration: const BoxDecoration(
+//           image: DecorationImage(
+//             image: AssetImage(AppConfig.backgroundImagePath),
+//             fit: BoxFit.cover,
+//           ),
+//         ),
+//         child: TabBarView(
+//           physics: const NeverScrollableScrollPhysics(),
+//           controller: _tabController,
+//           children: [
+//             CustomTrackingXeVitri(),
+//             CustomTrackingXe(),
+//           ],
+//         ),
+//       ),
+//       // body: LayoutBuilder(
+//       //   builder: (context, constraints) {
+//       //     return SingleChildScrollView(
+//       //       child: ConstrainedBox(
+//       //         constraints: BoxConstraints(
+//       //           minHeight: constraints.maxHeight,
+//       //         ),
+//       //         child: Container(
+//       //           decoration: const BoxDecoration(
+//       //             image: DecorationImage(
+//       //               image: AssetImage(AppConfig.backgroundImagePath),
+//       //               fit: BoxFit.cover,
+//       //             ),
+//       //           ),
+//       //           padding: EdgeInsets.all(10),
+//       //           child: Column(
+//       //             children: [
+//       //               // CustomCard(),
+//       //               CustomCardVIN(),
+//       //               SizedBox(height: 10),
+//       //               TabBarView(
+//       //                 controller: _tabController,
+//       //                 children: [
+//       //                   CustomTrackingXeVitri(),
+//       //                   CustomTrackingXe(),
+//       //                 ],
+//       //               ),
+//       //               SizedBox(height: 10),
+//       //               CustomTrackingXeVitri(),
+//       //               const SizedBox(height: 20),
+//       //               Container(
+//       //                 width: 100.w,
+//       //                 child: Column(
+//       //                   children: [
+//       //                     customTitle('TRACKING XE THÀNH PHẨM'),
+//       //                     SizedBox(height: 10),
+//       //                     customBottom(
+//       //                         "Tìm kiếm xe theo Đơn hàng/ Số VIN Theo dõi vị trí xe trong quá trình vận chuyển giao xe"),
+//       //                   ],
+//       //                 ),
+//       //               ),
+//       //             ],
+//       //           ),
+//       //         ),
+//       //       ),
+//       //     );
+//       //   },
+//       // ),
+//     );
+//   }
+// }

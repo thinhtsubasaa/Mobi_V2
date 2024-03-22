@@ -103,10 +103,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) => _ub.setSignIn())
                   .then((_) {
                 _btnController.success();
+
                 nextScreen(context, MainMenuPage());
               });
             } else {
               if (asb.hasError) {
+                openSnackBar(context, asb.errorCode);
                 print("lỗi: ${asb.errorCode}");
               } else {
                 openSnackBar(
@@ -122,12 +124,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 20),
-          child: Text(
-            "Tài khoản",
+    return AutofillGroup(
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: Text(
+              "Tài khoản",
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Roboto',
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: 70.w,
+            height: 8.h,
+            child: TextFormField(
+              controller: userNameCtrl,
+              autofillHints: [AutofillHints.username],
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            "Mật khẩu",
             style: TextStyle(
               color: Colors.black,
               fontFamily: 'Roboto',
@@ -135,131 +169,103 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fontWeight: FontWeight.w400,
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: 70.w,
-          height: 8.h,
-          child: TextFormField(
-            controller: userNameCtrl,
-            decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          "Mật khẩu",
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: 'Roboto',
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: 70.w,
-          height: 8.h,
-          child: TextFormField(
-            controller: passwordCtrl,
-            obscureText: obscureText,
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              // Sử dụng suffixIcon để thêm biểu tượng con mắt
-              suffixIcon: IconButton(
-                icon: Icon(
-                  obscureText ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.grey,
+          const SizedBox(height: 10),
+          Container(
+            width: 70.w,
+            height: 8.h,
+            child: TextFormField(
+              controller: passwordCtrl,
+              autofillHints: [AutofillHints.password],
+              obscureText: obscureText,
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                onPressed: () {
-                  // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
-                  setState(() {
-                    obscureText = !obscureText;
-                  });
-                },
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+                // Sử dụng suffixIcon để thêm biểu tượng con mắt
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    obscureText ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
+                    setState(() {
+                      obscureText = !obscureText;
+                    });
+                  },
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          "Domain",
-          style: TextStyle(
-            color: Colors.black,
-            fontFamily: 'Roboto',
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            height: 1.17,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: 70.w,
-          height: 8.h,
-          child: DropdownButtonFormField(
-            value: selectedDomain,
-            decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide(color: Colors.black),
-              ),
+          const SizedBox(height: 10),
+          const Text(
+            "Domain",
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Roboto',
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              height: 1.17,
             ),
-            items: [
-              DropdownMenuItem(
-                child: Text(selectedDomain),
-                value: selectedDomain,
-              ),
-              DropdownMenuItem(
-                child: Text('Option 1'),
-                value: 'option1',
-              ),
-              DropdownMenuItem(
-                child: Text('Option 2'),
-                value: 'option2',
-              ),
-              // Add more items as needed
-            ],
-            onChanged: (value) {
-              setState(() {
-                selectedDomain = value.toString();
-              });
-            },
           ),
-        ),
-        const SizedBox(height: 10),
-        loadingButton(
-          context,
-          _btnController,
-          _login,
-          'Đăng nhập',
-          Theme.of(context).primaryColor,
-          Colors.black,
-        ),
-        const SizedBox(height: 5),
-      ],
+          const SizedBox(height: 10),
+          Container(
+            width: 70.w,
+            height: 8.h,
+            child: DropdownButtonFormField(
+              value: selectedDomain,
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+              items: [
+                DropdownMenuItem(
+                  child: Text(selectedDomain),
+                  value: selectedDomain,
+                ),
+                DropdownMenuItem(
+                  child: Text('Option 1'),
+                  value: 'option1',
+                ),
+                DropdownMenuItem(
+                  child: Text('Option 2'),
+                  value: 'option2',
+                ),
+                // Add more items as needed
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedDomain = value.toString();
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 10),
+          loadingButton(
+            context,
+            _btnController,
+            _login,
+            'Đăng nhập',
+            Theme.of(context).primaryColor,
+            Colors.black,
+          ),
+          const SizedBox(height: 5),
+        ],
+      ),
     );
   }
 }

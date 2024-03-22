@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/login/Login.dart';
+import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
 import '../widgets/custom_title.dart';
 
@@ -9,22 +10,38 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: ListView(
+      body: Column(
         children: [
-          const CustomImage(imagePath: AppConfig.homeImagePath),
-          const SizedBox(height: 5),
-          customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
-          const SizedBox(height: 5),
-          CustomImage(imagePath: AppConfig.bottomHomeImagePath),
-          const SizedBox(
-              height: 65), // Khoảng cách để làm cho nút không che phần body
-          // Thêm khoảng cách tương ứng với chiều cao của nút
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const CustomImage(imagePath: AppConfig.homeImagePath),
+                ],
+              ),
+            ),
+          ),
+          BottomContent(),
         ],
       ),
-      floatingActionButton: CustomButton(onPressed: () {
-        nextScreen(context, LoginPage());
-      }),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class BottomContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+        const SizedBox(height: 5),
+        CustomImage(imagePath: AppConfig.bottomHomeImagePath),
+        const SizedBox(height: 15),
+        CustomButton(onPressed: () {
+          nextScreen(context, LoginPage());
+        }),
+      ],
     );
   }
 }
@@ -90,6 +107,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Image.asset(
         AppConfig.appBarImagePath,
+        height: 20.w,
       ),
       centerTitle: false,
     );

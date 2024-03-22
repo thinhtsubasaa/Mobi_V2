@@ -11,12 +11,20 @@ import 'package:sizer/sizer.dart';
 class CustomBodyQLKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(width: 100.w, child: BodyQLKhoXe());
+    return Container(width: 100.w, child: BodyQLKhoXeScreen());
   }
 }
 
+class BodyQLKhoXeScreen extends StatefulWidget {
+  const BodyQLKhoXeScreen({Key? key}) : super(key: key);
+
+  @override
+  _BodyQLKhoXeScreenState createState() => _BodyQLKhoXeScreenState();
+}
+
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class BodyQLKhoXe extends StatelessWidget {
+class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
+    with SingleTickerProviderStateMixin {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   @override
@@ -47,45 +55,42 @@ class BodyQLKhoXe extends StatelessWidget {
                       color: Color(0xFFBC2925),
                     ),
                     alignment: Alignment.center,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            nextScreen(context, NhanXePage());
-                          },
-                          icon: Stack(
-                            children: [
-                              Image.asset(
-                                'assets/images/car1.png',
-                                width: 60,
-                                height: 65,
-                              ),
-                              Transform.translate(
-                                offset: const Offset(25, -15),
-                                child: Image.asset(
-                                  'assets/images/car2.png',
-                                  width: 50,
-                                  height: 55,
-                                ),
-                              ),
-                            ],
+                    child: IconButton(
+                      onPressed: () {
+                        nextScreen(context, NhanXePage());
+                      },
+                      icon: Stack(
+                        children: [
+                          Image.asset(
+                            'assets/images/car1.png',
+                            width: 60,
+                            height: 65,
                           ),
+                          Transform.translate(
+                            offset: const Offset(25, -15),
+                            child: Image.asset(
+                              'assets/images/car2.png',
+                              width: 50,
+                              height: 55,
+                            ),
+                          ),
+                        ],
+                      ),
 
-                          iconSize: 60, // Kích thước của biểu tượng
-                          padding: EdgeInsets
-                              .zero, // Xóa padding mặc định của IconButton
-                          alignment: Alignment
-                              .center, // Căn chỉnh hình ảnh vào giữa nút
-                        ),
-                      ],
+                      iconSize: 60, // Kích thước của biểu tượng
+                      padding: EdgeInsets
+                          .zero, // Xóa padding mặc định của IconButton
+                      alignment:
+                          Alignment.center, // Căn chỉnh hình ảnh vào giữa nút
                     ),
                   ),
+
                   const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
                   const Text(
                     'KIỂM TRA NHẬN XE',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFFA71C20),
                     ),
@@ -220,9 +225,12 @@ class BodyQLKhoXe extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(width: 20),
+              SizedBox(width: 15),
               Column(
                 children: [
+                  SizedBox(
+                    height: 10,
+                  ),
                   Container(
                     width: 130,
                     height: 135,
@@ -263,9 +271,8 @@ class BodyQLKhoXe extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
                   const Text(
-                    'TRACKING XE\n THANH PHAM',
+                    'TRACKING XE\nTHÀNH PHẨM',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,

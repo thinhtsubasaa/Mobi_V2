@@ -35,7 +35,6 @@ class ChucnangService extends ChangeNotifier {
 
   Future<void> getData(BuildContext context, String soKhung) async {
     _isLoading = true;
-    _scan = null;
 
     try {
       final http.Response response =
@@ -44,33 +43,29 @@ class ChucnangService extends ChangeNotifier {
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data:${decodedData}");
-        if (decodedData != null) {
-          // _success = decodedData["success"];
-          // _message = decodedData["message"];
-          notifyListeners();
-          QuickAlert.show(
-              context: context,
-              type: QuickAlertType.success,
-              title: 'Success',
-              text: "Nhận xe thành công",
-              onConfirmBtnTap: () {
-                clear(context);
-              });
-        } else {
-          String errorMessage = response.body.replaceAll('"', '');
-          notifyListeners();
-          QuickAlert.show(
-              context: context,
-              type: QuickAlertType.error,
-              title: 'Error',
-              text: errorMessage,
-              onConfirmBtnTap: () {
-                clear(context);
-              });
-        }
+
+        // _success = decodedData["success"];
+        // _message = decodedData["message"];
+        notifyListeners();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: 'Success',
+            text: "Nhận xe thành công",
+            onConfirmBtnTap: () {
+              clear(context);
+            });
       } else {
-        _scan = null; // Gán _scan thành null nếu không có dữ liệu
-        _isLoading = false;
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Error',
+            text: errorMessage,
+            onConfirmBtnTap: () {
+              clear(context);
+            });
       }
     } catch (e) {
       _hasError = true;

@@ -94,7 +94,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           SizedBox(width: 8),
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              // padding: EdgeInsets.symmetric(horizontal: 10),
               // decoration: BoxDecoration(
               //   borderRadius: BorderRadius.circular(5),
               //   border: Border.all(color: Color(0xFFA71C20), width: 1),
@@ -103,7 +103,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
@@ -178,7 +178,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withOpacity(1),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x40000000),
@@ -269,13 +269,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(width: 10),
                                 // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: 10),
                                     // Text 1
                                     Text(
                                       'Số khung (VIN):',
@@ -299,8 +298,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                   ],
                                 ),
-
-                                SizedBox(width: 60),
 
                                 // Text 2
                                 Column(
@@ -337,12 +334,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             padding: const EdgeInsets.all(10),
                             child: Row(
                               children: [
-                                SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: 10),
-
                                     // Text 1
                                     Text(
                                       'Số máy:',

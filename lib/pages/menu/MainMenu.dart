@@ -15,39 +15,34 @@ class MainMenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(key: Key('customAppBar')),
-      body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  width: 100.w,
-                  child: Column(
-                    children: [
-                      // CustomCard(),
-                      CustomBodyMainMenu(),
-                      const SizedBox(height: 20),
-                      Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            customTitle(
-                              'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
-                            ),
-                            SizedBox(height: 10),
-                            customBottom(
-                              "Hệ thống bao gồm nhiều chức năng quản trị nghiệp vụ/ Dịch vụ của các Tổng công ty/ Công ty/ Đơn vị trực thuộc THILOGI",
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: Column(
+        children: [
+          CustomCard(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                width: 100.w,
+                child: CustomBodyMainMenu(),
+              ),
             ),
-          );
-        },
+          ),
+          BottomContent(),
+        ],
+      ),
+    );
+  }
+}
+
+class BottomContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 10.h,
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: customTitle(
+          'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
+        ),
       ),
     );
   }
