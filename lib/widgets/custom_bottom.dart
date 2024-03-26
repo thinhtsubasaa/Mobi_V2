@@ -12,8 +12,6 @@ Widget customBottom(String text) {
         fontFamily: 'Roboto',
         fontSize: 15.sp,
         fontWeight: FontWeight.w400,
-        height: 1.33,
-        letterSpacing: 0,
       ),
     ),
   );

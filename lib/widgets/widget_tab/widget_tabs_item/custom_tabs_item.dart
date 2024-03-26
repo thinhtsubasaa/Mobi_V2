@@ -23,8 +23,6 @@ class TabItem extends StatelessWidget {
               fontFamily: 'Comfortaa',
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              height: 1.14,
-              letterSpacing: 0,
               color: textColor,
             ),
           ),

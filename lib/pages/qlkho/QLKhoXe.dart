@@ -9,7 +9,7 @@ import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-// // ignore: use_key_in_widget_constructors
+// ignore: use_key_in_widget_constructors
 // class QLKhoXePage extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -31,6 +31,7 @@ import '../../widgets/custom_title.dart';
 //                         image: AssetImage(AppConfig.backgroundImagePath),
 //                         // Đường dẫn đến ảnh nền
 //                         fit: BoxFit.cover,
+
 //                         // Cách ảnh nền sẽ được hiển thị
 //                       ),
 //                     ),
@@ -40,9 +41,11 @@ import '../../widgets/custom_title.dart';
 //                         CustomBodyQLKhoXe(),
 //                         const SizedBox(height: 20),
 //                         Container(
+//                           height: MediaQuery.of(context).size.height / 3,
 //                           child: Column(
 //                             children: [
-//                               customTitle('QUẢN LÝ KHO XE THÀNH PHẨM (WMS)'),
+//                               const SizedBox(height: 20),
+//                               customTitle('QUẢN LÝ KHO XE\n THÀNH PHẨM (WMS)'),
 //                               SizedBox(height: 10),
 //                               customBottom(
 //                                   "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
@@ -100,13 +103,35 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(
-          'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
+          'KIỂM TRA - NHẬP KHO XE',
         ),
       ),
     );
   }
 }
+
+
+// class BottomContent extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       child: Expanded(
+//         // height: MediaQuery.of(context).size.height / 5,
+//         // padding: EdgeInsets.all(10),
+
+//         child: Column(
+//           children: [
+//             customTitle('QUẢN LÝ KHO XE\n THÀNH PHẨM (WMS)'),
+//             SizedBox(height: 10),
+//             customBottom(
+//                 "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

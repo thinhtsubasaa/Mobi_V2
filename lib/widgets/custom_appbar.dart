@@ -1,4 +1,5 @@
 import 'package:Thilogi/config/config.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -21,14 +22,11 @@ PreferredSizeWidget customAppBar() {
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
               color: Color(0xFFBC2925),
-              height: 16 / 14,
-              letterSpacing: 0,
             ),
           ),
         ),
       ],
     ),
-    centerTitle: false,
   );
 }
 

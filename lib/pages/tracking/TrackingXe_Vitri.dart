@@ -1,6 +1,6 @@
 import 'package:Thilogi/pages/tracking/TrackingXe_TrangThai.dart';
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
-import 'package:Thilogi/pages/vitrixe/custom_body_vitrixe.dart';
+import 'package:Thilogi/pages/XuatCong/custom_body_vitrixe.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +89,7 @@ class TrackingXeVitriPage extends StatelessWidget {
                     CustomCardVIN(),
                     SizedBox(height: 10),
                     TabNhanXeScreen(),
+                    SizedBox(height: 10),
                     CustomTrackingXeVitri(),
                   ],
                 ),
@@ -106,7 +107,7 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: MediaQuery.of(context).size.height / 7,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(

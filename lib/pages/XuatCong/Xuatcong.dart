@@ -1,3 +1,4 @@
+import 'package:Thilogi/pages/XuatCong/custom_body_vitrixe.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:sizer/sizer.dart';
 import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 
-// class VitriXePage extends StatelessWidget {
+// class XuatCongXePage extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
@@ -58,7 +59,7 @@ import '../../widgets/custom_card.dart';
 //     );
 //   }
 // }
-class VitriXePage extends StatelessWidget {
+class XuatCongXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +79,7 @@ class VitriXePage extends StatelessWidget {
                     // Cách ảnh nền sẽ được hiển thị
                   ),
                 ),
-                child: CustomBodyBaiXe(),
+                child: CustomBodyXuatCongXe(),
               ),
             ),
           ),
@@ -93,11 +94,11 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - NHẬN XE',
+          'KIỂM TRA - XUẤT CÔNG',
         ),
       ),
     );

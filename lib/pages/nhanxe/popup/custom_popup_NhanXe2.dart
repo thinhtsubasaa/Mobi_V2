@@ -1,6 +1,9 @@
+import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
 import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
+
+import '../../../utils/next_screen.dart';
 
 // ignore: use_key_in_widget_constructors
 class PopUp2 extends StatelessWidget {
@@ -41,7 +44,8 @@ class PopUp2 extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTopBar(), // Đặt phần này ở đây để nó không cuộn cùng nội dung
+            _buildTopBar(
+                context), // Đặt phần này ở đây để nó không cuộn cùng nội dung
             _buildInputFields(),
             Expanded(
               child: SingleChildScrollView(
@@ -60,7 +64,7 @@ class PopUp2 extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar() {
+  Widget _buildTopBar(BuildContext context) {
     return Container(
       height: 10.h,
       padding: const EdgeInsets.all(8),

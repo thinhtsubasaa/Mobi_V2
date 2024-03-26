@@ -1,4 +1,4 @@
-package com.example.project;
+package com.thilogi.vn.logistics;
 
 import io.flutter.embedding.android.FlutterActivity;
 

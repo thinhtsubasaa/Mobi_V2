@@ -281,7 +281,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -292,22 +292,17 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           Expanded(
             child: Container(
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,

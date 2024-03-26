@@ -5,6 +5,32 @@ import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
 import '../widgets/custom_title.dart';
 
+// class MyHomePage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: CustomAppBar(key: Key('customAppBar')),
+//       body: Container(
+//         width: MediaQuery.of(context).size.width,
+//         height: MediaQuery.of(context).size.height,
+//         child: ListView(
+//           children: [
+//             const CustomImage(imagePath: AppConfig.homeImagePath),
+//             const SizedBox(height: 5),
+//             customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+//             const SizedBox(height: 5),
+//             CustomImage(imagePath: AppConfig.bottomHomeImagePath),
+//             const SizedBox(height: 15),
+//             CustomButton(onPressed: () {
+//               nextScreen(context, LoginPage());
+//             }),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,17 +57,20 @@ class MyHomePage extends StatelessWidget {
 class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
-        const SizedBox(height: 5),
-        CustomImage(imagePath: AppConfig.bottomHomeImagePath),
-        const SizedBox(height: 15),
-        CustomButton(onPressed: () {
-          nextScreen(context, LoginPage());
-        }),
-      ],
+    return Container(
+      child: Column(
+        children: [
+          const SizedBox(height: 5),
+          customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+          const SizedBox(height: 10),
+          CustomImage(imagePath: AppConfig.bottomHomeImagePath),
+          const SizedBox(height: 15),
+          CustomButton(onPressed: () {
+            nextScreen(context, LoginPage());
+          }),
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 }
@@ -86,8 +115,6 @@ class CustomButton extends StatelessWidget {
           fontFamily: 'Roboto',
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          height: 1.16,
-          letterSpacing: 0,
         ),
       ),
     );
@@ -107,7 +134,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Image.asset(
         AppConfig.appBarImagePath,
-        height: 20.w,
       ),
       centerTitle: false,
     );

@@ -5,10 +5,12 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
 import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:flutter_datawedge/flutter_datawedge.dart';
+import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class CustomBodyVitriXe extends StatelessWidget {
+class CustomBodyXuatCongXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(child: BodyBaiXeScreen());
@@ -25,15 +27,28 @@ class BodyBaiXeScreen extends StatefulWidget {
 class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     with SingleTickerProviderStateMixin {
   static RequestHelper requestHelper = RequestHelper();
-  String? selectedKho;
-  List<String> khoList = ['Vị trí 1', 'Vị trí 2', 'Vị trí 3'];
   String _qrData = '';
   final _qrDataController = TextEditingController();
   Timer? _debounce;
-  List<String>? _results = [];
   KhoThanhPhamModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _success = false;
+  bool get success => _success;
+
+  String? _message;
+  String? get message => _message;
+
+  late FlutterDataWedge dataWedge;
+  late StreamSubscription<ScanResult> scanSubscription;
 
   late KhoThanhPhamBloc _bl;
 
@@ -42,11 +57,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     super.initState();
 
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
+    dataWedge = FlutterDataWedge(profileName: "Example Profile");
+
+    // Subscribe to scan results
+    scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
+      setState(() {
+        barcodeScanResult = result.data;
+      });
+      print(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult);
+    });
   }
 
   @override
   void dispose() {
-    // _tabController?.dispose();
+    scanSubscription.cancel();
+    // dataWedge.dispose();
     super.dispose();
   }
 
@@ -83,34 +109,28 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
-                  height: 1.08, // Corresponds to line-height of 13px
                   color: Colors.white,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 10),
           Expanded(
             child: Container(
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -192,10 +212,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Thông Tin Xác Nhận',
                         style: TextStyle(
                           fontFamily: 'Comfortaa',
@@ -203,40 +223,33 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const Divider(height: 1, color: Color(0xFFA71C20)),
-                      const SizedBox(height: 10),
+                      Divider(height: 1, color: Color(0xFFA71C20)),
+                      SizedBox(height: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InfoRow(
-                            labelText: "Kho Xe",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
+                          MyInputWidget(
+                            title: "Số Công",
+                            text: "",
+                            textStyle: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF000000),
+                            ),
+                            controller: null,
                           ),
-                          InfoRow(
-                            labelText: "Bãi Xe",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
-                          ),
-                          InfoRow(
-                            labelText: "Vị trí",
-                            itemList: khoList,
-                            selectedValue: selectedKho,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedKho = newValue;
-                              });
-                            },
+                          SizedBox(height: 4),
+                          MyInputWidget(
+                            title: "Số siu",
+                            text: "",
+                            textStyle: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF000000),
+                            ),
+                            controller: null,
                           ),
                         ],
                       ),
@@ -364,13 +377,34 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             ),
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10),
+                                ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(90.w, 50),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    onPressed: null,
+                                    child: Text("Lưu",
+                                        style: TextStyle(
+                                          fontFamily: 'Comfortaa',
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                        ))),
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-
-                // _buildButtons(context),
               ],
             ),
           ),
@@ -380,90 +414,73 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   }
 }
 
-class InfoRow extends StatelessWidget {
-  final String labelText;
-  final List<String> itemList;
-  final String? selectedValue;
-  final ValueChanged<String?> onChanged;
+class MyInputWidget extends StatelessWidget {
+  final String title;
+  final String text;
+  final TextStyle textStyle;
+  final TextEditingController? controller;
 
-  const InfoRow({
-    required this.labelText,
-    required this.itemList,
-    required this.selectedValue,
-    required this.onChanged,
-  });
+  const MyInputWidget({
+    Key? key,
+    required this.title,
+    required this.text,
+    required this.textStyle,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 7.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border.all(
-              color: const Color(0xFF818180),
-              width: 1,
+    return Container(
+      height: 9.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(
+          color: const Color(0xFF818180),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30.w,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF6C6C7),
+              border: Border(
+                right: BorderSide(
+                  color: Color(0xFF818180),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                title,
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF000000),
+                ),
+              ),
             ),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6C6C7),
-                    border: Border(
-                      right: BorderSide(
-                        color: Color(0xFF818180),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      labelText,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF000000),
-                      ),
-                    ),
-                  ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              child: TextFormField(
+                controller: controller,
+                style: textStyle,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: DropdownButtonFormField<String>(
-                  value: selectedValue,
-                  onChanged: onChanged,
-                  items: itemList.map((item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 15.w),
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xFF000000),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-      ],
+        ],
+      ),
     );
   }
 }

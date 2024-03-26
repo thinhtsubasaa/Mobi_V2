@@ -25,6 +25,8 @@ class BodyMainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(bottom: 25), // Khoảng cách giữa các box
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

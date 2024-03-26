@@ -30,7 +30,10 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 30),
+      // margin: const EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(
+          top: 25, bottom: 25), // Khoảng cách giữa các box
       child: Column(
         children: [
           // Hàng đầu tiên
@@ -41,7 +44,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -104,7 +107,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -168,7 +171,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -233,7 +236,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                   ),
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [

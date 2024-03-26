@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/vitrixe/vitrixe.dart';
+import 'package:Thilogi/pages/XuatCong/Xuatcong.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -23,7 +23,10 @@ class BodyQLKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 30),
+      // margin: const EdgeInsets.only(top: 30),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(
+          top: 25, bottom: 25), // Khoảng cách giữa các box
       child: Column(
         children: [
           // Hàng đầu tiên
@@ -34,7 +37,7 @@ class BodyQLKhoXe extends StatelessWidget {
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -98,7 +101,7 @@ class BodyQLKhoXe extends StatelessWidget {
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -162,7 +165,7 @@ class BodyQLKhoXe extends StatelessWidget {
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -223,7 +226,7 @@ class BodyQLKhoXe extends StatelessWidget {
                 children: [
                   Container(
                     width: 130,
-                    height: 135,
+                    height: 150,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -239,7 +242,7 @@ class BodyQLKhoXe extends StatelessWidget {
                     alignment: Alignment.center,
                     child: IconButton(
                       onPressed: () {
-                        nextScreen(context, VitriXePage());
+                        nextScreen(context, XuatCongXePage());
                       },
                       icon: Stack(
                         alignment: Alignment.center,
@@ -263,7 +266,7 @@ class BodyQLKhoXe extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'VỊ TRÍ XE',
+                    'XUẤT CÔNG',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,

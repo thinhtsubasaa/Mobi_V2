@@ -28,6 +28,7 @@ class GuessPage extends StatelessWidget {
                         const SizedBox(height: 20),
                         Container(
                           width: 100.w,
+                          height: MediaQuery.of(context).size.height / 2,
                           color: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
@@ -59,6 +60,7 @@ class GuessPage extends StatelessWidget {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
   final Key? key;
 
   const CustomAppBar({this.key}) : super(key: key);
@@ -67,10 +69,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       // automaticallyImplyLeading: false,
-      title: Image.asset(
-        AppConfig.appBarImagePath,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.appBarImagePath,
+            width: 70.w,
+          ),
+        ],
       ),
-      centerTitle: false,
     );
   }
 

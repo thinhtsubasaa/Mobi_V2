@@ -26,7 +26,6 @@ class LoginPage extends StatelessWidget {
               ),
               child: Container(
                 width: 100.w,
-                padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
                     Container(
@@ -39,6 +38,7 @@ class LoginPage extends StatelessWidget {
                           SizedBox(height: 20),
                           Container(
                             width: 100.w,
+                            height: MediaQuery.of(context).size.height / 2,
                             color: const Color(0x21428FCA),
                             padding: const EdgeInsets.symmetric(horizontal: 50),
                             child: Column(
@@ -106,6 +106,7 @@ class CustomButtonLogin extends StatelessWidget {
 }
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
   final Key? key;
 
   const CustomAppBar({this.key}) : super(key: key);
@@ -113,11 +114,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      automaticallyImplyLeading: false,
-      title: Image.asset(
-        AppConfig.appBarImagePath,
+      // automaticallyImplyLeading: false,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.appBarImagePath,
+            width: 70.w,
+          ),
+        ],
       ),
-      centerTitle: false,
     );
   }
 

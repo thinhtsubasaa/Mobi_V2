@@ -1,3 +1,4 @@
+import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,6 +12,8 @@ class AppBloc extends ChangeNotifier {
 
   ScanModel? _scan;
   ScanModel? get scan => _scan;
+  DieuChuyenModel? _dieuChuyen;
+  DieuChuyenModel? get dieuchuyen => _dieuChuyen;
 
   String? _id;
   String? get id => _id;
@@ -88,6 +91,8 @@ class AppBloc extends ChangeNotifier {
     _scan?.tenKho = null;
     _scan?.tenSanPham = null;
     _scan?.tenMau = null;
+    _tenKho = null;
+
     notifyListeners();
   }
 }

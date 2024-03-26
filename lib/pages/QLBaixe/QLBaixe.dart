@@ -8,7 +8,7 @@ import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-// // ignore: use_key_in_widget_constructors
+// ignore: use_key_in_widget_constructors
 // class QLBaiXePage extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -38,9 +38,11 @@ import '../../widgets/custom_title.dart';
 //                         CustomBodyQLBaiXe(),
 //                         const SizedBox(height: 20),
 //                         Container(
+//                           height: MediaQuery.of(context).size.height / 3,
 //                           child: Column(
 //                             children: [
-//                               customTitle('QUẢN LÝ BÃI XE THÀNH PHẨM (WMS)'),
+//                               const SizedBox(height: 20),
+//                               customTitle('QUẢN LÝ BÃI XE\n THÀNH PHẨM (WMS)'),
 //                               SizedBox(height: 10),
 //                               customBottom(
 //                                   "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
@@ -74,6 +76,7 @@ class QLBaiXePage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Container(
                 width: 100.w,
+                // height: MediaQuery.of(context).size.height - 150,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AppConfig.backgroundImagePath),
@@ -97,13 +100,37 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 20.h,
+      height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(
-          'QUẢN LÝ BÃI XE THÀNH PHẨM (WMS)',
+          'KIỂM TRA - NHẬP BÃI XE',
         ),
       ),
     );
   }
 }
+
+// class BottomContent extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return SingleChildScrollView(
+//       child: Expanded(
+//         // height: MediaQuery.of(context).size.height / 5,
+//         // padding: EdgeInsets.all(10),
+
+//         child: Column(
+//           children: [
+//             customTitle('QUẢN LÝ BÃI XE\n THÀNH PHẨM (WMS)'),
+//             SizedBox(height: 10),
+//             customBottom(
+//                 "Cung cấp ứng dụng quản lý vị trí xe trong bãi; tìm xe, xác nhận vận chuyển, giao xe thành phẩm."),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
+

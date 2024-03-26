@@ -90,11 +90,11 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - NHẬN XE',
+          'KIỂM TRA - NHẬP BÃI XE',
         ),
       ),
     );

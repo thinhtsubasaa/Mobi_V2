@@ -7,6 +7,58 @@ import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
+// class MainMenuPage extends StatelessWidget {
+//   int currentPage = 0; // Đặt giá trị hiện tại của trang
+//   int pageCount = 3;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: CustomAppBar(key: Key('customAppBar')),
+//       body: LayoutBuilder(
+//         builder: (context, constraints) {
+//           return SingleChildScrollView(
+//             child: ConstrainedBox(
+//               constraints: BoxConstraints(
+//                 minHeight: constraints.maxHeight,
+//               ),
+//               child: Column(
+//                 children: [
+//                   Container(
+//                     width: 100.w,
+//                     child: Column(
+//                       children: [
+//                         CustomCard(),
+//                         CustomBodyMainMenu(),
+//                         const SizedBox(height: 20),
+//                         Container(
+//                           height: MediaQuery.of(context).size.height / 3,
+//                           color: Colors.white,
+//                           child: Column(
+//                             children: [
+//                               const SizedBox(height: 20),
+//                               customTitle(
+//                                 'HỆ THỐNG QUẢN LÝ\n NGUỒN LỰC DOANH NGHIỆP (ERP)',
+//                               ),
+//                               SizedBox(height: 10),
+//                               customBottom(
+//                                 "Hệ thống bao gồm nhiều chức năng quản trị nghiệp vụ/ Dịch vụ của các Tổng công ty/ Công ty/ Đơn vị trực thuộc THILOGI",
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 class MainMenuPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
@@ -37,7 +89,7 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 10.h,
+      height: MediaQuery.of(context).size.height / 8,
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(

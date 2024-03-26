@@ -62,7 +62,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
-  late ImageService _imageService;
+  late ImageBloc _ib;
   List<DiaDiemModel>? _diadiemList; // Định nghĩa danh sách khoxeList ở đây
   List<DiaDiemModel>? get diadiemList => _diadiemList;
   List<PhuongThucVanChuyenModel>?
@@ -86,7 +86,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<GiaoXeBloc>(context, listen: false);
-    _imageService = Provider.of<ImageService>(context, listen: false);
+    _ib = Provider.of<ImageBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -232,9 +232,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
-                  height: 1.08, // Corresponds to line-height of 13px
                   color: Colors.white,
                 ),
               ),
@@ -244,10 +243,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           Expanded(
             child: Container(
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(

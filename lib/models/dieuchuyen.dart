@@ -18,9 +18,10 @@ class DieuChuyenModel {
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
-  String? Kho_Id;
-  String? BaiXe_Id;
+  String? khoDen_Id;
+  String? baiXe_Id;
   String? viTri_Id;
+  String? taiXe_Id;
 
   DieuChuyenModel({
     this.key,
@@ -42,9 +43,10 @@ class DieuChuyenModel {
     this.ghiChu,
     this.maKho,
     this.tenBaiXe,
-    this.BaiXe_Id,
+    this.baiXe_Id,
     this.viTri_Id,
-    this.Kho_Id,
+    this.khoDen_Id,
+    this.taiXe_Id,
   });
   @override
   String toString() {
@@ -69,10 +71,11 @@ class DieuChuyenModel {
         tenTaiXe: json["tenTaiXe"],
         ghiChu: json["ghiChu"],
         maKho: json["maKho"],
-        Kho_Id: json["Kho_Id"],
-        BaiXe_Id: json["BaiXe_Id"],
+        khoDen_Id: json["khoDen_Id"],
+        baiXe_Id: json["baiXe_Id"],
         viTri_Id: json["viTri_Id"],
         tenBaiXe: json["tenBaiXe"],
+        taiXe_Id: json["taiXe_Id"],
         lat: json["lat"],
         long: json["long"]);
   }
@@ -91,9 +94,10 @@ class DieuChuyenModel {
         'mauSon': mauSon,
         'ngayNhapKhoView': ngayNhapKhoView,
         "maKho": maKho,
-        "Kho_Id": Kho_Id,
-        "BaiXe_Id": BaiXe_Id,
+        "khoDen_Id": khoDen_Id,
+        "baiXe_Id": baiXe_Id,
         "viTri_Id": viTri_Id,
+        "taiXe_Id": taiXe_Id,
         "tenBaiXe": tenBaiXe,
         "lat": lat,
         "long": long

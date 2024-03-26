@@ -17,8 +17,8 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
-  late UserBloc _ub;
-  String _fullName = "No name";
+  late UserBloc? _ub;
+  String? _fullName;
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _CustomCardState extends State<CustomCard>
     _tabController!.addListener(_handleTabChange);
     _ub = Provider.of<UserBloc>(context, listen: false);
     setState(() {
-      _fullName = _ub.name!;
+      _fullName = _ub?.name;
     });
   }
 
@@ -71,8 +71,6 @@ class _CustomCardState extends State<CustomCard>
                 fontFamily: 'Roboto',
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                height: 28 / 24,
-                letterSpacing: 0,
                 color: Colors.white,
               ),
             ),
@@ -88,7 +86,7 @@ class _CustomCardState extends State<CustomCard>
               ),
               Container(
                 child: Text(
-                  _fullName,
+                  _fullName ?? "No name",
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Comfortaa',

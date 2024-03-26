@@ -104,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) {
                 _btnController.success();
 
-                nextScreen(context, MainMenuPage());
+                nextScreenReplace(context, MainMenuPage());
               });
             } else {
               if (asb.hasError) {
@@ -212,7 +212,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fontFamily: 'Roboto',
               fontSize: 15,
               fontWeight: FontWeight.w400,
-              height: 1.17,
             ),
           ),
           const SizedBox(height: 10),

@@ -57,9 +57,10 @@ class DieuChuyenBloc extends ChangeNotifier {
             ngayNhapKhoView: decodedData['ngayNhapKhoView'],
             tenTaiXe: decodedData['tenTaiXe'],
             ghiChu: decodedData['ghiChu'],
-            Kho_Id: decodedData['Kho_Id'],
-            BaiXe_Id: decodedData['BaiXe_Id'],
+            khoDen_Id: decodedData['khoDen_Id'],
+            baiXe_Id: decodedData['baiXe_Id'],
             viTri_Id: decodedData['viTri_Id'],
+            taiXe_Id: decodedData['taiXe_Id'],
             // latLng: decodedData['latLng'],
           );
         }

@@ -3,6 +3,9 @@ import 'dart:convert';
 
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/models/dieuchuyen.dart';
+import 'package:Thilogi/models/taixe.dart';
+import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/utils/snackbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../blocs/app_bloc.dart';
 import '../../models/baixe.dart';
 import '../../models/khoxe.dart';
 import '../../models/vitri.dart';
@@ -48,6 +52,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   String? KhoXeId;
   String? BaiXeId;
   String? ViTriId;
+  String? TaiXeId;
   final _qrDataController = TextEditingController();
   Timer? _debounce;
   List<String>? _results = [];
@@ -61,6 +66,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
 
   List<ViTriModel>? _vitriList; // Định nghĩa danh sách khoxeList ở đây
   List<ViTriModel>? get vitriList => _vitriList;
+  List<TaiXeModel>? _taixeList; // Định nghĩa danh sách khoxeList ở đây
+  List<TaiXeModel>? get taixeList => _taixeList;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -178,6 +185,28 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
+  void getTaiXeList() async {
+    try {
+      final http.Response response = await requestHelper.getData('TaiXe');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body)['datalist'];
+
+        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
+        _taixeList = (decodedData as List)
+            .map((item) => TaiXeModel.fromJson(item))
+            .toList();
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = true;
+        });
+      }
+    } catch (e) {
+      // Xử lý lỗi khi gọi API
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
   Future<void> postData(DieuChuyenModel scanData) async {
     _isLoading = true;
 
@@ -201,6 +230,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
+          title: "SUCCESS",
           text: "Điều chuyển thành công",
         );
       } else {
@@ -209,7 +239,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: '',
+          title: 'ERROR',
           text: errorMessage,
         );
       }
@@ -339,9 +369,10 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       _loading = true;
     });
 
-    _data?.Kho_Id = KhoXeId;
-    _data?.BaiXe_Id = BaiXeId;
+    _data?.khoDen_Id = KhoXeId;
+    _data?.baiXe_Id = BaiXeId;
     _data?.viTri_Id = ViTriId;
+    _data?.taiXe_Id = TaiXeId;
     _data?.key = _bl.dieuchuyen?.key;
     _data?.id = _bl.dieuchuyen?.id;
     _data?.soKhung = _bl.dieuchuyen?.soKhung;
@@ -357,6 +388,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     _data?.tenViTri = _bl.dieuchuyen?.tenViTri;
     _data?.mauSon = _bl.dieuchuyen?.mauSon;
     _data?.ngayNhapKhoView = _bl.dieuchuyen?.ngayNhapKhoView;
+    _data?.tenTaiXe = _bl.dieuchuyen?.tenTaiXe;
 
     // Get location here
     Geolocator.getCurrentPosition(
@@ -372,8 +404,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       _data?.long = long;
       print("lat: ${_data?.lat}");
       print("long: ${_data?.long}");
-      print("Kho_ID:${_data?.Kho_Id}");
-      print("Bai_ID:${_data?.BaiXe_Id}");
+      print("Kho_ID:${_data?.khoDen_Id}");
+      print("Bai_ID:${_data?.baiXe_Id}");
 
       // call api
 
@@ -400,6 +432,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   @override
   Widget build(BuildContext context) {
     getData();
+    getTaiXeList();
     return Container(
         child: Column(
       children: [
@@ -443,7 +476,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           SizedBox(height: 4),
                           MyInputWidget(
                             title: "Kho đi",
-                            text: _bl.dieuchuyen?.tenKho ?? "",
+                            text: _data?.tenKho ?? "",
                             textStyle: TextStyle(
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
@@ -454,7 +487,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           SizedBox(height: 4),
                           MyInputWidget(
                             title: "Bãi xe đi",
-                            text: _bl.dieuchuyen?.tenBaiXe ?? "",
+                            text: _data?.tenBaiXe ?? "",
                             textStyle: TextStyle(
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
@@ -465,7 +498,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           SizedBox(height: 4),
                           MyInputWidget(
                             title: "Vị trí ",
-                            text: _bl.dieuchuyen?.tenViTri ?? "",
+                            text: _data?.tenViTri ?? "",
                             textStyle: TextStyle(
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
@@ -475,7 +508,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: 10.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -557,7 +590,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: 10.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -633,7 +666,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: 10.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -696,6 +729,78 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                           ViTriId = newValue;
                                         });
                                         print("object : ${ViTriId}");
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Container(
+                            height: 10.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: const Color(0xFF818180),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 30.w,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFF6C6C7),
+                                    border: Border(
+                                      right: BorderSide(
+                                        color: Color(0xFF818180),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Tài Xế",
+                                      style: const TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF000000),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: DropdownButtonFormField<String>(
+                                      items: _taixeList?.map((item) {
+                                        return DropdownMenuItem<String>(
+                                          value: item.id,
+                                          child: Container(
+                                            padding:
+                                                EdgeInsets.only(left: 15.sp),
+                                            child: Text(
+                                              item.tenTaiXe ?? "",
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFF000000),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      value: TaiXeId,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          TaiXeId = newValue;
+                                        });
+                                        print("object : ${TaiXeId}");
                                       },
                                     ),
                                   ),

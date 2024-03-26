@@ -54,15 +54,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String _qrData = '';
   final _qrDataController = TextEditingController();
   Timer? _debounce;
-
-  KhoThanhPhamModel? _data;
   bool _loading = false;
+  KhoThanhPhamModel? _data;
+
   String barcodeScanResult = '';
   late KhoThanhPhamBloc _bl;
-
-  late AppBloc _ab;
-
-  // static RequestHelper requestHelper = RequestHelper();
 
   List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
   List<KhoXeModel>? get khoxeList => _khoxeList;
@@ -91,8 +87,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   @override
   void initState() {
     super.initState();
-
-    _ab = Provider.of<AppBloc>(context, listen: false);
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
 
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
@@ -231,7 +225,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -242,15 +236,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           Expanded(
             child: Container(
               // padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
@@ -317,6 +307,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
+          title: "SUCCESS",
           text: "Nhập kho thành công",
         );
       } else {
@@ -325,7 +316,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: '',
+          title: 'ERROR',
           text: errorMessage,
         );
       }
