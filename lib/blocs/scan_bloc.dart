@@ -80,12 +80,7 @@ class ScanBloc extends ChangeNotifier {
   }
 
   Future clearData() async {
-    _scan?.id = null;
-    _scan?.Kho_Id = null;
-    _scan?.soKhung = null;
-    _scan?.tenKho = null;
-    _scan?.tenSanPham = null;
-    _scan?.tenMau = null;
+    _scan = null;
     notifyListeners();
   }
 }

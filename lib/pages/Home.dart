@@ -5,32 +5,6 @@ import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
 import '../widgets/custom_title.dart';
 
-// class MyHomePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: CustomAppBar(key: Key('customAppBar')),
-//       body: Container(
-//         width: MediaQuery.of(context).size.width,
-//         height: MediaQuery.of(context).size.height,
-//         child: ListView(
-//           children: [
-//             const CustomImage(imagePath: AppConfig.homeImagePath),
-//             const SizedBox(height: 5),
-//             customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
-//             const SizedBox(height: 5),
-//             CustomImage(imagePath: AppConfig.bottomHomeImagePath),
-//             const SizedBox(height: 15),
-//             CustomButton(onPressed: () {
-//               nextScreen(context, LoginPage());
-//             }),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

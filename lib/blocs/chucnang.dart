@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Thilogi/blocs/app_bloc.dart';
+import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -79,48 +80,6 @@ class ChucnangService extends ChangeNotifier {
       notifyListeners();
     }
   }
-  // Future<void> getData(BuildContext context, String soKhung) async {
-  //   _isLoading = true;
-
-  //   try {
-  //     final http.Response response =
-  //         await requestHelper.getData('GetDataXeThaPham?keyword=$soKhung');
-  //     print("statusCode: ${response.statusCode}");
-  //     if (response.statusCode == 200) {
-  //       var decodedData = jsonDecode(response.body);
-  //       print("data:${decodedData}");
-
-  //       notifyListeners();
-
-  //       QuickAlert.show(
-  //           context: context,
-  //           type: QuickAlertType.success,
-  //           title: 'Success',
-  //           text: "Nhận xe thành công",
-  //           onConfirmBtnTap: () {
-  //             clear(context);
-  //           });
-  //     } else {
-  //       String errorMessage = response.body.replaceAll('"', '');
-  //       notifyListeners();
-
-  //       QuickAlert.show(
-  //           context: context,
-  //           type: QuickAlertType.error,
-  //           title: 'Error',
-  //           text: errorMessage,
-  //           onConfirmBtnTap: () {
-  //             clear(context);
-  //           });
-  //     }
-  //   } catch (e) {
-  //     _hasError = true;
-  //     _isLoading = false;
-  //     _message = e.toString();
-  //     _errorCode = e.toString();
-  //     notifyListeners();
-  //   }
-  // }
 
   void clear(context) async {
     final AppBloc ab = Provider.of<AppBloc>(context, listen: false);
@@ -128,4 +87,12 @@ class ChucnangService extends ChangeNotifier {
       nextScreenReplace(context, NhanXePage());
     });
   }
+
+  // void clear(context) async {
+  //   final AppBloc ab = Provider.of<AppBloc>(context, listen: false);
+  //   await ab.clearData().then((_) {
+  //     Navigator.pop(context);
+  //     Navigator.pop(context);
+  //   });
+  // }
 }

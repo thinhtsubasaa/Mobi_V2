@@ -8,8 +8,7 @@ import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
 
-import 'package:Thilogi/pages/Home.dart';
-import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
+import 'package:Thilogi/pages/splash.dart';
 
 import 'package:Thilogi/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -60,14 +59,14 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          routes: {
-            'qlKho': (context) => QLKhoXePage(),
-          },
           title: 'THILOGI ',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: MyHomePage(),
+          home: SplashPage(),
+          // routes: {
+          //   '/home': (context) => MyHomePage(),
+          // },
         ),
       ),
     );
