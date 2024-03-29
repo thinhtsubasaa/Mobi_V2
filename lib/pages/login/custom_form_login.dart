@@ -13,6 +13,8 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../config/config.dart';
+
 // ignore: use_key_in_widget_constructors
 class CustomLoginForm extends StatelessWidget {
   @override
@@ -28,7 +30,6 @@ class CustomLoginForm extends StatelessWidget {
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
-
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -41,7 +42,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
-  String selectedDomain = 'thilogi.com.vn';
+  late String selectedDomain;
+  List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
   final _btnController = RoundedLoadingButtonController();
 
   bool offsecureText = true;
@@ -56,6 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _ub = Provider.of<UserBloc>(context, listen: false);
 
     setState(() {
+      selectedDomain = items[0];
       _diaChiApi.text = _ab.apiUrl;
     });
   }
@@ -132,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Text(
               "Tài khoản",
               style: TextStyle(
-                color: Colors.black,
+                color: AppConfig.textInput,
                 fontFamily: 'Roboto',
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -163,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             "Mật khẩu",
             style: TextStyle(
-              color: Colors.black,
+              color: AppConfig.textInput,
               fontFamily: 'Roboto',
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -208,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const Text(
             "Domain",
             style: TextStyle(
-              color: Colors.black,
+              color: AppConfig.textInput,
               fontFamily: 'Roboto',
               fontSize: 15,
               fontWeight: FontWeight.w400,
@@ -231,24 +234,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   borderSide: BorderSide(color: Colors.black),
                 ),
               ),
-              items: [
-                DropdownMenuItem(
-                  child: Text(selectedDomain),
-                  value: selectedDomain,
-                ),
-                DropdownMenuItem(
-                  child: Text('Option 1'),
-                  value: 'option1',
-                ),
-                DropdownMenuItem(
-                  child: Text('Option 2'),
-                  value: 'option2',
-                ),
-                // Add more items as needed
-              ],
+              items: items.map((String item) {
+                return DropdownMenuItem(
+                  value: item,
+                  child: Text(item),
+                );
+              }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedDomain = value.toString();
+                  selectedDomain = value!;
                 });
               },
             ),

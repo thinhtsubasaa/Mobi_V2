@@ -6,6 +6,7 @@ import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../config/config.dart';
 import '../khoxe/khoxe.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -23,13 +24,10 @@ class BodyQLKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: const EdgeInsets.only(top: 30),
       padding: const EdgeInsets.only(top: 10, bottom: 10),
-      margin: const EdgeInsets.only(
-          top: 25, bottom: 25), // Khoảng cách giữa các box
+      margin: const EdgeInsets.only(top: 25, bottom: 25),
       child: Column(
         children: [
-          // Hàng đầu tiên
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -48,7 +46,7 @@ class BodyQLKhoXe extends StatelessWidget {
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: Row(
@@ -91,7 +89,7 @@ class BodyQLKhoXe extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       height: 13 / 12,
                       letterSpacing: 0,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],
@@ -112,7 +110,7 @@ class BodyQLKhoXe extends StatelessWidget {
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -149,14 +147,13 @@ class BodyQLKhoXe extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],
               ),
             ],
           ),
-          // Hàng thứ hai
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -176,7 +173,7 @@ class BodyQLKhoXe extends StatelessWidget {
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -215,7 +212,7 @@ class BodyQLKhoXe extends StatelessWidget {
                         fontFamily: 'Comfortaa',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFA71C20),
+                        color: AppConfig.primaryColor,
                       ),
                     ),
                   ),
@@ -237,7 +234,7 @@ class BodyQLKhoXe extends StatelessWidget {
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -271,14 +268,14 @@ class BodyQLKhoXe extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 30),
           PageIndicator(currentPage: currentPage, pageCount: pageCount),
         ],
       ),

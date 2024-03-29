@@ -24,6 +24,8 @@ class XuatKhoModel {
   String? danhSachPhuongTien_Id;
   String? bienSo_Id;
   String? taiXe_Id;
+  String? tenDiaDiem;
+  String? tenPhuongThucVanChuyen;
 
   XuatKhoModel(
       {this.key,
@@ -50,7 +52,9 @@ class XuatKhoModel {
       this.kho_Id,
       this.loaiPhuongTien_Id,
       this.phuongThucVanChuyen_Id,
-      this.taiXe_Id});
+      this.taiXe_Id,
+      this.tenDiaDiem,
+      this.tenPhuongThucVanChuyen});
   @override
   String toString() {
     return 'XuatKhoModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
@@ -82,7 +86,9 @@ class XuatKhoModel {
         Diadiem_Id: json["Diadiem_Id"],
         kho_Id: json["kho_Id"],
         lat: json["lat"],
-        long: json["long"]);
+        long: json["long"],
+        tenDiaDiem: json["tenDiaDiem"],
+        tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -107,6 +113,8 @@ class XuatKhoModel {
         "bienSo_Id": bienSo_Id,
         "taiXe_Id": taiXe_Id,
         "lat": lat,
-        "long": long
+        "long": long,
+        "tenDiaDiem": tenDiaDiem,
+        "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
       };
 }

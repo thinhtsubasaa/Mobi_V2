@@ -72,9 +72,7 @@ class KhoXePage extends StatelessWidget {
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AppConfig.backgroundImagePath),
-                    // Đường dẫn đến ảnh nền
                     fit: BoxFit.cover,
-                    // Cách ảnh nền sẽ được hiển thị
                   ),
                 ),
                 child: CustomBodyKhoXe(),

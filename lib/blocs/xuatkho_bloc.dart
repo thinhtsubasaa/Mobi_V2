@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:Thilogi/models/xuatkho.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 
 class XuatKhoBloc extends ChangeNotifier {
@@ -36,8 +35,6 @@ class XuatKhoBloc extends ChangeNotifier {
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        // var data = decodedData["data"];
-        // var info = data["info"];
         if (decodedData != null) {
           _xuatkho = XuatKhoModel(
             key: decodedData["key"],
@@ -63,11 +60,14 @@ class XuatKhoBloc extends ChangeNotifier {
             danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
             bienSo_Id: decodedData['bienSo_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
+            tenDiaDiem: decodedData['tenDiaDiem'],
+            tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
+
             // latLng: decodedData['latLng'],
           );
         }
       } else {
-        _xuatkho = null; // Gán _scan thành null nếu không có dữ liệu
+        _xuatkho = null;
         _isLoading = false;
       }
 

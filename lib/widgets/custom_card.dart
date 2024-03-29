@@ -78,7 +78,7 @@ class _CustomCardState extends State<CustomCard>
           Row(
             children: [
               Container(
-                padding: EdgeInsets.only(right: 2.w),
+                padding: EdgeInsets.only(right: 2.w, bottom: 3),
                 child: Icon(
                   Icons.person,
                   color: Colors.white,
@@ -92,8 +92,6 @@ class _CustomCardState extends State<CustomCard>
                     fontFamily: 'Comfortaa',
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
-                    height: 1.17,
-                    letterSpacing: 0,
                   ),
                 ),
               ),
@@ -117,15 +115,33 @@ class _CustomCardState extends State<CustomCard>
                   itemBuilder: (BuildContext context) => [
                     PopupMenuItem(
                       value: MenuOption.Settings,
-                      child: Text('Cài đặt'),
+                      child: Row(
+                        children: [
+                          Icon(Icons.settings),
+                          SizedBox(width: 8.0),
+                          Text('Cài đặt'),
+                        ],
+                      ),
                     ),
                     PopupMenuItem(
                       value: MenuOption.Profile,
-                      child: Text('Thông tin cá nhân'),
+                      child: Row(
+                        children: [
+                          Icon(Icons.person),
+                          SizedBox(width: 8.0),
+                          Text('Thông tin cá nhân'),
+                        ],
+                      ),
                     ),
                     PopupMenuItem(
                       value: MenuOption.Logout,
-                      child: Text('Đăng xuất'),
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout),
+                          SizedBox(width: 8.0),
+                          Text('Đăng xuất'),
+                        ],
+                      ),
                     ),
                   ],
                   icon: const Icon(

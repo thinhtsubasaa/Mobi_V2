@@ -29,10 +29,7 @@ class TabsNhanXe extends StatelessWidget {
                     fontFamily: 'Comfortaa',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    height: 1.14, // Corresponds to line-height of 16px
-                    letterSpacing: 0,
-                    color: Color(0xFF818180) // Màu chữ
-                    ),
+                    color: Color(0xFF818180)),
               ),
             ),
             Container(
@@ -57,9 +54,7 @@ class TabsNhanXe extends StatelessWidget {
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  height: 1.14, // Corresponds to line-height of 16px
-                  letterSpacing: 0,
-                  color: Color(0xFF428FCA), // Màu chữ
+                  color: Color(0xFF428FCA),
                 ),
               ),
             ),

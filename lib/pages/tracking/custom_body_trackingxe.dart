@@ -4,52 +4,61 @@ import 'package:sizer/sizer.dart';
 class CustomTrackingXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 90.w,
-      height: 60.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(10),
-          bottomRight: Radius.circular(10),
+    return SingleChildScrollView(
+      child: Container(
+        width: 100.w,
+        alignment: Alignment.bottomCenter,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height < 600
+              ? MediaQuery.of(context).size.height * 0.9
+              : MediaQuery.of(context).size.height * 0.6,
+          // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
         ),
-        border: Border.all(
-          color: Color(0xFFCCCCCC),
-          width: 1,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+          border: Border.all(
+            color: Color(0xFFCCCCCC),
+            width: 1,
+          ),
+          color: Colors.white,
         ),
-        color: Colors.white,
-      ),
-      child: Stack(
-        children: [
-          // Phần Text 1
-          Positioned(
-            left: 0, // Adjust left position as needed
-            top: 0, // Adjust top position as needed
-            child: Container(
-              width: 15.w,
-              height: 60.h,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
+        child: Stack(
+          children: [
+            // Phần Text 1
+            Positioned(
+              left: 0, // Adjust left position as needed
+              top: 0, // Adjust top position as needed
+              child: Container(
+                width: 15.w,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  color: Color(0xFFF6C6C7),
                 ),
-                color: Color(0xFFF6C6C7),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                child: Image.asset(
-                  'assets/images/road.png',
-                  height: 416,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                  child: Image.asset(
+                    'assets/images/road.png',
+                    height: MediaQuery.of(context).size.height < 600
+                        ? MediaQuery.of(context).size.height * 0.9
+                        : MediaQuery.of(context).size.height * 0.6,
+                  ),
                 ),
               ),
             ),
-          ),
-          // Your BodyTrackingXe widget goes here
-          Positioned(
-            left: 0, // Adjust left position as needed
-            top: 0, // Adjust top position as needed
-            child: BodyTrackingXe(),
-          ),
-        ],
+            // Your BodyTrackingXe widget goes here
+            Positioned(
+              left: 0, // Adjust left position as needed
+              top: 0, // Adjust top position as needed
+              child: BodyTrackingXe(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -87,7 +96,7 @@ class BodyTrackingXe extends StatelessWidget {
           buildDivider(),
           buildRowItem(
             customImage: CustomImage4(),
-            textLine1: '03/01/2023 - Kho Chu Lai - REMIND',
+            textLine1: '03/01/2023 - Kho Chu Lai - REMIND ',
             textLine2: '02/01/2023 - Kho Chu Lai - FAILED',
           ),
           buildDivider(),
@@ -101,70 +110,84 @@ class BodyTrackingXe extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildRowItem({
-    required Widget customImage,
-    required String textLine1,
-    required String textLine2,
-  }) {
+class buildRowItem extends StatelessWidget {
+  final Widget customImage;
+  final String textLine1;
+  final String textLine2;
+
+  const buildRowItem({
+    required this.customImage,
+    required this.textLine1,
+    required this.textLine2,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Widget buildRowItem({
+    //   required Widget customImage,
+    //   required String textLine1,
+    //   required String textLine2,
+    // }) {
+
     return Container(
-      width: 380,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width < 330
+            ? MediaQuery.of(context).size.width * 0.9
+            : MediaQuery.of(context).size.width * 0.6,
+      ),
       height: 80, // Set a fixed height as needed
-      child: Row(
-        children: [
-          customImage, // Custom Image widget goes here
-          RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '• ', // Dot character
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0469B9),
-                    letterSpacing: 0,
-                    height: 1.33, // Corresponds to line height
-                  ),
-                ),
-                TextSpan(
-                  text: textLine1 + '\n',
-                  style: TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0469B9),
-                    letterSpacing: 0,
-                    height: 1.33, // Corresponds to line height
-                  ),
-                ),
-                if (textLine2.isNotEmpty) ...[
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            customImage, // Custom Image widget goes here
+            RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(
+                children: [
                   TextSpan(
                     text: '• ', // Dot character
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF818180),
-                      letterSpacing: 0,
-                      height: 1.33, // Corresponds to line height
+                      color: Color(0xFF0469B9),
                     ),
                   ),
                   TextSpan(
-                    text: textLine2,
+                    text: textLine1 + '\n',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF818180),
-                      letterSpacing: 0,
-                      height: 1.33, // Corresponds to line height
+                      color: Color(0xFF0469B9),
                     ),
                   ),
+                  if (textLine2.isNotEmpty) ...[
+                    TextSpan(
+                      text: '• ', // Dot character
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF818180),
+                      ),
+                    ),
+                    TextSpan(
+                      text: textLine2,
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF818180),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -274,10 +297,10 @@ class CustomImage5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.translate(
-      offset: const Offset(-15, -5),
+      offset: const Offset(-50, -5),
       child: Image.asset(
         'assets/images/car4.png',
-        width: 105,
+        width: 70,
         height: 80,
       ),
     );
@@ -286,7 +309,7 @@ class CustomImage5 extends StatelessWidget {
 
 Widget buildDivider() {
   return Container(
-    width: 308,
+    width: 95.w,
     height: 2,
     padding: const EdgeInsets.only(right: 5),
     child: CustomPaint(

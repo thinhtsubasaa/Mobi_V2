@@ -58,10 +58,10 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height > 885 ? 30.h : null,
       child: Column(
         children: [
-          const SizedBox(height: 5),
-          customTitle('LOGISTIC TRỌN GÓI\n HÀNG ĐẦU MIỀN TRUNG'),
+          customTitle('LOGISTIC TRỌN GÓI\nHÀNG ĐẦU MIỀN TRUNG'),
           const SizedBox(height: 10),
           CustomImage(imagePath: AppConfig.bottomHomeImagePath),
           const SizedBox(height: 15),
@@ -77,9 +77,7 @@ class BottomContent extends StatelessWidget {
 
 class CustomImage extends StatelessWidget {
   final String imagePath;
-
   const CustomImage({required this.imagePath});
-
   @override
   Widget build(BuildContext context) {
     return Image.asset(
@@ -91,9 +89,7 @@ class CustomImage extends StatelessWidget {
 
 class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
-
   const CustomButton({required this.onPressed});
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -101,7 +97,8 @@ class CustomButton extends StatelessWidget {
         nextScreen(context, LoginPage());
       },
       style: ElevatedButton.styleFrom(
-        fixedSize: Size(AppConfig.buttonWidth, AppConfig.buttonHeight),
+        fixedSize: Size(
+            MediaQuery.of(context).size.width * 1.0, AppConfig.buttonHeight),
         backgroundColor: AppConfig.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
@@ -111,7 +108,7 @@ class CustomButton extends StatelessWidget {
       child: Text(
         'WELCOME',
         style: TextStyle(
-          color: Colors.white,
+          color: AppConfig.textButton,
           fontFamily: 'Roboto',
           fontSize: 16,
           fontWeight: FontWeight.w600,
@@ -135,7 +132,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Image.asset(
         AppConfig.appBarImagePath,
       ),
-      centerTitle: false,
     );
   }
 

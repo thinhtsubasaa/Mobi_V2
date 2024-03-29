@@ -8,7 +8,7 @@ Widget customBottom(String text) {
       text,
       textAlign: TextAlign.center,
       style: TextStyle(
-        color: Color(0xFF000000),
+        color: AppConfig.textInput,
         fontFamily: 'Roboto',
         fontSize: 15.sp,
         fontWeight: FontWeight.w400,

@@ -8,7 +8,7 @@ import 'package:Thilogi/services/request_helper.dart';
 class KhoXeBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
+  List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
 
   bool _hasError = false;
@@ -26,10 +26,6 @@ class KhoXeBloc extends ChangeNotifier {
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body)['dataList'];
         print("data: ${decodedData}");
-
-        // var data = decodedData["data"];
-
-        // var info = data["info"];
 
         _khoxeList = [
           KhoXeModel(

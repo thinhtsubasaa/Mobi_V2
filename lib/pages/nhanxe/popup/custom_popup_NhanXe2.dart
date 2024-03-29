@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
 
+import '../../../config/config.dart';
 import '../../../utils/next_screen.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -53,7 +54,7 @@ class PopUp2 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildCarDetails(),
-                    _buildTableOptions(),
+                    _buildTableOptions(context),
                   ],
                 ),
               ),
@@ -113,7 +114,10 @@ class PopUp2 extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFA71C20)),
+          const Divider(
+            height: 1,
+            color: AppConfig.primaryColor,
+          ),
           const SizedBox(height: 10),
         ],
       ),
@@ -123,14 +127,12 @@ class PopUp2 extends StatelessWidget {
   Widget _buildCarDetails() {
     return Column(
       children: [
-        // Box 1
         Container(
-          margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+          margin: EdgeInsets.all(10),
           child: Column(
             children: [
               Row(
                 children: [
-                  // Text
                   Text(
                     tenSanPham,
                     textAlign: TextAlign.left,
@@ -138,7 +140,7 @@ class PopUp2 extends StatelessWidget {
                       fontFamily: 'Coda Caption',
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   ),
                 ],
@@ -149,12 +151,10 @@ class PopUp2 extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(width: 10),
-                    // Text 1
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(width: 10),
-                        // Text 1
                         Text(
                           'Số khung (VIN):',
                           style: TextStyle(
@@ -165,46 +165,38 @@ class PopUp2 extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 5),
-                        // Text 2
                         Text(
                           soKhung,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFFA71C20),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ],
                     ),
-
-                    SizedBox(width: 40), // Khoảng cách giữa hai Text
-
-                    // Text 2
+                    SizedBox(width: 40),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Text 1
                         Text(
                           'Màu:',
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
-                            height: 1.08,
-                            letterSpacing: 0,
                             color: Color(0xFF818180),
                           ),
                         ),
                         SizedBox(height: 5),
-                        // Text 2
                         Text(
                           tenMau,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFFFF0007),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ],
@@ -221,11 +213,15 @@ class PopUp2 extends StatelessWidget {
     );
   }
 
-  Widget _buildTableOptions() {
+  Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
     return Container(
       width: 100.w,
-      height: 90.h,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height < 600
+            ? MediaQuery.of(context).size.height * 1.3
+            : 80.h, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+      ),
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
 import 'package:Thilogi/utils/snackbar.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,16 +16,15 @@ import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/khoxe.dart';
-import '../../blocs/app_bloc.dart';
 import '../../services/app_service.dart';
 
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
-import 'package:location/location.dart';
 
 import 'package:quickalert/quickalert.dart';
 
@@ -50,22 +50,20 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String? ViTriId;
   String? lat;
   String? long;
-  String? selectedKho;
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  Timer? _debounce;
   bool _loading = false;
   KhoThanhPhamModel? _data;
 
   String barcodeScanResult = '';
   late KhoThanhPhamBloc _bl;
 
-  List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
+  List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
-  List<BaiXeModel>? _baixeList; // Định nghĩa danh sách khoxeList ở đây
+  List<BaiXeModel>? _baixeList;
   List<BaiXeModel>? get baixeList => _baixeList;
 
-  List<ViTriModel>? _vitriList; // Định nghĩa danh sách khoxeList ở đây
+  List<ViTriModel>? _vitriList;
   List<ViTriModel>? get vitriList => _vitriList;
 
   bool _hasError = false;
@@ -83,14 +81,14 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String? get message => _message;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   void initState() {
     super.initState();
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
-
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-
     // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -194,7 +192,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   Widget CardVin() {
     return Container(
-      width: 90.w,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -217,15 +215,15 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
-              color: Color(0xFFA71C20),
+              color: AppConfig.primaryColor,
             ),
             child: Center(
               child: Text(
-                'Số khung\n (VIN)',
+                'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -235,12 +233,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              // padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
@@ -299,26 +297,27 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         var decodedData = jsonDecode(response.body);
 
         print("data: ${decodedData}");
-        // _isLoading = false;
-        // _success = decodedData["success"];
 
         notifyListeners();
-
+        _btnController.success();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           title: "SUCCESS",
           text: "Nhập kho thành công",
         );
+        _btnController.reset();
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        _btnController.error();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
           title: 'ERROR',
           text: errorMessage,
         );
+        _btnController.reset();
       }
     } catch (e) {
       _message = e.toString();
@@ -378,7 +377,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
-      // print("latLng:${lat}");
+
       _data?.lat = lat;
       _data?.long = long;
       print("lat: ${_data?.lat}");
@@ -393,11 +392,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           openSnackBar(context, 'no internet'.tr());
         } else {
           postData(_data!).then((_) {
-            // if (_bl.success) {
-            //   openSnackBar(context, "Lưu thành công");
-            // } else {
-            //   openSnackBar(context, "Lưu thất bại");
-            // }
             setState(() {
               _data = null;
               _qrData = '';
@@ -422,7 +416,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        // Box 1
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
@@ -459,7 +452,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -488,7 +483,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -496,7 +491,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       isDense: true,
                                       items: _khoxeList?.map((item) {
@@ -514,7 +509,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF000000),
+                                                    color: AppConfig.textInput,
                                                   ),
                                                 ),
                                               ),
@@ -541,7 +536,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -570,7 +567,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -578,7 +575,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _baixeList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -592,7 +589,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -617,7 +614,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -646,7 +645,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -654,7 +653,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _vitriList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -669,7 +668,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -696,12 +695,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+                      margin: EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              // Text
                               Text(
                                 _data != null ? _data!.tenSanPham ?? "" : "",
                                 textAlign: TextAlign.left,
@@ -720,11 +718,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // SizedBox(width: 10),
                                     Text(
                                       'Số khung (VIN):',
                                       style: TextStyle(
@@ -746,7 +742,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                   ],
                                 ),
-                                // SizedBox(width: 30),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -769,7 +764,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         color: Color(0xFFFF0007),
                                       ),
                                     ),
-                                    // SizedBox(width: 10),
                                   ],
                                 ),
                               ],
@@ -820,19 +814,17 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 10),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(90.w, 50),
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed: ViTriId != null ? _onSave : null,
-                          child: Text("Nhập kho",
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ))),
+                      RoundedLoadingButton(
+                        child: Text('Nhập kho',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              color: AppConfig.textButton,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            )),
+                        controller: _btnController,
+                        onPressed: ViTriId != null ? _onSave : null,
+                      ),
                       SizedBox(height: 10),
                     ],
                   ),

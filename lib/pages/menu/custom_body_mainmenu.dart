@@ -11,9 +11,8 @@ class CustomBodyMainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         width: 100.w,
-
         // ignore: prefer_const_constructors
-        color: Color.fromRGBO(246, 198, 199, 0.2), // Đặt màu nền cho phần này
+        color: Color.fromRGBO(246, 198, 199, 0.2),
         child: BodyMainMenu());
   }
 }
@@ -26,7 +25,7 @@ class BodyMainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 10),
-      margin: const EdgeInsets.only(bottom: 25), // Khoảng cách giữa các box
+      margin: const EdgeInsets.only(bottom: 25),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -68,7 +67,7 @@ class BodyMainMenu extends StatelessWidget {
               const CustomButton(
                   width: AppConfig.buttonMainMenuWidth,
                   height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColor),
+                  color: AppConfig.buttonColorMenu),
             ],
           ),
           const SizedBox(height: 30),
@@ -78,11 +77,11 @@ class BodyMainMenu extends StatelessWidget {
               CustomButton(
                   width: AppConfig.buttonMainMenuWidth,
                   height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColor),
+                  color: AppConfig.buttonColorMenu),
               CustomButton(
                   width: AppConfig.buttonMainMenuWidth,
                   height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColor),
+                  color: AppConfig.buttonColorMenu),
             ],
           ),
           const SizedBox(height: 30),
@@ -92,11 +91,11 @@ class BodyMainMenu extends StatelessWidget {
               CustomButton(
                   width: AppConfig.buttonMainMenuWidth,
                   height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColor),
+                  color: AppConfig.buttonColorMenu),
               CustomButton(
                   width: AppConfig.buttonMainMenuWidth,
                   height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColor),
+                  color: AppConfig.buttonColorMenu),
             ],
           ),
           const SizedBox(height: 30),

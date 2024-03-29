@@ -8,7 +8,10 @@ import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../config/config.dart';
 
 class CustomBodyXuatCongXe extends StatelessWidget {
   @override
@@ -29,7 +32,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  Timer? _debounce;
   KhoThanhPhamModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
@@ -51,11 +53,14 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   late StreamSubscription<ScanResult> scanSubscription;
 
   late KhoThanhPhamBloc _bl;
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
+  var soContCtrl = TextEditingController();
+  var soSiuCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
     _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
@@ -78,7 +83,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   Widget CardVin() {
     return Container(
-      width: 90.w,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -88,7 +93,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
+        color: Colors.white,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +110,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             ),
             child: Center(
               child: Text(
-                'Số khung\n (VIN)',
+                'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -119,14 +124,14 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              // padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA71C20),
+                  color: AppConfig.primaryColor,
                 ),
               ),
             ),
@@ -192,7 +197,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        // Box 1
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
@@ -212,7 +216,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -235,9 +239,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               fontFamily: 'Comfortaa',
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF000000),
+                              color: AppConfig.textInput,
                             ),
-                            controller: null,
+                            controller: soContCtrl,
                           ),
                           SizedBox(height: 4),
                           MyInputWidget(
@@ -247,9 +251,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               fontFamily: 'Comfortaa',
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF000000),
+                              color: AppConfig.textInput,
                             ),
-                            controller: null,
+                            controller: soSiuCtrl,
                           ),
                         ],
                       ),
@@ -258,14 +262,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 ),
                 Column(
                   children: [
-                    // Box 1
                     Container(
-                      margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+                      margin: EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              // Text
                               Text(
                                 _data != null ? _data!.tenSanPham ?? "" : "",
                                 textAlign: TextAlign.left,
@@ -284,11 +286,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Số khung (VIN):',
                                       style: TextStyle(
@@ -299,7 +299,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soKhung ?? "" : "",
                                       style: TextStyle(
@@ -311,12 +310,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                   ],
                                 ),
-
-                                // Text 2
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Màu:',
                                       style: TextStyle(
@@ -327,7 +323,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.tenMau ?? "" : "",
                                       style: TextStyle(
@@ -350,7 +345,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Số máy:',
                                       style: TextStyle(
@@ -361,7 +355,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soMay ?? "" : "",
                                       style: TextStyle(
@@ -383,19 +376,17 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 10),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: Size(90.w, 50),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                    onPressed: null,
-                                    child: Text("Lưu",
-                                        style: TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16,
-                                        ))),
+                                RoundedLoadingButton(
+                                  child: Text('Lưu',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        color: AppConfig.textButton,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                      )),
+                                  controller: _btnController,
+                                  onPressed: null,
+                                ),
                                 SizedBox(height: 10),
                               ],
                             ),
@@ -460,7 +451,7 @@ class MyInputWidget extends StatelessWidget {
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xFF000000),
+                  color: AppConfig.textInput,
                 ),
               ),
             ),

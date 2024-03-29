@@ -35,10 +35,6 @@ class KhoThanhPhamBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
-          // var data = decodedData["data"];
-
-          // var info = data["info"];
-
           _baixe = KhoThanhPhamModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -62,7 +58,7 @@ class KhoThanhPhamBloc extends ChangeNotifier {
           );
         }
       } else {
-        _baixe = null; // Gán _scan thành null nếu không có dữ liệu
+        _baixe = null;
         _isLoading = false;
       }
 

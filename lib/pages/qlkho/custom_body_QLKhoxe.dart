@@ -7,6 +7,8 @@ import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../config/config.dart';
+
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
   @override
@@ -27,42 +29,41 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     with SingleTickerProviderStateMixin {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: const EdgeInsets.only(top: 30),
       padding: const EdgeInsets.only(top: 10, bottom: 10),
-      margin: const EdgeInsets.only(
-          top: 25, bottom: 25), // Khoảng cách giữa các box
+      margin: const EdgeInsets.only(top: 30, bottom: 30),
       child: Column(
         children: [
-          // Hàng đầu tiên
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  Container(
-                    width: 130,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: Offset(0, 4),
-                          blurRadius: 4,
-                          spreadRadius: 0,
-                          color: Color(0x40000000),
-                        ),
-                      ],
-                      color: Color(0xFFBC2925),
-                    ),
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      onPressed: () {
-                        nextScreen(context, NhanXePage());
-                      },
-                      icon: Stack(
+                  GestureDetector(
+                    onTap: () {
+                      nextScreen(context, NhanXePage());
+                    },
+                    child: Container(
+                      width: 130,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(0, 4),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                            color: Color(0x40000000),
+                          ),
+                        ],
+                        color: AppConfig.primaryColor,
+                      ),
+                      alignment: Alignment.center,
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
                           Image.asset(
                             'assets/images/car1.png',
@@ -79,15 +80,8 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           ),
                         ],
                       ),
-
-                      iconSize: 60, // Kích thước của biểu tượng
-                      padding: EdgeInsets
-                          .zero, // Xóa padding mặc định của IconButton
-                      alignment:
-                          Alignment.center, // Căn chỉnh hình ảnh vào giữa nút
                     ),
                   ),
-
                   const SizedBox(height: 8), // Khoảng cách giữa ảnh và Text
                   const Text(
                     'KIỂM TRA NHẬN XE',
@@ -95,14 +89,12 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],
               ),
-
-              const SizedBox(width: 20), // Khoảng cách giữa 2 button
-
+              const SizedBox(width: 20),
               Column(
                 children: [
                   Container(
@@ -118,7 +110,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -155,14 +147,13 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],
               ),
             ],
           ),
-          // Hàng thứ hai
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +173,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -222,7 +213,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         fontFamily: 'Comfortaa',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFA71C20),
+                        color: AppConfig.primaryColor,
                       ),
                     ),
                   ),
@@ -247,7 +238,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           color: Color(0x40000000),
                         ),
                       ],
-                      color: Color(0xFFBC2925),
+                      color: AppConfig.primaryColor,
                     ),
                     alignment: Alignment.center,
                     child: IconButton(
@@ -280,7 +271,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       fontFamily: 'Comfortaa',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   )
                 ],

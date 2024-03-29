@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../config/config.dart';
+
 // ignore: use_key_in_widget_constructors
 class CustomBodyGuess extends StatelessWidget {
   @override
@@ -18,7 +20,7 @@ class CustomBodyGuess extends StatelessWidget {
               Color.fromRGBO(66, 143, 202, 0.2),
             ],
           ),
-        ), // Đặt màu nền cho phần này
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: MainButton());
   }
@@ -31,9 +33,7 @@ class MainButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () {
-            // Xử lý khi button 1 được nhấn
-          },
+          onTap: () {},
           child: Container(
             width: 35.w,
             height: 30.h,
@@ -49,15 +49,14 @@ class MainButton extends StatelessWidget {
                       Color(0x40000000), // Màu của bóng (0x40 là giá trị alpha)
                 ),
               ],
-              // Các thuộc tính khác của BoxDecoration
-              color: Color(0xFF428FCA), // Màu nền // Màu nền của nút
+              color: Color(0xFF428FCA),
             ),
             alignment: Alignment.center,
             child: const Center(
               child: Text(
-                'THÔNG TIN\n DỊCH VỤ', // Nội dung của button
+                'THÔNG TIN\n DỊCH VỤ',
                 style: TextStyle(
-                  color: Colors.white, // Màu chữ
+                  color: AppConfig.textButton,
                   fontFamily: 'Comfortaa',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
@@ -68,9 +67,7 @@ class MainButton extends StatelessWidget {
         ),
         SizedBox(width: 5.w),
         GestureDetector(
-          onTap: () {
-            // Xử lý khi button 1 được nhấn
-          },
+          onTap: () {},
           child: Container(
             width: 35.w,
             height: 30.h,
@@ -86,15 +83,14 @@ class MainButton extends StatelessWidget {
                       Color(0x40000000), // Màu của bóng (0x40 là giá trị alpha)
                 ),
               ],
-              // Các thuộc tính khác của BoxDecoration
-              color: Color(0xFF428FCA), // Màu nền // Màu nền của nút
+              color: Color(0xFF428FCA),
             ),
             alignment: Alignment.center,
             child: const Center(
               child: Text(
-                'TRA CỨU\nĐƠN HÀNG', // Nội dung của button
+                'TRA CỨU\nĐƠN HÀNG',
                 style: TextStyle(
-                  color: Colors.white, // Màu chữ
+                  color: AppConfig.textButton,
                   fontFamily: 'Comfortaa',
                   fontSize: 17,
                   fontWeight: FontWeight.w700,

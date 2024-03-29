@@ -22,7 +22,7 @@ Widget loadingButton(
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: AppConfig.textButton,
           ),
         ).tr()
       ],

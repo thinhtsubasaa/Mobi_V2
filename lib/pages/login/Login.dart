@@ -54,7 +54,6 @@ class LoginPage extends StatelessWidget {
                                 ),
                                 SizedBox(height: 20),
                                 CustomButtonLogin(onPressed: () {
-                                  // Handle button press
                                   nextScreen(context, GuessPage());
                                 }),
                               ],
@@ -94,7 +93,7 @@ class CustomButtonLogin extends StatelessWidget {
       child: Text(
         'TIẾP TỤC',
         style: TextStyle(
-          color: Colors.white,
+          color: AppConfig.textButton,
           fontFamily: 'Roboto',
           fontSize: 16.sp,
           fontWeight: FontWeight.w600,

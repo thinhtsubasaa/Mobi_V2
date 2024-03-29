@@ -45,16 +45,46 @@ class _HomePageState extends State<HomePage> {
     _addMarker(LatLng(0, 0)); // Add initial marker
   }
 
+  //Khởi tạo vị trí ban đầu là vị trí hiện tại của thiết bị (nếu có)
+  // _init() async {
+  //   _location = Location();
+  //   _currentLocation = await _location?.getLocation();
+  //   _cameraPosition = CameraPosition(
+  //     target: LatLng(
+  //       _currentLocation?.latitude ?? 0,
+  //       _currentLocation?.longitude ?? 0,
+  //     ),
+  //     zoom: 15,
+  //   );
+  //   _initLocation();
+  //   _addMarker(_cameraPosition!.target); // Thêm marker cho vị trí ban đầu
+  // }
+
   //function to listen when we move position
+  // _initLocation() {
+  //   //use this to go to current location instead
+  //   _location?.getLocation().then((location) {
+  //     _currentLocation = location;
+  //   });
+  //   _location?.onLocationChanged.listen((newLocation) {
+  //     _currentLocation = newLocation;
+
+  //     moveToPosition(LatLng(
+  //         _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+  //   });
+  // }
   _initLocation() {
-    //use this to go to current location instead
     _location?.getLocation().then((location) {
       _currentLocation = location;
     });
     _location?.onLocationChanged.listen((newLocation) {
       _currentLocation = newLocation;
-      moveToPosition(LatLng(
-          _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+      if (mounted) {
+        setState(() {
+          moveToPosition(LatLng(_currentLocation?.latitude ?? 0,
+              _currentLocation?.longitude ?? 0));
+        });
+      }
     });
   }
 
@@ -74,17 +104,41 @@ class _HomePageState extends State<HomePage> {
       position: latLng,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
     );
-
-    setState(() {
-      _markers.add(marker);
-    });
+    if (mounted) {
+      setState(() {
+        _markers.add(marker);
+      });
+    }
   }
 
-  // Function to update marker position
+// Function to update marker position
   _updateMarkerPosition(LatLng latLng) {
-    _markers.clear(); // Clear existing markers
-    _addMarker(latLng); // Add new marker
+    if (mounted) {
+      setState(() {
+        _markers.clear(); // Clear existing markers
+        _addMarker(latLng); // Add new marker
+      });
+    }
   }
+
+  // // Function to add a marker
+  // _addMarker(LatLng latLng) {
+  //   final Marker marker = Marker(
+  //     markerId: MarkerId('current_position'),
+  //     position: latLng,
+  //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+  //   );
+
+  //   setState(() {
+  //     _markers.add(marker);
+  //   });
+  // }
+
+  // // Function to update marker position
+  // _updateMarkerPosition(LatLng latLng) {
+  //   _markers.clear(); // Clear existing markers
+  //   _addMarker(latLng); // Add new marker
+  // }
 
   Widget _buildMapToggle() {
     return Padding(

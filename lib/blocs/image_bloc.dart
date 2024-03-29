@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/request_helper.dart';
 
-class ImageService extends ChangeNotifier {
+class ImageBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   bool _hasError = false;
   bool get hasError => _hasError;

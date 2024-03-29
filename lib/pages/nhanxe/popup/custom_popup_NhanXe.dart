@@ -1,8 +1,10 @@
+import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
@@ -31,12 +33,15 @@ class PopUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+
     return Center(
       child: Container(
         alignment: Alignment.bottomCenter,
         constraints: BoxConstraints(
-          maxHeight: screenHeight *
-              0.8, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+          maxHeight: screenHeight < 600
+              ? screenHeight * 0.85
+              : screenHeight *
+                  0.9, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -98,7 +103,6 @@ class PopUp extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
-              // Add functionality for the close button
               nextScreenReplace(context, NhanXePage());
             },
           ),
@@ -155,14 +159,12 @@ class PopUp extends StatelessWidget {
   Widget _buildCarDetails() {
     return Column(
       children: [
-        // Box 1
         Container(
-          margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+          margin: EdgeInsets.all(10),
           child: Column(
             children: [
               Row(
                 children: [
-                  // Text
                   Text(
                     tenSanPham,
                     textAlign: TextAlign.left,
@@ -170,7 +172,7 @@ class PopUp extends StatelessWidget {
                       fontFamily: 'Coda Caption',
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFFA71C20),
+                      color: AppConfig.primaryColor,
                     ),
                   ),
                 ],
@@ -181,12 +183,10 @@ class PopUp extends StatelessWidget {
                 child: Row(
                   children: [
                     SizedBox(width: 10),
-                    // Text 1
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(width: 10),
-                        // Text 1
                         Text(
                           'Số khung (VIN):',
                           style: TextStyle(
@@ -197,26 +197,21 @@ class PopUp extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 5),
-                        // Text 2
                         Text(
                           soKhung,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFFA71C20),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ],
                     ),
-
                     SizedBox(width: 40),
-
-                    // Text 2
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Text 1
                         Text(
                           'Màu:',
                           style: TextStyle(
@@ -227,14 +222,13 @@ class PopUp extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 5),
-                        // Text 2
                         Text(
                           tenMau,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFFFF0007),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ],
@@ -252,7 +246,6 @@ class PopUp extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(width: 10),
-                        // Text 1
                         Text(
                           'Số máy:',
                           style: TextStyle(
@@ -263,14 +256,13 @@ class PopUp extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 5),
-                        // Text 2
                         Text(
                           soMay,
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFFA71C20),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ],
@@ -289,15 +281,41 @@ class PopUp extends StatelessWidget {
 
   Widget _buildButtons(BuildContext context) {
     final ChucnangService _cv = ChucnangService();
+    final RoundedLoadingButtonController _btnController =
+        RoundedLoadingButtonController();
     return Container(
       child: Column(
         children: [
+          // RoundedLoadingButton(
+          //   width: MediaQuery.of(context).size.width * 1,
+          //   color: Color(0xFF00B528),
+          //   child: Text('KIỂM TRA OPTION THEO XE',
+          //       style: TextStyle(
+          //         fontFamily: 'Comfortaa',
+          //         color: Colors.white,
+          //         fontWeight: FontWeight.w700,
+          //         fontSize: 17,
+          //       )),
+          //   controller: _btnController,
+          //   onPressed: () {
+          //     nextScreen(
+          //       context,
+          //       NhanXe3Page(
+          //         soKhung: soKhung,
+          //         tenMau: tenMau,
+          //         tenSanPham: tenSanPham,
+          //         phuKien: phuKien,
+          //       ),
+          //     );
+          //     _btnController.reset();
+          //   },
+          // ),
           ElevatedButton(
             onPressed: () {
               nextScreen(
                 context,
                 NhanXe3Page(
-                  soKhung: soKhung, // hoặc giá trị mặc định khác nếu thích
+                  soKhung: soKhung,
                   tenMau: tenMau,
                   tenSanPham: tenSanPham,
                   phuKien: phuKien,
@@ -306,7 +324,7 @@ class PopUp extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00B528),
-              fixedSize: Size(100.w, 50),
+              fixedSize: Size(MediaQuery.of(context).size.width * 1.0, 50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -321,7 +339,7 @@ class PopUp extends StatelessWidget {
                       fontFamily: 'Comfortaa',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppConfig.textButton,
                     ),
                   ),
                 ),
@@ -330,36 +348,34 @@ class PopUp extends StatelessWidget {
                   padding: EdgeInsets.only(right: 5),
                   child: Icon(
                     Icons.edit,
-                    color: Colors.white,
+                    color: AppConfig.textButton,
                   ),
                 ),
               ],
             ),
           ),
+
           SizedBox(height: 7),
-          ElevatedButton(
+
+          RoundedLoadingButton(
+            width: MediaQuery.of(context).size.width * 1.0,
+            borderRadius: 5,
+            elevation: 0,
+            color: Color(0xFFE96327),
+            child: Text('XÁC NHẬN',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  color: AppConfig.textButton,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                )),
+            controller: _btnController,
             onPressed: () {
-              _cv.getData(context, soKhung);
+              _cv.getData(context, _btnController, soKhung);
               print("so Khung: ${soKhung}");
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE96327),
-              fixedSize: Size(100.w, 30),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            child: const Text(
-              'XÁC NHẬN',
-              style: TextStyle(
-                fontFamily: 'Comfortaa',
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 10),
         ],
       ),
     );

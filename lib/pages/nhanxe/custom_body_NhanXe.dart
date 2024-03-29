@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
-import 'package:Thilogi/services/request_helper.dart';
 import 'package:Thilogi/pages/nhanxe/tabs/custom_tabs_NhanXe.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import '../../blocs/scan_bloc.dart';
+import '../../config/config.dart';
 import '../../utils/next_screen.dart';
 
 class CustomBodyNhanXe extends StatelessWidget {
@@ -29,12 +29,8 @@ class BodyNhanxeScreen extends StatefulWidget {
 
 class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     with SingleTickerProviderStateMixin {
-  static RequestHelper requestHelper = RequestHelper();
-
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  Timer? _debounce;
-  List<String>? _results = [];
   ScanModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
@@ -68,7 +64,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
   Widget CardVin() {
     return Container(
-      width: 90.w,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -91,11 +87,11 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
-              color: Color(0xFFA71C20),
+              color: AppConfig.primaryColor,
             ),
             child: Center(
               child: Text(
-                'Số khung\n (VIN)',
+                'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -109,12 +105,12 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              // padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFFA71C20),
                 ),
@@ -185,19 +181,17 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
         const SizedBox(height: 5),
         TabsNhanXe(),
         const SizedBox(height: 10),
-        // Box 1
         Container(
           width: 90.w,
           padding: const EdgeInsets.only(top: 10, bottom: 10),
-          margin: const EdgeInsets.all(15), // Khoảng cách giữa các box
+          margin: const EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
-              color: const Color(0xFFCCCCCC), // Màu của đường viền
+              color: const Color(0xFFCCCCCC),
               width: 1, // Độ dày của đường viền
             ),
           ),
-
           child: Column(
             children: [
               Row(
@@ -215,7 +209,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             fontFamily: 'Coda Caption',
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFFA71C20),
+                            color: AppConfig.primaryColor,
                           ),
                         ),
                       ),
@@ -246,7 +240,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             fontFamily: 'Comfortaa',
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: AppConfig.textButton,
                           ),
                         ),
                       ),
@@ -257,16 +251,14 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
                 height: 13.h,
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Text 1
                     showInfoXe(
                       'Số khung (VIN):',
                       _data != null ? _data!.soKhung ?? "" : "",
                     ),
-
                     showInfoXe(
                       'Màu:',
                       _data != null ? _data!.tenMau ?? "" : "",
@@ -277,7 +269,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               const Divider(height: 1, color: Color(0xFFCCCCCC)),
               Container(
                 height: 13.h,
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Row(
                   children: [
                     showInfoXe(
@@ -320,7 +312,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       fontFamily: 'Comfortaa',
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppConfig.textButton,
                     ),
                   ),
                 ),
@@ -343,18 +335,19 @@ Widget showInfoXe(String title, String value) {
           title,
           style: const TextStyle(
             fontFamily: 'Comfortaa',
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
             color: Color(0xFF818180),
           ),
         ),
+        SizedBox(height: 5),
         Text(
           value,
           style: const TextStyle(
             fontFamily: 'Comfortaa',
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: FontWeight.w700,
-            color: Color(0xFFA71C20),
+            color: AppConfig.primaryColor,
           ),
         )
       ],

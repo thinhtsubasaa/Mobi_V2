@@ -26,7 +26,7 @@ class ScanBloc extends ChangeNotifier {
   String? get message => _message;
 
   var headers = {
-    'ApiKey': 'qtsx2023', // Thêm header này vào request của bạn
+    'ApiKey': 'qtsx2023',
   };
   Future<void> getData(String qrcode) async {
     _scan = null;
@@ -67,7 +67,7 @@ class ScanBloc extends ChangeNotifier {
                 .toList(),
           );
         } else {
-          _scan = null; // Gán _scan thành null nếu không có dữ liệu
+          _scan = null;
           _isLoading = false;
         }
       }

@@ -16,11 +16,13 @@ import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 
+import '../../config/config.dart';
 import '../../services/app_service.dart';
 import '../../utils/snackbar.dart';
 
@@ -50,15 +52,13 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   String? long;
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  Timer? _debounce;
-  List<String>? _results = [];
   XuatKhoModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
 
   late XuatKhoBloc _bl;
 
-  List<DiaDiemModel>? _diadiemList; // Định nghĩa danh sách khoxeList ở đây
+  List<DiaDiemModel>? _diadiemList;
   List<DiaDiemModel>? get diadiemList => _diadiemList;
   List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
   List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList =>
@@ -84,11 +84,12 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   String? get message => _message;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   void initState() {
     super.initState();
-
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
@@ -221,25 +222,26 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         var decodedData = jsonDecode(response.body);
 
         print("data: ${decodedData}");
-        // _isLoading = false;
-        // _success = decodedData["success"];
 
         notifyListeners();
-
+        _btnController.success();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           text: "Xuất kho thành công",
         );
+        _btnController.reset();
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        _btnController.error();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
           title: '',
           text: errorMessage,
         );
+        _btnController.reset();
       }
     } catch (e) {
       _message = e.toString();
@@ -250,7 +252,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
 
   Widget CardVin() {
     return Container(
-      width: 90.w,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -273,17 +275,17 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
-              color: Color(0xFFA71C20),
+              color: AppConfig.primaryColor,
             ),
             child: Center(
               child: Text(
-                'Số khung\n (VIN)',
+                'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
-                  color: Colors.white,
+                  color: AppConfig.textButton,
                 ),
               ),
             ),
@@ -291,14 +293,14 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              // padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA71C20),
+                  color: AppConfig.primaryColor,
                 ),
               ),
             ),
@@ -383,6 +385,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     _data?.danhSachPhuongTien_Id = DanhSachPhuongTienId;
     _data?.bienSo_Id = _bl.xuatkho?.bienSo_Id;
     _data?.taiXe_Id = _bl.xuatkho?.taiXe_Id;
+    _data?.tenDiaDiem = _bl.xuatkho?.tenDiaDiem;
+    _data?.tenPhuongThucVanChuyen = _bl.xuatkho?.tenPhuongThucVanChuyen;
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
@@ -438,7 +442,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        // Box 1
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
@@ -469,13 +472,18 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const Divider(height: 1, color: Color(0xFFA71C20)),
+                      const Divider(
+                        height: 1,
+                        color: AppConfig.primaryColor,
+                      ),
                       const SizedBox(height: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -504,7 +512,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -512,7 +520,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _diadiemList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -526,7 +534,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -551,7 +559,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -580,7 +590,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -588,7 +598,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items:
                                           _phuongthucvanchuyenList?.map((item) {
@@ -603,7 +613,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -629,7 +639,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -658,7 +670,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -666,7 +678,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _loaiphuongtienList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -681,7 +693,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -701,7 +713,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 7.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -730,7 +744,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -738,7 +752,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items:
                                           _danhsachphuongtienList?.map((item) {
@@ -754,7 +768,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -780,9 +794,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                 ),
                 Column(
                   children: [
-                    // Box 1
                     Container(
-                      margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+                      margin: EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Row(
@@ -795,10 +808,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                   fontFamily: 'Coda Caption',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w800,
-                                  height:
-                                      1.56, // Corresponds to line-height of 28px
-
-                                  color: Color(0xFFA71C20),
+                                  color: AppConfig.primaryColor,
                                 ),
                               ),
                             ],
@@ -809,13 +819,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // SizedBox(width: 10),
-                                // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // SizedBox(width: 10),
-                                    // Text 1
                                     Text(
                                       'Số khung (VIN):',
                                       style: TextStyle(
@@ -826,27 +832,20 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soKhung ?? "" : "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
-                                        color: Color(0xFFA71C20),
+                                        color: AppConfig.primaryColor,
                                       ),
                                     ),
                                   ],
                                 ),
-
-                                // SizedBox(
-                                //     width: 40), // Khoảng cách giữa hai Text
-
-                                // Text 2
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Màu:',
                                       style: TextStyle(
@@ -857,14 +856,13 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.tenMau ?? "" : "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xFFFF0007),
+                                        color: AppConfig.primaryColor,
                                       ),
                                     ),
                                   ],
@@ -877,13 +875,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                             padding: const EdgeInsets.all(10),
                             child: Row(
                               children: [
-                                // SizedBox(width: 10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // SizedBox(width: 10),
-
-                                    // Text 1
                                     Text(
                                       'Số máy:',
                                       style: TextStyle(
@@ -894,14 +888,13 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soMay ?? "" : "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        color: Color(0xFFA71C20),
+                                        color: AppConfig.primaryColor,
                                       ),
                                     ),
                                   ],
@@ -916,26 +909,23 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                   ],
                 ),
                 Container(
-                  width: 90.w,
+                  width: 100.w,
                   padding: const EdgeInsets.all(10),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 10),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(90.w, 50),
-                            backgroundColor: Colors.red,
-                          ),
-                          onPressed:
-                              DanhSachPhuongTienId != null ? _onSave : null,
-                          child: Text("Xuất Kho",
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ))),
+                      RoundedLoadingButton(
+                        child: Text('Xuất kho',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              color: AppConfig.textButton,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            )),
+                        controller: _btnController,
+                        onPressed:
+                            DanhSachPhuongTienId != null ? _onSave : null,
+                      ),
                     ],
                   ),
                 ),

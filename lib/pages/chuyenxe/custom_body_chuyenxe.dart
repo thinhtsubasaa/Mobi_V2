@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:Thilogi/models/taixe.dart';
-import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/utils/snackbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +16,10 @@ import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../blocs/app_bloc.dart';
+import '../../config/config.dart';
 import '../../models/baixe.dart';
 import '../../models/khoxe.dart';
 import '../../models/vitri.dart';
@@ -54,19 +53,17 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   String? ViTriId;
   String? TaiXeId;
   final _qrDataController = TextEditingController();
-  Timer? _debounce;
-  List<String>? _results = [];
   DieuChuyenModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
-  List<KhoXeModel>? _khoxeList; // Định nghĩa danh sách khoxeList ở đây
+  List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
-  List<BaiXeModel>? _baixeList; // Định nghĩa danh sách khoxeList ở đây
+  List<BaiXeModel>? _baixeList;
   List<BaiXeModel>? get baixeList => _baixeList;
 
-  List<ViTriModel>? _vitriList; // Định nghĩa danh sách khoxeList ở đây
+  List<ViTriModel>? _vitriList;
   List<ViTriModel>? get vitriList => _vitriList;
-  List<TaiXeModel>? _taixeList; // Định nghĩa danh sách khoxeList ở đây
+  List<TaiXeModel>? _taixeList;
   List<TaiXeModel>? get taixeList => _taixeList;
 
   bool _hasError = false;
@@ -86,6 +83,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   late StreamSubscription<ScanResult> scanSubscription;
 
   late DieuChuyenBloc _bl;
+  final RoundedLoadingButtonController _btnController =
+      RoundedLoadingButtonController();
 
   @override
   void initState() {
@@ -118,9 +117,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        // var data = decodedData["data"];
-        // var info = data["info"];
-
         _khoxeList = (decodedData as List)
             .map((item) => KhoXeModel.fromJson(item))
             .toList();
@@ -131,11 +127,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         });
       }
 
-      // notifyListeners();
+      notifyListeners();
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
-      // notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -146,7 +142,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
-        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
+
         _baixeList = (decodedData as List)
             .map((item) => BaiXeModel.fromJson(item))
             .toList();
@@ -222,26 +218,27 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         var decodedData = jsonDecode(response.body);
 
         print("data: ${decodedData}");
-        // _isLoading = false;
-        // _success = decodedData["success"];
 
         notifyListeners();
-
+        _btnController.success();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           title: "SUCCESS",
           text: "Điều chuyển thành công",
         );
+        _btnController.reset();
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        _btnController.error();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
           title: 'ERROR',
           text: errorMessage,
         );
+        _btnController.reset();
       }
     } catch (e) {
       _message = e.toString();
@@ -252,7 +249,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
 
   Widget CardVin() {
     return Container(
-      width: 90.w,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -275,11 +272,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
-              color: Color(0xFFA71C20),
+              color: AppConfig.primaryColor,
             ),
             child: Center(
               child: Text(
-                'Số khung\n (VIN)',
+                'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -293,11 +290,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           SizedBox(width: 10),
           Expanded(
             child: Container(
-              // padding: EdgeInsets.symmetric(horizontal: 10),
-              // decoration: BoxDecoration(
-              //   borderRadius: BorderRadius.circular(5),
-              //   border: Border.all(color: Color(0xFFA71C20), width: 1),
-              // ),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
                 style: TextStyle(
@@ -438,7 +431,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        // Box 1
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
@@ -481,7 +473,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF000000),
+                              color: AppConfig.textInput,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -492,7 +484,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF000000),
+                              color: AppConfig.textInput,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -503,12 +495,14 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               fontFamily: 'Comfortaa',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF000000),
+                              color: AppConfig.textInput,
                             ),
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 10.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -537,7 +531,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -545,7 +539,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       isDense: true,
                                       items: _khoxeList?.map((item) {
@@ -563,7 +557,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w600,
-                                                    color: Color(0xFF000000),
+                                                    color: AppConfig.textInput,
                                                   ),
                                                 ),
                                               ),
@@ -590,7 +584,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 10.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -619,7 +615,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -627,7 +623,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _baixeList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -641,7 +637,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -666,7 +662,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           const SizedBox(height: 4),
                           Container(
-                            height: 10.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -694,7 +692,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -702,7 +700,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _vitriList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -717,7 +715,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -738,7 +736,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           ),
                           SizedBox(height: 4),
                           Container(
-                            height: 10.h,
+                            height: MediaQuery.of(context).size.height < 600
+                                ? 10.h
+                                : 7.h,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
@@ -766,7 +766,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
-                                        color: Color(0xFF000000),
+                                        color: AppConfig.textInput,
                                       ),
                                     ),
                                   ),
@@ -774,7 +774,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                 Expanded(
                                   flex: 1,
                                   child: Container(
-                                    padding: EdgeInsets.only(top: 5),
+                                    padding: EdgeInsets.only(top: 12),
                                     child: DropdownButtonFormField<String>(
                                       items: _taixeList?.map((item) {
                                         return DropdownMenuItem<String>(
@@ -789,7 +789,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: Color(0xFF000000),
+                                                color: AppConfig.textInput,
                                               ),
                                             ),
                                           ),
@@ -815,14 +815,12 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                 ),
                 Column(
                   children: [
-                    // Box 1
                     Container(
-                      margin: EdgeInsets.all(10), // Khoảng cách giữa các box
+                      margin: EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Row(
                             children: [
-                              // Text
                               Text(
                                 _data != null ? _data!.tenSanPham ?? "" : "",
                                 textAlign: TextAlign.left,
@@ -841,11 +839,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Text 1
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Số khung (VIN):',
                                       style: TextStyle(
@@ -856,7 +852,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soKhung ?? "" : "",
                                       style: TextStyle(
@@ -868,12 +863,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                     ),
                                   ],
                                 ),
-
-                                // Text 2
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Màu:',
                                       style: TextStyle(
@@ -884,7 +876,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.tenMau ?? "" : "",
                                       style: TextStyle(
@@ -907,7 +898,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Text 1
                                     Text(
                                       'Số máy:',
                                       style: TextStyle(
@@ -918,7 +908,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                       ),
                                     ),
                                     SizedBox(height: 5),
-                                    // Text 2
                                     Text(
                                       _data != null ? _data!.soMay ?? "" : "",
                                       style: TextStyle(
@@ -940,19 +929,17 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 10),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: Size(90.w, 50),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                    onPressed: ViTriId != null ? _onSave : null,
-                                    child: Text("Điều chuyển",
-                                        style: TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16,
-                                        ))),
+                                RoundedLoadingButton(
+                                  child: Text('Điều chuyển',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        color: AppConfig.textButton,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                      )),
+                                  controller: _btnController,
+                                  onPressed: ViTriId != null ? _onSave : null,
+                                ),
                                 SizedBox(height: 10),
                               ],
                             ),
@@ -1015,7 +1002,7 @@ class MyInputWidget extends StatelessWidget {
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xFF000000),
+                  color: AppConfig.textInput,
                 ),
               ),
             ),

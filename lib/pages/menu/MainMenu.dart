@@ -91,10 +91,9 @@ class BottomContent extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height / 8,
       padding: EdgeInsets.all(10),
-      child: Center(
-        child: customTitle(
-          'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
-        ),
+      margin: EdgeInsets.only(left: 20),
+      child: customTitle(
+        'HỆ THỐNG QUẢN LÝ NGUỒN LỰC DOANH NGHIỆP (ERP)',
       ),
     );
   }

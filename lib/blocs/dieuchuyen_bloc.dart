@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 
 class DieuChuyenBloc extends ChangeNotifier {
@@ -36,10 +35,6 @@ class DieuChuyenBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
-          // var data = decodedData["data"];
-
-          // var info = data["info"];
-
           _dieuchuyen = DieuChuyenModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -65,7 +60,7 @@ class DieuChuyenBloc extends ChangeNotifier {
           );
         }
       } else {
-        _dieuchuyen = null; // Gán _scan thành null nếu không có dữ liệu
+        _dieuchuyen = null;
         _isLoading = false;
       }
 

@@ -25,6 +25,8 @@ class GiaoXeModel {
   String? bienSo_Id;
   String? taiXe_Id;
   String? nguoiNhan;
+  String? tenDiaDiem;
+  String? tenPhuongThucVanChuyen;
   List<FileDinhKems>? fileDinhKems;
 
   GiaoXeModel(
@@ -54,7 +56,9 @@ class GiaoXeModel {
       this.phuongThucVanChuyen_Id,
       this.taiXe_Id,
       this.nguoiNhan,
-      this.fileDinhKems});
+      this.fileDinhKems,
+      this.tenDiaDiem,
+      this.tenPhuongThucVanChuyen});
   @override
   String toString() {
     return 'GiaoXeModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu, fileDinhKems: $fileDinhKems)';
@@ -88,6 +92,8 @@ class GiaoXeModel {
       lat: json["lat"],
       long: json["long"],
       nguoiNhan: json["nguoiNhan"],
+      tenDiaDiem: json["tenDiaDiem"],
+      tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       fileDinhKems: (json['phuKien'] as List)
           .map((e) => FileDinhKems.fromJson(e))
           .toList(),
@@ -118,6 +124,8 @@ class GiaoXeModel {
         "lat": lat,
         "long": long,
         "nguoiNhan": nguoiNhan,
+        "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
+        "tenDiaDiem": tenDiaDiem,
       };
 }
 

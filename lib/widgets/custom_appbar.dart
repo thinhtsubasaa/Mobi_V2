@@ -19,9 +19,9 @@ PreferredSizeWidget customAppBar() {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               fontWeight: FontWeight.w700,
-              color: Color(0xFFBC2925),
+              color: AppConfig.primaryColor,
             ),
           ),
         ),

@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/giaoxe.dart';
-import 'package:Thilogi/models/xuatkho.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 
 class GiaoXeBloc extends ChangeNotifier {
@@ -37,10 +35,6 @@ class GiaoXeBloc extends ChangeNotifier {
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
-          // var data = decodedData["data"];
-
-          // var info = data["info"];
-
           _giaoxe = GiaoXeModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -66,11 +60,13 @@ class GiaoXeBloc extends ChangeNotifier {
             bienSo_Id: decodedData['bienSo_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
             nguoiNhan: decodedData['nguoiNhan'],
+            tenDiaDiem: decodedData['tenDiaDiem'],
+            tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
             // latLng: decodedData['latLng'],
           );
         }
       } else {
-        _giaoxe = null; // Gán _scan thành null nếu không có dữ liệu
+        _giaoxe = null;
         _isLoading = false;
       }
 
