@@ -18,6 +18,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+    bool _loading = false;
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
@@ -34,7 +35,11 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _goToHomePage() {
-    nextScreenReplace(context, MainMenuPage());
+    nextScreenReplace(context, MainMenuPage(resetLoadingState: () {
+                  setState(() {
+                    _loading = false;
+                  });
+                },));
   }
 
   void _goToLoginPage() {

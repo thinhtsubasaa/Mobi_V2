@@ -5,15 +5,38 @@ import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../widgets/loading.dart';
+
 // ignore: use_key_in_widget_constructors
-class CustomBodyMainMenu extends StatelessWidget {
+class CustomBodyMainMenu extends StatefulWidget {
+  @override
+  _CustomBodyMainMenuState createState() => _CustomBodyMainMenuState();
+}
+
+class _CustomBodyMainMenuState extends State<CustomBodyMainMenu> {
+  bool _loading = false;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 100.w,
-        // ignore: prefer_const_constructors
-        color: Color.fromRGBO(246, 198, 199, 0.2),
-        child: BodyMainMenu());
+    return _loading
+        ? LoadingWidget(context)
+        : Container(
+            width: 100.w,
+            color: Color.fromRGBO(246, 198, 199, 0.2),
+            child: BodyMainMenu(onNextScreen: () {
+              setState(() {
+                _loading = true;
+              });
+              // Navigate to the next screen
+              nextScreen(context, QLKhoXePage(
+                resetLoadingState: () {
+                  setState(() {
+                    _loading = true;
+                  });
+                },
+              ));
+            }),
+          );
   }
 }
 
@@ -21,6 +44,9 @@ class CustomBodyMainMenu extends StatelessWidget {
 class BodyMainMenu extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
+  final VoidCallback onNextScreen;
+  BodyMainMenu({required this.onNextScreen});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,9 +62,7 @@ class BodyMainMenu extends StatelessWidget {
               Column(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      nextScreen(context, QLKhoXePage());
-                    },
+                    onPressed: onNextScreen,
                     icon: Image.asset(
                       'assets/images/toyota7.png',
                       width: AppConfig.buttonMainMenuWidth,

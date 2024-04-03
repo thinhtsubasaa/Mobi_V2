@@ -1,4 +1,4 @@
-import 'package:Thilogi/pages/XuatCong/custom_body_vitrixe.dart';
+import 'package:Thilogi/pages/DongCont/custom_body_xuatcong.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +13,7 @@ class XuatCongXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: customAppBar(),
       body: Column(
         children: [
@@ -46,7 +47,7 @@ class BottomContent extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - XUẤT CÔNG',
+          'KIỂM TRA - ĐÓNG CONT',
         ),
       ),
     );

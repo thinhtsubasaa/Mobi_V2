@@ -25,6 +25,7 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
 import '../../config/config.dart';
 import '../../services/app_service.dart';
 import '../../utils/snackbar.dart';
+import '../../widgets/loading.dart';
 
 class CustomBodyKhoXe extends StatelessWidget {
   @override
@@ -59,6 +60,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   late XuatKhoBloc _bl;
 
   List<DiaDiemModel>? _diadiemList;
+
   List<DiaDiemModel>? get diadiemList => _diadiemList;
   List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
   List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList =>
@@ -90,6 +92,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   @override
   void initState() {
     super.initState();
+
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
@@ -126,7 +129,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
 
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
 
@@ -151,7 +154,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
             .toList();
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
     } catch (e) {
@@ -174,7 +177,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
             .toList();
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
     } catch (e) {
@@ -197,7 +200,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
             .toList();
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
     } catch (e) {
@@ -334,7 +337,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
       _data = null;
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
         _onScan(barcodeScanResult);
@@ -459,339 +462,385 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Thông Tin Xác Nhận',
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                _loading
+                    ? LoadingWidget(context)
+                    : Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Thông Tin Xác Nhận',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const Divider(
+                              height: 1,
+                              color: AppConfig.primaryColor,
+                            ),
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Địa điểm",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                          .size
+                                                          .height <
+                                                      600
+                                                  ? 0
+                                                  : 10),
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            items: _diadiemList?.map((item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item.id,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 15.sp),
+                                                  child: Text(
+                                                    item.tenDiaDiem ?? "",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppConfig.textInput,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: DiaDiemId,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                DiaDiemId = newValue;
+                                              });
+                                              // if (newValue != null) {
+                                              //   getBaiXeList(newValue);
+
+                                              // }
+                                              ;
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Phương thức\nvận chuyển",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                          .size
+                                                          .height <
+                                                      600
+                                                  ? 0
+                                                  : 10),
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            items: _phuongthucvanchuyenList
+                                                ?.map((item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item.id,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 15.sp),
+                                                  child: Text(
+                                                    item.tenPhuongThucVanChuyen ??
+                                                        "",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppConfig.textInput,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: PhuongThucVanChuyenId,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                PhuongThucVanChuyenId =
+                                                    newValue;
+                                              });
+                                              // if (newValue != null) {
+                                              //   getDanhSachPhuongTienList(newValue);
+                                              //   print(
+                                              //       "object : ${PhuongThucVanChuyenId}");
+                                              // }
+                                              // ;
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Loại phương\ntiện",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                          .size
+                                                          .height <
+                                                      600
+                                                  ? 0
+                                                  : 10),
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            items: _loaiphuongtienList
+                                                ?.map((item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item.id,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 15.sp),
+                                                  child: Text(
+                                                    item.tenLoaiPhuongTien ??
+                                                        "",
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppConfig.textInput,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: LoaiPhuongTienId,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                LoaiPhuongTienId = newValue;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Danh sách\nphương tiện",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                          .size
+                                                          .height <
+                                                      600
+                                                  ? 0
+                                                  : 10),
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            items: _danhsachphuongtienList
+                                                ?.map((item) {
+                                              return DropdownMenuItem<String>(
+                                                value: item.id,
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      left: 15.sp),
+                                                  child: Text(
+                                                    item.bienSo ?? "",
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppConfig.textInput,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            value: DanhSachPhuongTienId,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                DanhSachPhuongTienId = newValue;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const Divider(
-                        height: 1,
-                        color: AppConfig.primaryColor,
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height < 600
-                                ? 10.h
-                                : 7.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: const Color(0xFF818180),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 30.w,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF6C6C7),
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Color(0xFF818180),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Địa điểm",
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppConfig.textInput,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: DropdownButtonFormField<String>(
-                                      items: _diadiemList?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            padding:
-                                                EdgeInsets.only(left: 15.sp),
-                                            child: Text(
-                                              item.tenDiaDiem ?? "",
-                                              style: const TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppConfig.textInput,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: DiaDiemId,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          DiaDiemId = newValue;
-                                        });
-                                        // if (newValue != null) {
-                                        //   getBaiXeList(newValue);
-
-                                        // }
-                                        ;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Container(
-                            height: MediaQuery.of(context).size.height < 600
-                                ? 10.h
-                                : 7.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: const Color(0xFF818180),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 30.w,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF6C6C7),
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Color(0xFF818180),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Phương thức\nvận chuyển",
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppConfig.textInput,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: DropdownButtonFormField<String>(
-                                      items:
-                                          _phuongthucvanchuyenList?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            padding:
-                                                EdgeInsets.only(left: 15.sp),
-                                            child: Text(
-                                              item.tenPhuongThucVanChuyen ?? "",
-                                              style: const TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppConfig.textInput,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: PhuongThucVanChuyenId,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          PhuongThucVanChuyenId = newValue;
-                                        });
-                                        // if (newValue != null) {
-                                        //   getDanhSachPhuongTienList(newValue);
-                                        //   print(
-                                        //       "object : ${PhuongThucVanChuyenId}");
-                                        // }
-                                        // ;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Container(
-                            height: MediaQuery.of(context).size.height < 600
-                                ? 10.h
-                                : 7.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: const Color(0xFF818180),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 30.w,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF6C6C7),
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Color(0xFF818180),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Loại phương\ntiện",
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppConfig.textInput,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: DropdownButtonFormField<String>(
-                                      items: _loaiphuongtienList?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            padding:
-                                                EdgeInsets.only(left: 15.sp),
-                                            child: Text(
-                                              item.tenLoaiPhuongTien ?? "",
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppConfig.textInput,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: LoaiPhuongTienId,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          LoaiPhuongTienId = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Container(
-                            height: MediaQuery.of(context).size.height < 600
-                                ? 10.h
-                                : 7.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                color: const Color(0xFF818180),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 30.w,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFF6C6C7),
-                                    border: Border(
-                                      right: BorderSide(
-                                        color: Color(0xFF818180),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Danh sách\nphương tiện",
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppConfig.textInput,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.only(top: 12),
-                                    child: DropdownButtonFormField<String>(
-                                      items:
-                                          _danhsachphuongtienList?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            padding:
-                                                EdgeInsets.only(left: 15.sp),
-                                            child: Text(
-                                              item.bienSo ?? "",
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppConfig.textInput,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: DanhSachPhuongTienId,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          DanhSachPhuongTienId = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 Column(
                   children: [
                     Container(

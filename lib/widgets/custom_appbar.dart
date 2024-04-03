@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 PreferredSizeWidget customAppBar() {
   return AppBar(
     // automaticallyImplyLeading: false,
+
     title: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

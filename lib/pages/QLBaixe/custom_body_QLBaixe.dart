@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/XuatCong/Xuatcong.dart';
+import 'package:Thilogi/pages/DongCont/dongcont.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:sizer/sizer.dart';
@@ -263,7 +263,7 @@ class BodyQLKhoXe extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'XUẤT CÔNG',
+                    'ĐÓNG CONT',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 14,

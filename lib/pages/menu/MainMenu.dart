@@ -10,11 +10,33 @@ import '../../widgets/custom_title.dart';
 class MainMenuPage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
-
+final VoidCallback resetLoadingState;
+  MainMenuPage({required this.resetLoadingState});
+  PreferredSizeWidget customAppBar(BuildContext context) {
+    return AppBar(
+      // automaticallyImplyLeading: false,
+       leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          resetLoadingState();
+          Navigator.pop(context);
+        },
+      ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.appBarImagePath,
+            width: 70.w,
+          ),
+        ],
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(key: Key('customAppBar')),
+      appBar: customAppBar(context),
       body: Column(
         children: [
           CustomCard(),
@@ -47,28 +69,28 @@ class BottomContent extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  final Key? key;
+// class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+//   @override
+//   final Key? key;
 
-  const CustomAppBar({this.key}) : super(key: key);
+//   const CustomAppBar({this.key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      // automaticallyImplyLeading: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            AppConfig.appBarImagePath,
-            width: 70.w,
-          ),
-        ],
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return AppBar(
+//       // automaticallyImplyLeading: false,
+//       title: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Image.asset(
+//             AppConfig.appBarImagePath,
+//             width: 70.w,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}
+//   @override
+//   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+// }

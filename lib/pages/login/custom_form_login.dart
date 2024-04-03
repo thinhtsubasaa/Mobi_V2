@@ -14,17 +14,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../config/config.dart';
+import '../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomLoginForm extends StatelessWidget {
+  bool _loading = false;
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 100.w,
-        // ignore: prefer_const_constructors
-        color: Color.fromRGBO(246, 198, 199, 0.2),
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: SignUpScreen());
+    return _loading
+        ? LoadingWidget(context)
+        : Container(
+            width: 100.w,
+            // ignore: prefer_const_constructors
+            color: Color.fromRGBO(246, 198, 199, 0.2),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: SignUpScreen());
   }
 }
 
@@ -35,6 +39,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  bool _loading = false;
   late AppBloc _ab;
   late UserBloc _ub;
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -107,7 +112,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) {
                 _btnController.success();
 
-                nextScreenReplace(context, MainMenuPage());
+                nextScreenReplace(context, MainMenuPage(
+                  resetLoadingState: () {
+                    setState(() {
+                      _loading = false;
+                    });
+                  },
+                ));
               });
             } else {
               if (asb.hasError) {
@@ -149,6 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: TextFormField(
               controller: userNameCtrl,
               autofillHints: [AutofillHints.username],
+              keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 contentPadding:
                     EdgeInsets.symmetric(vertical: 10, horizontal: 25),

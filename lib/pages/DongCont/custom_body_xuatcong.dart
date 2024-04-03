@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Thilogi/blocs/dongcont_bloc.dart';
+import 'package:Thilogi/models/dongcont.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/blocs/khothanhpham_bloc.dart';
@@ -10,8 +12,10 @@ import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 import '../../config/config.dart';
+import '../../widgets/loading.dart';
 
 class CustomBodyXuatCongXe extends StatelessWidget {
   @override
@@ -32,7 +36,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  KhoThanhPhamModel? _data;
+  DongContModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
   bool _hasError = false;
@@ -52,16 +56,24 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
 
-  late KhoThanhPhamBloc _bl;
+  late DongContBloc _bl;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
-  var soContCtrl = TextEditingController();
-  var soSiuCtrl = TextEditingController();
+  String select = '';
+  final soContCtrl = TextEditingController();
+  final soSealCtrl = TextEditingController();
+  List<String> cities = [
+    "Nuithanh123",
+    "Tamky456",
+    "Badang000",
+    "abc213",
+    "tgkeg555"
+  ];
 
   @override
   void initState() {
     super.initState();
-    _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
+    _bl = Provider.of<DongContBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
     // Subscribe to scan results
@@ -79,6 +91,71 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     scanSubscription.cancel();
     // dataWedge.dispose();
     super.dispose();
+  }
+
+  Widget listSoCont() {
+    return Container(
+      height: 13.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(
+          color: const Color(0xFF818180),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 30.w,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF6C6C7),
+              border: Border(
+                right: BorderSide(
+                  color: Color(0xFF818180),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                "Số Cont",
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: AppConfig.textInput,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Container(
+              child: Column(
+                children: [
+                  DropdownSearch<String>(
+                    mode: Mode.MENU,
+                    showSearchBox: true,
+                    showSelectedItem: true,
+                    items: cities,
+                    // Sử dụng kiểu phù hợp (String?) => bool
+                    // popupItemDisabled: (String? s) =>
+                    //     s?.startsWith('I') ?? false,
+                    onChanged: (value) {
+                      setState(() {
+                        select = value;
+                      });
+                    },
+                    selectedItem: select,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget CardVin() {
@@ -160,12 +237,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print(barcodeScanResult);
+
     // Process the barcode scan result here
     setState(() {
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
       _data = null;
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
         _onScan(barcodeScanResult);
@@ -180,12 +258,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _bl.getData(value).then((_) {
       setState(() {
         _qrData = value;
-        if (_bl.baixe == null) {
+        if (_bl.dongcont == null) {
           _qrData = '';
           _qrDataController.text = '';
         }
         _loading = false;
-        _data = _bl.baixe;
+        _data = _bl.dongcont;
       });
     });
   }
@@ -214,52 +292,46 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Thông Tin Xác Nhận',
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                _loading
+                    ? LoadingWidget(context)
+                    : Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Thông Tin Xác Nhận',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Divider(height: 1, color: Color(0xFFA71C20)),
+                            SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                listSoCont(),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                MyInputWidget(
+                                  title: "Số Seal",
+                                  text: "",
+                                  textStyle: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppConfig.textInput,
+                                  ),
+                                  controller: soSealCtrl,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      Divider(height: 1, color: Color(0xFFA71C20)),
-                      SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MyInputWidget(
-                            title: "Số Công",
-                            text: "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
-                            ),
-                            controller: soContCtrl,
-                          ),
-                          SizedBox(height: 4),
-                          MyInputWidget(
-                            title: "Số siu",
-                            text: "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
-                            ),
-                            controller: soSiuCtrl,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 Column(
                   children: [
                     Container(
@@ -475,3 +547,41 @@ class MyInputWidget extends StatelessWidget {
     );
   }
 }
+
+  // String select = '';
+  // final soContCtrl = TextEditingController();
+//  DropDownField(
+//  controller: soContCtrl,
+//                                       hintText: 'Select',
+//                                       enabled: true,
+//                                       items: _diadiemList
+//                                           ?.map((item) {
+//                                             return DropdownMenuItem<String>(
+//                                               value: item.tenDiaDiem,
+//                                               child: Container(
+//                                                 padding: EdgeInsets.only(
+//                                                     left: 15.sp),
+//                                                 child: Text(
+//                                                   item.tenDiaDiem ?? "",
+//                                                   style: const TextStyle(
+//                                                     fontFamily: 'Comfortaa',
+//                                                     fontSize: 14,
+//                                                     fontWeight: FontWeight.w600,
+//                                                     color: AppConfig.textInput,
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             );
+//                                           })
+//                                           .toList()
+//                                           .map((DropdownMenuItem<String>
+//                                               menuItem) {
+//                                             return menuItem.value!;
+//                                           })
+//                                           .toList(), // Trích xuất giá trị value và chuyển đổi thành danh sách chuỗi
+//                                       onValueChanged: (newValue) {
+//                                         setState(() {
+//                                           DiaDiemId = newValue;
+//                                         });
+//                                       },
+//                                     ),

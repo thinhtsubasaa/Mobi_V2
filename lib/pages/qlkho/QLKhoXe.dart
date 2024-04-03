@@ -12,11 +12,46 @@ import '../../widgets/custom_title.dart';
 class QLKhoXePage extends StatelessWidget {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
+  final VoidCallback resetLoadingState;
+  QLKhoXePage({required this.resetLoadingState});
+  PreferredSizeWidget customAppBar(BuildContext context) {
+    return AppBar(
+      // automaticallyImplyLeading: false,
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          resetLoadingState();
+          Navigator.pop(context);
+        },
+      ),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.QLKhoImagePath,
+            width: 70.w,
+          ),
+          Container(
+            child: Text(
+              'TCT VẬN TẢI ĐƯỜNG BỘ THILOGI',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: customAppBar(context),
       body: Column(
         children: [
           CustomCard(),

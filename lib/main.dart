@@ -1,4 +1,5 @@
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
+import 'package:Thilogi/blocs/dongcont_bloc.dart';
 import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
 import 'package:Thilogi/blocs/image_bloc.dart';
@@ -55,6 +56,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider<DieuChuyenBloc>(
             create: (context) => DieuChuyenBloc(),
+          ),
+          ChangeNotifierProvider<DongContBloc>(
+            create: (context) => DongContBloc(),
           ),
         ],
         child: MaterialApp(

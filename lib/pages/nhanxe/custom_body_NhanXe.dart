@@ -12,6 +12,7 @@ import 'package:flutter_datawedge/flutter_datawedge.dart';
 import '../../blocs/scan_bloc.dart';
 import '../../config/config.dart';
 import '../../utils/next_screen.dart';
+import '../../widgets/loading.dart';
 
 class CustomBodyNhanXe extends StatelessWidget {
   @override
@@ -181,145 +182,149 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
         const SizedBox(height: 5),
         TabsNhanXe(),
         const SizedBox(height: 10),
-        Container(
-          width: 90.w,
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          margin: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: const Color(0xFFCCCCCC),
-              width: 1, // Độ dày của đường viền
-            ),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 8.h,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          _data != null ? _data!.tenSanPham ?? "" : "",
-                          style: TextStyle(
-                            fontFamily: 'Coda Caption',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
+        _loading
+            ? LoadingWidget(context)
+            : Container(
+                width: 90.w,
+                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                margin: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xFFCCCCCC),
+                    width: 1, // Độ dày của đường viền
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 8.h,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                _data != null ? _data!.tenSanPham ?? "" : "",
+                                style: TextStyle(
+                                  fontFamily: 'Coda Caption',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppConfig.primaryColor,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
+                        Container(
+                          width: 16.w,
+                          height: 3.h,
+                          margin: EdgeInsets.only(right: 10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF428FCA),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Xử lý sự kiện khi nút được nhấn
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                padding: const EdgeInsets.all(0),
+                              ),
+                              child: const Text(
+                                'Chờ nhận',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppConfig.textButton,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                    Container(
+                      height: 13.h,
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          showInfoXe(
+                            'Số khung (VIN):',
+                            _data != null ? _data!.soKhung ?? "" : "",
+                          ),
+                          showInfoXe(
+                            'Màu:',
+                            _data != null ? _data!.tenMau ?? "" : "",
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  Container(
-                    width: 16.w,
-                    height: 3.h,
-                    margin: EdgeInsets.only(right: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0xFF428FCA),
+                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                    Container(
+                      height: 13.h,
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      child: Row(
+                        children: [
+                          showInfoXe(
+                            'Nhà máy',
+                            _data != null ? _data!.tenKho ?? "" : "",
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Align(
-                      alignment: Alignment.center,
+                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                    Container(
+                      padding: EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () {
-                          // Xử lý sự kiện khi nút được nhấn
+                          nextScreenReplace(
+                              context,
+                              NhanXe2Page(
+                                soKhung: _data!.soKhung ?? "",
+                                soMay: _data!.soMay ?? "",
+                                tenMau: _data!.tenMau ?? "",
+                                tenSanPham: _data!.tenSanPham ?? "",
+                                ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
+                                tenTaiXe: _data!.tenTaiXe ?? " ",
+                                ghiChu: _data!.ghiChu ?? "No",
+                                tenKho: _data!.tenKho ?? "",
+                                phuKien: _data!.phuKien ?? [],
+                              ));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          padding: const EdgeInsets.all(0),
+                          backgroundColor:
+                              const Color(0xFFE96327), // Màu nền của nút
+                          fixedSize:
+                              Size(85.w, 7.h), // Kích thước cố định của nút
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(5), // Độ cong của góc nút
+                          ),
                         ),
                         child: const Text(
-                          'Chờ nhận',
-                          textAlign: TextAlign.center,
+                          'NHẬN XE',
                           style: TextStyle(
                             fontFamily: 'Comfortaa',
-                            fontSize: 8,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppConfig.textButton,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(height: 1, color: Color(0xFFCCCCCC)),
-              Container(
-                height: 13.h,
-                padding: const EdgeInsets.only(left: 5, right: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    showInfoXe(
-                      'Số khung (VIN):',
-                      _data != null ? _data!.soKhung ?? "" : "",
-                    ),
-                    showInfoXe(
-                      'Màu:',
-                      _data != null ? _data!.tenMau ?? "" : "",
-                    ),
+                    )
                   ],
                 ),
               ),
-              const Divider(height: 1, color: Color(0xFFCCCCCC)),
-              Container(
-                height: 13.h,
-                padding: const EdgeInsets.only(left: 5, right: 5),
-                child: Row(
-                  children: [
-                    showInfoXe(
-                      'Nhà máy',
-                      _data != null ? _data!.tenKho ?? "" : "",
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: Color(0xFFCCCCCC)),
-              Container(
-                padding: EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: () {
-                    nextScreenReplace(
-                        context,
-                        NhanXe2Page(
-                          soKhung: _data!.soKhung ?? "",
-                          soMay: _data!.soMay ?? "",
-                          tenMau: _data!.tenMau ?? "",
-                          tenSanPham: _data!.tenSanPham ?? "",
-                          ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
-                          tenTaiXe: _data!.tenTaiXe ?? " ",
-                          ghiChu: _data!.ghiChu ?? "No",
-                          tenKho: _data!.tenKho ?? "",
-                          phuKien: _data!.phuKien ?? [],
-                        ));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE96327), // Màu nền của nút
-                    fixedSize: Size(85.w, 7.h), // Kích thước cố định của nút
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(5), // Độ cong của góc nút
-                    ),
-                  ),
-                  child: const Text(
-                    'NHẬN XE',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppConfig.textButton,
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
       ],
     ));
   }

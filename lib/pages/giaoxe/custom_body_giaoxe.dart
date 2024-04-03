@@ -27,6 +27,7 @@ import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
 import '../../blocs/image_bloc.dart';
 import '../../utils/snackbar.dart';
+import '../../widgets/loading.dart';
 
 class CustomBodyGiaoXe extends StatelessWidget {
   @override
@@ -122,7 +123,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
 
@@ -147,7 +148,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
             .toList();
         // Gọi setState để cập nhật giao diện
         setState(() {
-          _loading = true;
+          _loading = false;
         });
       }
     } catch (e) {
@@ -406,206 +407,208 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Thông Tin Xác Nhận',
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                _loading
+                    ? LoadingWidget(context)
+                    : Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Thông Tin Xác Nhận',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const Divider(
+                              height: 1,
+                              color: AppConfig.primaryColor,
+                            ),
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                MyInputWidget(
+                                  title: "Địa điểm",
+                                  text: _data?.tenDiaDiem ?? "",
+                                  textStyle: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppConfig.textInput,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                MyInputWidget(
+                                  title: "Phương thức vận chuyển",
+                                  text: _data?.tenPhuongThucVanChuyen ?? "",
+                                  textStyle: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppConfig.textInput,
+                                  ),
+                                ),
+                                // Container(
+                                //   height: 7.h,
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(5),
+                                //     border: Border.all(
+                                //       color: const Color(0xFF818180),
+                                //       width: 1,
+                                //     ),
+                                //   ),
+                                //   child: Row(
+                                //     children: [
+                                //       Container(
+                                //         width: 30.w,
+                                //         decoration: const BoxDecoration(
+                                //           color: Color(0xFFF6C6C7),
+                                //           border: Border(
+                                //             right: BorderSide(
+                                //               color: Color(0xFF818180),
+                                //               width: 1,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         child: Center(
+                                //           child: Text(
+                                //             "Địa điểm",
+                                //             textAlign: TextAlign.left,
+                                //             style: const TextStyle(
+                                //               fontFamily: 'Comfortaa',
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.w400,
+                                //               color: Color(0xFF000000),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ),
+                                //       Expanded(
+                                //         flex: 1,
+                                //         child: Container(
+                                //           padding: EdgeInsets.only(top: 5),
+                                //           child: DropdownButtonFormField<String>(
+                                //             items: _diadiemList?.map((item) {
+                                //               return DropdownMenuItem<String>(
+                                //                 value: item.id,
+                                //                 child: Container(
+                                //                   padding:
+                                //                       EdgeInsets.only(left: 15.sp),
+                                //                   child: Text(
+                                //                     item.tenDiaDiem ?? "",
+                                //                     style: const TextStyle(
+                                //                       fontFamily: 'Comfortaa',
+                                //                       fontSize: 14,
+                                //                       fontWeight: FontWeight.w600,
+                                //                       color: Color(0xFF000000),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //               );
+                                //             }).toList(),
+                                //             value: DiaDiemId,
+                                //             onChanged: (newValue) {
+                                //               setState(() {
+                                //                 DiaDiemId = newValue;
+                                //               });
+                                //               // if (newValue != null) {
+                                //               //   getBaiXeList(newValue);
+
+                                //               // }
+                                //               ;
+                                //             },
+                                //           ),
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                                // SizedBox(height: 4),
+                                // Container(
+                                //   height: 7.h,
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(5),
+                                //     border: Border.all(
+                                //       color: const Color(0xFF818180),
+                                //       width: 1,
+                                //     ),
+                                //   ),
+                                //   child: Row(
+                                //     children: [
+                                //       Container(
+                                //         width: 30.w,
+                                //         decoration: const BoxDecoration(
+                                //           color: Color(0xFFF6C6C7),
+                                //           border: Border(
+                                //             right: BorderSide(
+                                //               color: Color(0xFF818180),
+                                //               width: 1,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         child: Center(
+                                //           child: Text(
+                                //             "Phương thức\nvận chuyển",
+                                //             textAlign: TextAlign.left,
+                                //             style: const TextStyle(
+                                //               fontFamily: 'Comfortaa',
+                                //               fontSize: 14,
+                                //               fontWeight: FontWeight.w400,
+                                //               color: Color(0xFF000000),
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ),
+                                //       Expanded(
+                                //         flex: 1,
+                                //         child: Container(
+                                //           padding: EdgeInsets.only(top: 5),
+                                //           child: DropdownButtonFormField<String>(
+                                //             items:
+                                //                 _phuongthucvanchuyenList?.map((item) {
+                                //               return DropdownMenuItem<String>(
+                                //                 value: item.id,
+                                //                 child: Container(
+                                //                   padding:
+                                //                       EdgeInsets.only(left: 15.sp),
+                                //                   child: Text(
+                                //                     item.tenPhuongThucVanChuyen ?? "",
+                                //                     style: const TextStyle(
+                                //                       fontFamily: 'Comfortaa',
+                                //                       fontSize: 14,
+                                //                       fontWeight: FontWeight.w600,
+                                //                       color: Color(0xFF000000),
+                                //                     ),
+                                //                   ),
+                                //                 ),
+                                //               );
+                                //             }).toList(),
+                                //             value: PhuongThucVanChuyenId,
+                                //             onChanged: (newValue) {
+                                //               setState(() {
+                                //                 PhuongThucVanChuyenId = newValue;
+                                //               });
+                                //               // if (newValue != null) {
+                                //               //   getDanhSachPhuongTienList(newValue);
+                                //               //   print(
+                                //               //       "object : ${PhuongThucVanChuyenId}");
+                                //               // }
+                                //               // ;
+                                //             },
+                                //           ),
+                                //         ),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const Divider(
-                        height: 1,
-                        color: AppConfig.primaryColor,
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MyInputWidget(
-                            title: "Địa điểm",
-                            text: _data?.tenDiaDiem ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          MyInputWidget(
-                            title: "Phương thức vận chuyển",
-                            text: _data?.tenPhuongThucVanChuyen ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
-                            ),
-                          ),
-                          // Container(
-                          //   height: 7.h,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(5),
-                          //     border: Border.all(
-                          //       color: const Color(0xFF818180),
-                          //       width: 1,
-                          //     ),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       Container(
-                          //         width: 30.w,
-                          //         decoration: const BoxDecoration(
-                          //           color: Color(0xFFF6C6C7),
-                          //           border: Border(
-                          //             right: BorderSide(
-                          //               color: Color(0xFF818180),
-                          //               width: 1,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         child: Center(
-                          //           child: Text(
-                          //             "Địa điểm",
-                          //             textAlign: TextAlign.left,
-                          //             style: const TextStyle(
-                          //               fontFamily: 'Comfortaa',
-                          //               fontSize: 14,
-                          //               fontWeight: FontWeight.w400,
-                          //               color: Color(0xFF000000),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       Expanded(
-                          //         flex: 1,
-                          //         child: Container(
-                          //           padding: EdgeInsets.only(top: 5),
-                          //           child: DropdownButtonFormField<String>(
-                          //             items: _diadiemList?.map((item) {
-                          //               return DropdownMenuItem<String>(
-                          //                 value: item.id,
-                          //                 child: Container(
-                          //                   padding:
-                          //                       EdgeInsets.only(left: 15.sp),
-                          //                   child: Text(
-                          //                     item.tenDiaDiem ?? "",
-                          //                     style: const TextStyle(
-                          //                       fontFamily: 'Comfortaa',
-                          //                       fontSize: 14,
-                          //                       fontWeight: FontWeight.w600,
-                          //                       color: Color(0xFF000000),
-                          //                     ),
-                          //                   ),
-                          //                 ),
-                          //               );
-                          //             }).toList(),
-                          //             value: DiaDiemId,
-                          //             onChanged: (newValue) {
-                          //               setState(() {
-                          //                 DiaDiemId = newValue;
-                          //               });
-                          //               // if (newValue != null) {
-                          //               //   getBaiXeList(newValue);
-
-                          //               // }
-                          //               ;
-                          //             },
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          // SizedBox(height: 4),
-                          // Container(
-                          //   height: 7.h,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(5),
-                          //     border: Border.all(
-                          //       color: const Color(0xFF818180),
-                          //       width: 1,
-                          //     ),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       Container(
-                          //         width: 30.w,
-                          //         decoration: const BoxDecoration(
-                          //           color: Color(0xFFF6C6C7),
-                          //           border: Border(
-                          //             right: BorderSide(
-                          //               color: Color(0xFF818180),
-                          //               width: 1,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         child: Center(
-                          //           child: Text(
-                          //             "Phương thức\nvận chuyển",
-                          //             textAlign: TextAlign.left,
-                          //             style: const TextStyle(
-                          //               fontFamily: 'Comfortaa',
-                          //               fontSize: 14,
-                          //               fontWeight: FontWeight.w400,
-                          //               color: Color(0xFF000000),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //       Expanded(
-                          //         flex: 1,
-                          //         child: Container(
-                          //           padding: EdgeInsets.only(top: 5),
-                          //           child: DropdownButtonFormField<String>(
-                          //             items:
-                          //                 _phuongthucvanchuyenList?.map((item) {
-                          //               return DropdownMenuItem<String>(
-                          //                 value: item.id,
-                          //                 child: Container(
-                          //                   padding:
-                          //                       EdgeInsets.only(left: 15.sp),
-                          //                   child: Text(
-                          //                     item.tenPhuongThucVanChuyen ?? "",
-                          //                     style: const TextStyle(
-                          //                       fontFamily: 'Comfortaa',
-                          //                       fontSize: 14,
-                          //                       fontWeight: FontWeight.w600,
-                          //                       color: Color(0xFF000000),
-                          //                     ),
-                          //                   ),
-                          //                 ),
-                          //               );
-                          //             }).toList(),
-                          //             value: PhuongThucVanChuyenId,
-                          //             onChanged: (newValue) {
-                          //               setState(() {
-                          //                 PhuongThucVanChuyenId = newValue;
-                          //               });
-                          //               // if (newValue != null) {
-                          //               //   getDanhSachPhuongTienList(newValue);
-                          //               //   print(
-                          //               //       "object : ${PhuongThucVanChuyenId}");
-                          //               // }
-                          //               // ;
-                          //             },
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
                 Column(
                   children: [
                     Container(

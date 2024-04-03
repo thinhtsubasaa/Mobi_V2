@@ -1,5 +1,5 @@
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
-import 'package:Thilogi/pages/XuatCong/custom_body_vitrixe.dart';
+import 'package:Thilogi/pages/DongCont/custom_body_xuatcong.dart';
 
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
