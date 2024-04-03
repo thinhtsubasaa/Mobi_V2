@@ -265,7 +265,8 @@ class PopUp extends StatelessWidget {
                               // Xử lý sự kiện khi nút được nhấn
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE96327), // Màu nền của nút
+                              primary:
+                                  const Color(0xFFE96327), // Màu nền của nút
                               fixedSize: const Size(
                                   320, 33), // Kích thước cố định của nút
                               shape: RoundedRectangleBorder(
