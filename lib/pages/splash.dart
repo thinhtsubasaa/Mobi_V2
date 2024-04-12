@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/Home.dart';
+import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
-import 'package:Thilogi/pages/menu/MainMenu.dart';
+
 import 'package:provider/provider.dart';
 import '../blocs/app_bloc.dart';
 
@@ -18,15 +20,18 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-    bool _loading = false;
+  bool _loading = false;
+
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
+
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       _ab.getApiUrl();
       if (ub.isSignedIn) {
         ub.getUserData();
         _ab.getData();
+
         _goToHomePage();
       } else {
         _goToLoginPage();
@@ -35,11 +40,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _goToHomePage() {
-    nextScreenReplace(context, MainMenuPage(resetLoadingState: () {
-                  setState(() {
-                    _loading = false;
-                  });
-                },));
+    nextScreenReplace(context, QLKhoXePage());
   }
 
   void _goToLoginPage() {
@@ -68,7 +69,7 @@ class _SplashPageState extends State<SplashPage> {
                 height: 20,
               ),
               Text(
-                'Nơi vận chuyển hàng hóa\nlớn nhất Miền Trung',
+                'HỆ THỐNG QUẢN LÝ\n NGUỒN LỰC DOANH NGHIỆP (ERP)',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15.0, color: AppConfig.textInput),
               ),

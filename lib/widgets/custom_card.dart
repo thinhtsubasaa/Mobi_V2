@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:Thilogi/pages/Account.dart';
 import '../blocs/user_bloc.dart';
+import '../pages/settings.dart';
 import '../utils/sign_out.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 
 enum MenuOption { Settings, Profile, Logout }
 
@@ -16,15 +18,12 @@ class CustomCard extends StatefulWidget {
 
 class _CustomCardState extends State<CustomCard>
     with SingleTickerProviderStateMixin {
-  TabController? _tabController;
   late UserBloc? _ub;
   String? _fullName;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: 3);
-    _tabController!.addListener(_handleTabChange);
     _ub = Provider.of<UserBloc>(context, listen: false);
     setState(() {
       _fullName = _ub?.name;
@@ -33,15 +32,9 @@ class _CustomCardState extends State<CustomCard>
 
   @override
   void dispose() {
-    _tabController?.dispose();
+    // _tabController?.dispose();
+    _ub?.dispose();
     super.dispose();
-  }
-
-  void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
-      // Call the action when the tab changes
-      // print('Tab changed to: ${_tabController!.index}');
-    }
   }
 
   @override
@@ -102,9 +95,11 @@ class _CustomCardState extends State<CustomCard>
                     switch (result) {
                       case MenuOption.Settings:
                         // Xử lý khi chọn Cài đặt
+
                         break;
                       case MenuOption.Profile:
                         // Xử lý khi chọn Thông tin cá nhân
+                        nextScreen(context, AccountPage());
                         break;
                       case MenuOption.Logout:
                         // Xử lý khi chọn Logout
@@ -148,7 +143,7 @@ class _CustomCardState extends State<CustomCard>
                     Icons.arrow_drop_down,
                     color: Colors.white,
                   ),
-                  color: Colors.white, // Màu nền của menu
+                  color: Colors.white,
                 ),
               ),
             ],

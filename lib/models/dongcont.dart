@@ -18,32 +18,33 @@ class DongContModel {
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
-  String? SoCont;
-  String? SoSeal;
+  String? soCont;
+  String? soSeal;
+  String? viTri;
 
-  DongContModel({
-    this.key,
-    this.id,
-    this.maMau,
-    this.mauSon,
-    this.maViTri,
-    this.tenViTri,
-    this.maSanPham,
-    this.lat,
-    this.long,
-    this.soKhung,
-    this.tenSanPham,
-    this.tenMau,
-    this.tenKho,
-    this.soMay,
-    this.ngayNhapKhoView,
-    this.tenTaiXe,
-    this.ghiChu,
-    this.maKho,
-    this.tenBaiXe,
-    this.SoCont,
-    this.SoSeal,
-  });
+  DongContModel(
+      {this.key,
+      this.id,
+      this.maMau,
+      this.mauSon,
+      this.maViTri,
+      this.tenViTri,
+      this.maSanPham,
+      this.lat,
+      this.long,
+      this.soKhung,
+      this.tenSanPham,
+      this.tenMau,
+      this.tenKho,
+      this.soMay,
+      this.ngayNhapKhoView,
+      this.tenTaiXe,
+      this.ghiChu,
+      this.maKho,
+      this.tenBaiXe,
+      this.soCont,
+      this.soSeal,
+      this.viTri});
   @override
   String toString() {
     return 'DongContModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
@@ -67,11 +68,12 @@ class DongContModel {
         tenTaiXe: json["tenTaiXe"],
         ghiChu: json["ghiChu"],
         maKho: json["maKho"],
-        SoCont: json["soCont"],
-        SoSeal: json["soSeal"],
+        soCont: json["soCont"],
+        soSeal: json["soSeal"],
         tenBaiXe: json["tenBaiXe"],
         lat: json["lat"],
-        long: json["long"]);
+        long: json["long"],
+        viTri: json["viTri"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -88,10 +90,11 @@ class DongContModel {
         'mauSon': mauSon,
         'ngayNhapKhoView': ngayNhapKhoView,
         "maKho": maKho,
-        "SoCont": SoCont,
-        "SoSeal": SoSeal,
+        "soCont": soCont,
+        "soSeal": soSeal,
         "tenBaiXe": tenBaiXe,
         "lat": lat,
-        "long": long
+        "long": long,
+        "viTri": viTri,
       };
 }

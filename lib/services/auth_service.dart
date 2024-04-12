@@ -42,6 +42,7 @@ class AuthService extends ChangeNotifier {
           mustChangePass: data['mustChangePass'],
           token: data['token'],
           refreshToken: data['refreshToken'],
+          accessRole: data['accessRole'],
           hinhAnhUrl: data['hinhAnhUrl'],
         );
       }

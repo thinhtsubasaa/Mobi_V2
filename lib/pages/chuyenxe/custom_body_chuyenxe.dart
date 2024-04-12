@@ -1026,43 +1026,46 @@ class MyInputWidget extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 30.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF6C6C7),
-              border: Border(
-                right: BorderSide(
-                  color: Color(0xFF818180),
-                  width: 1,
+      child: Opacity(
+        opacity: text.isEmpty ? 0.5 : 1.0,
+        child: Row(
+          children: [
+            Container(
+              width: 30.w,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF6C6C7),
+                border: Border(
+                  right: BorderSide(
+                    color: Color(0xFF818180),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(
+                    fontFamily: 'Comfortaa',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: AppConfig.textInput,
+                  ),
                 ),
               ),
             ),
-            child: Center(
-              child: Text(
-                title,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppConfig.textInput,
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: EdgeInsets.only(top: 5, left: 15.sp),
+                child: Text(
+                  text,
+                  style: textStyle,
                 ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.only(top: 5, left: 15.sp),
-              child: Text(
-                text,
-                style: textStyle,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

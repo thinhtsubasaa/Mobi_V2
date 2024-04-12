@@ -1,3 +1,5 @@
+import 'package:Thilogi/blocs/menu_roles.dart';
+import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
@@ -18,17 +20,14 @@ import '../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomLoginForm extends StatelessWidget {
-  bool _loading = false;
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? LoadingWidget(context)
-        : Container(
-            width: 100.w,
-            // ignore: prefer_const_constructors
-            color: Color.fromRGBO(246, 198, 199, 0.2),
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: SignUpScreen());
+    return Container(
+        width: 100.w,
+        // ignore: prefer_const_constructors
+        color: Color.fromRGBO(246, 198, 199, 0.2),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: SignUpScreen());
   }
 }
 
@@ -42,12 +41,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _loading = false;
   late AppBloc _ab;
   late UserBloc _ub;
+  late MenuRoleBloc _mb;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
   late String selectedDomain;
+  String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
+  String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
   final _btnController = RoundedLoadingButtonController();
 
@@ -61,6 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
     _ab = Provider.of<AppBloc>(context, listen: false);
     _ub = Provider.of<UserBloc>(context, listen: false);
+    _mb = Provider.of<MenuRoleBloc>(context, listen: false);
 
     setState(() {
       selectedDomain = items[0];
@@ -111,14 +114,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) => _ub.setSignIn())
                   .then((_) {
                 _btnController.success();
-
-                nextScreenReplace(context, MainMenuPage(
-                  resetLoadingState: () {
-                    setState(() {
-                      _loading = false;
-                    });
-                  },
-                ));
+                // nextScreenReplace(context, MainMenuPage());
+                _handleButtonTap(QLKhoXePage());
               });
             } else {
               if (asb.hasError) {
@@ -138,139 +135,153 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AutofillGroup(
-      child: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 20),
-            child: Text(
-              "Tài khoản",
-              style: TextStyle(
-                color: AppConfig.textInput,
-                fontFamily: 'Roboto',
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            width: 70.w,
-            height: 8.h,
-            child: TextFormField(
-              controller: userNameCtrl,
-              autofillHints: [AutofillHints.username],
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Mật khẩu",
-            style: TextStyle(
-              color: AppConfig.textInput,
-              fontFamily: 'Roboto',
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            width: 70.w,
-            height: 8.h,
-            child: TextFormField(
-              controller: passwordCtrl,
-              autofillHints: [AutofillHints.password],
-              obscureText: obscureText,
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                // Sử dụng suffixIcon để thêm biểu tượng con mắt
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    obscureText ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.grey,
+    return _loading
+        ? LoadingWidget(context)
+        : AutofillGroup(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    "Tài khoản",
+                    style: TextStyle(
+                      color: AppConfig.textInput,
+                      fontFamily: 'Roboto',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                  onPressed: () {
-                    // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
-                    setState(() {
-                      obscureText = !obscureText;
-                    });
-                  },
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Domain",
-            style: TextStyle(
-              color: AppConfig.textInput,
-              fontFamily: 'Roboto',
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            width: 70.w,
-            height: 8.h,
-            child: DropdownButtonFormField(
-              value: selectedDomain,
-              decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                const SizedBox(height: 10),
+                Container(
+                  width: 70.w,
+                  height: 8.h,
+                  child: TextFormField(
+                    controller: userNameCtrl,
+                    autofillHints: [AutofillHints.username],
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                    ),
+                  ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.black),
+                const SizedBox(height: 10),
+                const Text(
+                  "Mật khẩu",
+                  style: TextStyle(
+                    color: AppConfig.textInput,
+                    fontFamily: 'Roboto',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-              ),
-              items: items.map((String item) {
-                return DropdownMenuItem(
-                  value: item,
-                  child: Text(item),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  selectedDomain = value!;
-                });
-              },
+                const SizedBox(height: 10),
+                Container(
+                  width: 70.w,
+                  height: 8.h,
+                  child: TextFormField(
+                    controller: passwordCtrl,
+                    autofillHints: [AutofillHints.password],
+                    obscureText: obscureText,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      // Sử dụng suffixIcon để thêm biểu tượng con mắt
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureText ? Icons.visibility : Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  "Domain",
+                  style: TextStyle(
+                    color: AppConfig.textInput,
+                    fontFamily: 'Roboto',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: 70.w,
+                  height: 8.h,
+                  child: DropdownButtonFormField(
+                    value: selectedDomain,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                    ),
+                    items: items.map((String item) {
+                      return DropdownMenuItem(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDomain = value!;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10),
+                loadingButton(
+                  context,
+                  _btnController,
+                  _login,
+                  'Đăng nhập',
+                  Theme.of(context).primaryColor,
+                  Colors.black,
+                ),
+                const SizedBox(height: 5),
+              ],
             ),
-          ),
-          const SizedBox(height: 10),
-          loadingButton(
-            context,
-            _btnController,
-            _login,
-            'Đăng nhập',
-            Theme.of(context).primaryColor,
-            Colors.black,
-          ),
-          const SizedBox(height: 5),
-        ],
-      ),
-    );
+          );
+  }
+
+  void _handleButtonTap(Widget page) {
+    setState(() {
+      _loading = true;
+    });
+    nextScreenReplace(context, page);
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 }

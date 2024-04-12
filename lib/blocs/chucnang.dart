@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Thilogi/blocs/app_bloc.dart';
-import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -84,15 +83,9 @@ class ChucnangService extends ChangeNotifier {
   void clear(context) async {
     final AppBloc ab = Provider.of<AppBloc>(context, listen: false);
     await ab.clearData().then((_) {
+      Navigator.pop(context);
+      Navigator.pop(context);
       nextScreenReplace(context, NhanXePage());
     });
   }
-
-  // void clear(context) async {
-  //   final AppBloc ab = Provider.of<AppBloc>(context, listen: false);
-  //   await ab.clearData().then((_) {
-  //     Navigator.pop(context);
-  //     Navigator.pop(context);
-  //   });
-  // }
 }

@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(key: Key('customAppBar')),
+      appBar: customAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -104,28 +104,17 @@ class CustomButtonLogin extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  final Key? key;
-
-  const CustomAppBar({this.key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      // automaticallyImplyLeading: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            AppConfig.appBarImagePath,
-            width: 70.w,
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+PreferredSizeWidget customAppBar() {
+  return AppBar(
+    // automaticallyImplyLeading: false,
+    title: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.asset(
+          AppConfig.appBarImagePath,
+          width: 70.w,
+        ),
+      ],
+    ),
+  );
 }

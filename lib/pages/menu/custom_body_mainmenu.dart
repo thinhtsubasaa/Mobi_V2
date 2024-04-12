@@ -8,12 +8,28 @@ import 'package:sizer/sizer.dart';
 import '../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
-class CustomBodyMainMenu extends StatefulWidget {
+
+class CustomBodyMainMenu extends StatelessWidget {
   @override
-  _CustomBodyMainMenuState createState() => _CustomBodyMainMenuState();
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100.w,
+      color: Color.fromRGBO(246, 198, 199, 0.2),
+      child: BodyMainMenu(),
+    );
+  }
 }
 
-class _CustomBodyMainMenuState extends State<CustomBodyMainMenu> {
+class BodyMainMenu extends StatefulWidget {
+  @override
+  _BodyMainMenuState createState() => _BodyMainMenuState();
+}
+
+// ignore: use_key_in_widget_constructors, must_be_immutable
+class _BodyMainMenuState extends State<BodyMainMenu>
+    with SingleTickerProviderStateMixin {
+  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int pageCount = 3;
   bool _loading = false;
 
   @override
@@ -21,112 +37,113 @@ class _CustomBodyMainMenuState extends State<CustomBodyMainMenu> {
     return _loading
         ? LoadingWidget(context)
         : Container(
-            width: 100.w,
-            color: Color.fromRGBO(246, 198, 199, 0.2),
-            child: BodyMainMenu(onNextScreen: () {
-              setState(() {
-                _loading = true;
-              });
-              // Navigate to the next screen
-              nextScreen(context, QLKhoXePage(
-                resetLoadingState: () {
-                  setState(() {
-                    _loading = true;
-                  });
-                },
-              ));
-            }),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            margin: const EdgeInsets.only(bottom: 25),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            _handleButtonTap(QLKhoXePage());
+                          },
+                          icon: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/car3.png',
+                                width: 120,
+                                height: 80,
+                              ),
+                              Transform.translate(
+                                offset: const Offset(0, 3),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 60),
+                                  child: Image.asset(
+                                    'assets/images/car4.png',
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          iconSize: AppConfig
+                              .buttonMainMenuWidth, // Kích thước của biểu tượng
+                          padding: EdgeInsets
+                              .zero, // Xóa padding mặc định của IconButton
+                          alignment: Alignment
+                              .center, // Căn chỉnh hình ảnh vào giữa nút
+                        ),
+                        const SizedBox(
+                          child: Text(
+                            "QUẢN LÝ KHO XE\n THÀNH PHẨM",
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const CustomButton(
+                        width: AppConfig.buttonMainMenuWidth,
+                        height: AppConfig.buttonMainMenuHeight,
+                        color: AppConfig.buttonColorMenu),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomButton(
+                        width: AppConfig.buttonMainMenuWidth,
+                        height: AppConfig.buttonMainMenuHeight,
+                        color: AppConfig.buttonColorMenu),
+                    CustomButton(
+                        width: AppConfig.buttonMainMenuWidth,
+                        height: AppConfig.buttonMainMenuHeight,
+                        color: AppConfig.buttonColorMenu),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CustomButton(
+                        width: AppConfig.buttonMainMenuWidth,
+                        height: AppConfig.buttonMainMenuHeight,
+                        color: AppConfig.buttonColorMenu),
+                    CustomButton(
+                        width: AppConfig.buttonMainMenuWidth,
+                        height: AppConfig.buttonMainMenuHeight,
+                        color: AppConfig.buttonColorMenu),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                PageIndicator(currentPage: currentPage, pageCount: pageCount),
+              ],
+            ),
           );
   }
-}
 
-// ignore: use_key_in_widget_constructors, must_be_immutable
-class BodyMainMenu extends StatelessWidget {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
-  int pageCount = 3;
-  final VoidCallback onNextScreen;
-  BodyMainMenu({required this.onNextScreen});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
-      margin: const EdgeInsets.only(bottom: 25),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Column(
-                children: [
-                  IconButton(
-                    onPressed: onNextScreen,
-                    icon: Image.asset(
-                      'assets/images/toyota7.png',
-                      width: AppConfig.buttonMainMenuWidth,
-                      height: AppConfig.buttonMainMenuHeight,
-                    ),
-                    iconSize: AppConfig
-                        .buttonMainMenuWidth, // Kích thước của biểu tượng
-                    padding:
-                        EdgeInsets.zero, // Xóa padding mặc định của IconButton
-                    alignment:
-                        Alignment.center, // Căn chỉnh hình ảnh vào giữa nút
-                  ),
-                  const SizedBox(
-                    child: Text(
-                      "QUẢN LÝ KHO XE\n THÀNH PHẨM",
-                      style: TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const CustomButton(
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColorMenu),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColorMenu),
-              CustomButton(
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColorMenu),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomButton(
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColorMenu),
-              CustomButton(
-                  width: AppConfig.buttonMainMenuWidth,
-                  height: AppConfig.buttonMainMenuHeight,
-                  color: AppConfig.buttonColorMenu),
-            ],
-          ),
-          const SizedBox(height: 30),
-          PageIndicator(currentPage: currentPage, pageCount: pageCount),
-        ],
-      ),
-    );
+  void _handleButtonTap(Widget page) {
+    setState(() {
+      _loading = true;
+    });
+    nextScreen(context, page);
+    Future.delayed(Duration(seconds: 2), () {
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 }
 

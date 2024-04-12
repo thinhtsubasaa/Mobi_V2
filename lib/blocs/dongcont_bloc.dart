@@ -54,11 +54,11 @@ class DongContBloc extends ChangeNotifier {
             tenTaiXe: decodedData['tenTaiXe'],
             ghiChu: decodedData['ghiChu'],
             maKho: decodedData['maKho'],
-            SoCont: decodedData['soCont'],
-            SoSeal: decodedData['soSeal'],
+            soCont: decodedData['soCont'],
+            soSeal: decodedData['soSeal'],
             lat: decodedData['lat'],
             long: decodedData['long'],
-            // latLng: decodedData['latLng'],
+            viTri: decodedData['viTri'],
           );
         }
       } else {
