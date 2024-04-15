@@ -5,7 +5,14 @@ void nextScreen(context, page) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+void nextScreenRoute(BuildContext context, String routeName) {
+  Navigator.pushNamed(context, routeName);
+}
+
+>>>>>>> b3a8889a9acc5e1cc10f7c901661ac2582de27df
 void backScreen(context, page) {
   Navigator.pop(context, MaterialPageRoute(builder: (builder) => page));
 }

@@ -43,6 +43,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   @override
   void initState() {
     super.initState();
+
     _sb = Provider.of<ScanBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
@@ -177,7 +178,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     return Container(
         child: Column(
       children: [
-        const SizedBox(height: 3),
+        const SizedBox(height: 5),
         CardVin(),
         const SizedBox(height: 5),
         TabsNhanXe(),
@@ -287,19 +288,17 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       padding: EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () {
-                          nextScreenReplace(
-                              context,
-                              NhanXe2Page(
-                                soKhung: _data!.soKhung ?? "",
-                                soMay: _data!.soMay ?? "",
-                                tenMau: _data!.tenMau ?? "",
-                                tenSanPham: _data!.tenSanPham ?? "",
-                                ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
-                                tenTaiXe: _data!.tenTaiXe ?? " ",
-                                ghiChu: _data!.ghiChu ?? "No",
-                                tenKho: _data!.tenKho ?? "",
-                                phuKien: _data!.phuKien ?? [],
-                              ));
+                          _handleButtonTap(NhanXe2Page(
+                            soKhung: _data!.soKhung ?? "",
+                            soMay: _data!.soMay ?? "",
+                            tenMau: _data!.tenMau ?? "",
+                            tenSanPham: _data!.tenSanPham ?? "",
+                            ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
+                            tenTaiXe: _data!.tenTaiXe ?? " ",
+                            ghiChu: _data!.ghiChu ?? "No",
+                            tenKho: _data!.tenKho ?? "",
+                            phuKien: _data!.phuKien ?? [],
+                          ));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -327,6 +326,18 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               ),
       ],
     ));
+  }
+
+  void _handleButtonTap(Widget page) {
+    setState(() {
+      _loading = true;
+    });
+    nextScreen(context, page);
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 }
 

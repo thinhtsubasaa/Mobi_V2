@@ -16,6 +16,8 @@ class UserBloc extends ChangeNotifier {
 
   String? _fullName;
   String? get name => _fullName;
+  String? _accessRole;
+  String? get accessRole => _accessRole;
 
   String? _id;
   String? get id => _id;
@@ -34,6 +36,8 @@ class UserBloc extends ChangeNotifier {
 
   String? _refreshToken;
   String? get refreshToken => _refreshToken;
+  String? _hinhAnhUrl;
+  String? get hinhAnhUrl => _hinhAnhUrl;
 
   Future saveUserData(UserModel userModel) async {
     // ignore: unnecessary_null_comparison
@@ -45,6 +49,8 @@ class UserBloc extends ChangeNotifier {
       sp.setBool('mustChangePass', userModel.mustChangePass ?? false);
       sp.setString('token', userModel.token ?? '');
       sp.setString('refreshToken', userModel.refreshToken ?? '');
+      sp.setString('accessRole', userModel.accessRole ?? '');
+      sp.setString('hinhAnhUrl', userModel.hinhAnhUrl ?? '');
 
       _id = userModel.id;
       _fullName = userModel.fullName;
@@ -52,6 +58,8 @@ class UserBloc extends ChangeNotifier {
       _mustChangePass = userModel.mustChangePass ?? false;
       _token = userModel.token;
       _refreshToken = userModel.refreshToken;
+      _accessRole = userModel.accessRole;
+      _hinhAnhUrl = userModel.hinhAnhUrl;
       notifyListeners();
     }
   }
@@ -65,6 +73,8 @@ class UserBloc extends ChangeNotifier {
     _mustChangePass = sp.getBool('mustChangePass')!;
     _token = sp.getString('token');
     _refreshToken = sp.getString('refreshToken');
+    _accessRole = sp.getString('accessRole');
+    _hinhAnhUrl = sp.getString('hinhAnhUrl');
     notifyListeners();
   }
 
@@ -96,6 +106,8 @@ class UserBloc extends ChangeNotifier {
       _token = null;
       _refreshToken = null;
       _id = null;
+      _accessRole = null;
+      _hinhAnhUrl = null;
       notifyListeners();
     });
   }

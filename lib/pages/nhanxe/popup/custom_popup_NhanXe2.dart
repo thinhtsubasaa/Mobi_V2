@@ -53,7 +53,7 @@ class PopUp2 extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildCarDetails(),
+                    _buildCarDetails(context),
                     _buildTableOptions(context),
                   ],
                 ),
@@ -84,7 +84,7 @@ class PopUp2 extends StatelessWidget {
             'NHẬN XE',
             style: TextStyle(
               fontFamily: 'Myriad Pro',
-              fontSize: 30,
+              fontSize: 25,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
@@ -92,7 +92,7 @@ class PopUp2 extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
             onPressed: () {
-              // Add functionality for the close button
+              Navigator.pop(context);
             },
           ),
         ],
@@ -107,7 +107,7 @@ class PopUp2 extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Thông Tin xe Kiểm Tra',
+            'Thông tin xe kiểm tra',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 20,
@@ -124,7 +124,7 @@ class PopUp2 extends StatelessWidget {
     );
   }
 
-  Widget _buildCarDetails() {
+  Widget _buildCarDetails(BuildContext context) {
     return Column(
       children: [
         Container(
@@ -133,14 +133,24 @@ class PopUp2 extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    tenSanPham,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: 'Coda Caption',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: AppConfig.primaryColor,
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width < 330
+                          ? MediaQuery.of(context).size.width * 0.9
+                          : MediaQuery.of(context).size.width * 0.6,
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        tenSanPham,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontFamily: 'Coda Caption',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: AppConfig.primaryColor,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -149,57 +159,15 @@ class PopUp2 extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(width: 10),
-                        Text(
-                          'Số khung (VIN):',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF818180),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          soKhung,
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
-                          ),
-                        ),
-                      ],
+                    showInfoXe(
+                      'Số khung (VIN):',
+                      soKhung,
                     ),
-                    SizedBox(width: 40),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Màu:',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF818180),
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          tenMau,
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppConfig.primaryColor,
-                          ),
-                        ),
-                      ],
+                    showInfoXe(
+                      'Màu:',
+                      tenMau,
                     ),
                   ],
                 ),
@@ -219,8 +187,8 @@ class PopUp2 extends StatelessWidget {
       width: 100.w,
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height < 600
-            ? MediaQuery.of(context).size.height * 1.3
-            : 80.h, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+            ? MediaQuery.of(context).size.height * 2
+            : 90.h, // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
       ),
       padding: const EdgeInsets.all(10),
       child: Column(
@@ -294,4 +262,34 @@ class PopUp2 extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget showInfoXe(String title, String value) {
+  return Container(
+    padding: EdgeInsets.only(top: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontFamily: 'Comfortaa',
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF818180),
+          ),
+        ),
+        SizedBox(height: 5),
+        Text(
+          value,
+          style: const TextStyle(
+            fontFamily: 'Comfortaa',
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: AppConfig.primaryColor,
+          ),
+        )
+      ],
+    ),
+  );
 }

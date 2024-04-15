@@ -3,6 +3,7 @@ class UserModel {
   final String? email;
   final String? id;
   final bool? mustChangePass;
+  final String? accessRole;
   final String? token;
   final String? refreshToken;
   final String? hinhAnhUrl;
@@ -15,5 +16,6 @@ class UserModel {
     this.token,
     this.refreshToken,
     this.hinhAnhUrl,
+    this.accessRole,
   });
 }

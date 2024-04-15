@@ -10,11 +10,13 @@ import 'package:provider/provider.dart';
 =======
 import 'dart:async';
 
+import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/Home.dart';
+import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
-import 'package:Thilogi/pages/menu/MainMenu.dart';
+
 import 'package:provider/provider.dart';
 >>>>>>> 145bdff5b4959865954ab870a740ff42146aeebe
 import '../blocs/app_bloc.dart';
@@ -30,21 +32,28 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
 <<<<<<< HEAD
+<<<<<<< HEAD
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
     Future.delayed(const Duration(seconds: 2)).then((value) async {
 =======
     bool _loading = false;
+=======
+  bool _loading = false;
+
+>>>>>>> b3a8889a9acc5e1cc10f7c901661ac2582de27df
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
+
     Future.delayed(const Duration(seconds: 3)).then((value) async {
 >>>>>>> 145bdff5b4959865954ab870a740ff42146aeebe
       _ab.getApiUrl();
       if (ub.isSignedIn) {
         ub.getUserData();
         _ab.getData();
+
         _goToHomePage();
       } else {
         _goToLoginPage();
@@ -53,6 +62,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _goToHomePage() {
+<<<<<<< HEAD
 <<<<<<< HEAD
     nextScreenReplace(context, MainMenuPage());
   }
@@ -65,6 +75,9 @@ class _SplashPageState extends State<SplashPage> {
                     _loading = false;
                   });
                 },));
+=======
+    nextScreenReplace(context, QLKhoXePage());
+>>>>>>> b3a8889a9acc5e1cc10f7c901661ac2582de27df
   }
 
   void _goToLoginPage() {
@@ -108,7 +121,7 @@ class _SplashPageState extends State<SplashPage> {
                 height: 20,
               ),
               Text(
-                'Nơi vận chuyển hàng hóa\nlớn nhất Miền Trung',
+                'HỆ THỐNG QUẢN LÝ\n NGUỒN LỰC DOANH NGHIỆP (ERP)',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15.0, color: AppConfig.textInput),
               ),

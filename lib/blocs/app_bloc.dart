@@ -7,14 +7,16 @@ import '../models/scan.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "https://apiwms.thilogi.click";
+  String _apiUrl = "https://172.20.42.11:5001";
   String get apiUrl => _apiUrl;
+
+  String? _appFunctions = "none";
+  String? get appFunctions => _appFunctions;
 
   ScanModel? _scan;
   ScanModel? get scan => _scan;
   DieuChuyenModel? _dieuChuyen;
   DieuChuyenModel? get dieuchuyen => _dieuChuyen;
-
   String? _id;
   String? get id => _id;
 
@@ -34,6 +36,11 @@ class AppBloc extends ChangeNotifier {
   String? _appVersion = '1.0.0';
   String? get appVersion => _appVersion;
 
+AppBloc() {
+    
+    getAppFunction();
+    getApiUrl();
+  }
   _initPrefs() async {
     _pref ??= await SharedPreferences.getInstance();
   }
@@ -93,6 +100,18 @@ class AppBloc extends ChangeNotifier {
     _scan?.tenMau = null;
     _tenKho = null;
 
+    notifyListeners();
+  }
+    Future setAppFunction(String value) async {
+    await _initPrefs();
+    await _pref!.setString('appFunctions', value);
+    _appFunctions = value;
+    notifyListeners();
+  }
+
+  Future getAppFunction() async {
+    await _initPrefs();
+    _appFunctions = _pref!.getString('appFunctions');
     notifyListeners();
   }
 }

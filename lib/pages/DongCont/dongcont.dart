@@ -1,9 +1,8 @@
-import 'package:Thilogi/pages/DongCont/custom_body_xuatcong.dart';
+import 'package:Thilogi/pages/DongCont/custom_body_dongcont.dart';
 import 'package:Thilogi/widgets/custom_appbar.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/baixe/custom_body_baixe.dart';
 
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_bottom.dart';

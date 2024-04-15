@@ -9,7 +9,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(key: Key('customAppBar')),
+      appBar: customAppBar(),
       body: Column(
         children: [
           Expanded(
@@ -92,24 +92,14 @@ class CustomButton extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  // ignore: overridden_fields
-  final Key? key;
-
-  // ignore: prefer_const_constructors_in_immutables
-  CustomAppBar({this.key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: Image.asset(
+PreferredSizeWidget customAppBar() {
+  return AppBar(
+    // automaticallyImplyLeading: false,
+    title: Center(
+      child: Image.asset(
         AppConfig.appBarImagePath,
+        width: 85.w,
       ),
-    );
-  }
-
-  @override
-  // ignore: prefer_const_constructors
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+    ),
+  );
 }

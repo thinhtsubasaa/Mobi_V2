@@ -26,4 +26,5 @@ class AppConfig {
   static const String backgroundImagePath = 'assets/images/background.png';
   static const String homeImagePath = 'assets/images/toyota13.png';
   static const String bottomHomeImagePath = 'assets/images/toyota14.png';
+  static const String logoSplash = 'assets/images/thilogi_logo_white.png';
 }
