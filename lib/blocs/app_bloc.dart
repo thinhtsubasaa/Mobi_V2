@@ -1,23 +1,35 @@
+import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/scan.dart';
 
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "http://14.241.134.199:8021";
+  String _apiUrl = "https://apiwms.thilogi.click";
   String get apiUrl => _apiUrl;
 
-  String? _chuyenId;
-  String? get chuyenId => _chuyenId;
+  ScanModel? _scan;
+  ScanModel? get scan => _scan;
+  DieuChuyenModel? _dieuChuyen;
+  DieuChuyenModel? get dieuchuyen => _dieuChuyen;
 
-  String? _tenChuyen;
-  String? get tenChuyen => _tenChuyen;
+  String? _id;
+  String? get id => _id;
 
-  String? _tenNhomChucNang;
-  String? get tenNhomChucNang => _tenNhomChucNang;
+  String? _Kho_Id;
+  String? get Kho_Id => Kho_Id;
+  String? _soKhung;
+  String? get soKhung => _soKhung;
 
-  bool _isNhapKho = false;
-  bool get isNhapKho => _isNhapKho;
+  String? _tenKho;
+  String? get tenKho => _tenKho;
+  String? _tenSanPham;
+  String? get tenSanPham => _tenSanPham;
+
+  String? _tenMau;
+  String? get tenMau => _tenMau;
 
   String? _appVersion = '1.0.0';
   String? get appVersion => _appVersion;
@@ -41,35 +53,46 @@ class AppBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveData(String? cId, String tC, String tNcn, bool isNhapKho) async {
+  Future saveData(String? iD, String kiD, String sK, String tK, String tSp,
+      String tM) async {
     await _initPrefs();
-    await _pref!.setString('chuyenId', cId!.toString());
-    await _pref!.setString('tenChuyen', tC);
-    await _pref!.setString('tenNhomChucNang', tNcn);
-    await _pref!.setBool('_isNhapKho', isNhapKho);
+    await _pref!.setString('id', iD!.toString());
+    await _pref!.setString('Kho_Id', kiD!.toString());
+    await _pref!.setString('soKhung', sK);
+    await _pref!.setString('tenKho', tK);
+    await _pref!.setString('tenSanPham', tSp);
+    await _pref!.setString('tenMau', tM);
 
-    _chuyenId = cId;
-    _tenChuyen = tC;
-    _tenNhomChucNang = tNcn;
-    _isNhapKho = isNhapKho;
+    _id = iD.toString();
+    _Kho_Id = kiD.toString();
+    _soKhung = sK;
+    _tenKho = tK;
+    _tenSanPham = tSp;
+    _tenMau = tM;
     notifyListeners();
   }
 
   Future getData() async {
     await _initPrefs();
-    _chuyenId = _pref!.getString('chuyenId');
-    _tenChuyen = _pref!.getString('tenChuyen');
-    _tenNhomChucNang = _pref!.getString('tenNhomChucNang');
-    _isNhapKho = _pref!.getBool('isNhapKho') ?? false;
+    _id = _pref!.getString('id');
+    _Kho_Id = _pref!.getString('kho_Id');
+    _soKhung = _pref!.getString('soKhung');
+    _tenKho = _pref!.getString('tenKho');
+    _tenSanPham = _pref!.getString('tenSanPham');
+    _tenMau = _pref!.getString('tenMau');
     _appVersion = _pref!.getString('appVersion');
     notifyListeners();
   }
 
   Future clearData() async {
-    _chuyenId = null;
-    _tenChuyen = null;
-    _tenNhomChucNang = null;
-    _isNhapKho = false;
+    _scan?.id = null;
+    _scan?.Kho_Id = null;
+    _scan?.soKhung = null;
+    _scan?.tenKho = null;
+    _scan?.tenSanPham = null;
+    _scan?.tenMau = null;
+    _tenKho = null;
+
     notifyListeners();
   }
 }

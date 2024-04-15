@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:project/services/request_helper.dart';
+import 'package:Thilogi/services/request_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';

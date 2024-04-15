@@ -2,36 +2,23 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class AppConfig {
+  static const appName = "WMS_MOBI";
+  static const apiUrl = "http://10.17.40.172:5000";
+
   // Colors
   static const Color primaryColor = Color(0xFFA71C20);
   static const Color titleColor = Color.fromARGB(255, 216, 30, 16);
-  static const Color buttonColor = Color(0xFFCCCCCC);
+  static const Color buttonColorMenu = Color(0xFFCCCCCC);
+  static const Color textButton = Color(0xFFFFFFFF);
+  static const Color textInput = Color(0xFF000000);
 
   // Constants
   static const double boxWidth = 320;
   static const double boxHeight = 180;
   static const double buttonWidth = 328;
   static const double buttonHeight = 55;
-  static const double buttonMainMenuWidth = 140;
-  static const double buttonMainMenuHeight = 80;
-  static const double buttonTextFontSize = 14;
-
-  // Fonts
-  static const TextStyle headerTextStyle = TextStyle(
-    fontFamily: 'Myriad Pro',
-    fontSize: 30,
-    fontWeight: FontWeight.w700,
-    color: Colors.white,
-  );
-
-  static TextStyle buttonTextStyle(Color color) {
-    return TextStyle(
-      fontFamily: 'Comfortaa',
-      fontSize: buttonTextFontSize,
-      fontWeight: FontWeight.w700,
-      color: color,
-    );
-  }
+  static const double buttonMainMenuWidth = 150;
+  static const double buttonMainMenuHeight = 100;
 
   // Image path
   static const String QLKhoImagePath = 'assets/images/toyota8.png';
