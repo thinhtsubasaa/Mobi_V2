@@ -21,9 +21,13 @@ class RequestHelper {
 
   loginAction(data) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
+<<<<<<< HEAD
+    Map<String, String> headers = {"Content-type": "application/json"};
+=======
     Map<String, String> headers = {
       "Content-type": "application/json",
     };
+>>>>>>> 145bdff5b4959865954ab870a740ff42146aeebe
     return await http.post(
       Uri.parse('${sp.getString('apiUrl')}/token'),
       headers: headers,
@@ -69,8 +73,13 @@ class RequestHelper {
     await _getInfo();
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
+<<<<<<< HEAD
+      http.MultipartRequest request = http.MultipartRequest(
+          "POST", Uri.parse('${sp.getString('apiUrl')}/api/upload'));
+=======
       http.MultipartRequest request = http.MultipartRequest("POST",
           Uri.parse('${sp.getString('apiUrl')}/api/Upload/Multi/Image'));
+>>>>>>> 145bdff5b4959865954ab870a740ff42146aeebe
       request.headers.addAll(_setHeaders());
       http.MultipartFile multipartFile =
           await http.MultipartFile.fromPath('file', file.path);
