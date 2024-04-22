@@ -95,7 +95,7 @@ class _CustomCardState extends State<CustomCard>
                     switch (result) {
                       case MenuOption.Settings:
                         // Xử lý khi chọn Cài đặt
-
+                        nextScreen(context, SettingPage());
                         break;
                       case MenuOption.Profile:
                         // Xử lý khi chọn Thông tin cá nhân
