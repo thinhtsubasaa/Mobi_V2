@@ -7,7 +7,7 @@ import '../models/scan.dart';
 class AppBloc extends ChangeNotifier {
   SharedPreferences? _pref;
 
-  String _apiUrl = "https://192.168.1.6:5001";
+  String _apiUrl = "https://apiwms.thilogi.vn";
   String get apiUrl => _apiUrl;
 
   String? _appFunctions = "none";
@@ -36,8 +36,7 @@ class AppBloc extends ChangeNotifier {
   String? _appVersion = '1.0.0';
   String? get appVersion => _appVersion;
 
-AppBloc() {
-    
+  AppBloc() {
     getAppFunction();
     getApiUrl();
   }
@@ -102,7 +101,8 @@ AppBloc() {
 
     notifyListeners();
   }
-    Future setAppFunction(String value) async {
+
+  Future setAppFunction(String value) async {
     await _initPrefs();
     await _pref!.setString('appFunctions', value);
     _appFunctions = value;

@@ -132,7 +132,7 @@ class _SettingPageState extends State<SettingPage> {
             // Install the update using install_plugin_v2
             await InstallPlugin.installApk(
               '${downloadsDirectory.path}/Download/${tmpArr.last}',
-              'com.thilogi.vn.logisticswms',
+              'com.thilogi.vn.logistics',
             ).then((value) {
               if (value == 'Success') {
                 openSnacbar(context, "Tải xuống thành công");
@@ -159,7 +159,7 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('settings').tr(),
+        title: const Text('Cài đặt').tr(),
       ),
       body: SingleChildScrollView(
         // physics: const NeverScrollableScrollPhysics(),

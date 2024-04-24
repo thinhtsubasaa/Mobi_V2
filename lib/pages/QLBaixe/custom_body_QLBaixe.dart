@@ -1,3 +1,4 @@
+import 'package:Thilogi/pages/dongSeal/dongseal.dart';
 import 'package:Thilogi/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
@@ -286,6 +287,65 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                   ],
                 ),
                 const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          width: 130,
+                          height: 150,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 4),
+                                blurRadius: 4,
+                                spreadRadius: 0,
+                                color: Color(0x40000000),
+                              ),
+                            ],
+                            color: AppConfig.primaryColor,
+                          ),
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: () {
+                              _handleButtonTap(DongSealPage());
+                            },
+                            icon: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/car1.png',
+                                  width: 60,
+                                  height: 65,
+                                ),
+                                Transform.translate(
+                                  offset: const Offset(25, -15),
+                                  child: Image.asset(
+                                    'assets/images/search.png',
+                                    width: 50,
+                                    height: 55,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'ĐÓNG SEAL',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppConfig.primaryColor,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ],
             ),

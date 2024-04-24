@@ -517,7 +517,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 30.w,
+                                        width: 25.w,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFF6C6C7),
                                           border: Border(
@@ -552,29 +552,21 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                   : 10),
                                           child:
                                               DropdownButtonFormField<String>(
-                                            isDense: true,
                                             items: _khoxeList?.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item.id,
                                                 child: Container(
                                                   padding: EdgeInsets.only(
                                                       left: 15.sp),
-                                                  child: Center(
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        item.tenKhoXe ?? "",
-                                                        style: const TextStyle(
-                                                          fontFamily:
-                                                              'Comfortaa',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppConfig
-                                                              .textInput,
-                                                        ),
-                                                      ),
+                                                  child: Text(
+                                                    item.tenKhoXe ?? "",
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppConfig.textInput,
                                                     ),
                                                   ),
                                                 ),
@@ -613,7 +605,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 30.w,
+                                        width: 25.w,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFF6C6C7),
                                           border: Border(
@@ -701,7 +693,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 30.w,
+                                        width: 25.w,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFF6C6C7),
                                           border: Border(
@@ -785,7 +777,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 30.w,
+                                        width: 25.w,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFF6C6C7),
                                           border: Border(
@@ -1031,7 +1023,7 @@ class MyInputWidget extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 30.w,
+              width: 25.w,
               decoration: const BoxDecoration(
                 color: Color(0xFFF6C6C7),
                 border: Border(

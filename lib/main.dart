@@ -24,6 +24,7 @@ import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 
 import 'package:Thilogi/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sizer/sizer.dart';
@@ -38,7 +39,11 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = new MyHttpOverrides();
+  // await FlutterDownloader.initialize(
+  //   ignoreSsl: true,
+  // );
   runApp(MyApp());
 }
 
@@ -92,17 +97,6 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           home: SplashPage(),
-          // routes: {
-          //   'Home': (context) => MyHomePage(),
-          //   'kho-thanh-pham/kiem-tra-nhan-xe': (context) => NhanXePage(),
-          //   'kho-thanh-pham/tracking-xe-thanh-pham': (context) =>
-          //       TrackingXeVitriPage(),
-          //   'kho-thanh-pham/dieu-chuyen': (context) => ChuyenXePage(),
-          //   'kho-thanh-pham/xuat-kho': (context) => KhoXePage(),
-          //   'kho-thanh-pham/nhap-bai-xe': (context) => BaiXePage(),
-          //   'kho-thanh-pham': (context) => QLKhoXePage(),
-          //   'kho-thanh-pham/giao-xe': (context) => GiaoXePage(),
-          // },
         ),
       ),
     );

@@ -71,7 +71,7 @@ class UpdateChecker {
     // Install the update using install_plugin_v2
     await InstallPlugin.installApk(
       'path/to/downloads/$fileName',
-      'com.thaco.auto.qtsxchulai',
+      'com.thilogi.vn.logistics',
     ).then((value) {
       print(value);
     });
