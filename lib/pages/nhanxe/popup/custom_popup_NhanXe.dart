@@ -169,10 +169,7 @@ class PopUp extends StatelessWidget {
                 children: [
                   Container(
                     constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width < 330
-                          ? MediaQuery.of(context).size.width * 0.9
-                          : MediaQuery.of(context).size.width * 0.6,
-                    ),
+                        maxWidth: MediaQuery.of(context).size.width * 0.9),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Text(
@@ -228,7 +225,7 @@ class PopUp extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
-    final ChucnangService _cv = ChucnangService();
+    final ChucnangBloc _cv = ChucnangBloc();
     final RoundedLoadingButtonController _btnController =
         RoundedLoadingButtonController();
     return Container(

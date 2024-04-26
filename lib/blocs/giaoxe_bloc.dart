@@ -53,16 +53,12 @@ class GiaoXeBloc extends ChangeNotifier {
             ghiChu: decodedData['ghiChu'],
             maKho: decodedData['maKho'],
             kho_Id: decodedData['kho_Id'],
-            Diadiem_Id: decodedData['Diadiem_Id'],
-            phuongThucVanChuyen_Id: decodedData['phuongThucVanChuyen_Id'],
-            loaiPhuongTien_Id: decodedData['loaiPhuongTien_Id'],
-            danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
             bienSo_Id: decodedData['bienSo_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
             nguoiNhan: decodedData['nguoiNhan'],
             tenDiaDiem: decodedData['tenDiaDiem'],
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
-            // latLng: decodedData['latLng'],
+            viTri: decodedData['viTri'],
           );
         }
       } else {

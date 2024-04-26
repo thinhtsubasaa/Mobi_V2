@@ -22,7 +22,6 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 
 import '../../config/config.dart';
-import '../../models/danhsachphuongtien.dart';
 import '../../models/dsxdongcont.dart';
 import '../../services/app_service.dart';
 import '../../widgets/loading.dart';
@@ -46,7 +45,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  String? soCont;
+  String? soContId;
 
   String? DanhSachPhuongTienId;
 
@@ -54,6 +53,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   List<DSX_DongContModel>? get dsxdongcont => _dsxdongcontList;
 
   DongContModel? _data;
+  DSX_DongContModel? _dc;
   bool _loading = false;
   String barcodeScanResult = '';
   String? lat;
@@ -98,7 +98,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void getSoCont() async {
     try {
       final http.Response response =
-          await requestHelper.getData('GetListContMobi');
+          await requestHelper.getData('DM_DongCont/GetListContMobi');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _dsxdongcontList = (decodedData as List)
@@ -111,23 +111,26 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       }
       // notifyListeners();
     } catch (e) {
+      print('Error occurred: $e');
       _hasError = true;
       _errorCode = e.toString();
       // notifyListeners();
     }
   }
 
-  Future<void> postData(String soCont) async {
+  Future<void> postData(DongContModel scanData, String soContId, String soKhung,
+      String viTri) async {
     _isLoading = true;
 
     try {
-      // var newScanData = scanData;
+      var newScanData = scanData;
 
-      // newScanData.soKhung =
-      //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      // print("print data: ${newScanData.soKhung}");
+      newScanData.soKhung =
+          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/DongCont?SoCont=$soCont', _data?.toJson());
+          'KhoThanhPham/DongCont?SoCont=$soContId&SoKhung=$soKhung&ViTri=$viTri',
+          newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -139,6 +142,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
+          title: 'SUCCESS',
           text: "Đóng cont thành công",
         );
         _btnController.reset();
@@ -149,7 +153,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: '',
+          title: 'ERROR',
           text: errorMessage,
         );
         _btnController.reset();
@@ -164,7 +168,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-    // dataWedge.dispose();
     super.dispose();
   }
 
@@ -297,7 +300,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _data?.mauSon = _bl.dongcont?.mauSon;
     _data?.ngayNhapKhoView = _bl.dongcont?.ngayNhapKhoView;
     _data?.maKho = _bl.dongcont?.maKho;
-    _data?.soCont = soCont;
+    _data?.soCont = _bl.dongcont?.soCont;
+
     _data?.soSeal = _bl.dongcont?.soSeal;
 
     Geolocator.getCurrentPosition(
@@ -312,17 +316,18 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       _data?.long = long;
       _data?.viTri = "${lat},${long}";
 
-      print("lat: ${_data?.lat}");
-      print("long: ${_data?.long}");
       print("viTri: ${_data?.viTri}");
-
+      print("soContId: ${soContId}");
+      print("soKhung:${_data?.soKhung}");
       // call api
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
           openSnackBar(context, 'no internet'.tr());
         } else {
-          postData(_data?.soCont ?? "").then((_) {
+          postData(_data!, soContId ?? "", _data?.soKhung ?? "",
+                  _data?.viTri ?? "")
+              .then((_) {
             setState(() {
               _data = null;
               _qrData = '';
@@ -341,7 +346,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   @override
   Widget build(BuildContext context) {
     getSoCont();
-
     return Container(
         child: Column(
       children: [
@@ -431,10 +435,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                           .height <
                                                       600
                                                   ? 0
-                                                  : 10),
+                                                  : 5),
                                           child:
                                               DropdownButtonFormField<String>(
-                                            isDense: true,
                                             items:
                                                 _dsxdongcontList?.map((item) {
                                               return DropdownMenuItem<String>(
@@ -463,10 +466,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                 ),
                                               );
                                             }).toList(),
-                                            value: soCont,
-                                            onChanged: (newValue) async {
+                                            value: soContId,
+                                            onChanged: (newValue) {
                                               setState(() {
-                                                soCont = newValue;
+                                                soContId = newValue;
                                               });
                                             },
                                           ),
@@ -490,7 +493,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                           Row(
                             children: [
                               Text(
-                                _data != null ? _data!.tenSanPham ?? "" : "",
+                                _data?.tenSanPham ?? "",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontFamily: 'Coda Caption',
@@ -521,7 +524,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.soKhung ?? "" : "",
+                                      _data?.soKhung ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
@@ -545,7 +548,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.tenMau ?? "" : "",
+                                      _data?.tenMau ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
@@ -577,7 +580,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.soMay ?? "" : "",
+                                      _data?.soMay ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 18,
@@ -606,7 +609,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         fontSize: 16,
                                       )),
                                   controller: _btnController,
-                                  onPressed: soCont != null ? _onSave : null,
+                                  onPressed: soContId != null ? _onSave : null,
                                 ),
                                 SizedBox(height: 10),
                               ],

@@ -13,7 +13,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 import '../utils/next_screen.dart';
 
-class ChucnangService extends ChangeNotifier {
+class ChucnangBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   ScanModel? _scan;
@@ -51,7 +51,7 @@ class ChucnangService extends ChangeNotifier {
         QuickAlert.show(
             context: context,
             type: QuickAlertType.success,
-            title: 'Success',
+            title: 'SUCCESS',
             text: "Nhận xe thành công",
             onConfirmBtnTap: () {
               clear(context);
@@ -64,7 +64,7 @@ class ChucnangService extends ChangeNotifier {
         QuickAlert.show(
             context: context,
             type: QuickAlertType.error,
-            title: 'Error',
+            title: 'ERROR',
             text: errorMessage,
             onConfirmBtnTap: () {
               clear(context);

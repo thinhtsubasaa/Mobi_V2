@@ -63,11 +63,6 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
         child: Column(

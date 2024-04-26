@@ -20,6 +20,8 @@ class AppConfig {
   static const double buttonMainMenuWidth = 150;
   static const double buttonMainMenuHeight = 100;
 
+  static Color appThemeColor = const Color(0xFF00529C);
+
   // Image path
   static const String QLKhoImagePath = 'assets/images/toyota8.png';
   static const String appBarImagePath = 'assets/images/toyota15.png';

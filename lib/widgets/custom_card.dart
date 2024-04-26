@@ -31,13 +31,6 @@ class _CustomCardState extends State<CustomCard>
   }
 
   @override
-  void dispose() {
-    // _tabController?.dispose();
-    _ub?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       width: 100.w,
@@ -91,18 +84,14 @@ class _CustomCardState extends State<CustomCard>
               Container(
                 child: PopupMenuButton<MenuOption>(
                   onSelected: (MenuOption result) {
-                    // Xử lý khi một mục được chọn
                     switch (result) {
                       case MenuOption.Settings:
-                        // Xử lý khi chọn Cài đặt
                         nextScreen(context, SettingPage());
                         break;
                       case MenuOption.Profile:
-                        // Xử lý khi chọn Thông tin cá nhân
                         nextScreen(context, AccountPage());
                         break;
                       case MenuOption.Logout:
-                        // Xử lý khi chọn Logout
                         signOut(context);
                         break;
                     }

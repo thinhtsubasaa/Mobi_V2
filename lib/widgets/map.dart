@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
         child: FloatingActionButton(
           onPressed: _toggleMapType,
           materialTapTargetSize: MaterialTapTargetSize.padded,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.red,
           child: const Icon(Icons.map),
         ),
       ),

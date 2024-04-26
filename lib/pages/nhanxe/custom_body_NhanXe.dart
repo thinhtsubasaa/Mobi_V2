@@ -208,7 +208,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                _data != null ? _data!.tenSanPham ?? "" : "",
+                                _data?.tenSanPham ?? "",
                                 style: TextStyle(
                                   fontFamily: 'Coda Caption',
                                   fontSize: 14,
@@ -261,11 +261,11 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                         children: [
                           showInfoXe(
                             'Số khung (VIN):',
-                            _data != null ? _data!.soKhung ?? "" : "",
+                            _data?.soKhung ?? "",
                           ),
                           showInfoXe(
                             'Màu:',
-                            _data != null ? _data!.tenMau ?? "" : "",
+                            _data?.tenMau ?? "",
                           ),
                         ],
                       ),
@@ -278,7 +278,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                         children: [
                           showInfoXe(
                             'Nhà máy',
-                            _data != null ? _data!.tenKho ?? "" : "",
+                            _data?.tenKho ?? "",
                           ),
                         ],
                       ),

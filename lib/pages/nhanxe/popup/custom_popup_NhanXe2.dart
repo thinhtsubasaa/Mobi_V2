@@ -135,9 +135,7 @@ class PopUp2 extends StatelessWidget {
                 children: [
                   Container(
                     constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width < 330
-                          ? MediaQuery.of(context).size.width * 0.9
-                          : MediaQuery.of(context).size.width * 0.6,
+                      maxWidth: MediaQuery.of(context).size.width * 0.9,
                     ),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,

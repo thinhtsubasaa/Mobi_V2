@@ -1,15 +1,17 @@
 import 'dart:convert';
 
-import 'package:Thilogi/models/dieuchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 
-class DieuChuyenBloc extends ChangeNotifier {
+import '../models/dongcont.dart';
+import '../models/dongseal.dart';
+
+class DongSealBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  DieuChuyenModel? _dieuchuyen;
-  DieuChuyenModel? get dieuchuyen => _dieuchuyen;
+  DongSealModel? _dongseal;
+  DongSealModel? get dongseal => _dongseal;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -27,40 +29,28 @@ class DieuChuyenBloc extends ChangeNotifier {
 
   Future<void> getData(String qrcode) async {
     _isLoading = true;
-    _dieuchuyen = null;
+    _dongseal = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetSoKhungDieuchuyenmobi?SoKhung=$qrcode');
+          .getData('KhoThanhPham/GetSoKhungDongContmobi?SoKhung=$qrcode');
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
-          _dieuchuyen = DieuChuyenModel(
+          _dongseal = DongSealModel(
             key: decodedData["key"],
             id: decodedData['id'],
             soKhung: decodedData['soKhung'],
-            maSanPham: decodedData['maSanPham'],
-            tenSanPham: decodedData['tenSanPham'],
-            soMay: decodedData['soMay'],
-            maMau: decodedData['maMau'],
-            tenMau: decodedData['tenMau'],
-            tenKho: decodedData['tenKho'],
-            maViTri: decodedData['maViTri'],
-            tenViTri: decodedData['tenViTri'],
-            tenBaiXe: decodedData['tenBaiXe'],
-            mauSon: decodedData['mauSon'],
-            ngayNhapKhoView: decodedData['ngayNhapKhoView'],
-            tenTaiXe: decodedData['tenTaiXe'],
-            ghiChu: decodedData['ghiChu'],
-            khoDen_Id: decodedData['khoDen_Id'],
-            baiXe_Id: decodedData['baiXe_Id'],
-            viTri_Id: decodedData['viTri_Id'],
-            taiXe_Id: decodedData['taiXe_Id'],
+            soCont: decodedData['soCont'],
+            soSeal: decodedData['soSeal'],
+            lat: decodedData['lat'],
+            long: decodedData['long'],
             viTri: decodedData['viTri'],
           );
         }
       } else {
-        _dieuchuyen = null;
+        _dongseal = null;
         _isLoading = false;
       }
 

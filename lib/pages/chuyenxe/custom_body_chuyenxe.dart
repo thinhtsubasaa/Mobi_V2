@@ -394,14 +394,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         long = "${position.longitude}";
       });
       // print("latLng:${lat}");
-      _data?.lat = lat;
-      _data?.long = long;
-      print("lat: ${_data?.lat}");
-      print("long: ${_data?.long}");
+
+      _data?.viTri = "${lat}, ${long}";
+      print("viTri: ${_data?.viTri}");
       print("Kho_ID:${_data?.khoDen_Id}");
       print("Bai_ID:${_data?.baiXe_Id}");
-
-      // call api
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -418,7 +415,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         }
       });
     }).catchError((error) {
-      // Handle error while getting location
       print("Error getting location: $error");
     });
   }
@@ -859,7 +855,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           Row(
                             children: [
                               Text(
-                                _data != null ? _data!.tenSanPham ?? "" : "",
+                                _data?.tenSanPham ?? "",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontFamily: 'Coda Caption',
@@ -890,7 +886,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.soKhung ?? "" : "",
+                                      _data?.soKhung ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
@@ -914,7 +910,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.tenMau ?? "" : "",
+                                      _data?.tenMau ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
@@ -946,7 +942,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.soMay ?? "" : "",
+                                      _data?.soMay ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 18,

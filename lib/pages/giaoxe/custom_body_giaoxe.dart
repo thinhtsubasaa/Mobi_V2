@@ -46,8 +46,7 @@ class BodyGiaoXeScreen extends StatefulWidget {
 class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     with SingleTickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
-  String? DiaDiemId;
-  String? PhuongThucVanChuyenId;
+
   String? lat;
   String? long;
   String _qrData = '';
@@ -103,59 +102,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-    //dataWedge.dispose();
+
     super.dispose();
-  }
-
-  void getData() async {
-    try {
-      final http.Response response =
-          await requestHelper.getData('DM_DiaLy_DiaDiem/DiaDiemmobi');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-
-        // var data = decodedData["data"];
-        // var info = data["info"];
-
-        _diadiemList = (decodedData as List)
-            .map((item) => DiaDiemModel.fromJson(item))
-            .toList();
-
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
-      }
-
-      // notifyListeners();
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-      // notifyListeners();
-    }
-  }
-
-  void getPhuongThucVanChuyenList() async {
-    try {
-      final http.Response response =
-          await requestHelper.getData('TMS_PhuongThucVanChuyen');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body)['datalist'];
-
-        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
-        _phuongthucvanchuyenList = (decodedData as List)
-            .map((item) => PhuongThucVanChuyenModel.fromJson(item))
-            .toList();
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      // Xử lý lỗi khi gọi API
-      _hasError = true;
-      _errorCode = e.toString();
-    }
   }
 
   Future<void> postData(GiaoXeModel scanData) async {
@@ -336,8 +284,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     _data?.ngayNhapKhoView = _bl.giaoxe?.ngayNhapKhoView;
     _data?.maKho = _bl.giaoxe?.maKho;
     _data?.kho_Id = _bl.giaoxe?.kho_Id;
-    _data?.Diadiem_Id = DiaDiemId;
-    _data?.phuongThucVanChuyen_Id = PhuongThucVanChuyenId;
+
     _data?.tenDiaDiem = _bl.giaoxe?.tenDiaDiem;
     _data?.tenPhuongThucVanChuyen = _bl.giaoxe?.tenPhuongThucVanChuyen;
 
@@ -354,12 +301,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
       _data?.lat = lat;
       _data?.long = long;
 
-      print("Kho_ID:${_data?.kho_Id}");
-      print("phuongThucVanChuyen_Id:${_data?.phuongThucVanChuyen_Id}");
-      print("lat: ${_data?.lat}");
-      print("long: ${_data?.long}");
-
-      // call api
+      _data?.viTri = "${lat},${long}";
+      print("Vi tri: ${_data?.viTri}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -376,15 +319,12 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
         }
       });
     }).catchError((error) {
-      // Handle error while getting location
       print("Error getting location: $error");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    getPhuongThucVanChuyenList();
     return Container(
         child: Column(
       children: [
@@ -427,185 +367,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                               color: AppConfig.primaryColor,
                             ),
                             const SizedBox(height: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                MyInputWidget(
-                                  title: "Địa điểm",
-                                  text: _data?.tenDiaDiem ?? "",
-                                  textStyle: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppConfig.textInput,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                MyInputWidget(
-                                  title: "Phương thức vận chuyển",
-                                  text: _data?.tenPhuongThucVanChuyen ?? "",
-                                  textStyle: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppConfig.textInput,
-                                  ),
-                                ),
-                                // Container(
-                                //   height: 7.h,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(5),
-                                //     border: Border.all(
-                                //       color: const Color(0xFF818180),
-                                //       width: 1,
-                                //     ),
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Container(
-                                //         width: 30.w,
-                                //         decoration: const BoxDecoration(
-                                //           color: Color(0xFFF6C6C7),
-                                //           border: Border(
-                                //             right: BorderSide(
-                                //               color: Color(0xFF818180),
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         child: Center(
-                                //           child: Text(
-                                //             "Địa điểm",
-                                //             textAlign: TextAlign.left,
-                                //             style: const TextStyle(
-                                //               fontFamily: 'Comfortaa',
-                                //               fontSize: 14,
-                                //               fontWeight: FontWeight.w400,
-                                //               color: Color(0xFF000000),
-                                //             ),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //       Expanded(
-                                //         flex: 1,
-                                //         child: Container(
-                                //           padding: EdgeInsets.only(top: 5),
-                                //           child: DropdownButtonFormField<String>(
-                                //             items: _diadiemList?.map((item) {
-                                //               return DropdownMenuItem<String>(
-                                //                 value: item.id,
-                                //                 child: Container(
-                                //                   padding:
-                                //                       EdgeInsets.only(left: 15.sp),
-                                //                   child: Text(
-                                //                     item.tenDiaDiem ?? "",
-                                //                     style: const TextStyle(
-                                //                       fontFamily: 'Comfortaa',
-                                //                       fontSize: 14,
-                                //                       fontWeight: FontWeight.w600,
-                                //                       color: Color(0xFF000000),
-                                //                     ),
-                                //                   ),
-                                //                 ),
-                                //               );
-                                //             }).toList(),
-                                //             value: DiaDiemId,
-                                //             onChanged: (newValue) {
-                                //               setState(() {
-                                //                 DiaDiemId = newValue;
-                                //               });
-                                //               // if (newValue != null) {
-                                //               //   getBaiXeList(newValue);
-
-                                //               // }
-                                //               ;
-                                //             },
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                // SizedBox(height: 4),
-                                // Container(
-                                //   height: 7.h,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(5),
-                                //     border: Border.all(
-                                //       color: const Color(0xFF818180),
-                                //       width: 1,
-                                //     ),
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Container(
-                                //         width: 30.w,
-                                //         decoration: const BoxDecoration(
-                                //           color: Color(0xFFF6C6C7),
-                                //           border: Border(
-                                //             right: BorderSide(
-                                //               color: Color(0xFF818180),
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         child: Center(
-                                //           child: Text(
-                                //             "Phương thức\nvận chuyển",
-                                //             textAlign: TextAlign.left,
-                                //             style: const TextStyle(
-                                //               fontFamily: 'Comfortaa',
-                                //               fontSize: 14,
-                                //               fontWeight: FontWeight.w400,
-                                //               color: Color(0xFF000000),
-                                //             ),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //       Expanded(
-                                //         flex: 1,
-                                //         child: Container(
-                                //           padding: EdgeInsets.only(top: 5),
-                                //           child: DropdownButtonFormField<String>(
-                                //             items:
-                                //                 _phuongthucvanchuyenList?.map((item) {
-                                //               return DropdownMenuItem<String>(
-                                //                 value: item.id,
-                                //                 child: Container(
-                                //                   padding:
-                                //                       EdgeInsets.only(left: 15.sp),
-                                //                   child: Text(
-                                //                     item.tenPhuongThucVanChuyen ?? "",
-                                //                     style: const TextStyle(
-                                //                       fontFamily: 'Comfortaa',
-                                //                       fontSize: 14,
-                                //                       fontWeight: FontWeight.w600,
-                                //                       color: Color(0xFF000000),
-                                //                     ),
-                                //                   ),
-                                //                 ),
-                                //               );
-                                //             }).toList(),
-                                //             value: PhuongThucVanChuyenId,
-                                //             onChanged: (newValue) {
-                                //               setState(() {
-                                //                 PhuongThucVanChuyenId = newValue;
-                                //               });
-                                //               // if (newValue != null) {
-                                //               //   getDanhSachPhuongTienList(newValue);
-                                //               //   print(
-                                //               //       "object : ${PhuongThucVanChuyenId}");
-                                //               // }
-                                //               // ;
-                                //             },
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -618,7 +379,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                           Row(
                             children: [
                               Text(
-                                _data != null ? _data!.tenSanPham ?? "" : "",
+                                _data?.tenSanPham ?? "",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   fontFamily: 'Coda Caption',
@@ -649,7 +410,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.soKhung ?? "" : "",
+                                      _data?.soKhung ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 16,
@@ -673,7 +434,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      _data != null ? _data!.tenMau ?? "" : "",
+                                      _data?.tenMau ?? "",
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 14,
@@ -687,38 +448,20 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                             ),
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Số máy:',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data != null ? _data!.soMay ?? "" : "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppConfig.primaryColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                          Item(
+                            title: 'Số máy:',
+                            value: _data?.soMay,
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Item(
+                            title: 'Địa điểm:',
+                            value: _data?.tenDiaDiem,
+                          ),
+                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Item(
+                            title: 'Phương thức vận chuyển:',
+                            value: _data?.tenPhuongThucVanChuyen,
+                          ),
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: Column(
@@ -795,7 +538,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                         fontSize: 16,
                                       )),
                                   controller: _btnController,
-                                  onPressed: _onSave,
+                                  onPressed:
+                                      _data?.soKhung != null ? _onSave : null,
                                 ),
                               ],
                             ),
@@ -814,64 +558,45 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   }
 }
 
-class MyInputWidget extends StatelessWidget {
+class Item extends StatelessWidget {
   final String title;
-  final String text;
-  final TextStyle textStyle;
+  final String? value;
 
-  const MyInputWidget({
+  const Item({
     Key? key,
     required this.title,
-    required this.text,
-    required this.textStyle,
+    this.value,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height < 600 ? 10.h : 8.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(
-          color: const Color(0xFF818180),
-          width: 1,
-        ),
-      ),
+      padding: const EdgeInsets.all(10),
       child: Row(
         children: [
-          Container(
-            width: 30.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF6C6C7),
-              border: Border(
-                right: BorderSide(
-                  color: Color(0xFF818180),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Center(
-              child: Text(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
                 title,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppConfig.textInput,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF818180),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.only(top: 5, left: 15.sp),
-              child: Text(
-                text,
-                style: textStyle,
+              SizedBox(height: 5),
+              Text(
+                value ?? "",
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

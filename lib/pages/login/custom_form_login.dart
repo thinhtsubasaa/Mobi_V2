@@ -41,15 +41,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _loading = false;
   late AppBloc _ab;
   late UserBloc _ub;
-  late MenuRoleBloc _mb;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
   late String selectedDomain;
-  String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
-  String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
   final _btnController = RoundedLoadingButtonController();
 
@@ -63,7 +60,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
     _ab = Provider.of<AppBloc>(context, listen: false);
     _ub = Provider.of<UserBloc>(context, listen: false);
-    _mb = Provider.of<MenuRoleBloc>(context, listen: false);
 
     setState(() {
       selectedDomain = items[0];
@@ -92,7 +88,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     print('Password: ${passwordCtrl.text}');
     if (userNameCtrl.text.isEmpty) {
       _btnController.reset();
-      // ignore: use_build_context_synchronously
       openSnackBar(context, 'username is required'.trim());
     } else if (passwordCtrl.text.isEmpty) {
       _btnController.reset();
@@ -209,7 +204,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          // Khi nhấn vào biểu tượng con mắt, thay đổi trạng thái của obscureText
                           setState(() {
                             obscureText = !obscureText;
                           });
@@ -277,7 +271,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() {
       _loading = true;
     });
-    nextScreenReplace(context, page);
+    nextScreenCloseOthers(context, page);
     Future.delayed(Duration(seconds: 1), () {
       setState(() {
         _loading = false;

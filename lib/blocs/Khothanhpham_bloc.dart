@@ -54,7 +54,6 @@ class KhoThanhPhamBloc extends ChangeNotifier {
             Kho_Id: decodedData['Kho_Id'],
             BaiXe_Id: decodedData['BaiXe_Id'],
             viTri_Id: decodedData['viTri_Id'],
-            // latLng: decodedData['latLng'],
           );
         }
       } else {

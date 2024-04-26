@@ -54,16 +54,13 @@ class XuatKhoBloc extends ChangeNotifier {
             ghiChu: decodedData['ghiChu'],
             maKho: decodedData['maKho'],
             kho_Id: decodedData['kho_Id'],
-            Diadiem_Id: decodedData['Diadiem_Id'],
-            phuongThucVanChuyen_Id: decodedData['phuongThucVanChuyen_Id'],
-            loaiPhuongTien_Id: decodedData['loaiPhuongTien_Id'],
-            danhSachPhuongTien_Id: decodedData['danhSachPhuongTien_Id'],
             bienSo_Id: decodedData['bienSo_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
             tenDiaDiem: decodedData['tenDiaDiem'],
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
-
-            // latLng: decodedData['latLng'],
+            tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
+            tenPhuongTien: decodedData['tenPhuongTien'],
+            viTri: decodedData['viTri'],
           );
         }
       } else {

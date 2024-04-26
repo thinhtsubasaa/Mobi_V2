@@ -3,10 +3,11 @@ class DSX_DongContModel {
   String? id;
   String? lat;
   String? long;
+
   String? soCont;
   String? soSeal;
   String? viTri;
-  String? dongCont;
+  bool? tinhTrang;
 
   DSX_DongContModel(
       {this.key,
@@ -15,7 +16,7 @@ class DSX_DongContModel {
       this.long,
       this.soCont,
       this.soSeal,
-      this.dongCont,
+      this.tinhTrang,
       this.viTri});
 
   factory DSX_DongContModel.fromJson(Map<String, dynamic> json) {
@@ -27,7 +28,7 @@ class DSX_DongContModel {
       lat: json["lat"],
       long: json["long"],
       viTri: json["viTri"],
-      dongCont: json["dongCont"],
+      tinhTrang: json["tinhTrang"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -38,6 +39,6 @@ class DSX_DongContModel {
         "lat": lat,
         "long": long,
         "viTri": viTri,
-        "dongCont": dongCont,
+        "tinhTrang": tinhTrang,
       };
 }

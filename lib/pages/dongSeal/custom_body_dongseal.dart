@@ -1,13 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Thilogi/blocs/dongcont_bloc.dart';
-import 'package:Thilogi/models/danhsachphuongtientau.dart';
-import 'package:Thilogi/models/dongcont.dart';
 import 'package:Thilogi/utils/snackbar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
@@ -22,7 +18,9 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 
+import '../../blocs/dongseal_bloc.dart';
 import '../../config/config.dart';
+import '../../models/danhsachphuongtien.dart';
 import '../../models/dongseal.dart';
 import '../../models/dsxdongcont.dart';
 
@@ -48,15 +46,16 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
-  String? soContId;
+  String? soCont;
   String? TauId;
-  TextEditingController _controller = TextEditingController();
+  String? viTri;
+  TextEditingController _soSeal = TextEditingController();
 
   List<DSX_DongContModel>? _dsxdongcontList;
   List<DSX_DongContModel>? get dsxdongcont => _dsxdongcontList;
 
-  List<DanhSachPhuongTienTauModel>? _danhsachphuongtientauList;
-  List<DanhSachPhuongTienTauModel>? get danhsachphuongtientauList =>
+  List<DanhSachPhuongTienModel>? _danhsachphuongtientauList;
+  List<DanhSachPhuongTienModel>? get danhsachphuongtientauList =>
       _danhsachphuongtientauList;
 
   DongSealModel? _data;
@@ -81,20 +80,21 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
 
-  late DongContBloc _bl;
+  late DongSealBloc _bl;
+
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
 
   @override
   void initState() {
     super.initState();
-    _bl = Provider.of<DongContBloc>(context, listen: false);
+    _bl = Provider.of<DongSealBloc>(context, listen: false);
   }
 
   void getSoCont() async {
     try {
       final http.Response response =
-          await requestHelper.getData('GetListContMobi');
+          await requestHelper.getData('DM_DongCont/GetListContMobi');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
@@ -119,13 +119,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void getDanhSachPhuongTienTauList() async {
     try {
       final http.Response response =
-          await requestHelper.getData('TMS_DanhSachPhuongTienTau');
+          await requestHelper.getData('TMS_DanhSachPhuongTien/Tau');
       if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body)['datalist'];
+        var decodedData = jsonDecode(response.body);
 
         // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
         _danhsachphuongtientauList = (decodedData as List)
-            .map((item) => DanhSachPhuongTienTauModel.fromJson(item))
+            .map((item) => DanhSachPhuongTienModel.fromJson(item))
             .toList();
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -139,107 +139,91 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     }
   }
 
-  // Future<void> postData(String soKhung, String viTri, String soCont) async {
-  //   _isLoading = true;
+  Future<void> postData(
+      String soSeal, String viTri, String soCont, String TauId) async {
+    _isLoading = true;
 
-  //   try {
-  //     // var newScanData = scanData;
-
-  //     // newScanData.soKhung =
-  //     //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-  //     // print("print data: ${newScanData.soKhung}");
-  //     final http.Response response = await requestHelper.postData(
-  //         'KhoThanhPham/DongCont?SoKhung=$soKhung&ViTri=$viTri&SoCont=$soCont',
-  //         _data?.toJson());
-  //     print("statusCode: ${response.statusCode}");
-  //     if (response.statusCode == 200) {
-  //       var decodedData = jsonDecode(response.body);
-
-  //       print("data: ${decodedData}");
-
-  //       notifyListeners();
-  //       _btnController.success();
-  //       QuickAlert.show(
-  //         context: context,
-  //         type: QuickAlertType.success,
-  //         text: "Đóng cont thành công",
-  //       );
-  //       _btnController.reset();
-  //     } else {
-  //       String errorMessage = response.body.replaceAll('"', '');
-  //       notifyListeners();
-  //       _btnController.error();
-  //       QuickAlert.show(
-  //         context: context,
-  //         type: QuickAlertType.error,
-  //         title: '',
-  //         text: errorMessage,
-  //       );
-  //       _btnController.reset();
-  //     }
-  //   } catch (e) {
-  //     _message = e.toString();
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-
-  @override
-  void dispose() {
-    scanSubscription.cancel();
-    // dataWedge.dispose();
-    super.dispose();
+    try {
+      // var newScanData = scanData;
+      // newScanData.soKhung =
+      //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      // print("print data: ${newScanData.soKhung}");
+      final http.Response response = await requestHelper.postData(
+          'KhoThanhPham/DongSeal?SoSeal=$soSeal&ViTri=$viTri&SoCont=$soCont&TauId=$TauId',
+          _data?.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: ${decodedData}");
+        notifyListeners();
+        _btnController.success();
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.success,
+          title: 'SUCCESS',
+          text: "Đóng seal thành công",
+        );
+        _btnController.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'ERROR',
+          text: errorMessage,
+        );
+        _btnController.reset();
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  // _onSave() {
-  //   setState(() {
-  //     _loading = true;
-  //   });
+  _onSave() {
+    setState(() {
+      _loading = true;
+    });
 
-  //   _data?.key = _bl.dongcont?.key;
-  //   _data?.id = _bl.dongcont?.id;
-  //   _data?.soCont = _bl.dongcont?.soCont;
-  //   _data?.soSeal = _bl.dongcont?.soSeal;
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
+      setState(() {
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
+      });
+      _data?.lat = lat;
+      _data?.long = long;
+      viTri = "${lat},${long}";
+      _data?.soSeal = _soSeal.text;
 
-  //   Geolocator.getCurrentPosition(
-  //     desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
-  //   ).then((position) {
-  //     // Assuming `_data` is not null
-  //     setState(() {
-  //       lat = "${position.latitude}";
-  //       long = "${position.longitude}";
-  //     });
-  //     _data?.lat = lat;
-  //     _data?.long = long;
-  //     _data?.viTri = "${lat},${long}";
+      print("viTri: ${viTri}");
+      print("soSeal:${_soSeal.text}");
+      print("soCont:${soCont}");
+      print("TauId: ${TauId}");
 
-  //     print("lat: ${_data?.lat}");
-  //     print("long: ${_data?.long}");
-  //     print("viTri: ${_data?.viTri}");
-
-  //     // call api
-
-  //     AppService().checkInternet().then((hasInternet) {
-  //       if (!hasInternet!) {
-  //         openSnackBar(context, 'no internet'.tr());
-  //       } else {
-  //         postData(
-  //                 _data?.soKhung ?? "", _data?.viTri ?? "", _data?.soCont ?? "")
-  //             .then((_) {
-  //           setState(() {
-  //             _data = null;
-  //             _qrData = '';
-  //             _qrDataController.text = '';
-  //             _loading = false;
-  //           });
-  //         });
-  //       }
-  //     });
-  //   }).catchError((error) {
-  //     // Handle error while getting location
-  //     print("Error getting location: $error");
-  //   });
-  // }
+      AppService().checkInternet().then((hasInternet) {
+        if (!hasInternet!) {
+          openSnackBar(context, 'no internet'.tr());
+        } else {
+          postData(_soSeal.text, viTri ?? "", soCont ?? "", TauId ?? "")
+              .then((_) {
+            setState(() {
+              _data = null;
+              _qrData = '';
+              _qrDataController.text = '';
+              _loading = false;
+            });
+          });
+        }
+      });
+    }).catchError((error) {
+      print("Error getting location: $error");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -334,14 +318,14 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                           .height <
                                                       600
                                                   ? 0
-                                                  : 10),
+                                                  : 5),
                                           child:
                                               DropdownButtonFormField<String>(
                                             isDense: true,
                                             items:
                                                 _dsxdongcontList?.map((item) {
                                               return DropdownMenuItem<String>(
-                                                value: item.id,
+                                                value: item.soCont,
                                                 child: Container(
                                                   padding: EdgeInsets.only(
                                                       left: 15.sp),
@@ -366,10 +350,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                 ),
                                               );
                                             }).toList(),
-                                            value: soContId,
-                                            onChanged: (newValue) async {
+                                            value: soCont,
+                                            onChanged: (newValue) {
                                               setState(() {
-                                                soContId = newValue;
+                                                soCont = newValue;
                                               });
                                             },
                                           ),
@@ -381,7 +365,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 const SizedBox(height: 10),
                                 MyInputWidget(
                                   title: 'Số Seal',
-                                  controller: _controller,
+                                  controller: _soSeal,
                                   textStyle: TextStyle(
                                     fontFamily: 'Comfortaa',
                                     fontSize: 16,
@@ -437,7 +421,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                           .height <
                                                       600
                                                   ? 0
-                                                  : 10),
+                                                  : 5),
                                           child:
                                               DropdownButtonFormField<String>(
                                             isDense: true,
@@ -471,7 +455,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                               );
                                             }).toList(),
                                             value: TauId,
-                                            onChanged: (newValue) async {
+                                            onChanged: (newValue) {
                                               setState(() {
                                                 TauId = newValue;
                                               });
@@ -499,7 +483,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                               fontSize: 16,
                                             )),
                                         controller: _btnController,
-                                        onPressed: null,
+                                        onPressed:
+                                            soCont != null ? _onSave : null,
                                       ),
                                       SizedBox(height: 10),
                                     ],

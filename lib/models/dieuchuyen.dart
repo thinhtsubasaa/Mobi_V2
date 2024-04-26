@@ -15,6 +15,7 @@ class DieuChuyenModel {
   String? soMay;
   String? lat;
   String? long;
+  String? viTri;
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
@@ -23,35 +24,31 @@ class DieuChuyenModel {
   String? viTri_Id;
   String? taiXe_Id;
 
-  DieuChuyenModel({
-    this.key,
-    this.id,
-    this.maMau,
-    this.mauSon,
-    this.maViTri,
-    this.tenViTri,
-    this.maSanPham,
-    this.lat,
-    this.long,
-    this.soKhung,
-    this.tenSanPham,
-    this.tenMau,
-    this.tenKho,
-    this.soMay,
-    this.ngayNhapKhoView,
-    this.tenTaiXe,
-    this.ghiChu,
-    this.maKho,
-    this.tenBaiXe,
-    this.baiXe_Id,
-    this.viTri_Id,
-    this.khoDen_Id,
-    this.taiXe_Id,
-  });
-  @override
-  String toString() {
-    return 'DieuChuyenModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
-  }
+  DieuChuyenModel(
+      {this.key,
+      this.id,
+      this.maMau,
+      this.mauSon,
+      this.maViTri,
+      this.tenViTri,
+      this.maSanPham,
+      this.lat,
+      this.long,
+      this.soKhung,
+      this.tenSanPham,
+      this.tenMau,
+      this.tenKho,
+      this.soMay,
+      this.ngayNhapKhoView,
+      this.tenTaiXe,
+      this.ghiChu,
+      this.maKho,
+      this.tenBaiXe,
+      this.baiXe_Id,
+      this.viTri_Id,
+      this.khoDen_Id,
+      this.taiXe_Id,
+      this.viTri});
 
   factory DieuChuyenModel.fromJson(Map<String, dynamic> json) {
     return DieuChuyenModel(
@@ -77,7 +74,8 @@ class DieuChuyenModel {
         tenBaiXe: json["tenBaiXe"],
         taiXe_Id: json["taiXe_Id"],
         lat: json["lat"],
-        long: json["long"]);
+        long: json["long"],
+        viTri: json["viTri"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -100,6 +98,7 @@ class DieuChuyenModel {
         "taiXe_Id": taiXe_Id,
         "tenBaiXe": tenBaiXe,
         "lat": lat,
-        "long": long
+        "long": long,
+        "viTri": viTri,
       };
 }

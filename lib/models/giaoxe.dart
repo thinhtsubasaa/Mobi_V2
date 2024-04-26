@@ -14,14 +14,11 @@ class GiaoXeModel {
   String? soMay;
   String? lat;
   String? long;
+  String? viTri;
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
   String? kho_Id;
-  String? Diadiem_Id;
-  String? phuongThucVanChuyen_Id;
-  String? loaiPhuongTien_Id;
-  String? danhSachPhuongTien_Id;
   String? bienSo_Id;
   String? taiXe_Id;
   String? nguoiNhan;
@@ -48,21 +45,14 @@ class GiaoXeModel {
       this.tenTaiXe,
       this.ghiChu,
       this.maKho,
-      this.Diadiem_Id,
       this.bienSo_Id,
-      this.danhSachPhuongTien_Id,
       this.kho_Id,
-      this.loaiPhuongTien_Id,
-      this.phuongThucVanChuyen_Id,
       this.taiXe_Id,
       this.nguoiNhan,
       this.fileDinhKems,
       this.tenDiaDiem,
-      this.tenPhuongThucVanChuyen});
-  @override
-  String toString() {
-    return 'GiaoXeModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu, fileDinhKems: $fileDinhKems)';
-  }
+      this.tenPhuongThucVanChuyen,
+      this.viTri});
 
   factory GiaoXeModel.fromJson(Map<String, dynamic> json) {
     return GiaoXeModel(
@@ -83,16 +73,12 @@ class GiaoXeModel {
       ghiChu: json["ghiChu"],
       maKho: json["maKho"],
       taiXe_Id: json["taiXe_Id"],
-      bienSo_Id: json["bienSo_Id"],
-      danhSachPhuongTien_Id: json["danhSachPhuongTien_Id"],
-      loaiPhuongTien_Id: json["loaiPhuongTien_Id"],
-      phuongThucVanChuyen_Id: json["phuongThucVanChuyen_Id"],
-      Diadiem_Id: json["Diadiem_Id"],
       kho_Id: json["kho_Id"],
       lat: json["lat"],
       long: json["long"],
       nguoiNhan: json["nguoiNhan"],
       tenDiaDiem: json["tenDiaDiem"],
+      viTri: json["viTri"],
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       fileDinhKems: (json['phuKien'] as List)
           .map((e) => FileDinhKems.fromJson(e))
@@ -115,10 +101,6 @@ class GiaoXeModel {
         'ngayNhapKhoView': ngayNhapKhoView,
         "maKho": maKho,
         "kho_Id": kho_Id,
-        "Diadiem_Id": Diadiem_Id,
-        "phuongThucVanChuyen_Id": phuongThucVanChuyen_Id,
-        "loaiPhuongTien_Id": loaiPhuongTien_Id,
-        "danhSachPhuongTien_Id": danhSachPhuongTien_Id,
         "bienSo_Id": bienSo_Id,
         "taiXe_Id": taiXe_Id,
         "lat": lat,
@@ -126,6 +108,7 @@ class GiaoXeModel {
         "nguoiNhan": nguoiNhan,
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "tenDiaDiem": tenDiaDiem,
+        "viTri": viTri,
       };
 }
 

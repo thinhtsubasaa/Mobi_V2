@@ -19,29 +19,30 @@ class KhoThanhPhamModel {
   String? Kho_Id;
   String? BaiXe_Id;
   String? viTri_Id;
+  String? viTri;
 
-  KhoThanhPhamModel({
-    this.key,
-    this.id,
-    this.maMau,
-    this.mauSon,
-    this.maViTri,
-    this.tenViTri,
-    this.lat,
-    this.long,
-    this.Kho_Id,
-    this.BaiXe_Id,
-    this.viTri_Id,
-    this.maSanPham,
-    this.soKhung,
-    this.tenSanPham,
-    this.tenMau,
-    this.tenKho,
-    this.soMay,
-    this.ngayNhapKhoView,
-    this.tenTaiXe,
-    this.ghiChu,
-  });
+  KhoThanhPhamModel(
+      {this.key,
+      this.id,
+      this.maMau,
+      this.mauSon,
+      this.maViTri,
+      this.tenViTri,
+      this.lat,
+      this.long,
+      this.Kho_Id,
+      this.BaiXe_Id,
+      this.viTri_Id,
+      this.maSanPham,
+      this.soKhung,
+      this.tenSanPham,
+      this.tenMau,
+      this.tenKho,
+      this.soMay,
+      this.ngayNhapKhoView,
+      this.tenTaiXe,
+      this.ghiChu,
+      this.viTri});
   @override
   String toString() {
     return 'KhoThanhPhamModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
@@ -69,6 +70,7 @@ class KhoThanhPhamModel {
       viTri_Id: json["viTri_Id"],
       lat: json["lat"],
       long: json["long"],
+      viTri: json["viTri"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -90,5 +92,6 @@ class KhoThanhPhamModel {
         'viTri_Id': viTri_Id,
         'lat': lat,
         'long': long,
+        'viTri': viTri,
       };
 }
