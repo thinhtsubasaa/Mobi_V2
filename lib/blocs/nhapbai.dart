@@ -1,17 +1,15 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
-import '../models/dongcont.dart';
-
-class DongContBloc extends ChangeNotifier {
+class NhapBaiBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  DongContModel? _dongcont;
-  DongContModel? get dongcont => _dongcont;
+  KhoThanhPhamModel? _baixe;
+  KhoThanhPhamModel? get baixe => _baixe;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -29,16 +27,15 @@ class DongContBloc extends ChangeNotifier {
 
   Future<void> getData(BuildContext context, String qrcode) async {
     _isLoading = true;
-    _dongcont = null;
+    _baixe = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetSoKhungDongContmobi?SoKhung=$qrcode');
-      print(response.statusCode);
+          .getData('KhoThanhPham/GetSoKhungNhapKhoBaimobi?SoKhung=$qrcode');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
-          _dongcont = DongContModel(
+          _baixe = KhoThanhPhamModel(
             key: decodedData["key"],
             id: decodedData['id'],
             soKhung: decodedData['soKhung'],
@@ -54,12 +51,9 @@ class DongContBloc extends ChangeNotifier {
             ngayNhapKhoView: decodedData['ngayNhapKhoView'],
             tenTaiXe: decodedData['tenTaiXe'],
             ghiChu: decodedData['ghiChu'],
-            maKho: decodedData['maKho'],
-            soCont: decodedData['soCont'],
-            soSeal: decodedData['soSeal'],
-            lat: decodedData['lat'],
-            long: decodedData['long'],
-            viTri: decodedData['viTri'],
+            Kho_Id: decodedData['Kho_Id'],
+            BaiXe_Id: decodedData['BaiXe_Id'],
+            viTri_Id: decodedData['viTri_Id'],
           );
         }
       } else {
@@ -72,7 +66,7 @@ class DongContBloc extends ChangeNotifier {
           title: 'ERROR',
           text: errorMessage,
         );
-        _dongcont = null;
+        _baixe = null;
         _isLoading = false;
       }
 
@@ -80,6 +74,29 @@ class DongContBloc extends ChangeNotifier {
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> postData(KhoThanhPhamModel scanData) async {
+    _isLoading = true;
+    try {
+      var newScanData = scanData;
+      newScanData.soKhung =
+          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      print("print data: ${newScanData.soKhung}");
+      final http.Response response = await requestHelper.postData(
+          'KhoThanhPham/NhapKhoBai', newScanData.toJson());
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+        _isLoading = false;
+        _success = decodedData["success"];
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
       notifyListeners();
     }
   }

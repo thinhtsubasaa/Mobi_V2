@@ -6,9 +6,13 @@ import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
 import 'package:Thilogi/pages/DongCont/dongcont.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
+import '../../models/menurole.dart';
+import '../../services/request_helper.dart';
 import '../khoxe/khoxe.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -28,10 +32,65 @@ class BodyQLBaiXeScreen extends StatefulWidget {
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
+  String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
+  String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
+  late MenuRoleBloc _mb;
+  static RequestHelper requestHelper = RequestHelper();
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+
+  String? _message;
+  String? get message => _message;
+
+  String? url;
+
+  @override
+  void initState() {
+    super.initState();
+    // getData(context, DonVi_Id, PhanMem_Id);
+    _mb = Provider.of<MenuRoleBloc>(context, listen: false);
+    // setState(() {
+    //   ruleKhothanhpham = false;
+    //   ruleKiemTraNhanXe = false;
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  bool userHasPermission(String? url1) {
+    print(_mb.menurole);
+    print('url5:$url1');
+    // Kiểm tra xem _mb.menurole có null không
+    if (_mb.menurole != null) {
+      url = _mb.menurole!
+          .firstWhere((menuRole) => menuRole.url == url1,
+              orElse: () => MenuRoleModel() as MenuRoleModel)
+          ?.url;
+      print('url1:$url');
+      if (url == url1) {
+        print("object:$url");
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      // Trả về false nếu _mb.menurole là null
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return _loading
@@ -40,128 +99,63 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             margin: const EdgeInsets.only(top: 25, bottom: 25),
             child: Column(
-              children: [
+              children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 4,
-                                spreadRadius: 0,
-                                color: Color(0x40000000),
-                              ),
-                            ],
-                            color: AppConfig.primaryColor,
+                    // if (userHasPermission('nhap-bai-xe-mobi'))
+                    CustomButton(
+                      'NHẬP BÃI XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/car1.png',
+                            width: 60,
+                            height: 65,
                           ),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  _handleButtonTap(BaiXePage());
-                                },
-                                icon: Stack(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/car1.png',
-                                      width: 60,
-                                      height: 65,
-                                    ),
-                                    Transform.translate(
-                                      offset: const Offset(25, -15),
-                                      child: Image.asset(
-                                        'assets/images/car2.png',
-                                        width: 50,
-                                        height: 55,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                iconSize: 60,
-                                padding: EdgeInsets.zero,
-                                alignment: Alignment.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'NHẬP BÃI XE',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 4,
-                                spreadRadius: 0,
-                                color: Color(0x40000000),
-                              ),
-                            ],
-                            color: AppConfig.primaryColor,
-                          ),
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            onPressed: () {
-                              _handleButtonTap(ChuyenXePage());
-                            },
-                            icon: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/car3.png',
-                                  width: 120,
-                                  height: 80,
-                                ),
-                                Transform.translate(
-                                  offset: const Offset(0, 3),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 60),
-                                    child: Image.asset(
-                                      'assets/images/car4.png',
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          Transform.translate(
+                            offset: const Offset(25, -15),
+                            child: Image.asset(
+                              'assets/images/car2.png',
+                              width: 50,
+                              height: 55,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'ĐIỀU CHUYỂN XE',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(BaiXePage());
+                      },
+                    ),
+                    const SizedBox(width: 20),
+                    // if (userHasPermission('dieu-chuyen-xe-mobi'))
+                    CustomButton(
+                      'ĐIỀU CHUYỂN XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/car3.png',
+                            width: 120,
+                            height: 80,
                           ),
-                        )
-                      ],
+                          Transform.translate(
+                            offset: const Offset(0, 3),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 60),
+                              child: Image.asset(
+                                'assets/images/car4.png',
+                                width: 40,
+                                height: 40,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(ChuyenXePage());
+                      },
                     ),
                   ],
                 ),
@@ -169,120 +163,59 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 4,
-                                spreadRadius: 0,
-                                color: Color(0x40000000),
+                    // if (userHasPermission('xuat-kho-xe-mobi'))
+                    CustomButton(
+                      'XUẤT KHO XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/car5.png',
+                            width: 120,
+                            height: 80,
+                          ),
+                          Transform.translate(
+                            offset: const Offset(0, -3),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 70),
+                              child: Image.asset(
+                                'assets/images/car4.png',
+                                width: 40,
+                                height: 40,
                               ),
-                            ],
-                            color: AppConfig.primaryColor,
-                          ),
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            onPressed: () {
-                              _handleButtonTap(KhoXePage());
-                            },
-                            icon: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/car5.png',
-                                  width: 120,
-                                  height: 80,
-                                ),
-                                Transform.translate(
-                                  offset: const Offset(0, -3),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 70),
-                                    child: Image.asset(
-                                      'assets/images/car4.png',
-                                      width: 40,
-                                      height: 40,
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Center(
-                          child: Text(
-                            'XUẤT KHO XE',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: AppConfig.primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(KhoXePage());
+                      },
                     ),
                     SizedBox(width: 20),
-                    Column(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 4,
-                                spreadRadius: 0,
-                                color: Color(0x40000000),
-                              ),
-                            ],
-                            color: AppConfig.primaryColor,
+                    // if (userHasPermission('dong-cont-mobi'))
+                    CustomButton(
+                      'ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/car1.png',
+                            width: 60,
+                            height: 65,
                           ),
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            onPressed: () {
-                              _handleButtonTap(XuatCongXePage());
-                            },
-                            icon: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/car1.png',
-                                  width: 60,
-                                  height: 65,
-                                ),
-                                Transform.translate(
-                                  offset: const Offset(25, -15),
-                                  child: Image.asset(
-                                    'assets/images/search.png',
-                                    width: 50,
-                                    height: 55,
-                                  ),
-                                ),
-                              ],
+                          Transform.translate(
+                            offset: const Offset(25, -15),
+                            child: Image.asset(
+                              'assets/images/search.png',
+                              width: 50,
+                              height: 55,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'ĐÓNG CONT',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
-                          ),
-                        )
-                      ],
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(XuatCongXePage());
+                      },
                     ),
                   ],
                 ),
@@ -290,59 +223,30 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 150,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(0, 4),
-                                blurRadius: 4,
-                                spreadRadius: 0,
-                                color: Color(0x40000000),
-                              ),
-                            ],
-                            color: AppConfig.primaryColor,
+                    // if (userHasPermission('dong-seal-mobi'))
+                    CustomButton(
+                      'ĐÓNG SEAL',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/car1.png',
+                            width: 60,
+                            height: 65,
                           ),
-                          alignment: Alignment.center,
-                          child: IconButton(
-                            onPressed: () {
-                              _handleButtonTap(DongSealPage());
-                            },
-                            icon: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/car1.png',
-                                  width: 60,
-                                  height: 65,
-                                ),
-                                Transform.translate(
-                                  offset: const Offset(25, -15),
-                                  child: Image.asset(
-                                    'assets/images/search.png',
-                                    width: 50,
-                                    height: 55,
-                                  ),
-                                ),
-                              ],
+                          Transform.translate(
+                            offset: const Offset(25, -15),
+                            child: Image.asset(
+                              'assets/images/search.png',
+                              width: 50,
+                              height: 55,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'ĐÓNG SEAL',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.primaryColor,
-                          ),
-                        )
-                      ],
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(DongSealPage());
+                      },
                     ),
                   ],
                 ),
@@ -363,4 +267,43 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
       });
     });
   }
+}
+
+Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Column(
+      children: [
+        Container(
+          width: 130,
+          height: 150,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, 4),
+                blurRadius: 4,
+                spreadRadius: 0,
+                color: Color(0x40000000),
+              ),
+            ],
+            color: AppConfig.primaryColor,
+          ),
+          alignment: Alignment.center,
+          child: page,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          buttonText,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Comfortaa',
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppConfig.primaryColor,
+          ),
+        ),
+      ],
+    ),
+  );
 }

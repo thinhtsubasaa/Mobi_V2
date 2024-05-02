@@ -88,12 +88,10 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     _bl = Provider.of<GiaoXeBloc>(context, listen: false);
     _ib = Provider.of<ImageBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-    // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
       });
-
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult);
     });
@@ -102,7 +100,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-
     super.dispose();
   }
 
@@ -162,7 +159,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,7 +243,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     setState(() {
       _loading = true;
     });
-    _bl.getData(value).then((_) {
+    _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.giaoxe == null) {
@@ -334,15 +331,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

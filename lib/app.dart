@@ -7,6 +7,7 @@ import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/image_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
+import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/theme_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
               providers: [
                 ChangeNotifierProvider<AppBloc>(
                   create: (context) => AppBloc(),
+                ),
+                ChangeNotifierProvider<NhapBaiBloc>(
+                  create: (context) => NhapBaiBloc(),
                 ),
                 ChangeNotifierProvider<UserBloc>(
                   create: (context) => UserBloc(),

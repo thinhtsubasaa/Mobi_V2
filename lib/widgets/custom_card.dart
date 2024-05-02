@@ -132,7 +132,6 @@ class _CustomCardState extends State<CustomCard>
                     Icons.arrow_drop_down,
                     color: Colors.white,
                   ),
-                  color: Colors.white,
                 ),
               ),
             ],

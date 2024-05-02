@@ -248,7 +248,7 @@ class _SettingPageState extends State<SettingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  'copyright',
+                  '(C) 2024 Bản quyền thuộc về THILOGI',
                   style: TextStyle(
                     fontSize: 14,
                     letterSpacing: -0.7,
@@ -409,7 +409,7 @@ class UserUI extends StatelessWidget {
             ),
           ),
           title: Text(
-            'dark mode',
+            'Chế độ tối',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,

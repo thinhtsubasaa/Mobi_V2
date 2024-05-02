@@ -42,9 +42,8 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
   String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late MenuRoleBloc _mb;
-
-  MenuRoleModel? _menurole;
-  MenuRoleModel? get menurole => _menurole;
+  List<MenuRoleModel>? _menurole;
+  List<MenuRoleModel>? get menurole => _menurole;
 
   static RequestHelper requestHelper = RequestHelper();
   bool _isLoading = true;
@@ -58,21 +57,17 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   String? _message;
   String? get message => _message;
 
+  String? url;
+
   @override
   void initState() {
     super.initState();
-    getData(context, DonVi_Id, PhanMem_Id);
+    // getData(context, DonVi_Id, PhanMem_Id);
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     // setState(() {
     //   ruleKhothanhpham = false;
     //   ruleKiemTraNhanXe = false;
     // });
-  }
-
-  @override
-  void dispose() {
-    _mb.dispose();
-    super.dispose();
   }
 
   Future<void> getData(
@@ -88,27 +83,32 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data:${decodedData}");
-        List<String> getAllUrls(List<dynamic> items) {
-          List<String> urls = [];
-          for (var item in items) {
-            // Kiểm tra xem item có chứa URL không
-            if (item.containsKey('url')) {
-              urls.add(item['url']);
-            }
-            // Kiểm tra xem item có mục con không và duyệt qua chúng nếu có
-            if (item.containsKey('children')) {
-              urls.addAll(getAllUrls(item['children']));
-            }
-          }
-          return urls;
-        }
+        // List<String> getAllUrls(List<dynamic> items) {
+        //   List<String> urls = [];
+        //   for (var item in items) {
+        //     // Kiểm tra xem item có chứa URL không
+        //     if (item.containsKey('url')) {
+        //       urls.add(item['url']);
+        //     }
+        //     // Kiểm tra xem item có mục con không và duyệt qua chúng nếu có
+        //     if (item.containsKey('children')) {
+        //       urls.addAll(getAllUrls(item['children']));
+        //     }
+        //   }
+        //   return urls;
+        // }
 
+        // if (decodedData != null) {
+        //   List<String> urls = getAllUrls(decodedData);
+        //   print('Danh sách các URL:');
+        //   for (var url in urls) {
+        //     print(url);
+        //   }
+        // }
         if (decodedData != null) {
-          List<String> urls = getAllUrls(decodedData);
-          print('Danh sách các URL:');
-          for (var url in urls) {
-            // print(url);
-          }
+          _menurole = (decodedData as List).map((p) {
+            return MenuRoleModel.fromJson(p);
+          }).toList();
         }
         notifyListeners();
       } else {
@@ -124,9 +124,30 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     }
   }
 
+  bool userHasPermission(String? url1) {
+    print(_mb.menurole);
+    print('url5:$url1');
+    // Kiểm tra xem _mb.menurole có null không
+    if (_mb.menurole != null) {
+      url = _mb.menurole!
+          .firstWhere((menuRole) => menuRole.url == url1,
+              orElse: () => MenuRoleModel() as MenuRoleModel)
+          ?.url;
+      print('url1:$url');
+      if (url == url1) {
+        print("object:$url");
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      // Trả về false nếu _mb.menurole là null
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // getData(context, DonVi_Id, PhanMem_Id);
     return _loading
         ? LoadingWidget(context)
         : Container(
@@ -137,6 +158,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // if (userHasPermission('nhan-xe-mobi'))
                     CustomButton(
                       'KIỂM TRA NHẬN XE',
                       Stack(
@@ -162,6 +184,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       },
                     ),
                     const SizedBox(width: 20),
+                    // if (userHasPermission('quan-ly-bai-xe-mobi'))
                     CustomButton(
                       'QUẢN LÝ BÃI XE',
                       Stack(
@@ -195,6 +218,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // if (userHasPermission('giao-xe-mobi'))
                     CustomButton(
                       'VẬN CHUYỂN GIAO XE',
                       Stack(
@@ -223,6 +247,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       },
                     ),
                     SizedBox(width: 15),
+                    // if (userHasPermission('tracking-xe-thanh-pham-mobi'))
                     Column(
                       children: [
                         SizedBox(

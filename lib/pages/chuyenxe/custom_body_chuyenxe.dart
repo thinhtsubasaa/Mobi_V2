@@ -94,7 +94,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
-    // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -107,7 +106,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-    // dataWedge.dispose();
     super.dispose();
   }
 
@@ -260,7 +258,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -345,7 +343,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     setState(() {
       _loading = true;
     });
-    _bl.getData(value).then((_) {
+    _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.dieuchuyen == null) {
@@ -432,15 +430,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,6 +538,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                   : 10),
                                           child:
                                               DropdownButtonFormField<String>(
+                                            isExpanded: true,
                                             items: _khoxeList?.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item.id,

@@ -237,15 +237,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

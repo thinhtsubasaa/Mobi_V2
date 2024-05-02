@@ -76,7 +76,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +160,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     setState(() {
       _loading = true;
     });
-    _sb.getData(value).then((_) {
+    _sb.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_sb.scan == null) {
@@ -190,11 +190,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 margin: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: const Color(0xFFCCCCCC),
-                    width: 1, // Độ dày của đường viền
-                  ),
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 child: Column(
                   children: [

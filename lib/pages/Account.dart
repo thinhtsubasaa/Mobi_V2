@@ -1,6 +1,8 @@
+import 'package:Thilogi/widgets/divider.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/chuyenxe/custom_body_chuyenxe.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
@@ -54,33 +56,24 @@ class BodyAccountScreen extends StatefulWidget {
 
 class _BodyAccountScreenState extends State<BodyAccountScreen>
     with SingleTickerProviderStateMixin {
-  late UserBloc? _ub;
+  late UserBloc? ub;
 
   @override
   void initState() {
     super.initState();
-    _ub = Provider.of<UserBloc>(context, listen: false);
+    ub = Provider.of<UserBloc>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-      children: [
+      child: Column(children: [
         const SizedBox(height: 5),
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,48 +95,78 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                       const SizedBox(height: 10),
                       Column(
                         children: [
-                          SizedBox(height: 4),
-                          MyInputWidget(
-                            title: "Họ và tên",
-                            text: _ub?.name ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
+                          ListTile(
+                            contentPadding: EdgeInsets.all(0),
+                            title: Container(
+                              width: 200,
+                              height: 200,
+                              child: Image.network(
+                                ub?.hinhAnhUrl ?? "",
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 5),
-                          MyInputWidget(
-                            title: "Email",
-                            text: _ub?.email ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
+                          const DividerWidget(),
+                          ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            leading: const CircleAvatar(
+                              backgroundColor: Colors.blueAccent,
+                              radius: 18,
+                              child: Icon(
+                                Feather.user_check,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            title: Text(
+                              ub?.name ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 5),
-                          MyInputWidget(
-                            title: "Role ",
-                            text: _ub?.accessRole ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
+                          const DividerWidget(),
+                          ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            leading: const CircleAvatar(
+                              backgroundColor: Colors.blueAccent,
+                              radius: 18,
+                              child: Icon(
+                                Feather.user_plus,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            title: Text(
+                              ub?.accessRole ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
-                          SizedBox(height: 5),
-                          MyInputWidget(
-                            title: "Hình ảnh",
-                            text: _ub?.hinhAnhUrl ?? "",
-                            textStyle: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppConfig.textInput,
+                          const DividerWidget(),
+                          ListTile(
+                            contentPadding: const EdgeInsets.all(0),
+                            leading: CircleAvatar(
+                              backgroundColor: Colors.indigoAccent[100],
+                              radius: 18,
+                              child: const Icon(
+                                Feather.mail,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            title: Text(
+                              ub?.email ?? "",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ],
@@ -155,72 +178,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
             ),
           ),
         ),
-      ],
-    ));
-  }
-}
-
-class MyInputWidget extends StatelessWidget {
-  final String title;
-  final String text;
-  final TextStyle textStyle;
-
-  const MyInputWidget({
-    Key? key,
-    required this.title,
-    required this.text,
-    required this.textStyle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 10.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(
-          color: const Color(0xFF818180),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 30.w,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF6C6C7),
-              border: Border(
-                right: BorderSide(
-                  color: Color(0xFF818180),
-                  width: 1,
-                ),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                title,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                  color: AppConfig.textInput,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.only(top: 5, left: 5.sp),
-              child: Text(
-                text,
-                style: textStyle,
-              ),
-            ),
-          ),
-        ],
-      ),
+      ]),
     );
   }
 }

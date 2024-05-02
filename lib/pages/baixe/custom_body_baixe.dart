@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
 import 'package:Thilogi/utils/snackbar.dart';
@@ -25,6 +26,7 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 import 'package:quickalert/quickalert.dart';
 import '../../widgets/loading.dart';
+import '../../widgets/map.dart';
 
 class CustomBodyBaiXe extends StatelessWidget {
   @override
@@ -54,7 +56,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   KhoThanhPhamModel? _data;
 
   String barcodeScanResult = '';
-  late KhoThanhPhamBloc _bl;
+  late NhapBaiBloc _bl;
 
   List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
@@ -85,7 +87,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   @override
   void initState() {
     super.initState();
-    _bl = Provider.of<KhoThanhPhamBloc>(context, listen: false);
+    _bl = Provider.of<NhapBaiBloc>(context, listen: false);
+
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -100,6 +103,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
+
     super.dispose();
   }
 
@@ -192,14 +196,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
+      // decoration: BoxDecoration(
+      //   // Đặt border radius cho card
+      //   borderRadius: BorderRadius.circular(10),
+      //   border: Border.all(
+      //     color: const Color(0xFF818180), // Màu của đường viền
+      //     width: 1, // Độ dày của đường viền
+      //   ),
+      //   color: Colors.white, // Màu nền của card
+      // ),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -265,11 +277,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   }
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
-    print(barcodeScanResult);
+    print("abc: ${barcodeScanResult}");
     // Process the barcode scan result here
     setState(() {
       _qrData = '';
-      _qrDataController.text = barcodeScanResult;
+      _qrDataController.text = '';
       _data = null;
       Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
@@ -279,15 +291,16 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     });
   }
 
-  Future<void> postData(KhoThanhPhamModel scanData, String viTri) async {
+  Future<void> postData(String ViTriId, String viTri, String soKhung) async {
     _isLoading = true;
     try {
-      var newScanData = scanData;
-      newScanData.soKhung =
-          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      print("print data: ${newScanData.soKhung}");
+      // var newScanData = scanData;
+      // newScanData.soKhung =
+      //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      // print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/NhapKhoBai?ToaDo=$viTri', newScanData.toJson());
+          'KhoThanhPham/NhapKhoBai?ViTri_Id=$ViTriId&ToaDo=$viTri&SoKhung=$soKhung',
+          _data?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -325,7 +338,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     setState(() {
       _loading = true;
     });
-    _bl.getData(value).then((_) {
+    _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.baixe == null) {
@@ -346,21 +359,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _data?.Kho_Id = KhoXeId;
     _data?.BaiXe_Id = BaiXeId;
     _data?.viTri_Id = ViTriId;
-    _data?.key = _bl.baixe?.key;
     _data?.id = _bl.baixe?.id;
     _data?.soKhung = _bl.baixe?.soKhung;
-    _data?.tenSanPham = _bl.baixe?.tenSanPham;
-    _data?.maSanPham = _bl.baixe?.maSanPham;
-    _data?.soMay = _bl.baixe?.soMay;
-    _data?.maMau = _bl.baixe?.maMau;
-    _data?.tenMau = _bl.baixe?.tenMau;
-    _data?.tenKho = _bl.baixe?.tenKho;
-    _data?.tenViTri = _bl.baixe?.tenViTri;
-    _data?.mauSon = _bl.baixe?.mauSon;
-    _data?.ngayNhapKhoView = _bl.baixe?.ngayNhapKhoView;
-    _data?.tenViTri = _bl.baixe?.tenViTri;
-    _data?.mauSon = _bl.baixe?.mauSon;
-    _data?.ngayNhapKhoView = _bl.baixe?.ngayNhapKhoView;
 
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
@@ -374,6 +374,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
       print("viTri:${_data?.viTri}");
       print("ViTri_ID:${_data?.viTri_Id}");
+      print("SoKhung: ${_data?.soKhung}");
 
       // call api
 
@@ -381,7 +382,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         if (!hasInternet!) {
           openSnackBar(context, 'no internet'.tr());
         } else {
-          postData(_data!, _data?.viTri ?? "").then((_) {
+          postData(ViTriId!, _data?.viTri ?? "", _data?.soKhung ?? "")
+              .then((_) {
             setState(() {
               _data = null;
               _qrData = '';
@@ -392,7 +394,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         }
       });
     }).catchError((error) {
-      // Handle error while getting location
       print("Error getting location: $error");
     });
   }
@@ -409,16 +410,19 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         Center(
           child: Container(
             alignment: Alignment.bottomCenter,
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.circular(5),
+            //   color: Colors.white.withOpacity(1),
+            //   boxShadow: const [
+            //     BoxShadow(
+            //       color: Color(0x40000000),
+            //       blurRadius: 4,
+            //       offset: Offset(0, 4),
+            //     ),
+            //   ],
+            // ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,6 +593,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                   : 5),
                                           child:
                                               DropdownButtonFormField<String>(
+                                            isExpanded: true,
                                             items: _baixeList?.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item.id,

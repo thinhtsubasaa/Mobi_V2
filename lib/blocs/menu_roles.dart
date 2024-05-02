@@ -16,8 +16,8 @@ import '../utils/next_screen.dart';
 class MenuRoleBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
-  MenuRoleModel? _menurole;
-  MenuRoleModel? get menurole => _menurole;
+  List<MenuRoleModel>? _menurole;
+  List<MenuRoleModel>? get menurole => _menurole;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -34,6 +34,7 @@ class MenuRoleBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
   String? rule;
+  String? url;
 
   Future<void> getData(
       BuildContext context, DonVi_Id, String PhanMem_Id) async {
@@ -51,30 +52,33 @@ class MenuRoleBloc extends ChangeNotifier {
 
         print("data:${decodedData}");
 
+        // if (decodedData != null) {
+
+        // _menurole = []; // Khởi tạo danh sách mới để lưu trữ các MenuRoleModel
+        // for (var item in decodedData) {
+        //   _menurole?.add(
+        //     MenuRoleModel(
+        //       id: item['id'],
+        //       tenMenu: item['tenMenu'],
+        //       url: item['url'],
+        //     ),
+        //   );
+
+        // }
         if (decodedData != null) {
-          // _menurole = MenuRoleModel(
-          //   id: decodedData['id'],
-          //   tenMenu: decodedData['tenMenu'],
-          //   url: decodedData['url'],
-          // );
-          List<String> urls = [];
+          _menurole = (decodedData as List).map((p) {
+            return MenuRoleModel.fromJson(p);
+          }).toList();
 
-          for (var item in decodedData) {
-            if (item.containsKey('url')) {
-              urls.add(item['url']);
-            }
-          }
-          print('Danh sách các URL:');
-          for (var url in urls) {
-            print(url);
-          }
+          // url = _menurole
+          //     ?.firstWhere((menuRole) => menuRole.url == 'Bao-cao',
+          //         // ignore: null_check_always_fails
+          //         orElse: () => null!)
+          //     .url;
 
-          if (urls.isNotEmpty && urls.any((url) => url.contains('Home'))) {
-            rule = '1';
-          } else {
-            print('false');
-          }
+          // print("url:$url");
         }
+
         notifyListeners();
       } else {
         _menurole = null;

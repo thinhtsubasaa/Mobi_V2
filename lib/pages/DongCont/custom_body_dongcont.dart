@@ -183,7 +183,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -268,7 +268,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     setState(() {
       _loading = true;
     });
-    _bl.getData(value).then((_) {
+    _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.dongcont == null) {
@@ -355,15 +355,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

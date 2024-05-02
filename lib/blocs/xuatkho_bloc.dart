@@ -4,6 +4,7 @@ import 'package:Thilogi/models/xuatkho.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:quickalert/quickalert.dart';
 
 class XuatKhoBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -25,12 +26,12 @@ class XuatKhoBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(String qrcode) async {
+  Future<void> getData(BuildContext context, String qrcode) async {
     _isLoading = true;
     _xuatkho = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetSoKhungXuatKhomobi?SoKhung=$qrcode');
+          .getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -61,9 +62,20 @@ class XuatKhoBloc extends ChangeNotifier {
             tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
             tenPhuongTien: decodedData['tenPhuongTien'],
             viTri: decodedData['viTri'],
+            noidi: decodedData['noidi'],
+            noiden: decodedData['noiden'],
           );
         }
       } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.error,
+          title: 'ERROR',
+          text: errorMessage,
+        );
         _xuatkho = null;
         _isLoading = false;
       }

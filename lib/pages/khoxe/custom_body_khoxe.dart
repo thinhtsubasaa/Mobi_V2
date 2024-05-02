@@ -165,7 +165,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           color: const Color(0xFF818180), // Màu của đường viền
           width: 1, // Độ dày của đường viền
         ),
-        color: Colors.white, // Màu nền của card
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,7 +249,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     setState(() {
       _loading = true;
     });
-    _bl.getData(value).then((_) {
+    _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
         if (_bl.xuatkho == null) {
@@ -282,6 +282,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     _data?.ngayNhapKhoView = _bl.xuatkho?.ngayNhapKhoView;
     _data?.maKho = _bl.xuatkho?.maKho;
     _data?.kho_Id = _bl.xuatkho?.kho_Id;
+    _data?.noidi = _bl.xuatkho?.noidi;
+    _data?.noiden = _bl.xuatkho?.noiden;
 
     _data?.bienSo_Id = _bl.xuatkho?.bienSo_Id;
     _data?.taiXe_Id = _bl.xuatkho?.taiXe_Id;
@@ -308,11 +310,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           openSnackBar(context, 'no internet'.tr());
         } else {
           postData(_data!).then((_) {
-            // if (_bl.success) {
-            //   openSnackBar(context, "Lưu thành công");
-            // } else {
-            //   openSnackBar(context, "Lưu thất bại");
-            // }
             setState(() {
               _data = null;
               _qrData = '';
@@ -339,15 +336,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           child: Container(
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white.withOpacity(1),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40000000),
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                ),
-              ],
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,6 +464,16 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           Item(
                             title: 'Danh sách phương tiện:',
                             value: _data?.tenPhuongTien,
+                          ),
+                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Item(
+                            title: 'Nơi đi:',
+                            value: _data?.noidi,
+                          ),
+                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          Item(
+                            title: 'Nơi đến:',
+                            value: _data?.noiden,
                           ),
                         ],
                       ),

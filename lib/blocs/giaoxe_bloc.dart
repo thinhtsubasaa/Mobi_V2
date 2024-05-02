@@ -4,6 +4,7 @@ import 'package:Thilogi/models/giaoxe.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:quickalert/quickalert.dart';
 
 class GiaoXeBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -25,7 +26,7 @@ class GiaoXeBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(String qrcode) async {
+  Future<void> getData(BuildContext context, String qrcode) async {
     _isLoading = true;
     _giaoxe = null;
     try {
@@ -62,6 +63,15 @@ class GiaoXeBloc extends ChangeNotifier {
           );
         }
       } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.error,
+          title: 'ERROR',
+          text: errorMessage,
+        );
         _giaoxe = null;
         _isLoading = false;
       }
