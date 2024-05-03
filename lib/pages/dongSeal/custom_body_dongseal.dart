@@ -89,6 +89,18 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DongSealBloc>(context, listen: false);
+    requestLocationPermission();
+  }
+
+  void requestLocationPermission() async {
+    // Kiểm tra quyền truy cập vị trí
+    LocationPermission permission = await Geolocator.checkPermission();
+    // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
   }
 
   void getSoCont() async {

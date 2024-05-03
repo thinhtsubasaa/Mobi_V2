@@ -83,6 +83,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DongContBloc>(context, listen: false);
+    requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
     // Subscribe to scan results
@@ -93,6 +94,23 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult);
     });
+  }
+
+  @override
+  void dispose() {
+    scanSubscription.cancel();
+    super.dispose();
+  }
+
+  void requestLocationPermission() async {
+    // Kiểm tra quyền truy cập vị trí
+    LocationPermission permission = await Geolocator.checkPermission();
+    // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
   }
 
   void getSoCont() async {
@@ -163,12 +181,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  @override
-  void dispose() {
-    scanSubscription.cancel();
-    super.dispose();
   }
 
   Widget CardVin() {

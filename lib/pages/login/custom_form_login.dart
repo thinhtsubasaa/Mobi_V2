@@ -41,13 +41,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _loading = false;
   late AppBloc _ab;
   late UserBloc _ub;
+  late MenuRoleBloc _mb;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
+  String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
+  String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late String selectedDomain;
   List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
+  Map<String, String> domainTitles = {
+    'thilogi.com.vn': '@thilogi.com.vn',
+    'thaco.com.vn': '@thaco.com.vn',
+    '': 'Cá nhân'
+  };
+
   final _btnController = RoundedLoadingButtonController();
 
   bool offsecureText = true;
@@ -60,6 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
     _ab = Provider.of<AppBloc>(context, listen: false);
     _ub = Provider.of<UserBloc>(context, listen: false);
+    _mb = Provider.of<MenuRoleBloc>(context, listen: false);
 
     setState(() {
       selectedDomain = items[0];
@@ -109,8 +119,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) => _ub.setSignIn())
                   .then((_) {
                 _btnController.success();
-                // nextScreenReplace(context, MainMenuPage());
-                _handleButtonTap(QLKhoXePage());
+
+                nextScreenReplace(context, QLKhoXePage());
+
+                // _handleButtonTap(QLKhoXePage());
               });
             } else {
               if (asb.hasError) {
@@ -197,7 +209,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(10.0),
                         borderSide: BorderSide(color: Colors.black),
                       ),
-                      // Sử dụng suffixIcon để thêm biểu tượng con mắt
                       suffixIcon: IconButton(
                         icon: Icon(
                           obscureText ? Icons.visibility : Icons.visibility_off,
@@ -241,9 +252,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     items: items.map((String item) {
                       return DropdownMenuItem(
-                        value: item,
-                        child: Text(item),
-                      );
+                          value: item,
+                          // child: Text(item),
+                          child: Text(domainTitles[item] ?? ''));
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
@@ -267,15 +278,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
           );
   }
 
-  void _handleButtonTap(Widget page) {
-    setState(() {
-      _loading = true;
-    });
-    nextScreenCloseOthers(context, page);
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        _loading = false;
-      });
-    });
-  }
+  // void _handleButtonTap(Widget page) {
+  //   if (!mounted) return;
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   nextScreenCloseOthers(context, page);
+  //   Future.delayed(Duration(seconds: 1), () {
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //   });
+  // }
 }

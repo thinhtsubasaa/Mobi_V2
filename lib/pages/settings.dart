@@ -248,7 +248,7 @@ class _SettingPageState extends State<SettingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  '(C) 2024 Bản quyền thuộc về THILOGI',
+                  'Bản quyền thuộc về THACO THILOGI © 2024',
                   style: TextStyle(
                     fontSize: 14,
                     letterSpacing: -0.7,

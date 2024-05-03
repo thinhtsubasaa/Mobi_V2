@@ -89,11 +89,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   @override
   void initState() {
     super.initState();
-
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
+    requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-
-    // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -106,8 +104,18 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-    // dataWedge.dispose();
     super.dispose();
+  }
+
+  void requestLocationPermission() async {
+    // Kiểm tra quyền truy cập vị trí
+    LocationPermission permission = await Geolocator.checkPermission();
+    // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
   }
 
   Future<void> postData(XuatKhoModel scanData) async {

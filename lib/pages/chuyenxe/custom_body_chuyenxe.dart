@@ -90,10 +90,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   @override
   void initState() {
     super.initState();
-
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
+    requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -107,6 +106,17 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   void dispose() {
     scanSubscription.cancel();
     super.dispose();
+  }
+
+  void requestLocationPermission() async {
+    // Kiểm tra quyền truy cập vị trí
+    LocationPermission permission = await Geolocator.checkPermission();
+    // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
   }
 
   void getData() async {
@@ -125,7 +135,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           _loading = false;
         });
       }
-
       notifyListeners();
     } catch (e) {
       _hasError = true;
@@ -146,9 +155,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             .map((item) => BaiXeModel.fromJson(item))
             .toList();
         // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = true;
-        });
+        // setState(() {
+        //   _loading = true;
+        // });
       }
     } catch (e) {
       // Xử lý lỗi khi gọi API
@@ -159,8 +168,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
 
   void getViTriList(String BaiXeId) async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_WMS_Kho_ViTri?baiXe_Id=$BaiXeId');
+      final http.Response response = await requestHelper
+          .getData('DM_WMS_Kho_ViTri/Mobi?baiXe_Id=$BaiXeId');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body)['result'];
         print("data: ${decodedData}");
@@ -169,31 +178,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             .map((item) => ViTriModel.fromJson(item))
             .toList();
         // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = true;
-        });
-      }
-    } catch (e) {
-      // Xử lý lỗi khi gọi API
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  void getTaiXeList() async {
-    try {
-      final http.Response response = await requestHelper.getData('TaiXe');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body)['datalist'];
-
-        // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
-        _taixeList = (decodedData as List)
-            .map((item) => TaiXeModel.fromJson(item))
-            .toList();
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
+        // setState(() {
+        //   _loading = true;
+        // });
       }
     } catch (e) {
       // Xử lý lỗi khi gọi API
@@ -393,7 +380,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       });
       // print("latLng:${lat}");
 
-      _data?.viTri = "${lat}, ${long}";
+      // _data?.viTri = "${lat}, ${long}";
       print("viTri: ${_data?.viTri}");
       print("Kho_ID:${_data?.khoDen_Id}");
       print("Bai_ID:${_data?.baiXe_Id}");
@@ -420,7 +407,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   @override
   Widget build(BuildContext context) {
     getData();
-    getTaiXeList();
+
     return Container(
         child: Column(
       children: [
@@ -451,6 +438,138 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               ),
                             ),
                             const Divider(height: 1, color: Color(0xFFA71C20)),
+                            Column(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            constraints: BoxConstraints(
+                                                maxWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.87),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                _data?.tenSanPham ?? "",
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontFamily: 'Coda Caption',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppConfig.primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Số khung (VIN):',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF818180),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                                Text(
+                                                  _data?.soKhung ?? "",
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFFA71C20),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Màu:',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF818180),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                                Text(
+                                                  _data?.tenMau ?? "",
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Color(0xFFFF0007),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Số máy:',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF818180),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 5),
+                                                Text(
+                                                  _data?.soMay ?? "",
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFFA71C20),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 10),
                             Column(
                               children: [
@@ -627,6 +746,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                   : 10),
                                           child:
                                               DropdownButtonFormField<String>(
+                                            isExpanded: true,
                                             items: _baixeList?.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item.id,
@@ -714,6 +834,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                   : 10),
                                           child:
                                               DropdownButtonFormField<String>(
+                                            isExpanded: true,
                                             items: _vitriList?.map((item) {
                                               return DropdownMenuItem<String>(
                                                 value: item.id,
@@ -748,230 +869,31 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFF818180),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 25.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Tài Xế",
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 10),
-                                          child:
-                                              DropdownButtonFormField<String>(
-                                            items: _taixeList?.map((item) {
-                                              return DropdownMenuItem<String>(
-                                                value: item.id,
-                                                child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 15.sp),
-                                                  child: Text(
-                                                    item.tenTaiXe ?? "",
-                                                    textAlign: TextAlign.center,
-                                                    style: const TextStyle(
-                                                      fontFamily: 'Comfortaa',
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color:
-                                                          AppConfig.textInput,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                            value: TaiXeId,
-                                            onChanged: (newValue) {
-                                              setState(() {
-                                                TaiXeId = newValue;
-                                              });
-                                              print("object : ${TaiXeId}");
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                           ],
                         ),
                       ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                _data?.tenSanPham ?? "",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: 'Coda Caption',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFFA71C20),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Số khung (VIN):',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data?.soKhung ?? "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFFA71C20),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Màu:',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data?.tenMau ?? "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFFFF0007),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Số máy:',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data?.soMay ?? "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFFA71C20),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10),
-                                RoundedLoadingButton(
-                                  child: Text('Điều chuyển',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        color: AppConfig.textButton,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                      )),
-                                  controller: _btnController,
-                                  onPressed: ViTriId != null ? _onSave : null,
-                                ),
-                                SizedBox(height: 10),
-                              ],
-                            ),
-                          ),
-                        ],
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      RoundedLoadingButton(
+                        child: Text('Điều chuyển',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              color: AppConfig.textButton,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            )),
+                        controller: _btnController,
+                        onPressed: ViTriId != null ? _onSave : null,
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -33,6 +33,7 @@ class MenuRoleBloc extends ChangeNotifier {
 
   String? _message;
   String? get message => _message;
+
   String? rule;
   String? url;
 
@@ -45,38 +46,17 @@ class MenuRoleBloc extends ChangeNotifier {
     try {
       final http.Response response = await requestHelper
           .getData('Menu/By_User?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
-
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
         print("data:${decodedData}");
 
-        // if (decodedData != null) {
-
-        // _menurole = []; // Khởi tạo danh sách mới để lưu trữ các MenuRoleModel
-        // for (var item in decodedData) {
-        //   _menurole?.add(
-        //     MenuRoleModel(
-        //       id: item['id'],
-        //       tenMenu: item['tenMenu'],
-        //       url: item['url'],
-        //     ),
-        //   );
-
-        // }
         if (decodedData != null) {
           _menurole = (decodedData as List).map((p) {
             return MenuRoleModel.fromJson(p);
           }).toList();
-
-          // url = _menurole
-          //     ?.firstWhere((menuRole) => menuRole.url == 'Bao-cao',
-          //         // ignore: null_check_always_fails
-          //         orElse: () => null!)
-          //     .url;
-
-          // print("url:$url");
+          print(_menurole);
         }
 
         notifyListeners();

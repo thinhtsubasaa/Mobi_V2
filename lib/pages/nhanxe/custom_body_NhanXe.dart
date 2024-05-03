@@ -47,7 +47,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     _sb = Provider.of<ScanBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
 
-    // Subscribe to scan results
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -60,7 +59,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   @override
   void dispose() {
     scanSubscription.cancel();
-    // dataWedge.dispose();
     super.dispose();
   }
 

@@ -83,6 +83,7 @@ class _CustomCardState extends State<CustomCard>
               ),
               Container(
                 child: PopupMenuButton<MenuOption>(
+                  // elevation: 50,
                   onSelected: (MenuOption result) {
                     switch (result) {
                       case MenuOption.Settings:

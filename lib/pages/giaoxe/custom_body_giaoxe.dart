@@ -87,6 +87,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     super.initState();
     _bl = Provider.of<GiaoXeBloc>(context, listen: false);
     _ib = Provider.of<ImageBloc>(context, listen: false);
+    requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -102,7 +103,16 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     scanSubscription.cancel();
     super.dispose();
   }
-
+void requestLocationPermission() async {
+    // Kiểm tra quyền truy cập vị trí
+    LocationPermission permission = await Geolocator.checkPermission();
+    // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
+  }
   Future<void> postData(GiaoXeModel scanData) async {
     _isLoading = true;
 
