@@ -60,6 +60,7 @@ class GiaoXeBloc extends ChangeNotifier {
             tenDiaDiem: decodedData['tenDiaDiem'],
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
             viTri: decodedData['viTri'],
+            noigiao: decodedData['noigiao'],
           );
         }
       } else {
@@ -68,8 +69,8 @@ class GiaoXeBloc extends ChangeNotifier {
         QuickAlert.show(
           // ignore: use_build_context_synchronously
           context: context,
-          type: QuickAlertType.error,
-          title: 'ERROR',
+          type: QuickAlertType.info,
+          title: '',
           text: errorMessage,
         );
         _giaoxe = null;

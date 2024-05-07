@@ -54,6 +54,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   GiaoXeModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
+  String? viTri;
 
   late GiaoXeBloc _bl;
   File? _selectImage;
@@ -103,7 +104,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     scanSubscription.cancel();
     super.dispose();
   }
-void requestLocationPermission() async {
+
+  void requestLocationPermission() async {
     // Kiểm tra quyền truy cập vị trí
     LocationPermission permission = await Geolocator.checkPermission();
     // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
@@ -113,7 +115,8 @@ void requestLocationPermission() async {
       await Geolocator.requestPermission();
     }
   }
-  Future<void> postData(GiaoXeModel scanData) async {
+
+  Future<void> postData(GiaoXeModel scanData, String viTri) async {
     _isLoading = true;
 
     try {
@@ -122,7 +125,7 @@ void requestLocationPermission() async {
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/GiaoXe', newScanData.toJson());
+          'KhoThanhPham/GiaoXe?ViTri=$viTri', newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -134,7 +137,7 @@ void requestLocationPermission() async {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          title: 'SUCCESS',
+          title: 'Thành công',
           text: "Giao xe thành công",
         );
         _btnController.reset();
@@ -145,7 +148,7 @@ void requestLocationPermission() async {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: 'ERROR',
+          title: 'Thất bại',
           text: errorMessage,
         );
         _btnController.reset();
@@ -259,11 +262,6 @@ void requestLocationPermission() async {
         if (_bl.giaoxe == null) {
           _qrData = '';
           _qrDataController.text = '';
-          if (_bl.success == false && _bl.message!.isNotEmpty) {
-            openSnackBar(context, _bl.message!);
-          } else {
-            openSnackBar(context, "Không có dữ liệu");
-          }
         }
         _loading = false;
         _data = _bl.giaoxe;
@@ -291,10 +289,9 @@ void requestLocationPermission() async {
     _data?.ngayNhapKhoView = _bl.giaoxe?.ngayNhapKhoView;
     _data?.maKho = _bl.giaoxe?.maKho;
     _data?.kho_Id = _bl.giaoxe?.kho_Id;
-
+    _data?.noigiao = _bl.giaoxe?.noigiao;
     _data?.tenDiaDiem = _bl.giaoxe?.tenDiaDiem;
     _data?.tenPhuongThucVanChuyen = _bl.giaoxe?.tenPhuongThucVanChuyen;
-
     _data?.bienSo_Id = _bl.giaoxe?.bienSo_Id;
     _data?.taiXe_Id = _bl.giaoxe?.taiXe_Id;
     Geolocator.getCurrentPosition(
@@ -308,14 +305,14 @@ void requestLocationPermission() async {
       _data?.lat = lat;
       _data?.long = long;
 
-      _data?.viTri = "${lat},${long}";
-      print("Vi tri: ${_data?.viTri}");
+      viTri = "${lat},${long}";
+      print("Vi tri: ${viTri}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
           openSnackBar(context, 'no internet'.tr());
         } else {
-          postData(_data!).then((_) {
+          postData(_data!, viTri ?? "").then((_) {
             setState(() {
               _data = null;
               _qrData = '';
@@ -377,71 +374,39 @@ void requestLocationPermission() async {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                _data?.tenSanPham ?? "",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: 'Coda Caption',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppConfig.primaryColor,
+                              Container(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.87),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    _data?.tenSanPham ?? "",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: 'Coda Caption',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppConfig.primaryColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Container(
-                            padding: const EdgeInsets.all(10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Số khung (VIN):',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data?.soKhung ?? "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppConfig.primaryColor,
-                                      ),
-                                    ),
-                                  ],
+                                Item(
+                                  title: 'Số khung:',
+                                  value: _data?.soKhung,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Màu:',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      _data?.tenMau ?? "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFFFF0007),
-                                      ),
-                                    ),
-                                  ],
+                                Item(
+                                  title: 'Màu:',
+                                  value: _data?.tenMau,
                                 ),
                               ],
                             ),
@@ -453,14 +418,10 @@ void requestLocationPermission() async {
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Item(
-                            title: 'Địa điểm:',
-                            value: _data?.tenDiaDiem,
+                            title: 'Nơi giao:',
+                            value: _data?.noigiao,
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Phương thức vận chuyển:',
-                            value: _data?.tenPhuongThucVanChuyen,
-                          ),
                           Container(
                             padding: const EdgeInsets.all(10),
                             child: Column(
@@ -500,7 +461,7 @@ void requestLocationPermission() async {
                                 //         context, _selectedImages);
                                 //   },
                                 // ),
-                                SizedBox(height: 10),
+
                                 // MaterialButton(
                                 //   color: Colors.red,
                                 //   child: Text(
@@ -521,32 +482,30 @@ void requestLocationPermission() async {
                               ],
                             ),
                           ),
-                          Container(
-                            width: 90.w,
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 10),
-                                RoundedLoadingButton(
-                                  child: Text('Giao Xe',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        color: AppConfig.textButton,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                      )),
-                                  controller: _btnController,
-                                  onPressed:
-                                      _data?.soKhung != null ? _onSave : null,
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                     ),
                   ],
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 10),
+                      RoundedLoadingButton(
+                        child: Text('Giao Xe',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              color: AppConfig.textButton,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            )),
+                        controller: _btnController,
+                        onPressed: _data?.soKhung != null ? _onSave : null,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

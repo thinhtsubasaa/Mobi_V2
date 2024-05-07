@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/xuatkho.dart';
+import 'package:Thilogi/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
+
+import '../utils/snacbar.dart';
 
 class XuatKhoBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -64,16 +67,20 @@ class XuatKhoBloc extends ChangeNotifier {
             viTri: decodedData['viTri'],
             noidi: decodedData['noidi'],
             noiden: decodedData['noiden'],
+            benVanChuyen: decodedData['benVanChuyen'],
+            soXe: decodedData['soXe'],
+            maSoNhanVien: decodedData['maSoNhanVien'],
           );
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        // openSnackBar(context, errorMessage);
         QuickAlert.show(
           // ignore: use_build_context_synchronously
           context: context,
-          type: QuickAlertType.error,
-          title: 'ERROR',
+          type: QuickAlertType.info,
+          title: '',
           text: errorMessage,
         );
         _xuatkho = null;

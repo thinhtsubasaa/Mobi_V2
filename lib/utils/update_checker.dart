@@ -30,6 +30,7 @@ class UpdateChecker {
       http.Response response = await requestHelper.getData("PhienBan/KiemTra");
       var decodedData = jsonDecode(response.body);
       var info = decodedData["info"];
+      print("info:$info ");
       // covert dataa
       values = {
         "maPhienBan": info["maPhienBan"],

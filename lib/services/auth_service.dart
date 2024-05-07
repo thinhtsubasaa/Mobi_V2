@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/user.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:quickalert/quickalert.dart';
 
 class AuthService extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -13,11 +14,16 @@ class AuthService extends ChangeNotifier {
 
   bool _hasError = false;
   bool get hasError => _hasError;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
 
   String? _errorCode;
   String? get errorCode => _errorCode;
 
-  Future login(String userName, String password, String domain) async {
+  Future login(BuildContext context, String userName, String password,
+      String domain) async {
+    _isLoading = true;
+    _user = null;
     try {
       _hasError = false;
       final http.Response response = await requestHelper.loginAction(
@@ -45,6 +51,18 @@ class AuthService extends ChangeNotifier {
           accessRole: data['accessRole'],
           hinhAnhUrl: data['hinhAnhUrl'],
         );
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.error,
+          title: 'ERROR',
+          text: errorMessage,
+        );
+        _user = null;
+        _isLoading = false;
       }
       notifyListeners();
     } catch (e) {

@@ -16,8 +16,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  bool _loading = false;
-
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();

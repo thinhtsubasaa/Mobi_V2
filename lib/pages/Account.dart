@@ -1,12 +1,10 @@
 import 'package:Thilogi/widgets/divider.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/chuyenxe/custom_body_chuyenxe.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 import '../blocs/user_bloc.dart';

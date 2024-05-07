@@ -1,4 +1,3 @@
-import 'package:Thilogi/blocs/Khothanhpham_bloc.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/blocs/dongcont_bloc.dart';
@@ -11,6 +10,7 @@ import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/theme_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/blocs/vitri_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
 import 'package:Thilogi/models/theme.dart';
 import 'package:Thilogi/pages/splash.dart';
@@ -44,9 +44,6 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider<ScanBloc>(
                   create: (context) => ScanBloc(),
                 ),
-                ChangeNotifierProvider<KhoThanhPhamBloc>(
-                  create: (context) => KhoThanhPhamBloc(),
-                ),
                 ChangeNotifierProvider<KhoXeBloc>(
                   create: (context) => KhoXeBloc(),
                 ),
@@ -70,6 +67,9 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<MenuRoleBloc>(
                   create: (context) => MenuRoleBloc(),
+                ),
+                ChangeNotifierProvider<ViTriBloc>(
+                  create: (context) => ViTriBloc(),
                 ),
               ],
               child: MaterialApp(

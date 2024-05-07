@@ -41,14 +41,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _loading = false;
   late AppBloc _ab;
   late UserBloc _ub;
-  late MenuRoleBloc _mb;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
   var userNameCtrl = TextEditingController();
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
-  String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
-  String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late String selectedDomain;
   List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
   Map<String, String> domainTitles = {
@@ -69,7 +66,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.initState();
     _ab = Provider.of<AppBloc>(context, listen: false);
     _ub = Provider.of<UserBloc>(context, listen: false);
-    _mb = Provider.of<MenuRoleBloc>(context, listen: false);
 
     setState(() {
       selectedDomain = items[0];
@@ -111,7 +107,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         } else {
           final AuthService asb = context.read<AuthService>();
           await asb
-              .login(userNameCtrl.text, passwordCtrl.text, selectedDomain)
+              .login(
+                  context, userNameCtrl.text, passwordCtrl.text, selectedDomain)
               .then((_) {
             if (asb.user != null) {
               _ub
@@ -120,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) {
                 _btnController.success();
 
-                nextScreenReplace(context, QLKhoXePage());
+                nextScreenCloseOthers(context, QLKhoXePage());
 
                 // _handleButtonTap(QLKhoXePage());
               });
@@ -169,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),

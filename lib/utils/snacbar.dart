@@ -6,7 +6,7 @@ void openSnacbar(context, snacMessage) {
       duration: const Duration(seconds: 2),
       content: Container(
         alignment: Alignment.centerLeft,
-        height: 60,
+        height: 300,
         child: Text(
           snacMessage,
           style: const TextStyle(

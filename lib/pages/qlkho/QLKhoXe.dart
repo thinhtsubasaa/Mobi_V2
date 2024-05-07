@@ -27,9 +27,7 @@ class QLKhoXePage extends StatelessWidget {
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AppConfig.backgroundImagePath),
-                    // Đường dẫn đến ảnh nền
                     fit: BoxFit.cover,
-                    // Cách ảnh nền sẽ được hiển thị
                   ),
                 ),
                 child: CustomBodyQLKhoXe(),
@@ -50,7 +48,7 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: customTitle(
-        'KIỂM TRA - NHẬP KHO XE',
+        'KIỂM TRA - QUẢN LÝ KHO XE',
       ),
     );
   }

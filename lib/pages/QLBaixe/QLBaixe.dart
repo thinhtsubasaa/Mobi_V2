@@ -9,7 +9,7 @@ import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 class QLBaiXePage extends StatelessWidget {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int currentPage = 0;
   int pageCount = 3;
 
   @override
@@ -48,7 +48,7 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       child: customTitle(
-        'KIỂM TRA - NHẬP BÃI XE',
+        'KIỂM TRA - QUẢN LÝ BÃI XE',
       ),
     );
   }

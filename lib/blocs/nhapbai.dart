@@ -59,11 +59,15 @@ class NhapBaiBloc extends ChangeNotifier {
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        if (errorMessage.isEmpty) {
+          errorMessage = "Số khung xe không chính xác hoặc đã nhập bãi";
+        }
+
         QuickAlert.show(
           // ignore: use_build_context_synchronously
           context: context,
-          type: QuickAlertType.error,
-          title: 'ERROR',
+          type: QuickAlertType.info,
+          title: '',
           text: errorMessage,
         );
         _baixe = null;

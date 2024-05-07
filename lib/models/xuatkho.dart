@@ -27,6 +27,9 @@ class XuatKhoModel {
   String? tenPhuongTien;
   String? noidi;
   String? noiden;
+  String? benVanChuyen;
+  String? soXe;
+  String? maSoNhanVien;
 
   XuatKhoModel(
       {this.key,
@@ -55,6 +58,9 @@ class XuatKhoModel {
       this.tenLoaiPhuongTien,
       this.tenPhuongTien,
       this.viTri,
+      this.benVanChuyen,
+      this.soXe,
+      this.maSoNhanVien,
       this.noidi,
       this.noiden});
 
@@ -86,6 +92,9 @@ class XuatKhoModel {
       viTri: json["viTri"],
       noidi: json["noidi"],
       noiden: json["noiden"],
+      benVanChuyen: json["benVanChuyen"],
+      soXe: json["soXe"],
+      maSoNhanVien: json["maSoNhanVien"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -113,5 +122,8 @@ class XuatKhoModel {
         "viTri": viTri,
         "noidi": noidi,
         "noiden": noiden,
+        "benVanChuyen": benVanChuyen,
+        "soXe": soXe,
+        "maSoNhanVien": maSoNhanVien,
       };
 }

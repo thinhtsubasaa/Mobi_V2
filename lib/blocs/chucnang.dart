@@ -51,7 +51,7 @@ class ChucnangBloc extends ChangeNotifier {
         QuickAlert.show(
             context: context,
             type: QuickAlertType.success,
-            title: 'SUCCESS',
+            title: 'Thành công',
             text: "Nhận xe thành công",
             onConfirmBtnTap: () {
               clear(context);
@@ -64,7 +64,7 @@ class ChucnangBloc extends ChangeNotifier {
         QuickAlert.show(
             context: context,
             type: QuickAlertType.error,
-            title: 'ERROR',
+            title: 'Thất bại',
             text: errorMessage,
             onConfirmBtnTap: () {
               clear(context);

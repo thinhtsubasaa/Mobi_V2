@@ -53,6 +53,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   XuatKhoModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
+  String? viTri;
 
   late XuatKhoBloc _bl;
 
@@ -118,7 +119,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     }
   }
 
-  Future<void> postData(XuatKhoModel scanData) async {
+  Future<void> postData(XuatKhoModel scanData, String viTri) async {
     _isLoading = true;
 
     try {
@@ -127,7 +128,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XuatKho', newScanData.toJson());
+          'KhoThanhPham/XuatKho?ToaDo=$viTri', newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -139,6 +140,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
+          title: 'Thành công',
           text: "Xuất kho thành công",
         );
         _btnController.reset();
@@ -149,7 +151,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
-          title: '',
+          title: 'Thất bại',
           text: errorMessage,
         );
         _btnController.reset();
@@ -167,11 +169,10 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF818180), // Màu của đường viền
-          width: 1, // Độ dày của đường viền
+          color: const Color(0xFF818180),
+          width: 1,
         ),
         color: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -240,7 +241,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print(barcodeScanResult);
-    // Process the barcode scan result here
+
     setState(() {
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
@@ -305,11 +306,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
-      _data?.lat = lat;
-      _data?.long = long;
-      _data?.viTri = "${lat},${long}";
 
-      print("viTri: ${_data?.viTri}");
+      viTri = "${lat},${long}";
+      print("viTri: ${viTri}");
 
       // call api
 
@@ -317,7 +316,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
         if (!hasInternet!) {
           openSnackBar(context, 'no internet'.tr());
         } else {
-          postData(_data!).then((_) {
+          postData(_data!, viTri ?? "").then((_) {
             setState(() {
               _data = null;
               _qrData = '';
@@ -368,7 +367,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                               height: 1,
                               color: AppConfig.primaryColor,
                             ),
-                            const SizedBox(height: 10),
                           ],
                         ),
                       ),
@@ -380,7 +378,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                         children: [
                           Row(
                             children: [
-                              // Text
                               Text(
                                 _data?.tenSanPham ?? "",
                                 textAlign: TextAlign.left,
@@ -395,55 +392,16 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Container(
-                            padding: const EdgeInsets.all(10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Số khung (VIN):',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    Text(
-                                      _data != null ? _data!.soKhung ?? "" : "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppConfig.primaryColor,
-                                      ),
-                                    ),
-                                  ],
+                                Item(
+                                  title: 'Số khung:',
+                                  value: _data?.soKhung,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Màu:',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF818180),
-                                      ),
-                                    ),
-                                    Text(
-                                      _data != null ? _data!.tenMau ?? "" : "",
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppConfig.primaryColor,
-                                      ),
-                                    ),
-                                  ],
+                                Item(
+                                  title: 'Màu:',
+                                  value: _data?.tenMau,
                                 ),
                               ],
                             ),
@@ -455,23 +413,18 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Item(
-                            title: 'Địa điểm:',
-                            value: _data?.tenDiaDiem,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
                             title: 'Phương thức vận chuyển:',
                             value: _data?.tenPhuongThucVanChuyen,
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Item(
-                            title: 'Loại phương tiện:',
-                            value: _data?.tenLoaiPhuongTien,
+                            title: 'Bên vận chuyển:',
+                            value: _data?.benVanChuyen,
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Item(
-                            title: 'Danh sách phương tiện:',
-                            value: _data?.tenPhuongTien,
+                            title: 'Biển số:',
+                            value: _data?.soXe,
                           ),
                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                           Item(
@@ -483,6 +436,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                             title: 'Nơi đến:',
                             value: _data?.noiden,
                           ),
+                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         ],
                       ),
                     ),
@@ -550,7 +504,7 @@ class Item extends StatelessWidget {
                 value ?? "",
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),

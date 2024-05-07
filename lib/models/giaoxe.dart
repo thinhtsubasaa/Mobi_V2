@@ -24,6 +24,7 @@ class GiaoXeModel {
   String? nguoiNhan;
   String? tenDiaDiem;
   String? tenPhuongThucVanChuyen;
+  String? noigiao;
   List<FileDinhKems>? fileDinhKems;
 
   GiaoXeModel(
@@ -52,7 +53,8 @@ class GiaoXeModel {
       this.fileDinhKems,
       this.tenDiaDiem,
       this.tenPhuongThucVanChuyen,
-      this.viTri});
+      this.viTri,
+      this.noigiao});
 
   factory GiaoXeModel.fromJson(Map<String, dynamic> json) {
     return GiaoXeModel(
@@ -80,6 +82,7 @@ class GiaoXeModel {
       tenDiaDiem: json["tenDiaDiem"],
       viTri: json["viTri"],
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
+      noigiao: json["noigiao"],
       fileDinhKems: (json['phuKien'] as List)
           .map((e) => FileDinhKems.fromJson(e))
           .toList(),
@@ -109,6 +112,7 @@ class GiaoXeModel {
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "tenDiaDiem": tenDiaDiem,
         "viTri": viTri,
+        "noigiao": noigiao,
       };
 }
 

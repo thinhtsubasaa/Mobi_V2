@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
-import 'package:Thilogi/pages/nhanxe/tabs/custom_tabs_NhanXe.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -36,17 +35,14 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   bool _loading = false;
   String barcodeScanResult = '';
   late ScanBloc _sb;
-
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
 
   @override
   void initState() {
     super.initState();
-
     _sb = Provider.of<ScanBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -68,11 +64,10 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF818180), // Màu của đường viền
-          width: 1, // Độ dày của đường viền
+          color: const Color(0xFF818180),
+          width: 1,
         ),
         color: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -141,7 +136,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print("Sokhungg:${barcodeScanResult}");
-    // Process the barcode scan result here
     setState(() {
       _qrData = '';
       _qrDataController.text = '';
@@ -178,9 +172,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       children: [
         const SizedBox(height: 5),
         CardVin(),
-        const SizedBox(height: 5),
-        TabsNhanXe(),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
         _loading
             ? LoadingWidget(context)
             : Container(
@@ -224,9 +216,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                           child: Align(
                             alignment: Alignment.center,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // Xử lý sự kiện khi nút được nhấn
-                              },
+                              onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 padding: const EdgeInsets.all(0),
@@ -271,7 +261,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                       child: Row(
                         children: [
                           showInfoXe(
-                            'Nhà máy',
+                            'Nhà máy:',
                             _data?.tenKho ?? "",
                           ),
                         ],
@@ -289,19 +279,16 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                             tenSanPham: _data!.tenSanPham ?? "",
                             ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
                             tenTaiXe: _data!.tenTaiXe ?? " ",
-                            ghiChu: _data!.ghiChu ?? "No",
+                            ghiChu: _data!.ghiChu ?? "",
                             tenKho: _data!.tenKho ?? "",
                             phuKien: _data!.phuKien ?? [],
                           ));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xFFE96327), // Màu nền của nút
-                          fixedSize:
-                              Size(85.w, 7.h), // Kích thước cố định của nút
+                          backgroundColor: const Color(0xFFE96327),
+                          fixedSize: Size(85.w, 7.h),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(5), // Độ cong của góc nút
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
                         child: const Text(

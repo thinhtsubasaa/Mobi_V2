@@ -25,3 +25,40 @@ class PageIndicator extends StatelessWidget {
     );
   }
 }
+
+
+  //       DropdownButtonFormField<String>(
+                                                //     isExpanded: true,
+                                                //     items: _khoxeList?.map((item) {
+                                                //       return DropdownMenuItem<String>(
+                                                //         value: item.id,
+                                                //         child: Container(
+                                                //           padding: EdgeInsets.only(
+                                                //               left: 15.sp),
+                                                //           child: Text(
+                                                //             item.tenKhoXe ?? "",
+                                                //             style: const TextStyle(
+                                                //               fontFamily: 'Comfortaa',
+                                                //               fontSize: 14,
+                                                //               fontWeight:
+                                                //                   FontWeight.w600,
+                                                //               color:
+                                                //                   AppConfig.textInput,
+                                                //             ),
+                                                //           ),
+                                                //         ),
+                                                //       );
+                                                //     }).toList(),
+                                                //     value: KhoXeId,
+                                                //     onChanged: (newValue) async {
+                                                //       setState(() {
+                                                //         KhoXeId = newValue;
+                                                //       });
+                                                //       if (newValue != null) {
+                                                //         getBaiXeList(newValue);
+                                                //         print("object : ${KhoXeId}");
+                                                //       }
+                                                //       ;
+                                                //     },
+                                                //   ),
+                                                // ),
