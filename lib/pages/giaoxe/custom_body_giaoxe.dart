@@ -139,6 +139,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           type: QuickAlertType.success,
           title: 'Thành công',
           text: "Giao xe thành công",
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       } else {
@@ -150,6 +151,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           type: QuickAlertType.error,
           title: 'Thất bại',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       }
@@ -302,17 +304,23 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
-      _data?.lat = lat;
-      _data?.long = long;
 
-      viTri = "${lat},${long}";
-      print("Vi tri: ${viTri}");
+      _data?.toaDo = "${lat},${long}";
+      print("Vi tri: ${_data?.toaDo}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
-          openSnackBar(context, 'no internet'.tr());
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
         } else {
-          postData(_data!, viTri ?? "").then((_) {
+          postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
               _qrData = '';

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -10,6 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
+    as GeoLocationAccuracy;
 
 import '../utils/next_screen.dart';
 
@@ -34,13 +37,31 @@ class ChucnangBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(BuildContext context,
-      RoundedLoadingButtonController controller, String soKhung) async {
+  Future<void> getData(
+      BuildContext context,
+      RoundedLoadingButtonController controller,
+      String soKhung,
+      String toaDo) async {
     _isLoading = true;
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // Yêu cầu quyền truy cập vị trí
+      await Geolocator.requestPermission();
+    }
+    // Lấy vị trí hiện tại
+    Position? currentPosition;
 
     try {
-      final http.Response response =
-          await requestHelper.getData('GetDataXeThaPham?keyword=$soKhung');
+      currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+      );
+      double lat = currentPosition.latitude;
+      double long = currentPosition.longitude;
+      toaDo = "${lat},${long}";
+
+      final http.Response response = await requestHelper
+          .getData('GetDataXeThaPham?keyword=$soKhung&ToaDo=$toaDo');
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -53,6 +74,7 @@ class ChucnangBloc extends ChangeNotifier {
             type: QuickAlertType.success,
             title: 'Thành công',
             text: "Nhận xe thành công",
+            confirmBtnText: 'Đồng ý',
             onConfirmBtnTap: () {
               clear(context);
             });
@@ -66,9 +88,11 @@ class ChucnangBloc extends ChangeNotifier {
             type: QuickAlertType.error,
             title: 'Thất bại',
             text: errorMessage,
+            confirmBtnText: 'Đồng ý',
             onConfirmBtnTap: () {
               clear(context);
             });
+        print(errorMessage);
         controller.reset();
       }
     } catch (e) {

@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/xuatkho.dart';
-import 'package:Thilogi/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
-
-import '../utils/snacbar.dart';
 
 class XuatKhoBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
@@ -64,7 +61,7 @@ class XuatKhoBloc extends ChangeNotifier {
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
             tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
             tenPhuongTien: decodedData['tenPhuongTien'],
-            viTri: decodedData['viTri'],
+            toaDo: decodedData['toaDo'],
             noidi: decodedData['noidi'],
             noiden: decodedData['noiden'],
             benVanChuyen: decodedData['benVanChuyen'],
@@ -82,6 +79,7 @@ class XuatKhoBloc extends ChangeNotifier {
           type: QuickAlertType.info,
           title: '',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _xuatkho = null;
         _isLoading = false;

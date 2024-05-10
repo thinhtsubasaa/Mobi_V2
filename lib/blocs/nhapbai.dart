@@ -54,6 +54,7 @@ class NhapBaiBloc extends ChangeNotifier {
             Kho_Id: decodedData['Kho_Id'],
             BaiXe_Id: decodedData['BaiXe_Id'],
             viTri_Id: decodedData['viTri_Id'],
+            toaDo: decodedData['toaDo'],
           );
         }
       } else {
@@ -69,6 +70,7 @@ class NhapBaiBloc extends ChangeNotifier {
           type: QuickAlertType.info,
           title: '',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _baixe = null;
         _isLoading = false;

@@ -136,7 +136,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   }
 
   Future<void> postData(DongContModel scanData, String soContId, String soKhung,
-      String viTri) async {
+      String toaDo) async {
     _isLoading = true;
 
     try {
@@ -146,7 +146,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/DongCont?SoCont=$soContId&SoKhung=$soKhung&ViTri=$viTri',
+          'KhoThanhPham/DongCont?SoContId=$soContId&SoKhung=$soKhung&ViTri=$toaDo',
           newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
@@ -161,6 +161,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.success,
           title: 'Thành công',
           text: "Đóng cont thành công",
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       } else {
@@ -172,6 +173,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.error,
           title: 'Thất bại',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       }
@@ -323,21 +325,27 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
-      _data?.lat = lat;
-      _data?.long = long;
-      _data?.viTri = "${lat},${long}";
 
-      print("viTri: ${_data?.viTri}");
+      _data?.toaDo = "${lat},${long}";
+
+      print("viTri: ${_data?.toaDo}");
       print("soContId: ${soContId}");
       print("soKhung:${_data?.soKhung}");
-      // call api
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
-          openSnackBar(context, 'no internet'.tr());
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
         } else {
           postData(_data!, soContId ?? "", _data?.soKhung ?? "",
-                  _data?.viTri ?? "")
+                  _data?.toaDo ?? "")
               .then((_) {
             setState(() {
               _data = null;

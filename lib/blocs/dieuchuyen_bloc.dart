@@ -58,6 +58,7 @@ class DieuChuyenBloc extends ChangeNotifier {
             viTri_Id: decodedData['viTri_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
             viTri: decodedData['viTri'],
+            toaDo: decodedData['toaDo'],
           );
         }
       } else {
@@ -68,6 +69,7 @@ class DieuChuyenBloc extends ChangeNotifier {
           context: context,
           type: QuickAlertType.info,
           title: '',
+          confirmBtnText: 'Đồng ý',
           text: errorMessage,
         );
         _dieuchuyen = null;

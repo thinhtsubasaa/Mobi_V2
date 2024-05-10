@@ -27,7 +27,6 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 import 'package:quickalert/quickalert.dart';
 import '../../widgets/loading.dart';
-import '../../widgets/map.dart';
 
 class CustomBodyBaiXe extends StatelessWidget {
   @override
@@ -318,6 +317,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.success,
           title: "Thành công",
           text: "Nhập kho thành công",
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       } else {
@@ -329,6 +329,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.error,
           title: 'Thất bại',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       }
@@ -374,18 +375,25 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
+      _data?.toaDo = "${lat},${long}";
 
-      _data?.viTri = "${lat},${long}";
-
-      print("viTri:${_data?.viTri}");
+      print("viTri:${_data?.toaDo}");
       print("ViTri_ID:${_data?.viTri_Id}");
       print("SoKhung: ${_data?.soKhung}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
-          openSnackBar(context, 'no internet'.tr());
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
         } else {
-          postData(ViTriId!, _data?.viTri ?? "", _data?.soKhung ?? "")
+          postData(ViTriId!, _data?.toaDo ?? "", _data?.soKhung ?? "")
               .then((_) {
             setState(() {
               _data = null;

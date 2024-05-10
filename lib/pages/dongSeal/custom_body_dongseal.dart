@@ -173,6 +173,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.success,
           title: 'Thành công',
           text: "Đóng seal thành công",
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       } else {
@@ -184,6 +185,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           type: QuickAlertType.error,
           title: 'Thất bại',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
       }
@@ -206,8 +208,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         lat = "${position.latitude}";
         long = "${position.longitude}";
       });
-      _data?.lat = lat;
-      _data?.long = long;
+
       viTri = "${lat},${long}";
       _data?.soSeal = _soSeal.text;
 
@@ -218,11 +219,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
-          openSnackBar(context, 'no internet'.tr());
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
         } else {
           postData(_soSeal.text, viTri ?? "", soCont ?? "", TauId ?? "")
               .then((_) {
             setState(() {
+              soCont = null;
+              _soSeal.text = '';
+              TauId = null;
               _data = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -368,7 +380,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                       ?.map((item) {
                                                     return DropdownMenuItem<
                                                         String>(
-                                                      value: item.id,
+                                                      value: item.soCont,
                                                       child: Container(
                                                         constraints: BoxConstraints(
                                                             maxWidth: MediaQuery.of(
@@ -452,25 +464,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                     ),
                                                     searchMatchFn:
                                                         (item, searchValue) {
-                                                      if (item
-                                                          is DropdownMenuItem<
-                                                              String>) {
-                                                        // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                        String itemId =
-                                                            item.value ?? "";
-                                                        // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                        return _dsxdongcontList
-                                                                ?.any((soCont) =>
-                                                                    soCont.id ==
-                                                                        itemId &&
-                                                                    soCont.soCont
-                                                                            ?.toLowerCase()
-                                                                            .contains(searchValue.toLowerCase()) ==
-                                                                        true) ??
-                                                            false;
-                                                      } else {
-                                                        return false;
-                                                      }
+                                                      return item.value
+                                                          .toString()
+                                                          .contains(
+                                                              searchValue);
                                                     },
                                                   ),
                                                   onMenuStateChange: (isOpen) {

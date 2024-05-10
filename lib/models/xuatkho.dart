@@ -14,7 +14,7 @@ class XuatKhoModel {
   String? soMay;
   String? lat;
   String? long;
-  String? viTri;
+  String? toaDo;
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
@@ -57,7 +57,7 @@ class XuatKhoModel {
       this.tenPhuongThucVanChuyen,
       this.tenLoaiPhuongTien,
       this.tenPhuongTien,
-      this.viTri,
+      this.toaDo,
       this.benVanChuyen,
       this.soXe,
       this.maSoNhanVien,
@@ -89,7 +89,7 @@ class XuatKhoModel {
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       tenLoaiPhuongTien: json["tenLoaiPhuongTien"],
       tenPhuongTien: json["tenPhuongTien"],
-      viTri: json["viTri"],
+      toaDo: json["viTri"],
       noidi: json["noidi"],
       noiden: json["noiden"],
       benVanChuyen: json["benVanChuyen"],
@@ -119,7 +119,7 @@ class XuatKhoModel {
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "tenLoaiPhuongTien": tenLoaiPhuongTien,
         "tenPhuongTien": tenPhuongTien,
-        "viTri": viTri,
+        "viTri": toaDo,
         "noidi": noidi,
         "noiden": noiden,
         "benVanChuyen": benVanChuyen,

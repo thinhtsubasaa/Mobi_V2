@@ -11,6 +11,7 @@ import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/utils/snackbar.dart';
 import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -94,16 +95,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
     print('Password: ${passwordCtrl.text}');
     if (userNameCtrl.text.isEmpty) {
       _btnController.reset();
-      openSnackBar(context, 'username is required'.trim());
+      // openSnackBar(context, 'username is required'.trim());
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Hãy điền tài khoản',
+        confirmBtnText: 'Đồng ý',
+      );
     } else if (passwordCtrl.text.isEmpty) {
       _btnController.reset();
       // ignore: use_build_context_synchronously
-      openSnackBar(context, 'password is required'.trim());
+      // openSnackBar(context, 'password is required'.trim());
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Hãy nhập mật khẩu',
+        confirmBtnText: 'Đồng ý',
+      );
     } else {
       AppService().checkInternet().then((hasInternet) async {
         if (!hasInternet!) {
           _btnController.reset();
-          openSnackBar(context, 'no internet'.trim());
+          // openSnackBar(context, 'no internet'.trim());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
         } else {
           final AuthService asb = context.read<AuthService>();
           await asb
@@ -122,13 +147,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // _handleButtonTap(QLKhoXePage());
               });
             } else {
-              if (asb.hasError) {
-                openSnackBar(context, asb.errorCode);
-                print("lỗi: ${asb.errorCode}");
-              } else {
-                openSnackBar(
-                    context, 'username or password is incorrect'.trim());
-              }
+              // if (asb.hasError) {
+              //   openSnackBar(context, asb.errorCode);
+              //   print("lỗi: ${asb.errorCode}");
+              // } else {
+              //   openSnackBar(
+              //       context, 'username or password is incorrect'.trim());
+              // }
               _btnController.reset();
             }
           });

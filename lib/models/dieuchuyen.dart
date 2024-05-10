@@ -23,6 +23,7 @@ class DieuChuyenModel {
   String? baiXe_Id;
   String? viTri_Id;
   String? taiXe_Id;
+  String? toaDo;
 
   DieuChuyenModel(
       {this.key,
@@ -48,7 +49,8 @@ class DieuChuyenModel {
       this.viTri_Id,
       this.khoDen_Id,
       this.taiXe_Id,
-      this.viTri});
+      this.viTri,
+      this.toaDo});
 
   factory DieuChuyenModel.fromJson(Map<String, dynamic> json) {
     return DieuChuyenModel(
@@ -75,7 +77,8 @@ class DieuChuyenModel {
         taiXe_Id: json["taiXe_Id"],
         lat: json["lat"],
         long: json["long"],
-        viTri: json["viTri"]);
+        viTri: json["viTri"],
+        toaDo: json["toaDo"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -100,5 +103,6 @@ class DieuChuyenModel {
         "lat": lat,
         "long": long,
         "viTri": viTri,
+        "toaDo": toaDo,
       };
 }

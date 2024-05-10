@@ -19,7 +19,7 @@ class KhoThanhPhamModel {
   String? Kho_Id;
   String? BaiXe_Id;
   String? viTri_Id;
-  String? viTri;
+  String? toaDo;
 
   KhoThanhPhamModel(
       {this.key,
@@ -42,11 +42,7 @@ class KhoThanhPhamModel {
       this.ngayNhapKhoView,
       this.tenTaiXe,
       this.ghiChu,
-      this.viTri});
-  @override
-  String toString() {
-    return 'KhoThanhPhamModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
-  }
+      this.toaDo});
 
   factory KhoThanhPhamModel.fromJson(Map<String, dynamic> json) {
     return KhoThanhPhamModel(
@@ -70,7 +66,7 @@ class KhoThanhPhamModel {
       viTri_Id: json["viTri_Id"],
       lat: json["lat"],
       long: json["long"],
-      viTri: json["viTri"],
+      toaDo: json["toaDo"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -92,6 +88,6 @@ class KhoThanhPhamModel {
         'viTri_Id': viTri_Id,
         'lat': lat,
         'long': long,
-        'viTri': viTri,
+        'toaDo': toaDo,
       };
 }

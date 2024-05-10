@@ -43,7 +43,6 @@ class ScanBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
 
         if (decodedData != null) {
-          // Kiểm tra dữ liệu trước khi gán
           _scan = ScanModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -76,6 +75,7 @@ class ScanBloc extends ChangeNotifier {
             type: QuickAlertType.info,
             title: '',
             text: errorMessage,
+            confirmBtnText: 'Đồng ý',
           );
           _scan = null;
           _isLoading = false;

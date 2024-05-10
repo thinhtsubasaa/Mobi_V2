@@ -18,6 +18,7 @@ class ScanModel {
   String? Kho_Id;
   String? BaiXe_Id;
   String? viTri_Id;
+  String? toaDo;
 
   List<PhuKien>? phuKien;
 
@@ -42,11 +43,8 @@ class ScanModel {
     this.tenTaiXe,
     this.ghiChu,
     this.phuKien,
+    this.toaDo,
   });
-  @override
-  String toString() {
-    return 'ScanModel(key:$key, : $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayXuatKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu, phuKien: $phuKien)';
-  }
 
   factory ScanModel.fromJson(Map<String, dynamic> json) {
     return ScanModel(
@@ -69,6 +67,7 @@ class ScanModel {
       Kho_Id: json["Kho_Id"],
       BaiXe_Id: json["BaiXe_Id"],
       viTri_Id: json["viTri_Id"],
+      toaDo: json["toaDo"],
       phuKien:
           (json['phuKien'] as List).map((e) => PhuKien.fromJson(e)).toList(),
     );
@@ -89,7 +88,8 @@ class ScanModel {
         'ngayNhapKhoView': ngayNhapKhoView,
         'Kho_Id': Kho_Id,
         'BaiXe_Id': BaiXe_Id,
-        'viTri_Id': viTri_Id
+        'viTri_Id': viTri_Id,
+        'toaDo': toaDo,
       };
 }
 

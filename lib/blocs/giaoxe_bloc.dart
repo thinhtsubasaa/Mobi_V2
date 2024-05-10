@@ -59,19 +59,21 @@ class GiaoXeBloc extends ChangeNotifier {
             nguoiNhan: decodedData['nguoiNhan'],
             tenDiaDiem: decodedData['tenDiaDiem'],
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
-            viTri: decodedData['viTri'],
+            toaDo: decodedData['toaDo'],
             noigiao: decodedData['noigiao'],
           );
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+
         QuickAlert.show(
           // ignore: use_build_context_synchronously
           context: context,
           type: QuickAlertType.info,
           title: '',
           text: errorMessage,
+          confirmBtnText: 'Đồng ý',
         );
         _giaoxe = null;
         _isLoading = false;

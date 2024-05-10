@@ -5,7 +5,7 @@ class DongSealModel {
   String? long;
   String? soCont;
   String? soSeal;
-  String? viTri;
+  String? toaDo;
   String? soKhung;
 
   DongSealModel(
@@ -15,7 +15,7 @@ class DongSealModel {
       this.long,
       this.soCont,
       this.soSeal,
-      this.viTri,
+      this.toaDo,
       this.soKhung});
 
   factory DongSealModel.fromJson(Map<String, dynamic> json) {
@@ -26,7 +26,7 @@ class DongSealModel {
         soSeal: json["soSeal"],
         lat: json["lat"],
         long: json["long"],
-        viTri: json["viTri"],
+        toaDo: json["toaDo"],
         soKhung: json["soKhung"]);
   }
   Map<String, dynamic> toJson() => {
@@ -36,7 +36,7 @@ class DongSealModel {
         "soSeal": soSeal,
         "lat": lat,
         "long": long,
-        "viTri": viTri,
+        "toaDo": toaDo,
         "soKhung": soKhung,
       };
 }

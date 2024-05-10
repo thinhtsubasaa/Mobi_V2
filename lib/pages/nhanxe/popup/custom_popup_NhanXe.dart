@@ -1,11 +1,15 @@
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
+import 'package:Thilogi/services/app_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../utils/snackbar.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class PopUp extends StatelessWidget {
@@ -225,6 +229,7 @@ class PopUp extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
+    String? toaDo;
     final ChucnangBloc _cv = ChucnangBloc();
     final RoundedLoadingButtonController _btnController =
         RoundedLoadingButtonController();
@@ -299,9 +304,7 @@ class PopUp extends StatelessWidget {
               ],
             ),
           ),
-
           SizedBox(height: 7),
-
           RoundedLoadingButton(
             width: MediaQuery.of(context).size.width * 1.0,
             borderRadius: 5,
@@ -316,7 +319,8 @@ class PopUp extends StatelessWidget {
                 )),
             controller: _btnController,
             onPressed: () {
-              _cv.getData(context, _btnController, soKhung);
+              _cv.getData(context, _btnController, soKhung, toaDo ?? "");
+
               print("so Khung: ${soKhung}");
             },
           ),

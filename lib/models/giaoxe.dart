@@ -14,7 +14,7 @@ class GiaoXeModel {
   String? soMay;
   String? lat;
   String? long;
-  String? viTri;
+  String? toaDo;
   String? ngayNhapKhoView;
   String? tenTaiXe;
   String? ghiChu;
@@ -53,7 +53,7 @@ class GiaoXeModel {
       this.fileDinhKems,
       this.tenDiaDiem,
       this.tenPhuongThucVanChuyen,
-      this.viTri,
+      this.toaDo,
       this.noigiao});
 
   factory GiaoXeModel.fromJson(Map<String, dynamic> json) {
@@ -80,7 +80,7 @@ class GiaoXeModel {
       long: json["long"],
       nguoiNhan: json["nguoiNhan"],
       tenDiaDiem: json["tenDiaDiem"],
-      viTri: json["viTri"],
+      toaDo: json["toaDo"],
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       noigiao: json["noigiao"],
       fileDinhKems: (json['phuKien'] as List)
@@ -111,7 +111,7 @@ class GiaoXeModel {
         "nguoiNhan": nguoiNhan,
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "tenDiaDiem": tenDiaDiem,
-        "viTri": viTri,
+        "toaDo": toaDo,
         "noigiao": noigiao,
       };
 }

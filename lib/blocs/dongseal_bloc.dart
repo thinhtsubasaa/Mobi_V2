@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 
-import '../models/dongcont.dart';
 import '../models/dongseal.dart';
 
 class DongSealBloc extends ChangeNotifier {
@@ -46,7 +45,7 @@ class DongSealBloc extends ChangeNotifier {
             soSeal: decodedData['soSeal'],
             lat: decodedData['lat'],
             long: decodedData['long'],
-            viTri: decodedData['viTri'],
+            toaDo: decodedData['toaDo'],
           );
         }
       } else {

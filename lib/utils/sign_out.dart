@@ -25,14 +25,14 @@ void openLogoutDialog(context) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: const Text('Bạn có chắc chắn đăng xuất không?').tr(),
+          content: const Text('Bạn có muốn đăng xuất khỏi ứng dụng?').tr(),
           title: const Text('Đăng Xuất').tr(),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel').tr(),
+              child: const Text('Hủy').tr(),
             ),
             TextButton(
                 onPressed: () async {

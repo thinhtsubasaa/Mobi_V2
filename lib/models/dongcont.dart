@@ -20,7 +20,7 @@ class DongContModel {
   String? ghiChu;
   String? soCont;
   String? soSeal;
-  String? viTri;
+  String? toaDo;
 
   DongContModel(
       {this.key,
@@ -44,11 +44,7 @@ class DongContModel {
       this.tenBaiXe,
       this.soCont,
       this.soSeal,
-      this.viTri});
-  @override
-  String toString() {
-    return 'DongContModel(key:$key,id: $id, soKhung: $soKhung, tenSanPham: $tenSanPham, tenMau: $tenMau, tenKho: $tenKho, soMay: $soMay, ngayXuatKhoView: $ngayNhapKhoView, tenTaiXe: $tenTaiXe, ghiChu: $ghiChu)';
-  }
+      this.toaDo});
 
   factory DongContModel.fromJson(Map<String, dynamic> json) {
     return DongContModel(
@@ -73,7 +69,7 @@ class DongContModel {
         tenBaiXe: json["tenBaiXe"],
         lat: json["lat"],
         long: json["long"],
-        viTri: json["viTri"]);
+        toaDo: json["toaDo"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,
@@ -95,6 +91,6 @@ class DongContModel {
         "tenBaiXe": tenBaiXe,
         "lat": lat,
         "long": long,
-        "viTri": viTri,
+        "toaDo": toaDo,
       };
 }

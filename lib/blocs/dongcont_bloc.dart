@@ -59,7 +59,7 @@ class DongContBloc extends ChangeNotifier {
             soSeal: decodedData['soSeal'],
             lat: decodedData['lat'],
             long: decodedData['long'],
-            viTri: decodedData['viTri'],
+            toaDo: decodedData['toaDo'],
           );
         }
       } else {
@@ -70,6 +70,7 @@ class DongContBloc extends ChangeNotifier {
           context: context,
           type: QuickAlertType.info,
           title: '',
+          confirmBtnText: 'Đồng ý',
           text: errorMessage,
         );
         _dongcont = null;
