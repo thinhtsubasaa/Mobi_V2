@@ -335,6 +335,33 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     });
   }
 
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn giao xe không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSave();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -510,7 +537,9 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                               fontSize: 16,
                             )),
                         controller: _btnController,
-                        onPressed: _data?.soKhung != null ? _onSave : null,
+                        onPressed: _data?.soKhung != null
+                            ? () => _showConfirmationDialog(context)
+                            : null,
                       ),
                     ],
                   ),

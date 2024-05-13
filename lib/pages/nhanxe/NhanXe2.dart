@@ -34,7 +34,7 @@ class NhanXe2Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: customAppBar(context),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(

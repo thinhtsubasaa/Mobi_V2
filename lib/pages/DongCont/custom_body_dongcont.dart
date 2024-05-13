@@ -135,19 +135,19 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     }
   }
 
-  Future<void> postData(DongContModel scanData, String soContId, String soKhung,
-      String toaDo) async {
+  Future<void> postData(DongContModel? scanData, String soContId,
+      String soKhung, String toaDo) async {
     _isLoading = true;
 
     try {
       var newScanData = scanData;
 
-      newScanData.soKhung =
+      newScanData?.soKhung =
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      print("print data: ${newScanData.soKhung}");
+      print("print data: ${newScanData?.soKhung}");
       final http.Response response = await requestHelper.postData(
           'KhoThanhPham/DongCont?SoContId=$soContId&SoKhung=$soKhung&ViTri=$toaDo',
-          newScanData.toJson());
+          newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -320,7 +320,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
-      // Assuming `_data` is not null
       setState(() {
         lat = "${position.latitude}";
         long = "${position.longitude}";
@@ -360,6 +359,33 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       // Handle error while getting location
       print("Error getting location: $error");
     });
+  }
+
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn đóng cont không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSave();
+        });
   }
 
   @override
@@ -639,7 +665,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               fontSize: 16,
                             )),
                         controller: _btnController,
-                        onPressed: soContId != null ? _onSave : null,
+                        onPressed: soContId != null
+                            ? () => _showConfirmationDialog(context)
+                            : null,
                       ),
                       SizedBox(height: 10),
                     ],

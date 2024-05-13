@@ -1,40 +1,30 @@
-class DSX_DongContModel {
+class DS_DongContModel {
   String? key;
   String? id;
-  String? lat;
-  String? long;
-  String? soContId;
   String? soCont;
   String? soSeal;
-  String? viTri;
   String? loaiXe;
+  String? soKhung;
+  String? viTri;
 
-  bool? tinhTrang;
-
-  DSX_DongContModel(
+  DS_DongContModel(
       {this.key,
       this.id,
-      this.lat,
-      this.long,
       this.soCont,
       this.soSeal,
-      this.tinhTrang,
-      this.soContId,
       this.loaiXe,
+      this.soKhung,
       this.viTri});
 
-  factory DSX_DongContModel.fromJson(Map<String, dynamic> json) {
-    return DSX_DongContModel(
+  factory DS_DongContModel.fromJson(Map<String, dynamic> json) {
+    return DS_DongContModel(
       key: json["key"],
       id: json["id"],
       soCont: json["soCont"],
       soSeal: json["soSeal"],
-      lat: json["lat"],
-      long: json["long"],
       viTri: json["viTri"],
-      soContId: json["soContId"],
-      tinhTrang: json["tinhTrang"],
       loaiXe: json["loaiXe"],
+      soKhung: json["soKhung"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -42,10 +32,8 @@ class DSX_DongContModel {
         'id': id,
         "soCont": soCont,
         "soSeal": soSeal,
-        "lat": lat,
-        "long": long,
         "viTri": viTri,
-        "tinhTrang": tinhTrang,
-        "soContId": soContId,
+        "loaiXe": loaiXe,
+        "soKhung": soKhung,
       };
 }

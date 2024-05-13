@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
@@ -177,17 +178,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/car2.png',
-                                width: 50,
-                                height: 55,
-                              ),
+                              'assets/images/nhanxe.png',
                             ),
                           ],
                         ),
@@ -203,20 +194,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car3.png',
-                              width: 120,
-                              height: 80,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(0, 3),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 60),
-                                child: Image.asset(
-                                  'assets/images/car4.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              ),
+                              'assets/images/qlbaixe.png',
                             ),
                           ],
                         ),
@@ -232,30 +210,17 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                   children: [
                     if (userHasPermission(menuRoles, 'giao-xe-mobi'))
                       CustomButton(
-                        'VẬN CHUYỂN GIAO XE',
+                        'VẬN CHUYỂN/GIAO XE',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car5.png',
-                              width: 120,
-                              height: 80,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(0, -3),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 70),
-                                child: Image.asset(
-                                  'assets/images/car4.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              ),
+                              'assets/images/vc_gx.png',
                             ),
                           ],
                         ),
                         () {
-                          _handleButtonTap(GiaoXePage());
+                          _handleButtonTap(VanChuyenPage());
                         },
                       ),
                     SizedBox(width: 15),
@@ -309,10 +274,10 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           const Text(
                             'TRACKING XE\nTHÀNH PHẨM',
                             style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: AppConfig.primaryColor,
+                              fontFamily: 'Roboto',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: AppConfig.titleColor,
                             ),
                           )
                         ],
@@ -367,10 +332,10 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           buttonText,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontFamily: 'Comfortaa',
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppConfig.primaryColor,
+            fontFamily: 'Roboto',
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+            color: AppConfig.titleColor,
           ),
         ),
       ],

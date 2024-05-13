@@ -7,7 +7,7 @@ Widget customTitle(String text) {
     text,
     textAlign: TextAlign.center,
     style: TextStyle(
-      color: AppConfig.titleColor,
+      color: AppConfig.textButton,
       fontFamily: 'Roboto',
       fontSize: 16,
       fontWeight: FontWeight.w700,

@@ -1,37 +1,42 @@
-import 'package:Thilogi/pages/dongSeal/dongseal.dart';
-import 'package:Thilogi/widgets/loading.dart';
+import 'dart:convert';
+import 'dart:ffi';
+
+import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:Thilogi/pages/baixe/baixe.dart';
-import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/DongCont/dongcont.dart';
+import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
+import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
+import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:http/http.dart' as http;
 
-import '../../blocs/menu_roles.dart';
-import '../../config/config.dart';
-import '../../models/menurole.dart';
-import '../../services/request_helper.dart';
-import '../khoxe/khoxe.dart';
+import '../../../blocs/menu_roles.dart';
+import '../../../config/config.dart';
+import '../../../models/menurole.dart';
+import '../../../widgets/loading.dart';
+
+import '../../khoxe/khoxe.dart';
 
 // ignore: use_key_in_widget_constructors
-class CustomBodyQLBaiXe extends StatelessWidget {
+class CustomBodyVanChuyen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(width: 100.w, child: BodyQLBaiXeScreen());
+    return Container(width: 100.w, child: BodyQLKhoXeScreen());
   }
 }
 
-class BodyQLBaiXeScreen extends StatefulWidget {
-  const BodyQLBaiXeScreen({Key? key}) : super(key: key);
+class BodyQLKhoXeScreen extends StatefulWidget {
+  const BodyQLKhoXeScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyQLBaiXeScreenState createState() => _BodyQLBaiXeScreenState();
+  _BodyQLKhoXeScreenState createState() => _BodyQLKhoXeScreenState();
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
+class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     with SingleTickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
@@ -39,13 +44,18 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
   String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late MenuRoleBloc _mb;
+  List<MenuRoleModel>? _menurole;
+  List<MenuRoleModel>? get menurole => _menurole;
+
   static RequestHelper requestHelper = RequestHelper();
   bool _isLoading = true;
   bool get isLoading => _isLoading;
   bool _hasError = false;
   bool get hasError => _hasError;
+
   String? _errorCode;
   String? get errorCode => _errorCode;
+
   String? _message;
   String? get message => _message;
 
@@ -55,19 +65,50 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   @override
   void initState() {
     super.initState();
+    // getData(context, DonVi_Id, PhanMem_Id);
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
-    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     _menuRoleFuture = _fetchMenuRoles();
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
   Future<List<MenuRoleModel>> _fetchMenuRoles() async {
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
+  }
+
+  Future<void> getData(
+      BuildContext context, DonVi_Id, String PhanMem_Id) async {
+    _isLoading = true;
+    _menurole = null;
+
+    try {
+      final http.Response response = await requestHelper
+          .getData('Menu/By_User?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
+
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data:${decodedData}");
+
+        if (decodedData != null) {
+          _menurole = (decodedData as List).map((p) {
+            return MenuRoleModel.fromJson(p);
+          }).toList();
+
+          print(_menurole);
+        }
+        notifyListeners();
+      } else {
+        _menurole = null;
+        _isLoading = false;
+      }
+    } catch (e) {
+      _hasError = true;
+      _isLoading = false;
+      _message = e.toString();
+      _errorCode = e.toString();
+      notifyListeners();
+    }
   }
 
   // bool userHasPermission(String? url1) {
@@ -77,7 +118,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   //   if (_mb.menurole != null) {
   //     url = _mb.menurole!
   //         .firstWhere((menuRole) => menuRole.url == url1,
-  //             orElse: () => MenuRoleModel() as MenuRoleModel)
+  //             orElse: () => MenuRoleModel())
   //         ?.url;
   //     print('url1:$url');
   //     if (url == url1) {
@@ -115,57 +156,32 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
 
   @override
   Widget _buildContent(List<MenuRoleModel> menuRoles) {
+    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _loading
         ? LoadingWidget(context)
         : Container(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
-            margin: const EdgeInsets.only(top: 25, bottom: 25),
+            margin: const EdgeInsets.only(top: 30, bottom: 30),
             child: Column(
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
+                    if (userHasPermission(menuRoles, 'giao-xe-mobi'))
                       CustomButton(
-                        'NHẬP BÃI XE',
+                        'VẬN CHUYỂN',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/car2.png',
-                                width: 50,
-                                height: 55,
-                              ),
-                            ),
-                          ],
-                        ),
-                        () {
-                          _handleButtonTap(BaiXePage());
-                        },
-                      ),
-                    const SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
-                      CustomButton(
-                        'ĐIỀU CHUYỂN XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/car3.png',
+                              'assets/images/car5.png',
                               width: 120,
                               height: 80,
                             ),
                             Transform.translate(
-                              offset: const Offset(0, 3),
+                              offset: const Offset(0, -3),
                               child: Padding(
-                                padding: const EdgeInsets.only(right: 60),
+                                padding: const EdgeInsets.only(right: 70),
                                 child: Image.asset(
                                   'assets/images/car4.png',
                                   width: 40,
@@ -176,70 +192,41 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                           ],
                         ),
                         () {
-                          _handleButtonTap(ChuyenXePage());
+                          _handleButtonTap(KhoXePage());
                         },
                       ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'dong-seal-mobi'))
+                    SizedBox(width: 15),
+                    if (userHasPermission(menuRoles, 'xuat-kho-xe-mobi'))
                       CustomButton(
-                        'ĐÓNG CONT',
+                        'GIAO XE',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
+                              'assets/images/car5.png',
+                              width: 120,
+                              height: 80,
                             ),
                             Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/search.png',
-                                width: 50,
-                                height: 55,
+                              offset: const Offset(0, -3),
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 70),
+                                child: Image.asset(
+                                  'assets/images/car4.png',
+                                  width: 40,
+                                  height: 40,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         () {
-                          _handleButtonTap(XuatCongXePage());
-                        },
-                      ),
-                    SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'dong-cont-mobi'))
-                      CustomButton(
-                        'ĐÓNG SEAL',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/search.png',
-                                width: 50,
-                                height: 55,
-                              ),
-                            ),
-                          ],
-                        ),
-                        () {
-                          _handleButtonTap(DongSealPage());
+                          _handleButtonTap(GiaoXePage());
                         },
                       ),
                   ],
                 ),
                 const SizedBox(height: 30),
-
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ],
             ),

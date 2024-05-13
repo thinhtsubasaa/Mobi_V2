@@ -416,6 +416,33 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     });
   }
 
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn điều chuyển không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSave();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     getData();
@@ -1056,7 +1083,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               fontSize: 16,
                             )),
                         controller: _btnController,
-                        onPressed: ViTriId != null ? _onSave : null,
+                        onPressed: ViTriId != null
+                            ? () => _showConfirmationDialog(context)
+                            : null,
                       ),
                       SizedBox(height: 10),
                     ],

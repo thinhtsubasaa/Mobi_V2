@@ -1,12 +1,12 @@
 import 'package:Thilogi/config/config.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-PreferredSizeWidget customAppBar() {
+PreferredSizeWidget customAppBar(BuildContext context) {
   return AppBar(
-    // automaticallyImplyLeading: false,
-
+    automaticallyImplyLeading: false,
     title: Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,5 +30,13 @@ PreferredSizeWidget customAppBar() {
         ],
       ),
     ),
+    leading: Theme.of(context).platform == TargetPlatform.iOS
+        ? CupertinoButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.arrow_back),
+          )
+        : null,
   );
 }

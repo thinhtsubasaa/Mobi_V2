@@ -12,7 +12,7 @@ class GiaoXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: customAppBar(context),
       body: Column(
         children: [
           CustomCard(),
@@ -41,12 +41,21 @@ class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
-      child: Center(
-        child: customTitle(
-          'KIỂM TRA - GIAO XE',
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            Color(0xFFE96327),
+            Color(0xFFBC2925),
+          ],
         ),
+      ),
+      child: customTitle(
+        'KIỂM TRA - GIAO XE',
       ),
     );
   }

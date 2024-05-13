@@ -319,6 +319,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           text: "Nhập kho thành công",
           confirmBtnText: 'Đồng ý',
         );
+
         _btnController.reset();
       } else {
         String errorMessage = response.body.replaceAll('"', '');
@@ -376,7 +377,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         long = "${position.longitude}";
       });
       _data?.toaDo = "${lat},${long}";
-
+      print("Kho_Id:${KhoXeId}");
       print("viTri:${_data?.toaDo}");
       print("ViTri_ID:${_data?.viTri_Id}");
       print("SoKhung: ${_data?.soKhung}");
@@ -409,10 +410,38 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     });
   }
 
+  void _showConfirmationDialog(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn nhập bãi không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSave();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     getData();
     getBaiXeList(KhoXeId ?? "");
+
     return Container(
         child: Column(
       children: [
@@ -447,6 +476,179 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Container(
+                                //   height:
+                                //       MediaQuery.of(context).size.height < 600
+                                //           ? 10.h
+                                //           : 7.h,
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(5),
+                                //     border: Border.all(
+                                //       color: const Color(0xFF818180),
+                                //       width: 1,
+                                //     ),
+                                //   ),
+                                //   child: Row(
+                                //     children: [
+                                //       Container(
+                                //         width: 20.w,
+                                //         decoration: const BoxDecoration(
+                                //           color: Color(0xFFF6C6C7),
+                                //           border: Border(
+                                //             right: BorderSide(
+                                //               color: Color(0xFF818180),
+                                //               width: 1,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //         child: Center(
+                                //           child: Text(
+                                //             "Kho đến",
+                                //             textAlign: TextAlign.left,
+                                //             style: const TextStyle(
+                                //               fontFamily: 'Comfortaa',
+                                //               fontSize: 16,
+                                //               fontWeight: FontWeight.w400,
+                                //               color: AppConfig.textInput,
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ),
+                                //       Expanded(
+                                //         flex: 1,
+                                //         child: Container(
+                                //             padding: EdgeInsets.only(
+                                //                 top: MediaQuery.of(context)
+                                //                             .size
+                                //                             .height <
+                                //                         600
+                                //                     ? 0
+                                //                     : 10),
+                                //             child: DropdownButtonHideUnderline(
+                                //               child: DropdownButton2<String>(
+                                //                 isExpanded: true,
+                                //                 items: _khoxeList?.map((item) {
+                                //                   return DropdownMenuItem<
+                                //                       String>(
+                                //                     value: item.id,
+                                //                     child: Container(
+                                //                       constraints: BoxConstraints(
+                                //                           maxWidth: MediaQuery.of(
+                                //                                       context)
+                                //                                   .size
+                                //                                   .width *
+                                //                               0.9),
+                                //                       child:
+                                //                           SingleChildScrollView(
+                                //                         scrollDirection:
+                                //                             Axis.horizontal,
+                                //                         child: Text(
+                                //                           item.tenKhoXe ?? "",
+                                //                           textAlign:
+                                //                               TextAlign.center,
+                                //                           style:
+                                //                               const TextStyle(
+                                //                             fontFamily:
+                                //                                 'Comfortaa',
+                                //                             fontSize: 14,
+                                //                             fontWeight:
+                                //                                 FontWeight.w600,
+                                //                             color: AppConfig
+                                //                                 .textInput,
+                                //                           ),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   );
+                                //                 }).toList(),
+                                //                 value: KhoXeId,
+                                //                 onChanged: (newValue) {
+                                //                   setState(() {
+                                //                     KhoXeId = newValue;
+                                //                   });
+                                //                   if (newValue != null) {
+                                //                     getBaiXeList(newValue);
+                                //                     print(
+                                //                         "object : ${KhoXeId}");
+                                //                   }
+                                //                 },
+                                //                 dropdownSearchData:
+                                //                     DropdownSearchData(
+                                //                   searchController:
+                                //                       textEditingController,
+                                //                   searchInnerWidgetHeight: 50,
+                                //                   searchInnerWidget: Container(
+                                //                     height: 50,
+                                //                     padding:
+                                //                         const EdgeInsets.only(
+                                //                       top: 8,
+                                //                       bottom: 4,
+                                //                       right: 8,
+                                //                       left: 8,
+                                //                     ),
+                                //                     child: TextFormField(
+                                //                       expands: true,
+                                //                       maxLines: null,
+                                //                       controller:
+                                //                           textEditingController,
+                                //                       decoration:
+                                //                           InputDecoration(
+                                //                         isDense: true,
+                                //                         contentPadding:
+                                //                             const EdgeInsets
+                                //                                 .symmetric(
+                                //                           horizontal: 10,
+                                //                           vertical: 8,
+                                //                         ),
+                                //                         hintText: 'Tìm kho xe',
+                                //                         hintStyle:
+                                //                             const TextStyle(
+                                //                                 fontSize: 12),
+                                //                         border:
+                                //                             OutlineInputBorder(
+                                //                           borderRadius:
+                                //                               BorderRadius
+                                //                                   .circular(8),
+                                //                         ),
+                                //                       ),
+                                //                     ),
+                                //                   ),
+                                //                   searchMatchFn:
+                                //                       (item, searchValue) {
+                                //                     if (item
+                                //                         is DropdownMenuItem<
+                                //                             String>) {
+                                //                       // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                //                       String itemId =
+                                //                           item.value ?? "";
+                                //                       // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                //                       return _khoxeList?.any((khoXe) =>
+                                //                               khoXe.id ==
+                                //                                   itemId &&
+                                //                               khoXe.tenKhoXe
+                                //                                       ?.toLowerCase()
+                                //                                       .contains(
+                                //                                           searchValue
+                                //                                               .toLowerCase()) ==
+                                //                                   true) ??
+                                //                           false;
+                                //                     } else {
+                                //                       return false;
+                                //                     }
+                                //                   },
+                                //                 ),
+                                //                 onMenuStateChange: (isOpen) {
+                                //                   if (!isOpen) {
+                                //                     textEditingController
+                                //                         .clear();
+                                //                   }
+                                //                 },
+                                //               ),
+                                //             )),
+                                //       ),
+                                //     ],
+                                //   ),
+                                // ),
                                 const SizedBox(height: 4),
                                 Container(
                                   height:
@@ -855,7 +1057,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               fontSize: 16,
                             )),
                         controller: _btnController,
-                        onPressed: ViTriId != null ? _onSave : null,
+                        onPressed: ViTriId != null
+                            ? () => _showConfirmationDialog(context)
+                            : null,
                       ),
                       SizedBox(height: 10),
                     ],

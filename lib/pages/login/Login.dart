@@ -1,4 +1,3 @@
-import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/login/custom_form_login.dart';
 import 'package:Thilogi/config/config.dart';
@@ -34,7 +33,7 @@ class LoginPage extends StatelessWidget {
                         children: [
                           CustomLoginForm(),
                           SizedBox(height: 20),
-                          customTitle('DÀNH CHO KHÁCH HÀNG'),
+                          customTitleLogin('DÀNH CHO KHÁCH HÀNG'),
                           SizedBox(height: 20),
                           Container(
                             width: 100.w,
@@ -115,6 +114,19 @@ PreferredSizeWidget customAppBar() {
           width: 70.w,
         ),
       ],
+    ),
+  );
+}
+
+Widget customTitleLogin(String text) {
+  return Text(
+    text,
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      color: Color(0xFF428FCA),
+      fontFamily: 'Roboto',
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
     ),
   );
 }

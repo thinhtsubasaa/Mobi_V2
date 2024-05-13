@@ -175,13 +175,31 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                   ),
                 ),
               ),
+              // Container(
+              //   height: MediaQuery.of(context).size.height / 11,
+              //   padding: EdgeInsets.all(10),
+              //   child: Center(
+              //     child: customTitle(
+              //       'TRACKING XE THÀNH PHẨM',
+              //     ),
+              //   ),
+              // ),
               Container(
+                width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 11,
                 padding: EdgeInsets.all(10),
-                child: Center(
-                  child: customTitle(
-                    'TRACKING XE THÀNH PHẨM',
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFFE96327),
+                      Color(0xFFBC2925),
+                    ],
                   ),
+                ),
+                child: customTitle(
+                  'TRACKING XE THÀNH PHẨM',
                 ),
               ),
             ],

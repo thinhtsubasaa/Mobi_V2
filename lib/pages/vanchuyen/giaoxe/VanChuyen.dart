@@ -1,13 +1,19 @@
+import 'package:Thilogi/pages/giaoxe/custom_body_giaoxe.dart';
+import 'package:Thilogi/pages/vanchuyen/giaoxe/custom_body_vanchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/chuyenxe/custom_body_chuyenxe.dart';
-import 'package:sizer/sizer.dart';
-import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
-import '../../widgets/custom_card.dart';
-import '../../widgets/custom_title.dart';
+import 'package:Thilogi/pages/qlkho/custom_body_QLKhoxe.dart';
 
-class ChuyenXePage extends StatelessWidget {
+import 'package:sizer/sizer.dart';
+
+import '../../../widgets/custom_appbar.dart';
+import '../../../widgets/custom_card.dart';
+import '../../../widgets/custom_title.dart';
+
+class VanChuyenPage extends StatelessWidget {
+  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int pageCount = 3;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +31,7 @@ class ChuyenXePage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: CustomBodyChuyenXe(),
+                child: CustomBodyVanChuyen(),
               ),
             ),
           ),
@@ -54,7 +60,7 @@ class BottomContent extends StatelessWidget {
         ),
       ),
       child: customTitle(
-        'KIỂM TRA - ĐIỀU CHUYỂN XE',
+        'KIỂM TRA - VẬN CHUYỂN / GIAO XE',
       ),
     );
   }
