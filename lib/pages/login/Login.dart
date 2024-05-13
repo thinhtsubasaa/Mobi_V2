@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/login/custom_form_login.dart';
 import 'package:Thilogi/config/config.dart';
@@ -15,7 +16,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: customAppBar(context),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -103,18 +104,28 @@ class CustomButtonLogin extends StatelessWidget {
   }
 }
 
-PreferredSizeWidget customAppBar() {
+PreferredSizeWidget customAppBar(BuildContext context) {
   return AppBar(
-    // automaticallyImplyLeading: false,
-    title: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image.asset(
-          AppConfig.appBarImagePath,
-          width: 70.w,
-        ),
-      ],
+    automaticallyImplyLeading: false,
+    title: Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            AppConfig.appBarImagePath,
+            width: 70.w,
+          ),
+        ],
+      ),
     ),
+    leading: Theme.of(context).platform == TargetPlatform.iOS
+        ? CupertinoButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.arrow_back),
+          )
+        : null,
   );
 }
 

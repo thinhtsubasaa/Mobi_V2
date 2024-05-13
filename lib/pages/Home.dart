@@ -3,7 +3,6 @@ import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 import 'package:sizer/sizer.dart';
 import '../utils/next_screen.dart';
-import '../widgets/custom_title.dart';
 
 class MyHomePage extends StatelessWidget {
   @override
@@ -35,7 +34,7 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height > 885 ? 30.h : null,
       child: Column(
         children: [
-          customTitle('LOGISTIC TRỌN GÓI\nHÀNG ĐẦU MIỀN TRUNG'),
+          customTitleHome('LOGISTIC TRỌN GÓI\nHÀNG ĐẦU MIỀN TRUNG'),
           const SizedBox(height: 10),
           CustomImage(imagePath: AppConfig.bottomHomeImagePath),
           const SizedBox(height: 15),
@@ -47,6 +46,19 @@ class BottomContent extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget customTitleHome(String text) {
+  return Text(
+    text,
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      color: AppConfig.titleColor,
+      fontFamily: 'Roboto',
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
+    ),
+  );
 }
 
 class CustomImage extends StatelessWidget {
