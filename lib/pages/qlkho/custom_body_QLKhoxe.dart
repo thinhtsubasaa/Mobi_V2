@@ -36,7 +36,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
@@ -178,7 +178,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/nhanxe.png',
+                              'assets/images/Button_NhanXe_3b.png',
                             ),
                           ],
                         ),
@@ -194,7 +194,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/qlbaixe.png',
+                              'assets/images/Button_QLBaiXe.png',
                             ),
                           ],
                         ),
@@ -210,12 +210,12 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                   children: [
                     if (userHasPermission(menuRoles, 'giao-xe-mobi'))
                       CustomButton(
-                        'VẬN CHUYỂN/GIAO XE',
+                        'VẬN CHUYỂN\nGIAO XE',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/vc_gx.png',
+                              'assets/images/Button_VC_GX.png',
                             ),
                           ],
                         ),
@@ -223,64 +223,67 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           _handleButtonTap(VanChuyenPage());
                         },
                       ),
-                    SizedBox(width: 15),
+                    SizedBox(width: 20),
                     if (userHasPermission(
                         menuRoles, 'tracking-xe-thanh-pham-mobi'))
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            width: 130,
-                            height: 150,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  offset: Offset(0, 4),
-                                  blurRadius: 4,
-                                  spreadRadius: 0,
-                                  color: Color(0x40000000),
-                                ),
-                              ],
-                              color: AppConfig.primaryColor,
+                      // Column(
+                      //   children: [
+                      //     Container(
+                      //       width: 130,
+                      //       height: 170,
+                      //       // decoration: const BoxDecoration(
+                      //       //   shape: BoxShape.circle,
+                      //       //   boxShadow: [
+                      //       //     BoxShadow(
+                      //       //       offset: Offset(0, 4),
+                      //       //       blurRadius: 4,
+                      //       //       spreadRadius: 0,
+                      //       //       color: Color(0x40000000),
+                      //       //     ),
+                      //       //   ],
+                      //       //   color: AppConfig.primaryColor,
+                      //       // ),
+                      //       alignment: Alignment.center,
+                      //       child: IconButton(
+                      //         onPressed: () {
+                      //           _handleButtonTap(TrackingXeVitriPage());
+                      //         },
+                      //         icon: Stack(
+                      //           alignment: Alignment.center,
+                      //           children: [
+                      //             Image.asset(
+                      //               'assets/images/Button_Tracking.png',
+                      //               width: 130,
+                      //               height: 170,
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     const Text(
+                      //       'TRACKING XE\nTHÀNH PHẨM',
+                      //       style: TextStyle(
+                      //         fontFamily: 'Roboto',
+                      //         fontSize: 15,
+                      //         fontWeight: FontWeight.w800,
+                      //         color: AppConfig.titleColor,
+                      //       ),
+                      //     )
+                      //   ],
+                      // ),
+                      CustomButton(
+                        'TRACKING XE\nTHÀNH PHẨM',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_Tracking.png',
                             ),
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: () {
-                                _handleButtonTap(TrackingXeVitriPage());
-                              },
-                              icon: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Image.asset(
-                                    'assets/images/car1.png',
-                                    width: 60,
-                                    height: 65,
-                                  ),
-                                  Transform.translate(
-                                    offset: const Offset(25, -15),
-                                    child: Image.asset(
-                                      'assets/images/search.png',
-                                      width: 50,
-                                      height: 55,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Text(
-                            'TRACKING XE\nTHÀNH PHẨM',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: AppConfig.titleColor,
-                            ),
-                          )
-                        ],
+                          ],
+                        ),
+                        () {
+                          _handleButtonTap(TrackingXeVitriPage());
+                        },
                       ),
                   ],
                 ),
@@ -312,18 +315,18 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
         Container(
           width: 130,
           height: 150,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 4),
-                blurRadius: 4,
-                spreadRadius: 0,
-                color: Color(0x40000000),
-              ),
-            ],
-            color: AppConfig.primaryColor,
-          ),
+          // decoration: BoxDecoration(
+          //   shape: BoxShape.circle,
+          //   boxShadow: [
+          //     BoxShadow(
+          //       offset: Offset(0, 4),
+          //       blurRadius: 4,
+          //       spreadRadius: 0,
+          //       color: Color(0x40000000),
+          //     ),
+          //   ],
+          //   color: AppConfig.primaryColor,
+          // ),
           alignment: Alignment.center,
           child: page,
         ),

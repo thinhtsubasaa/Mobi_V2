@@ -9,6 +9,7 @@ import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/theme_bloc.dart';
+import 'package:Thilogi/blocs/timxe.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
 import 'package:Thilogi/blocs/vitri_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
@@ -70,6 +71,9 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<ViTriBloc>(
                   create: (context) => ViTriBloc(),
+                ),
+                ChangeNotifierProvider<TimXeBloc>(
+                  create: (context) => TimXeBloc(),
                 ),
               ],
               child: MaterialApp(

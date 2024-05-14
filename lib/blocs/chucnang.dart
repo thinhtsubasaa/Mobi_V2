@@ -92,7 +92,7 @@ class ChucnangBloc extends ChangeNotifier {
             onConfirmBtnTap: () {
               clear(context);
             });
-        print(errorMessage);
+        print("Toa Do : $toaDo");
         controller.reset();
       }
     } catch (e) {

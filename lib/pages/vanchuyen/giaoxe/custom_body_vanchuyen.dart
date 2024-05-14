@@ -37,7 +37,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
@@ -174,20 +174,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car5.png',
-                              width: 120,
-                              height: 80,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(0, -3),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 70),
-                                child: Image.asset(
-                                  'assets/images/car4.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              ),
+                              'assets/images/Button_QLBaiXe_XuatBai.png',
                             ),
                           ],
                         ),
@@ -203,20 +190,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car5.png',
-                              width: 120,
-                              height: 80,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(0, -3),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 70),
-                                child: Image.asset(
-                                  'assets/images/car4.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              ),
+                              'assets/images/Button_QLBaiXe_XuatBai.png',
                             ),
                           ],
                         ),
@@ -254,18 +228,6 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
         Container(
           width: 130,
           height: 150,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 4),
-                blurRadius: 4,
-                spreadRadius: 0,
-                color: Color(0x40000000),
-              ),
-            ],
-            color: AppConfig.primaryColor,
-          ),
           alignment: Alignment.center,
           child: page,
         ),

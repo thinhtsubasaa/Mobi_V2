@@ -28,7 +28,7 @@ class BodyNhanxeScreen extends StatefulWidget {
 }
 
 class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   String _qrData = '';
   final _qrDataController = TextEditingController();
   ScanModel? _data;

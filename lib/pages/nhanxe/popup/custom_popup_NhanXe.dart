@@ -6,6 +6,7 @@ import 'package:Thilogi/blocs/chucnang.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe3.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
@@ -319,9 +320,31 @@ class PopUp extends StatelessWidget {
                 )),
             controller: _btnController,
             onPressed: () {
-              _cv.getData(context, _btnController, soKhung, toaDo ?? "");
-
-              print("so Khung: ${soKhung}");
+              // _cv.getData(context, _btnController, soKhung, toaDo ?? "");
+              QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.confirm,
+                  text: 'Bạn có muốn nhận xe không?',
+                  title: '',
+                  confirmBtnText: 'Đồng ý',
+                  cancelBtnText: 'Không',
+                  confirmBtnTextStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  cancelBtnTextStyle: TextStyle(
+                    color: Colors.red,
+                    fontSize: 19.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  onCancelBtnTap: () {
+                    Navigator.of(context).pop();
+                    _btnController.reset();
+                  },
+                  onConfirmBtnTap: () {
+                    Navigator.of(context).pop();
+                    _cv.getData(context, _btnController, soKhung, toaDo ?? "");
+                  });
             },
           ),
           const SizedBox(height: 10),

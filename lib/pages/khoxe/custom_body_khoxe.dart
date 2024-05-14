@@ -43,7 +43,7 @@ class BodyKhoXeScreen extends StatefulWidget {
 }
 
 class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String? lat;

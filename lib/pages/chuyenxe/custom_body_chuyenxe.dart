@@ -45,7 +45,7 @@ class BodyChuyenXeScreen extends StatefulWidget {
 }
 
 class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String _qrData = '';
@@ -59,7 +59,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   DieuChuyenModel? _data;
   bool _loading = false;
   String barcodeScanResult = '';
-  late ViTriBloc _vl;
   List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
   List<BaiXeModel>? _baixeList;
@@ -94,7 +93,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
-    _vl = Provider.of<ViTriBloc>(context, listen: false);
+
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {

@@ -44,7 +44,7 @@ class BodyBaiXeScreen extends StatefulWidget {
 }
 
 class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   String? SoContId;

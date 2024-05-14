@@ -1,16 +1,12 @@
-import 'package:Thilogi/pages/vanchuyen/giaoxe/custom_body_vanchuyen.dart';
+import 'package:Thilogi/pages/timxe/custom_body_timxe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/custom_card.dart';
+import '../../widgets/custom_title.dart';
 
-import '../../../widgets/custom_appbar.dart';
-import '../../../widgets/custom_card.dart';
-import '../../../widgets/custom_title.dart';
-
-class VanChuyenPage extends StatelessWidget {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
-  int pageCount = 3;
-
+class TimXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,14 +18,13 @@ class VanChuyenPage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Container(
                 width: 100.w,
-                height: MediaQuery.of(context).size.height,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(AppConfig.backgroundImagePath),
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: CustomBodyVanChuyen(),
+                child: CustomBodyTimXe(),
               ),
             ),
           ),
@@ -58,7 +53,7 @@ class BottomContent extends StatelessWidget {
         ),
       ),
       child: customTitle(
-        'KIỂM TRA - VẬN CHUYỂN / GIAO XE',
+        'KIỂM TRA - TÌM XE TRONG BÃI',
       ),
     );
   }

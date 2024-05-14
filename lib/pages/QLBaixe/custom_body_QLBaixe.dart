@@ -14,6 +14,7 @@ import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../services/request_helper.dart';
 import '../khoxe/khoxe.dart';
+import '../timxe/timxe.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLBaiXe extends StatelessWidget {
@@ -32,7 +33,7 @@ class BodyQLBaiXeScreen extends StatefulWidget {
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
   bool _loading = false;
@@ -60,10 +61,6 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
     _menuRoleFuture = _fetchMenuRoles();
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
   Future<List<MenuRoleModel>> _fetchMenuRoles() async {
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
@@ -132,17 +129,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/car2.png',
-                                width: 50,
-                                height: 55,
-                              ),
+                              'assets/images/Button_QLBaiXe_NhapBai.png',
                             ),
                           ],
                         ),
@@ -158,20 +145,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car3.png',
-                              width: 120,
-                              height: 80,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(0, 3),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 60),
-                                child: Image.asset(
-                                  'assets/images/car4.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              ),
+                              'assets/images/Button_QLBaiXe_ChuyenBai.png',
                             ),
                           ],
                         ),
@@ -185,24 +159,30 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (userHasPermission(menuRoles, 'dong-seal-mobi'))
+                    // if (userHasPermission(menuRoles, 'tim-xe-mobi'))
+                    CustomButton(
+                      'TÌM XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(TimXePage());
+                      },
+                    ),
+                    SizedBox(width: 20),
+                    if (userHasPermission(menuRoles, 'dong-cont-mobi'))
                       CustomButton(
                         'ĐÓNG CONT',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/search.png',
-                                width: 50,
-                                height: 55,
-                              ),
+                              'assets/images/Button_QLBaiXe_DongCont.png',
                             ),
                           ],
                         ),
@@ -210,25 +190,20 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                           _handleButtonTap(XuatCongXePage());
                         },
                       ),
-                    SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'dong-cont-mobi'))
+                  ],
+                ),
+                SizedBox(width: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (userHasPermission(menuRoles, 'dong-seal-mobi'))
                       CustomButton(
                         'ĐÓNG SEAL',
                         Stack(
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/car1.png',
-                              width: 60,
-                              height: 65,
-                            ),
-                            Transform.translate(
-                              offset: const Offset(25, -15),
-                              child: Image.asset(
-                                'assets/images/search.png',
-                                width: 50,
-                                height: 55,
-                              ),
+                              'assets/images/Button_QLBaiXe_DongSeal.png',
                             ),
                           ],
                         ),
@@ -267,18 +242,6 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
         Container(
           width: 130,
           height: 150,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, 4),
-                blurRadius: 4,
-                spreadRadius: 0,
-                color: Color(0x40000000),
-              ),
-            ],
-            color: AppConfig.primaryColor,
-          ),
           alignment: Alignment.center,
           child: page,
         ),

@@ -44,7 +44,7 @@ class BodyGiaoXeScreen extends StatefulWidget {
 }
 
 class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+    with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String? lat;
@@ -87,7 +87,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<GiaoXeBloc>(context, listen: false);
-    _ib = Provider.of<ImageBloc>(context, listen: false);
+    // _ib = Provider.of<ImageBloc>(context, listen: false);
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
