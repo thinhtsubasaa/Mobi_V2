@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:Thilogi/models/giaoxe.dart';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -25,8 +24,6 @@ import '../../config/config.dart';
 import '../../models/diadiem.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
-import '../../blocs/image_bloc.dart';
-import '../../utils/snackbar.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyGiaoXe extends StatelessWidget {
@@ -62,7 +59,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
-  late ImageBloc _ib;
   List<DiaDiemModel>? _diadiemList;
   List<DiaDiemModel>? get diadiemList => _diadiemList;
   List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
@@ -369,183 +365,124 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        Center(
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _loading
-                    ? LoadingWidget(context)
-                    : Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Thông Tin Xác Nhận',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const Divider(
-                              height: 1,
-                              color: AppConfig.primaryColor,
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _loading
+                      ? LoadingWidget(context)
+                      : Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.87),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                    _data?.tenSanPham ?? "",
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: 'Coda Caption',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppConfig.primaryColor,
+                              const Text(
+                                'Thông Tin Xác Nhận',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: AppConfig.primaryColor,
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+                  Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.87),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                      _data?.tenSanPham ?? "",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontFamily: 'Coda Caption',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800,
+                                        color: AppConfig.primaryColor,
+                                      ),
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Item(
+                                    title: 'Số khung:',
+                                    value: _data?.soKhung,
+                                  ),
+                                  Item(
+                                    title: 'Màu:',
+                                    value: _data?.tenMau,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Item(
-                                  title: 'Số khung:',
-                                  value: _data?.soKhung,
-                                ),
-                                Item(
-                                  title: 'Màu:',
-                                  value: _data?.tenMau,
-                                ),
-                              ],
                             ),
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Số máy:',
-                            value: _data?.soMay,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Nơi giao:',
-                            value: _data?.noigiao,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // SizedBox(
-                                //   height: 150,
-                                //   child: ListView.builder(
-                                //     scrollDirection: Axis.horizontal,
-                                //     itemCount: _selectedImages.length,
-                                //     itemBuilder: (context, index) {
-                                //       return Padding(
-                                //         padding: const EdgeInsets.all(8.0),
-                                //         child: Image.file(
-                                //           _selectedImages[index],
-                                //           width: 100,
-                                //           height: 100,
-                                //           fit: BoxFit.cover,
-                                //         ),
-                                //       );
-                                //     },
-                                //   ),
-                                // ),
-                                // MaterialButton(
-                                //   color: Colors.red,
-                                //   child: Text(
-                                //     "Ảnh",
-                                //     style: TextStyle(
-                                //       fontFamily: 'Comfortaa',
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.w700,
-                                //       fontSize: 16,
-                                //     ),
-                                //   ),
-                                //   onPressed: () {
-                                //     _imageService.pickImage(
-                                //         context, _selectedImages);
-                                //   },
-                                // ),
-
-                                // MaterialButton(
-                                //   color: Colors.red,
-                                //   child: Text(
-                                //     "Lưu",
-                                //     style: TextStyle(
-                                //       fontFamily: 'Comfortaa',
-                                //       color: Colors.white,
-                                //       fontWeight: FontWeight.w700,
-                                //       fontSize: 16,
-                                //     ),
-                                //   ),
-                                //   onPressed: () {
-                                //     // Gọi phương thức uploadImages từ _imageService và chuyển danh sách _selectedImages
-                                //     _imageService.upload(
-                                //         context, _selectedImages);
-                                //   },
-                                // ),
-                              ],
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Số máy:',
+                              value: _data?.soMay,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 10),
-                      RoundedLoadingButton(
-                        child: Text('Giao Xe',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              color: AppConfig.textButton,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            )),
-                        controller: _btnController,
-                        onPressed: _data?.soKhung != null
-                            ? () => _showConfirmationDialog(context)
-                            : null,
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Nơi giao:',
+                              value: _data?.noigiao,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedLoadingButton(
+                child: Text('Giao Xe',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      color: AppConfig.textButton,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    )),
+                controller: _btnController,
+                onPressed: _data?.soKhung != null
+                    ? () => _showConfirmationDialog(context)
+                    : null,
+              ),
+            ],
           ),
         ),
       ],

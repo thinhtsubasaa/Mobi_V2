@@ -73,6 +73,7 @@ class _HomePageState extends State<HomePage> {
   //         _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
   //   });
   // }
+
   _initLocation() {
     _location?.getLocation().then((location) {
       _currentLocation = location;

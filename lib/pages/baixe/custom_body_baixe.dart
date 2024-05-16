@@ -2,12 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Thilogi/blocs/nhapbai.dart';
-import 'package:Thilogi/blocs/vitri_bloc.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
-import 'package:Thilogi/utils/snackbar.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -54,7 +51,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   final _qrDataController = TextEditingController();
   bool _loading = false;
   KhoThanhPhamModel? _data;
-
   String barcodeScanResult = '';
   late NhapBaiBloc _bl;
 
@@ -89,7 +85,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<NhapBaiBloc>(context, listen: false);
-
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -446,277 +441,277 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        Center(
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _loading
-                    ? LoadingWidget(context)
-                    : Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Thông Tin Xác Nhận',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _loading
+                      ? LoadingWidget(context)
+                      : Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Thông Tin Xác Nhận',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
-                            ),
-                            const Divider(height: 1, color: Color(0xFFA71C20)),
-                            const SizedBox(height: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Container(
-                                //   height:
-                                //       MediaQuery.of(context).size.height < 600
-                                //           ? 10.h
-                                //           : 7.h,
-                                //   decoration: BoxDecoration(
-                                //     borderRadius: BorderRadius.circular(5),
-                                //     border: Border.all(
-                                //       color: const Color(0xFF818180),
-                                //       width: 1,
-                                //     ),
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Container(
-                                //         width: 20.w,
-                                //         decoration: const BoxDecoration(
-                                //           color: Color(0xFFF6C6C7),
-                                //           border: Border(
-                                //             right: BorderSide(
-                                //               color: Color(0xFF818180),
-                                //               width: 1,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //         child: Center(
-                                //           child: Text(
-                                //             "Kho đến",
-                                //             textAlign: TextAlign.left,
-                                //             style: const TextStyle(
-                                //               fontFamily: 'Comfortaa',
-                                //               fontSize: 16,
-                                //               fontWeight: FontWeight.w400,
-                                //               color: AppConfig.textInput,
-                                //             ),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //       Expanded(
-                                //         flex: 1,
-                                //         child: Container(
-                                //             padding: EdgeInsets.only(
-                                //                 top: MediaQuery.of(context)
-                                //                             .size
-                                //                             .height <
-                                //                         600
-                                //                     ? 0
-                                //                     : 10),
-                                //             child: DropdownButtonHideUnderline(
-                                //               child: DropdownButton2<String>(
-                                //                 isExpanded: true,
-                                //                 items: _khoxeList?.map((item) {
-                                //                   return DropdownMenuItem<
-                                //                       String>(
-                                //                     value: item.id,
-                                //                     child: Container(
-                                //                       constraints: BoxConstraints(
-                                //                           maxWidth: MediaQuery.of(
-                                //                                       context)
-                                //                                   .size
-                                //                                   .width *
-                                //                               0.9),
-                                //                       child:
-                                //                           SingleChildScrollView(
-                                //                         scrollDirection:
-                                //                             Axis.horizontal,
-                                //                         child: Text(
-                                //                           item.tenKhoXe ?? "",
-                                //                           textAlign:
-                                //                               TextAlign.center,
-                                //                           style:
-                                //                               const TextStyle(
-                                //                             fontFamily:
-                                //                                 'Comfortaa',
-                                //                             fontSize: 14,
-                                //                             fontWeight:
-                                //                                 FontWeight.w600,
-                                //                             color: AppConfig
-                                //                                 .textInput,
-                                //                           ),
-                                //                         ),
-                                //                       ),
-                                //                     ),
-                                //                   );
-                                //                 }).toList(),
-                                //                 value: KhoXeId,
-                                //                 onChanged: (newValue) {
-                                //                   setState(() {
-                                //                     KhoXeId = newValue;
-                                //                   });
-                                //                   if (newValue != null) {
-                                //                     getBaiXeList(newValue);
-                                //                     print(
-                                //                         "object : ${KhoXeId}");
-                                //                   }
-                                //                 },
-                                //                 dropdownSearchData:
-                                //                     DropdownSearchData(
-                                //                   searchController:
-                                //                       textEditingController,
-                                //                   searchInnerWidgetHeight: 50,
-                                //                   searchInnerWidget: Container(
-                                //                     height: 50,
-                                //                     padding:
-                                //                         const EdgeInsets.only(
-                                //                       top: 8,
-                                //                       bottom: 4,
-                                //                       right: 8,
-                                //                       left: 8,
-                                //                     ),
-                                //                     child: TextFormField(
-                                //                       expands: true,
-                                //                       maxLines: null,
-                                //                       controller:
-                                //                           textEditingController,
-                                //                       decoration:
-                                //                           InputDecoration(
-                                //                         isDense: true,
-                                //                         contentPadding:
-                                //                             const EdgeInsets
-                                //                                 .symmetric(
-                                //                           horizontal: 10,
-                                //                           vertical: 8,
-                                //                         ),
-                                //                         hintText: 'Tìm kho xe',
-                                //                         hintStyle:
-                                //                             const TextStyle(
-                                //                                 fontSize: 12),
-                                //                         border:
-                                //                             OutlineInputBorder(
-                                //                           borderRadius:
-                                //                               BorderRadius
-                                //                                   .circular(8),
-                                //                         ),
-                                //                       ),
-                                //                     ),
-                                //                   ),
-                                //                   searchMatchFn:
-                                //                       (item, searchValue) {
-                                //                     if (item
-                                //                         is DropdownMenuItem<
-                                //                             String>) {
-                                //                       // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                //                       String itemId =
-                                //                           item.value ?? "";
-                                //                       // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                //                       return _khoxeList?.any((khoXe) =>
-                                //                               khoXe.id ==
-                                //                                   itemId &&
-                                //                               khoXe.tenKhoXe
-                                //                                       ?.toLowerCase()
-                                //                                       .contains(
-                                //                                           searchValue
-                                //                                               .toLowerCase()) ==
-                                //                                   true) ??
-                                //                           false;
-                                //                     } else {
-                                //                       return false;
-                                //                     }
-                                //                   },
-                                //                 ),
-                                //                 onMenuStateChange: (isOpen) {
-                                //                   if (!isOpen) {
-                                //                     textEditingController
-                                //                         .clear();
-                                //                   }
-                                //                 },
-                                //               ),
-                                //             )),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                const SizedBox(height: 4),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFF818180),
-                                      width: 1,
+                              const Divider(
+                                  height: 1, color: Color(0xFFA71C20)),
+                              const SizedBox(height: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    height:
+                                        MediaQuery.of(context).size.height < 600
+                                            ? 10.h
+                                            : 7.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: const Color(0xFF818180),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 20.w,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF6C6C7),
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: Color(0xFF818180),
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Bãi Xe",
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppConfig.textInput,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                              .size
+                                                              .height <
+                                                          600
+                                                      ? 0
+                                                      : 5),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  items:
+                                                      _baixeList?.map((item) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: item.id,
+                                                      child: Container(
+                                                        constraints: BoxConstraints(
+                                                            maxWidth: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.9),
+                                                        child:
+                                                            SingleChildScrollView(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          child: Text(
+                                                            item.tenBaiXe ?? "",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Comfortaa',
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              color: AppConfig
+                                                                  .textInput,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  value: BaiXeId,
+                                                  onChanged: (newValue) {
+                                                    setState(() {
+                                                      BaiXeId = newValue;
+                                                    });
+                                                    if (newValue != null) {
+                                                      getViTriList(newValue);
+                                                      print(
+                                                          "object : ${BaiXeId}");
+                                                    }
+                                                  },
+                                                  dropdownSearchData:
+                                                      DropdownSearchData(
+                                                    searchController:
+                                                        textEditingController,
+                                                    searchInnerWidgetHeight: 50,
+                                                    searchInnerWidget:
+                                                        Container(
+                                                      height: 50,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: 8,
+                                                        bottom: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                      ),
+                                                      child: TextFormField(
+                                                        expands: true,
+                                                        maxLines: null,
+                                                        controller:
+                                                            textEditingController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          isDense: true,
+                                                          contentPadding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 8,
+                                                          ),
+                                                          hintText:
+                                                              'Tìm bãi xe',
+                                                          hintStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 12),
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    searchMatchFn:
+                                                        (item, searchValue) {
+                                                      if (item
+                                                          is DropdownMenuItem<
+                                                              String>) {
+                                                        // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                        String itemId =
+                                                            item.value ?? "";
+                                                        // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                        return _baixeList?.any((baiXe) =>
+                                                                baiXe.id ==
+                                                                    itemId &&
+                                                                baiXe.tenBaiXe
+                                                                        ?.toLowerCase()
+                                                                        .contains(
+                                                                            searchValue.toLowerCase()) ==
+                                                                    true) ??
+                                                            false;
+                                                      } else {
+                                                        return false;
+                                                      }
+                                                    },
+                                                  ),
+                                                  onMenuStateChange: (isOpen) {
+                                                    if (!isOpen) {
+                                                      textEditingController
+                                                          .clear();
+                                                    }
+                                                  },
+                                                ),
+                                              )),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Bãi Xe",
-                                            textAlign: TextAlign.left,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    height:
+                                        MediaQuery.of(context).size.height < 600
+                                            ? 10.h
+                                            : 7.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: const Color(0xFF818180),
+                                        width: 1,
                                       ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                            .size
-                                                            .height <
-                                                        600
-                                                    ? 0
-                                                    : 5),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                items: _baixeList?.map((item) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: item.id,
-                                                    child: Container(
-                                                      constraints: BoxConstraints(
-                                                          maxWidth: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.9),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 20.w,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF6C6C7),
+                                            border: Border(
+                                              right: BorderSide(
+                                                color: Color(0xFF818180),
+                                                width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "Vị trí",
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppConfig.textInput,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                              .size
+                                                              .height <
+                                                          600
+                                                      ? 0
+                                                      : 5),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton2<String>(
+                                                  isExpanded: true,
+                                                  items:
+                                                      _vitriList?.map((item) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: item.id,
+                                                      child: Container(
                                                         child: Text(
-                                                          item.tenBaiXe ?? "",
+                                                          item.tenViTri ?? "",
                                                           textAlign:
                                                               TextAlign.center,
                                                           style:
@@ -731,341 +726,175 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                value: BaiXeId,
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    BaiXeId = newValue;
-                                                  });
-                                                  if (newValue != null) {
-                                                    getViTriList(newValue);
+                                                    );
+                                                  }).toList(),
+                                                  value: ViTriId,
+                                                  onChanged: (newValue) {
+                                                    setState(() {
+                                                      ViTriId = newValue;
+                                                    });
                                                     print(
-                                                        "object : ${BaiXeId}");
-                                                  }
-                                                },
-                                                dropdownSearchData:
-                                                    DropdownSearchData(
-                                                  searchController:
-                                                      textEditingController,
-                                                  searchInnerWidgetHeight: 50,
-                                                  searchInnerWidget: Container(
-                                                    height: 50,
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      top: 8,
-                                                      bottom: 4,
-                                                      right: 8,
-                                                      left: 8,
-                                                    ),
-                                                    child: TextFormField(
-                                                      expands: true,
-                                                      maxLines: null,
-                                                      controller:
-                                                          textEditingController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        isDense: true,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 8,
-                                                        ),
-                                                        hintText: 'Tìm bãi xe',
-                                                        hintStyle:
-                                                            const TextStyle(
-                                                                fontSize: 12),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
+                                                        "object : ${ViTriId}");
+                                                  },
+                                                  dropdownSearchData:
+                                                      DropdownSearchData(
+                                                    searchController:
+                                                        textEditingController,
+                                                    searchInnerWidgetHeight: 50,
+                                                    searchInnerWidget:
+                                                        Container(
+                                                      height: 50,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                        top: 8,
+                                                        bottom: 4,
+                                                        right: 8,
+                                                        left: 8,
+                                                      ),
+                                                      child: TextFormField(
+                                                        expands: true,
+                                                        maxLines: null,
+                                                        controller:
+                                                            textEditingController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          isDense: true,
+                                                          contentPadding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 8,
+                                                          ),
+                                                          hintText:
+                                                              'Tìm vị trí',
+                                                          hintStyle:
+                                                              const TextStyle(
+                                                                  fontSize: 12),
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
+                                                    searchMatchFn:
+                                                        (item, searchValue) {
+                                                      if (item
+                                                          is DropdownMenuItem<
+                                                              String>) {
+                                                        // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                        String itemId =
+                                                            item.value ?? "";
+                                                        // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                        return _vitriList?.any((viTri) =>
+                                                                viTri.id ==
+                                                                    itemId &&
+                                                                viTri.tenViTri
+                                                                        ?.toLowerCase()
+                                                                        .contains(
+                                                                            searchValue.toLowerCase()) ==
+                                                                    true) ??
+                                                            false;
+                                                      } else {
+                                                        return false;
+                                                      }
+                                                    },
                                                   ),
-                                                  searchMatchFn:
-                                                      (item, searchValue) {
-                                                    if (item
-                                                        is DropdownMenuItem<
-                                                            String>) {
-                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                      String itemId =
-                                                          item.value ?? "";
-                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                      return _baixeList?.any((baiXe) =>
-                                                              baiXe.id ==
-                                                                  itemId &&
-                                                              baiXe.tenBaiXe
-                                                                      ?.toLowerCase()
-                                                                      .contains(
-                                                                          searchValue
-                                                                              .toLowerCase()) ==
-                                                                  true) ??
-                                                          false;
-                                                    } else {
-                                                      return false;
+                                                  onMenuStateChange: (isOpen) {
+                                                    if (!isOpen) {
+                                                      textEditingController
+                                                          .clear();
                                                     }
                                                   },
                                                 ),
-                                                onMenuStateChange: (isOpen) {
-                                                  if (!isOpen) {
-                                                    textEditingController
-                                                        .clear();
-                                                  }
-                                                },
-                                              ),
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFF818180),
-                                      width: 1,
+                                              )),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Vị trí",
-                                            textAlign: TextAlign.left,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Container(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                            .size
-                                                            .height <
-                                                        600
-                                                    ? 0
-                                                    : 5),
-                                            child: DropdownButtonHideUnderline(
-                                              child: DropdownButton2<String>(
-                                                isExpanded: true,
-                                                items: _vitriList?.map((item) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: item.id,
-                                                    child: Container(
-                                                      child: Text(
-                                                        item.tenViTri ?? "",
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: const TextStyle(
-                                                          fontFamily:
-                                                              'Comfortaa',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppConfig
-                                                              .textInput,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                value: ViTriId,
-                                                onChanged: (newValue) {
-                                                  setState(() {
-                                                    ViTriId = newValue;
-                                                  });
-                                                  print("object : ${ViTriId}");
-                                                },
-                                                dropdownSearchData:
-                                                    DropdownSearchData(
-                                                  searchController:
-                                                      textEditingController,
-                                                  searchInnerWidgetHeight: 50,
-                                                  searchInnerWidget: Container(
-                                                    height: 50,
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      top: 8,
-                                                      bottom: 4,
-                                                      right: 8,
-                                                      left: 8,
-                                                    ),
-                                                    child: TextFormField(
-                                                      expands: true,
-                                                      maxLines: null,
-                                                      controller:
-                                                          textEditingController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        isDense: true,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 8,
-                                                        ),
-                                                        hintText: 'Tìm vị trí',
-                                                        hintStyle:
-                                                            const TextStyle(
-                                                                fontSize: 12),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  searchMatchFn:
-                                                      (item, searchValue) {
-                                                    if (item
-                                                        is DropdownMenuItem<
-                                                            String>) {
-                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                      String itemId =
-                                                          item.value ?? "";
-                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                      return _vitriList?.any((viTri) =>
-                                                              viTri.id ==
-                                                                  itemId &&
-                                                              viTri.tenViTri
-                                                                      ?.toLowerCase()
-                                                                      .contains(
-                                                                          searchValue
-                                                                              .toLowerCase()) ==
-                                                                  true) ??
-                                                          false;
-                                                    } else {
-                                                      return false;
-                                                    }
-                                                  },
-                                                ),
-                                                onMenuStateChange: (isOpen) {
-                                                  if (!isOpen) {
-                                                    textEditingController
-                                                        .clear();
-                                                  }
-                                                },
-                                              ),
-                                            )),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.87),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                    _data?.tenSanPham ?? "",
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: 'Coda Caption',
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFFA71C20),
-                                    ),
-                                  ),
-                                ),
+                                ],
                               ),
                             ],
                           ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Item(
-                                  title: 'Số khung:',
-                                  value: _data?.soKhung,
+                        ),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              constraints: BoxConstraints(
+                                  maxWidth:
+                                      MediaQuery.of(context).size.width * 0.87),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Text(
+                                  _data?.tenSanPham ?? "",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: 'Coda Caption',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFA71C20),
+                                  ),
                                 ),
-                                Item(
-                                  title: 'Màu:',
-                                  value: _data?.tenMau,
-                                ),
-                              ],
+                              ),
                             ),
+                          ],
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Item(
+                                title: 'Số khung:',
+                                value: _data?.soKhung,
+                              ),
+                              Item(
+                                title: 'Màu:',
+                                value: _data?.tenMau,
+                              ),
+                            ],
                           ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Số máy:',
-                            value: _data?.soMay,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                        ],
-                      ),
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        Item(
+                          title: 'Số máy:',
+                          value: _data?.soMay,
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                      ],
                     ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 10),
-                      RoundedLoadingButton(
-                        child: Text('Nhập kho',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              color: AppConfig.textButton,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            )),
-                        controller: _btnController,
-                        onPressed: ViTriId != null
-                            ? () => _showConfirmationDialog(context)
-                            : null,
-                      ),
-                      SizedBox(height: 10),
-                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RoundedLoadingButton(
+                child: Text('Nhập kho',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      color: AppConfig.textButton,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    )),
+                controller: _btnController,
+                onPressed: ViTriId != null
+                    ? () => _showConfirmationDialog(context)
+                    : null,
+              ),
+            ],
           ),
         ),
       ],
@@ -1106,7 +935,7 @@ class Item extends StatelessWidget {
                 value ?? "",
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),

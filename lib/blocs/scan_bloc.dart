@@ -41,7 +41,7 @@ class ScanBloc extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-
+        print("data: ${decodedData}");
         if (decodedData != null) {
           _scan = ScanModel(
             key: decodedData["key"],
@@ -66,21 +66,25 @@ class ScanBloc extends ChangeNotifier {
                 .map((item) => PhuKien.fromJson(item))
                 .toList(),
           );
-        } else {
-          String errorMessage = response.body.replaceAll('"', '');
-          notifyListeners();
-          QuickAlert.show(
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: QuickAlertType.info,
-            title: '',
-            text: errorMessage,
-            confirmBtnText: 'Đồng ý',
-          );
-          _scan = null;
-          _isLoading = false;
         }
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        if (errorMessage.isEmpty) {
+          errorMessage = "Số khung xe không chính xác hoặc đã nhận xe";
+        }
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
+        _scan = null;
+        _isLoading = false;
       }
+
       notifyListeners();
     } catch (e) {
       _hasError = true;
@@ -94,23 +98,3 @@ class ScanBloc extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-  // Future postData(ScanModel scanData) async {
-  //   _isLoading = true;
-  //   try {
-  //     var newScanData = scanData;
-  //     newScanData.soKhung =
-  //         newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-  //     final http.Response response = await requestHelper.postData(
-  //         'KhoThanhPham/NhapKhoBai', newScanData.toJson());
-  //     var decodedData = jsonDecode(response.body);
-  //     print("data: ${decodedData}");
-  //     _isLoading = false;
-  //     _success = decodedData["success"];
-  //   } catch (e) {
-  //     _message = e.toString();
-  //     _isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
-

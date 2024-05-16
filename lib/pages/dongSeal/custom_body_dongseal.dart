@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:Thilogi/utils/snackbar.dart';
+import 'package:Thilogi/widgets/checksheet_upload_anh.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:flutter_datawedge/flutter_datawedge.dart';
-import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -52,7 +49,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   String? soCont;
   String? TauId;
   String? viTri;
-  TextEditingController _soSeal = TextEditingController();
+  final TextEditingController _soSeal = TextEditingController();
 
   List<DSX_DongContModel>? _dsxdongcontList;
   List<DSX_DongContModel>? get dsxdongcont => _dsxdongcontList;
@@ -76,9 +73,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
-  bool _success = false;
-  bool get success => _success;
-
   String? _message;
   String? get message => _message;
 
@@ -93,7 +87,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DongSealBloc>(context, listen: false);
-
     requestLocationPermission();
   }
 
@@ -791,6 +784,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   ),
                                   SizedBox(height: 4),
                                   _buildTableOptions(context),
+                                  // CheckSheetUploadAnh(
+                                  //   lstFiles: [],
+                                  // )
                                 ],
                               ),
                             ],

@@ -16,17 +16,15 @@ class ChuyenXePage extends StatelessWidget {
         children: [
           CustomCard(),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                width: 100.w,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(AppConfig.backgroundImagePath),
-                    fit: BoxFit.cover,
+            child: Container(
+              width: 100.w,
+              decoration: const BoxDecoration(
+                  // image: DecorationImage(
+                  //   image: AssetImage(AppConfig.backgroundImagePath),
+                  //   fit: BoxFit.cover,
+                  // ),
                   ),
-                ),
-                child: CustomBodyChuyenXe(),
-              ),
+              child: CustomBodyChuyenXe(),
             ),
           ),
           BottomContent(),

@@ -1,3 +1,4 @@
+import 'package:Thilogi/blocs/GetBaiXe_bloc.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/blocs/dongcont_bloc.dart';
@@ -74,6 +75,9 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<TimXeBloc>(
                   create: (context) => TimXeBloc(),
+                ),
+                ChangeNotifierProvider<GetBaiXeBloc>(
+                  create: (context) => GetBaiXeBloc(),
                 ),
               ],
               child: MaterialApp(

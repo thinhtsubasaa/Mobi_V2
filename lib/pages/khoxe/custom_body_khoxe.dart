@@ -7,7 +7,6 @@ import 'package:Thilogi/models/diadiem.dart';
 import 'package:Thilogi/models/loaiphuongtien.dart';
 import 'package:Thilogi/models/phuongthucvanchuyen.dart';
 import 'package:Thilogi/models/xuatkho.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -24,9 +23,9 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
 
 import '../../config/config.dart';
 import '../../services/app_service.dart';
-import '../../utils/snackbar.dart';
 import '../../widgets/loading.dart';
 
+// ignore: use_key_in_widget_constructors
 class CustomBodyKhoXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -69,16 +68,8 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   List<LoaiPhuongTienModel>? _loaiphuongtienList;
   List<LoaiPhuongTienModel>? get loaiphuongtienList => _loaiphuongtienList;
 
-  bool _hasError = false;
-  bool get hasError => _hasError;
-
-  String? _errorCode;
-  String? get errorCode => _errorCode;
   bool _isLoading = true;
   bool get isLoading => _isLoading;
-
-  bool _success = false;
-  bool get success => _success;
 
   String? _message;
   String? get message => _message;
@@ -374,133 +365,135 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
       children: [
         CardVin(),
         const SizedBox(height: 5),
-        Center(
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _loading
-                    ? LoadingWidget(context)
-                    : Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Thông Tin Xác Nhận',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const Divider(
-                              height: 1,
-                              color: AppConfig.primaryColor,
-                            ),
-                          ],
-                        ),
-                      ),
-                Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.all(10),
-                      child: Column(
-                        children: [
-                          Row(
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _loading
+                      ? LoadingWidget(context)
+                      : Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                _data?.tenSanPham ?? "",
-                                textAlign: TextAlign.left,
+                              const Text(
+                                'Thông Tin Xác Nhận',
                                 style: TextStyle(
-                                  fontFamily: 'Coda Caption',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppConfig.primaryColor,
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
                                 ),
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: AppConfig.primaryColor,
                               ),
                             ],
                           ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                  Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Row(
                               children: [
-                                Item(
-                                  title: 'Số khung:',
-                                  value: _data?.soKhung,
-                                ),
-                                Item(
-                                  title: 'Màu:',
-                                  value: _data?.tenMau,
+                                Text(
+                                  _data?.tenSanPham ?? "",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: 'Coda Caption',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppConfig.primaryColor,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Số máy:',
-                            value: _data?.soMay,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Phương thức vận chuyển:',
-                            value: _data?.tenPhuongThucVanChuyen,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Bên vận chuyển:',
-                            value: _data?.benVanChuyen,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Biển số:',
-                            value: _data?.soXe,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Nơi đi:',
-                            value: _data?.noidi,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                          Item(
-                            title: 'Nơi đến:',
-                            value: _data?.noiden,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 100.w,
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10),
-                      RoundedLoadingButton(
-                        child: Text('Xuất kho',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              color: AppConfig.textButton,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            )),
-                        controller: _btnController,
-                        onPressed: _data?.soKhung != null
-                            ? () => _showConfirmationDialog(context)
-                            : null,
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Item(
+                                    title: 'Số khung:',
+                                    value: _data?.soKhung,
+                                  ),
+                                  Item(
+                                    title: 'Màu:',
+                                    value: _data?.tenMau,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Số máy:',
+                              value: _data?.soMay,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Phương thức vận chuyển:',
+                              value: _data?.tenPhuongThucVanChuyen,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Bên vận chuyển:',
+                              value: _data?.benVanChuyen,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Biển số:',
+                              value: _data?.soXe,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Nơi đi:',
+                              value: _data?.noidi,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Nơi đến:',
+                              value: _data?.noiden,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+          ),
+        ),
+        Container(
+          width: 100.w,
+          padding: const EdgeInsets.all(5),
+          child: Column(
+            children: [
+              RoundedLoadingButton(
+                child: Text('Xuất kho',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      color: AppConfig.textButton,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    )),
+                controller: _btnController,
+                onPressed: _data?.soKhung != null
+                    ? () => _showConfirmationDialog(context)
+                    : null,
+              ),
+            ],
           ),
         ),
       ],

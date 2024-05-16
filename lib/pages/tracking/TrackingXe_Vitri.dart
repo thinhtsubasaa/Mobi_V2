@@ -170,7 +170,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                     controller: _tabController,
                     children: [
                       CustomTrackingXeVitri(),
-                      CustomTrackingXe(),
+                      const CustomTrackingXeScreen(),
                     ],
                   ),
                 ),

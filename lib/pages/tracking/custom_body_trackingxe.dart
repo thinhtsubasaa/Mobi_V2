@@ -1,7 +1,157 @@
+import 'dart:async';
+
+import 'package:Thilogi/blocs/TrackingXe.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_datawedge/flutter_datawedge.dart';
+import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:provider/provider.dart';
+
 import 'package:sizer/sizer.dart';
 
-class CustomTrackingXe extends StatelessWidget {
+import '../../config/config.dart';
+
+class CustomTrackingXeScreen extends StatefulWidget {
+  const CustomTrackingXeScreen({Key? key}) : super(key: key);
+
+  @override
+  _CustomTrackingXeScreenState createState() => _CustomTrackingXeScreenState();
+}
+
+class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
+    with TickerProviderStateMixin, ChangeNotifier {
+  late TrackingBloc _bl;
+  late FlutterDataWedge dataWedge;
+  String barcodeScanResult = '';
+  late StreamSubscription<ScanResult> scanSubscription;
+  @override
+  void initState() {
+    super.initState();
+    _bl = Provider.of<TrackingBloc>(context, listen: false);
+
+    dataWedge = FlutterDataWedge(profileName: "Example Profile");
+    scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
+      setState(() {
+        barcodeScanResult = result.data;
+      });
+      print(barcodeScanResult);
+      // _handleBarcodeScanResult(barcodeScanResult);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Widget CardVin() {
+    return Container(
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+      height: 8.h,
+      margin: const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFF818180),
+          width: 1,
+        ),
+        color: Theme.of(context).colorScheme.onPrimary,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 20.w,
+            height: 8.h,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5),
+                bottomLeft: Radius.circular(5),
+              ),
+              color: AppConfig.primaryColor,
+            ),
+            child: Center(
+              child: Text(
+                'Số khung\n(VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFA71C20),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            color: Colors.black,
+            onPressed: () async {
+              String result = await FlutterBarcodeScanner.scanBarcode(
+                '#A71C20',
+                'Cancel',
+                false,
+                ScanMode.QR,
+              );
+              setState(() {
+                barcodeScanResult = result;
+              });
+              print(barcodeScanResult);
+              // _handleBarcodeScanResult(barcodeScanResult);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  // void _handleBarcodeScanResult(String barcodeScanResult) {
+  //   print(barcodeScanResult);
+
+  //   setState(() {
+  //     _qrData = '';
+  //     _qrDataController.text = barcodeScanResult;
+  //     _data = null;
+  //     Future.delayed(const Duration(seconds: 0), () {
+  //       _qrData = barcodeScanResult;
+  //       _qrDataController.text = barcodeScanResult;
+  //       _onScan(barcodeScanResult);
+  //     });
+  //   });
+  // }
+
+  // _onScan(value) {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   _bl.getData(context, value).then((_) {
+  //     setState(() {
+  //       _qrData = value;
+  //       if (_bl.dieuchuyen == null) {
+  //         _qrData = '';
+  //         _qrDataController.text = '';
+  //       }
+  //       _loading = false;
+  //       _data = _bl.dieuchuyen;
+  //     });
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

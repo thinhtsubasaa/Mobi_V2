@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:Thilogi/widgets/checksheet_upload_anh.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
@@ -200,7 +201,9 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       ),
                   ],
                 ),
+
                 const SizedBox(height: 30),
+
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ],
             ),

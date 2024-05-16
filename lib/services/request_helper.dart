@@ -69,8 +69,8 @@ class RequestHelper {
     await _getInfo();
     try {
       SharedPreferences sp = await SharedPreferences.getInstance();
-      http.MultipartRequest request = http.MultipartRequest("POST",
-          Uri.parse('${sp.getString('apiUrl')}/api/Upload/Multi/Image'));
+      http.MultipartRequest request = http.MultipartRequest(
+          "POST", Uri.parse('${sp.getString('apiUrl')}/api/upload'));
       request.headers.addAll(_setHeaders());
       http.MultipartFile multipartFile =
           await http.MultipartFile.fromPath('file', file.path);

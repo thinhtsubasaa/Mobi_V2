@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
-import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
-import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -68,10 +65,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     // _mb.getData(context, DonVi_Id, PhanMem_Id);
     _menuRoleFuture = _fetchMenuRoles();
-
-    // setState(() {
-
-    // });
   }
 
   Future<List<MenuRoleModel>> _fetchMenuRoles() async {
@@ -315,18 +308,6 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
         Container(
           width: 130,
           height: 150,
-          // decoration: BoxDecoration(
-          //   shape: BoxShape.circle,
-          //   boxShadow: [
-          //     BoxShadow(
-          //       offset: Offset(0, 4),
-          //       blurRadius: 4,
-          //       spreadRadius: 0,
-          //       color: Color(0x40000000),
-          //     ),
-          //   ],
-          //   color: AppConfig.primaryColor,
-          // ),
           alignment: Alignment.center,
           child: page,
         ),
