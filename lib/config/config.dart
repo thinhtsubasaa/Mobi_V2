@@ -11,6 +11,7 @@ class AppConfig {
   static const Color buttonColorMenu = Color(0xFFCCCCCC);
   static const Color textButton = Color(0xFFFFFFFF);
   static const Color textInput = Color(0xFF000000);
+  static const Color bottom = Color(0xFF808080);
 
   // Constants
   static const double boxWidth = 320;

@@ -18,17 +18,12 @@ class AccountPage extends StatelessWidget {
         children: [
           CustomCard(),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                width: 100.w,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(AppConfig.backgroundImagePath),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: CustomBodyAccount(),
+            child: Container(
+              width: 100.w,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
+              child: CustomBodyAccount(),
             ),
           ),
           BottomContent(),
@@ -64,119 +59,121 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(children: [
-        const SizedBox(height: 5),
-        Center(
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Thông Tin Cá Nhân',
-                        style: TextStyle(
-                          fontFamily: 'Comfortaa',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(children: [
+          const SizedBox(height: 5),
+          Center(
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Thông Tin Cá Nhân',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                      const Divider(height: 1, color: Color(0xFFA71C20)),
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.all(0),
-                            title: Container(
-                              width: 200,
-                              height: 200,
-                              child: Image.network(
-                                ub?.hinhAnhUrl ?? "",
-                                fit: BoxFit.contain,
+                        const Divider(height: 1, color: Color(0xFFA71C20)),
+                        const SizedBox(height: 10),
+                        Column(
+                          children: [
+                            ListTile(
+                              contentPadding: EdgeInsets.all(0),
+                              title: Container(
+                                width: 200,
+                                height: 200,
+                                child: Image.network(
+                                  ub?.hinhAnhUrl ?? "",
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
-                          ),
-                          const DividerWidget(),
-                          ListTile(
-                            contentPadding: const EdgeInsets.all(0),
-                            leading: const CircleAvatar(
-                              backgroundColor: Colors.blueAccent,
-                              radius: 18,
-                              child: Icon(
-                                Feather.user_check,
-                                size: 18,
-                                color: Colors.white,
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.blueAccent,
+                                radius: 18,
+                                child: Icon(
+                                  Feather.user_check,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.name ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
-                            title: Text(
-                              ub?.name ?? "",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.primary,
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.blueAccent,
+                                radius: 18,
+                                child: Icon(
+                                  Feather.user_plus,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.accessRole ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
-                          ),
-                          const DividerWidget(),
-                          ListTile(
-                            contentPadding: const EdgeInsets.all(0),
-                            leading: const CircleAvatar(
-                              backgroundColor: Colors.blueAccent,
-                              radius: 18,
-                              child: Icon(
-                                Feather.user_plus,
-                                size: 18,
-                                color: Colors.white,
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.indigoAccent[100],
+                                radius: 18,
+                                child: const Icon(
+                                  Feather.mail,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.email ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
                             ),
-                            title: Text(
-                              ub?.accessRole ?? "",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                          const DividerWidget(),
-                          ListTile(
-                            contentPadding: const EdgeInsets.all(0),
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.indigoAccent[100],
-                              radius: 18,
-                              child: const Icon(
-                                Feather.mail,
-                                size: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            title: Text(
-                              ub?.email ?? "",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ]),
+        ]),
+      ),
     );
   }
 }
@@ -198,8 +195,10 @@ class BottomContent extends StatelessWidget {
           ],
         ),
       ),
-      child: customTitle(
-        'KIỂM TRA - THÔNG TIN CÁ NHÂN',
+      child: Center(
+        child: customTitle(
+          'KIỂM TRA - THÔNG TIN CÁ NHÂN',
+        ),
       ),
     );
   }

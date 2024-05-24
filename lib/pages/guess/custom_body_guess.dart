@@ -41,12 +41,10 @@ class MainButton extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  offset:
-                      Offset(0, 4), // Độ dịch chuyển theo chiều ngang và dọc
-                  blurRadius: 4, // Độ mờ của bóng
-                  spreadRadius: 0, // Phạm vi của bóng
-                  color:
-                      Color(0x40000000), // Màu của bóng (0x40 là giá trị alpha)
+                  offset: Offset(0, 4),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                  color: Color(0x40000000),
                 ),
               ],
               color: Color(0xFF428FCA),
@@ -75,12 +73,10 @@ class MainButton extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  offset:
-                      Offset(0, 4), // Độ dịch chuyển theo chiều ngang và dọc
-                  blurRadius: 4, // Độ mờ của bóng
-                  spreadRadius: 0, // Phạm vi của bóng
-                  color:
-                      Color(0x40000000), // Màu của bóng (0x40 là giá trị alpha)
+                  offset: Offset(0, 4),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                  color: Color(0x40000000),
                 ),
               ],
               color: Color(0xFF428FCA),

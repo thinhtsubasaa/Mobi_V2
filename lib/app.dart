@@ -1,10 +1,8 @@
-import 'package:Thilogi/blocs/GetBaiXe_bloc.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/dieuchuyen_bloc.dart';
 import 'package:Thilogi/blocs/dongcont_bloc.dart';
 import 'package:Thilogi/blocs/dongseal_bloc.dart';
 import 'package:Thilogi/blocs/giaoxe_bloc.dart';
-import 'package:Thilogi/blocs/image_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
@@ -20,6 +18,8 @@ import 'package:Thilogi/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+
+import 'blocs/TrackingXe.dart';
 
 class MyApp extends StatelessWidget {
   @override
@@ -49,9 +49,6 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider<KhoXeBloc>(
                   create: (context) => KhoXeBloc(),
                 ),
-                ChangeNotifierProvider<ImageBloc>(
-                  create: (context) => ImageBloc(),
-                ),
                 ChangeNotifierProvider<XuatKhoBloc>(
                   create: (context) => XuatKhoBloc(),
                 ),
@@ -76,12 +73,13 @@ class MyApp extends StatelessWidget {
                 ChangeNotifierProvider<TimXeBloc>(
                   create: (context) => TimXeBloc(),
                 ),
-                ChangeNotifierProvider<GetBaiXeBloc>(
-                  create: (context) => GetBaiXeBloc(),
+                ChangeNotifierProvider<TrackingBloc>(
+                  create: (context) => TrackingBloc(),
                 ),
               ],
               child: MaterialApp(
                 debugShowCheckedModeBanner: false,
+
                 title: 'THILOGI ',
                 theme: ThemeModel().lightTheme,
                 darkTheme: ThemeModel().darkTheme,

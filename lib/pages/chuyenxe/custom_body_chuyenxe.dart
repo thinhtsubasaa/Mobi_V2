@@ -55,7 +55,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   final _qrDataController = TextEditingController();
   DieuChuyenModel? _data;
   bool _loading = false;
-  String barcodeScanResult = '';
+  String? barcodeScanResult;
   List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
   List<BaiXeModel>? _baixeList;
@@ -91,7 +91,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
-
+    getData();
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -99,7 +99,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
   }
 
@@ -136,6 +136,12 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         setState(() {
           _loading = false;
         });
+        setState(() {
+          // Reset ViTri list and selected ViTriId
+          _baixeList = [];
+          KhoXeId = null;
+          BaiXeId = null;
+        });
       }
       notifyListeners();
     } catch (e) {
@@ -157,12 +163,15 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             .map((item) => BaiXeModel.fromJson(item))
             .toList();
         // Gọi setState để cập nhật giao diện
-        // setState(() {
-        //   _loading = true;
-        // });
+
+        setState(() {
+          // Reset ViTri list and selected ViTriId
+          _vitriList = [];
+          BaiXeId = null;
+          ViTriId = null;
+        });
       }
     } catch (e) {
-      // Xử lý lỗi khi gọi API
       _hasError = true;
       _errorCode = e.toString();
     }
@@ -173,7 +182,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       final http.Response response = await requestHelper
           .getData('DM_WMS_Kho_ViTri/Mobi?baiXe_Id=$BaiXeId');
       if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body)['result'];
+        var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         // Xử lý dữ liệu và cập nhật UI tương ứng với danh sách bãi xe đã lấy được
         _vitriList = (decodedData as List)
@@ -183,9 +192,12 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         // setState(() {
         //   _loading = true;
         // });
+        setState(() {
+          // Reset selected ViTriId
+          ViTriId = null;
+        });
       }
     } catch (e) {
-      // Xử lý lỗi khi gọi API
       _hasError = true;
       _errorCode = e.toString();
     }
@@ -281,7 +293,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                barcodeScanResult ?? '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
@@ -291,7 +303,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -306,7 +317,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? " ");
             },
           ),
         ],
@@ -339,6 +350,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         if (_bl.dieuchuyen == null) {
           _qrData = '';
           _qrDataController.text = '';
+          barcodeScanResult = null;
         }
         _loading = false;
         _data = _bl.dieuchuyen;
@@ -401,6 +413,10 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
+              KhoXeId = null;
+              BaiXeId = null;
+              ViTriId = null;
+              barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
@@ -442,7 +458,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
 
   @override
   Widget build(BuildContext context) {
-    getData();
     return Container(
         child: Column(
       children: [
@@ -478,54 +493,67 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               Column(
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.all(10),
+                                    margin:
+                                        EdgeInsets.only(top: 10, bottom: 10),
                                     child: Column(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                              constraints: BoxConstraints(
-                                                  maxWidth:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.87),
-                                              child: SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.horizontal,
+                                        Container(
+                                          height: 7.h,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
                                                 child: Text(
-                                                  _data?.tenSanPham ?? "",
-                                                  textAlign: TextAlign.left,
+                                                  'Loại xe:',
                                                   style: TextStyle(
-                                                    fontFamily: 'Coda Caption',
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w800,
-                                                    color:
-                                                        AppConfig.primaryColor,
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color(0xFF818180),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
+                                              Container(
+                                                constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.70),
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Text(
+                                                    _data?.tenSanPham ?? '',
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      fontFamily: 'Comfortaa',
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      color: AppConfig
+                                                          .primaryColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
-                                        Container(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Item(
-                                                title: 'Số khung:',
-                                                value: _data?.soKhung,
-                                              ),
-                                              Item(
-                                                title: 'Màu:',
-                                                value: _data?.tenMau,
-                                              ),
-                                            ],
-                                          ),
+                                        Item(
+                                          title: 'Số khung:',
+                                          value: _data?.soKhung,
+                                        ),
+                                        const Divider(
+                                            height: 1,
+                                            color: Color(0xFFCCCCCC)),
+                                        Item(
+                                          title: 'Màu:',
+                                          value: _data?.tenMau,
                                         ),
                                         const Divider(
                                             height: 1,
@@ -665,6 +693,22 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                           "object : ${KhoXeId}");
                                                     }
                                                   },
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
                                                   dropdownSearchData:
                                                       DropdownSearchData(
                                                     searchController:
@@ -844,6 +888,22 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                           "object : ${BaiXeId}");
                                                     }
                                                   },
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
                                                   dropdownSearchData:
                                                       DropdownSearchData(
                                                     searchController:
@@ -1008,6 +1068,22 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     print(
                                                         "object : ${ViTriId}");
                                                   },
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
                                                   dropdownSearchData:
                                                       DropdownSearchData(
                                                     searchController:
@@ -1136,34 +1212,32 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 8.h,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF818180),
-                ),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
               ),
-              SizedBox(height: 5),
-              Text(
-                value ?? "",
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: AppConfig.primaryColor,
-                ),
+            ),
+            SizedBox(width: 5),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

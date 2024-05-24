@@ -6,12 +6,15 @@ import 'package:Thilogi/models/scan.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
+import '../models/getdata.dart';
+
 class ScanBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   ScanModel? _scan;
   ScanModel? get scan => _scan;
-
+  DataModel? _data;
+  DataModel? get data => _data;
   bool _hasError = false;
   bool get hasError => _hasError;
 
@@ -31,14 +34,18 @@ class ScanBloc extends ChangeNotifier {
   };
   Future<void> getData(BuildContext context, String qrcode) async {
     _scan = null;
+    _data = null;
     _isLoading = true;
     try {
+      // final http.Response response = await requestHelper
+      //     .getData('GetDataXeThaPham/GetDuLieuXe?SoKhung=$qrcode');
+
       final response = await http.get(
         Uri.parse(
             "https://qtsxautoapi.thacochulai.vn/api/KhoThanhPham/TraCuuXeThanhPham_Thilogi1?SoKhung=$qrcode"),
         headers: headers,
       );
-
+      print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
@@ -68,29 +75,73 @@ class ScanBloc extends ChangeNotifier {
           );
         }
       } else {
-        String errorMessage = response.body.replaceAll('"', '');
-        notifyListeners();
-        if (errorMessage.isEmpty) {
-          errorMessage = "Số khung xe không chính xác hoặc đã nhận xe";
-        }
-        QuickAlert.show(
-          // ignore: use_build_context_synchronously
-          context: context,
-          type: QuickAlertType.info,
-          title: '',
-          text: errorMessage,
-          confirmBtnText: 'Đồng ý',
-        );
-        _scan = null;
-        _isLoading = false;
+        await _get(context, qrcode);
       }
 
+      _isLoading = false;
       notifyListeners();
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
       notifyListeners();
     }
+  }
+
+  Future<void> _get(BuildContext context, String qrcode) async {
+    try {
+      final http.Response response = await requestHelper
+          .getData('GetDataXeThaPham/GetDuLieuXe?keyword=$qrcode');
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data2: ${decodedData}");
+        if (decodedData != null) {
+          _data = DataModel(
+            id: decodedData['id'],
+            soKhung: decodedData['soKhung'],
+            maSanPham: decodedData['maSanPham'],
+            tenSanPham: decodedData['tenSanPham'],
+
+            // soMay: decodedData['soMay'],
+            maMau: decodedData['maMau'],
+            tenMau: decodedData['tenMau'],
+            //   tenKho: decodedData['tenKho'],
+            //   maViTri: decodedData['maViTri'],
+            //   tenViTri: decodedData['tenViTri'],
+            //   mauSon: decodedData['mauSon'],
+            //   ngayXuatKhoView: decodedData['ngayXuatKhoView'],
+            //   tenTaiXe: decodedData['tenTaiXe'],
+            //   ghiChu: decodedData['ghiChu'],
+            //   Kho_Id: decodedData['Kho_Id'],
+            //   BaiXe_Id: decodedData['BaiXe_Id'],
+            //   viTri_Id: decodedData['viTri_Id'],
+            //   phuKien: (decodedData['phuKien'] as List<dynamic>)
+            //       .map((item) => HuKien.fromJson(item))
+            //       .toList(),
+          );
+        } else {
+          _showErrorDialog(
+              context, "Số khung xe không chính xác hoặc đã nhận xe");
+        }
+      } else {
+        _showErrorDialog(context, response.body.replaceAll('"', ''));
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.info,
+      title: '',
+      text: errorMessage,
+      confirmBtnText: 'Đồng ý',
+    );
+    _scan = null;
+    _isLoading = false;
   }
 
   Future clearData() async {

@@ -51,7 +51,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   final _qrDataController = TextEditingController();
   bool _loading = false;
   KhoThanhPhamModel? _data;
-  String barcodeScanResult = '';
+  String? barcodeScanResult = '';
   late NhapBaiBloc _bl;
 
   List<KhoXeModel>? _khoxeList;
@@ -85,6 +85,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<NhapBaiBloc>(context, listen: false);
+    getData();
+    getBaiXeList(KhoXeId ?? "");
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -92,7 +94,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
   }
 
@@ -114,25 +116,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     }
   }
 
-  void getLocation() async {
-    await Geolocator.checkPermission();
-    await Geolocator.requestPermission();
-
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low);
-    print("ss");
-    print(position);
-  }
-
   void getData() async {
     try {
       final http.Response response =
           await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-
-        // var data = decodedData["data"];
-        // var info = data["info"];
 
         _khoxeList = (decodedData as List)
             .map((item) => KhoXeModel.fromJson(item))
@@ -158,10 +147,13 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         _baixeList = (decodedData as List)
             .map((item) => BaiXeModel.fromJson(item))
             .toList();
-        // Gọi setState để cập nhật giao diện
-        // setState(() {
-        //   _loading = true;
-        // });
+
+        setState(() {
+          // Reset ViTri list and selected ViTriId
+          _vitriList = [];
+          BaiXeId = null;
+          ViTriId = null;
+        });
       }
     } catch (e) {
       _hasError = true;
@@ -174,16 +166,17 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       final http.Response response = await requestHelper
           .getData('DM_WMS_Kho_ViTri/Mobi?baiXe_Id=$BaiXeId');
       if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body)['result'];
+        var decodedData = jsonDecode(response.body);
         _vitriList = (decodedData as List)
             .map((item) => ViTriModel.fromJson(item))
             .toList();
-        // setState(() {
-        //   _loading = true;
-        // });
+
+        setState(() {
+          // Reset selected ViTriId
+          ViTriId = null;
+        });
       }
     } catch (e) {
-      // Xử lý lỗi khi gọi API
       _hasError = true;
       _errorCode = e.toString();
     }
@@ -242,7 +235,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                barcodeScanResult ?? "",
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
@@ -266,7 +259,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
             },
           ),
         ],
@@ -343,6 +336,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       setState(() {
         _qrData = value;
         if (_bl.baixe == null) {
+          barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
         }
@@ -351,6 +345,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         _data = _bl.baixe;
       });
     });
+  }
+
+  String checkSlash() {
+    return (_data != null) ? '/' : '';
   }
 
   _onSave() {
@@ -392,6 +390,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               .then((_) {
             setState(() {
               _data = null;
+              barcodeScanResult = null;
+              KhoXeId = null;
+              BaiXeId = null;
+              ViTriId = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
@@ -433,9 +435,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    getBaiXeList(KhoXeId ?? "");
-
     return Container(
         child: Column(
       children: [
@@ -572,6 +571,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                           "object : ${BaiXeId}");
                                                     }
                                                   },
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
                                                   dropdownSearchData:
                                                       DropdownSearchData(
                                                     searchController:
@@ -736,6 +751,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                     print(
                                                         "object : ${ViTriId}");
                                                   },
+                                                  buttonStyleData:
+                                                      const ButtonStyleData(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 16),
+                                                    height: 40,
+                                                    width: 200,
+                                                  ),
+                                                  dropdownStyleData:
+                                                      const DropdownStyleData(
+                                                    maxHeight: 200,
+                                                  ),
+                                                  menuItemStyleData:
+                                                      const MenuItemStyleData(
+                                                    height: 40,
+                                                  ),
                                                   dropdownSearchData:
                                                       DropdownSearchData(
                                                     searchController:
@@ -824,43 +855,54 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     margin: EdgeInsets.all(10),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.87),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                        Container(
+                          height: 7.h,
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
                                 child: Text(
-                                  _data?.tenSanPham ?? "",
-                                  textAlign: TextAlign.left,
+                                  'Loại xe:',
                                   style: TextStyle(
-                                    fontFamily: 'Coda Caption',
+                                    fontFamily: 'Comfortaa',
                                     fontSize: 15,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFFA71C20),
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF818180),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Item(
-                                title: 'Số khung:',
-                                value: _data?.soKhung,
-                              ),
-                              Item(
-                                title: 'Màu:',
-                                value: _data?.tenMau,
+                              Container(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        MediaQuery.of(context).size.width *
+                                            0.70),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    _data?.tenSanPham ?? '',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: 'Coda Caption',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppConfig.primaryColor,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        Item(
+                          title: 'Số khung:',
+                          value: _data?.soKhung,
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        Item(
+                          title: 'Màu:',
+                          value:
+                              "${_data?.tenMau ?? ""}${checkSlash()}${_data?.maMau ?? ""}",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Item(
@@ -878,6 +920,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         ),
         Container(
           padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -885,7 +930,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 child: Text('Nhập kho',
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
-                      color: AppConfig.textButton,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     )),
@@ -915,34 +960,32 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 8.h,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF818180),
-                ),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
               ),
-              SizedBox(height: 5),
-              Text(
-                value ?? "",
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: AppConfig.primaryColor,
-                ),
+            ),
+            SizedBox(width: 5),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

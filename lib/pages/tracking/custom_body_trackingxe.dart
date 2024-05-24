@@ -1,15 +1,82 @@
 import 'dart:async';
 
 import 'package:Thilogi/blocs/TrackingXe.dart';
+import 'package:Thilogi/models/lsnhapbai.dart';
+import 'package:Thilogi/models/lsxuatxe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sizer/sizer.dart';
 
 import '../../config/config.dart';
+import '../../models/lsxequa.dart';
+
+class BodyTrackingXe extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        width: 100.w,
+        alignment: Alignment.bottomCenter,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height < 600
+              ? MediaQuery.of(context).size.height * 0.9
+              : MediaQuery.of(context).size.height * 0.6,
+          // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+          border: Border.all(
+            color: Color(0xFFCCCCCC),
+            width: 1,
+          ),
+          color: Colors.white,
+        ),
+        child: Stack(
+          children: [
+            // Phần Text 1
+            Positioned(
+              left: 0, // Adjust left position as needed
+              top: 0, // Adjust top position as needed
+              child: Container(
+                width: 15.w,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  color: Color(0xFFF6C6C7),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                  child: Image.asset(
+                    'assets/images/road.png',
+                    height: MediaQuery.of(context).size.height < 600
+                        ? MediaQuery.of(context).size.height * 0.9
+                        : MediaQuery.of(context).size.height * 0.6,
+                  ),
+                ),
+              ),
+            ),
+            // Your BodyTrackingXe widget goes here
+            Positioned(
+              left: 0, // Adjust left position as needed
+              top: 0, // Adjust top position as needed
+              child: CustomTrackingXeScreen(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class CustomTrackingXeScreen extends StatefulWidget {
   const CustomTrackingXeScreen({Key? key}) : super(key: key);
@@ -20,9 +87,20 @@ class CustomTrackingXeScreen extends StatefulWidget {
 
 class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
     with TickerProviderStateMixin, ChangeNotifier {
+// ignore: use_key_in_widget_constructors
   late TrackingBloc _bl;
   late FlutterDataWedge dataWedge;
+
   String barcodeScanResult = '';
+  String _qrData = '';
+  final _qrDataController = TextEditingController();
+  bool _loading = false;
+  List<LSXeQuaModel>? _data;
+  List<LSXeQuaModel>? get data => _data;
+  List<LSNhapBaiModel>? _data1;
+  List<LSNhapBaiModel>? get data1 => _data1;
+  List<LSXuatXeModel>? _data2;
+  List<LSXuatXeModel>? get data2 => _data2;
   late StreamSubscription<ScanResult> scanSubscription;
   @override
   void initState() {
@@ -35,7 +113,7 @@ class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      // _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult);
     });
   }
 
@@ -113,109 +191,60 @@ class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              // _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult);
             },
           ),
         ],
       ),
     );
   }
-  // void _handleBarcodeScanResult(String barcodeScanResult) {
-  //   print(barcodeScanResult);
 
-  //   setState(() {
-  //     _qrData = '';
-  //     _qrDataController.text = barcodeScanResult;
-  //     _data = null;
-  //     Future.delayed(const Duration(seconds: 0), () {
-  //       _qrData = barcodeScanResult;
-  //       _qrDataController.text = barcodeScanResult;
-  //       _onScan(barcodeScanResult);
-  //     });
-  //   });
-  // }
+  void _handleBarcodeScanResult(String barcodeScanResult) {
+    print('ab:$barcodeScanResult');
 
-  // _onScan(value) {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   _bl.getData(context, value).then((_) {
-  //     setState(() {
-  //       _qrData = value;
-  //       if (_bl.dieuchuyen == null) {
-  //         _qrData = '';
-  //         _qrDataController.text = '';
-  //       }
-  //       _loading = false;
-  //       _data = _bl.dieuchuyen;
-  //     });
-  //   });
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        width: 100.w,
-        alignment: Alignment.bottomCenter,
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height < 600
-              ? MediaQuery.of(context).size.height * 0.9
-              : MediaQuery.of(context).size.height * 0.6,
-          // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(10),
-            bottomRight: Radius.circular(10),
-          ),
-          border: Border.all(
-            color: Color(0xFFCCCCCC),
-            width: 1,
-          ),
-          color: Colors.white,
-        ),
-        child: Stack(
-          children: [
-            // Phần Text 1
-            Positioned(
-              left: 0, // Adjust left position as needed
-              top: 0, // Adjust top position as needed
-              child: Container(
-                width: 15.w,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                  color: Color(0xFFF6C6C7),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                  child: Image.asset(
-                    'assets/images/road.png',
-                    height: MediaQuery.of(context).size.height < 600
-                        ? MediaQuery.of(context).size.height * 0.9
-                        : MediaQuery.of(context).size.height * 0.6,
-                  ),
-                ),
-              ),
-            ),
-            // Your BodyTrackingXe widget goes here
-            Positioned(
-              left: 0, // Adjust left position as needed
-              top: 0, // Adjust top position as needed
-              child: BodyTrackingXe(),
-            ),
-          ],
-        ),
-      ),
-    );
+    setState(() {
+      _qrData = '';
+      _qrDataController.text = barcodeScanResult;
+      _data = null;
+      _data1 = null;
+      _data2 = null;
+      Future.delayed(const Duration(seconds: 0), () {
+        _qrData = barcodeScanResult;
+        _qrDataController.text = barcodeScanResult;
+        _onScan(barcodeScanResult);
+      });
+    });
   }
-}
 
-// ignore: use_key_in_widget_constructors
-class BodyTrackingXe extends StatelessWidget {
+  String formatDateTime(String dateTimeString) {
+    // Parse chuỗi ngày tháng thành đối tượng DateTime
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    // Định dạng lại đối tượng DateTime thành chuỗi với định dạng mong muốn
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm:ss').format(dateTime);
+    return formattedDate;
+  }
+
+  _onScan(value) {
+    setState(() {
+      _loading = true;
+    });
+    _bl.getTrackingXe(context, value).then((_) {
+      setState(() {
+        _qrData = value;
+        if (_bl.lsxequa == null &&
+            _bl.lsnhapbai == null &&
+            _bl.lsxuatxe == null) {
+          _qrData = '';
+          _qrDataController.text = '';
+        } else {
+          _data = _bl.lsxequa;
+          _data1 = _bl.lsnhapbai;
+          _data2 = _bl.lsxuatxe;
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -225,37 +254,52 @@ class BodyTrackingXe extends StatelessWidget {
           SizedBox(
             height: 20,
           ),
-          buildRowItem(
-            customImage: CustomImage1(),
-            textLine1: '15/01/2023 - GiaoXe - SRAnLac - Số\n BB Giao xe',
-            textLine2: '',
-          ),
-          buildDivider(),
-          buildRowItem(
-            customImage: CustomImage2(),
-            textLine1: '15/01/2023 - VCNB - SRAnLac - đến',
-            textLine2: '15/01/2023 - VCNB - HCM - đi',
-          ),
-          buildDivider(),
-          buildRowItem(
-            customImage: CustomImage3(),
-            textLine1: '11/01/2023 - HCM - Bãi xe ...',
-            textLine2:
-                '07/01/2023 - CLA - Bãi Xuất - Cont\n 1235123AGGS123 - seal F1242003',
-          ),
-          buildDivider(),
-          buildRowItem(
-            customImage: CustomImage4(),
-            textLine1: '03/01/2023 - Kho Chu Lai - REMIND ',
-            textLine2: '02/01/2023 - Kho Chu Lai - FAILED',
-          ),
-          buildDivider(),
-          buildRowItem(
-            customImage: CustomImage5(),
-            textLine1: '03/01/2023 - NM KIA',
-            textLine2: '01/01/2023 - NM KIA',
-          ),
-          buildDivider(),
+          if (_data != null)
+            Column(
+              children: _data!.map((lsxeQuaModel) {
+                return buildRowItem(
+                  customImage: CustomImage1(),
+                  textLine: formatDateTime(lsxeQuaModel.tuNgay ?? "") +
+                      ' - ' +
+                      (lsxeQuaModel.noiNhan ?? "") +
+                      ': ' +
+                      (lsxeQuaModel.nguoiNhan ?? ""),
+                );
+              }).toList(),
+            ),
+          // buildDivider(),
+          if (_data1 != null)
+            Column(
+              children: _data1!.map((item) {
+                return buildRowItem(
+                  customImage: CustomImage2(),
+                  textLine: (item.ngay != null
+                          ? formatDateTime(item.ngay ?? "")
+                          : "") +
+                      '-' +
+                      (item.thongTinChiTiet ?? ""),
+                );
+              }).toList(),
+            ),
+
+          // buildDivider(),
+          if (_data2 != null)
+            Column(
+              children: _data2!.map((item) {
+                return buildRowItem(
+                  customImage: CustomImage3(),
+                  textLine: (item.ngay != null
+                          ? formatDateTime(item.ngay ?? "")
+                          : "") +
+                      '-' +
+                      (item.thongTinChiTiet ?? "") +
+                      ': ' +
+                      (item.thongtinvanchuyen ?? ""),
+                );
+              }).toList(),
+            ),
+          if (_data == null && _data1 == null && _data2 == null)
+            Text('Không có dữ liệu'),
         ],
       ),
     );
@@ -264,28 +308,20 @@ class BodyTrackingXe extends StatelessWidget {
 
 class buildRowItem extends StatelessWidget {
   final Widget customImage;
-  final String textLine1;
-  final String textLine2;
+  final String textLine;
 
   const buildRowItem({
     required this.customImage,
-    required this.textLine1,
-    required this.textLine2,
+    required this.textLine,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Widget buildRowItem({
-    //   required Widget customImage,
-    //   required String textLine1,
-    //   required String textLine2,
-    // }) {
-
     return Container(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width < 330
             ? MediaQuery.of(context).size.width * 0.9
-            : MediaQuery.of(context).size.width * 0.6,
+            : MediaQuery.of(context).size.width * 0.9,
       ),
       height: 80, // Set a fixed height as needed
       child: SingleChildScrollView(
@@ -306,7 +342,7 @@ class buildRowItem extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: textLine1 + '\n',
+                    text: textLine,
                     style: TextStyle(
                       fontFamily: 'Comfortaa',
                       fontSize: 13,
@@ -314,25 +350,6 @@ class buildRowItem extends StatelessWidget {
                       color: Color(0xFF0469B9),
                     ),
                   ),
-                  if (textLine2.isNotEmpty) ...[
-                    TextSpan(
-                      text: '• ', // Dot character
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF818180),
-                      ),
-                    ),
-                    TextSpan(
-                      text: textLine2,
-                      style: TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF818180),
-                      ),
-                    ),
-                  ],
                 ],
               ),
             ),

@@ -41,12 +41,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late MenuRoleBloc _mb;
   static RequestHelper requestHelper = RequestHelper();
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
-  bool _hasError = false;
-  bool get hasError => _hasError;
-  String? _errorCode;
-  String? get errorCode => _errorCode;
+
   String? _message;
   String? get message => _message;
 
@@ -57,7 +52,6 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   void initState() {
     super.initState();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
-    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     _menuRoleFuture = _fetchMenuRoles();
   }
 
@@ -114,109 +108,100 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   Widget _buildContent(List<MenuRoleModel> menuRoles) {
     return _loading
         ? LoadingWidget(context)
-        : Container(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            margin: const EdgeInsets.only(top: 25, bottom: 25),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
-                      CustomButton(
-                        'NHẬP BÃI XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_NhapBai.png',
-                            ),
-                          ],
-                        ),
-                        () {
+        : SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              margin: const EdgeInsets.only(top: 25, bottom: 25),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
+                        CustomButton(
+                            'NHẬP BÃI XE',
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/Button_QLBaiXe_NhapBai.png',
+                                ),
+                              ],
+                            ), () {
                           _handleButtonTap(BaiXePage());
-                        },
-                      ),
-                    const SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
-                      CustomButton(
-                        'ĐIỀU CHUYỂN XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_ChuyenBai.png',
-                            ),
-                          ],
-                        ),
-                        () {
+                        }),
+                      const SizedBox(width: 10),
+                      if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
+                        CustomButton(
+                            'ĐIỀU CHUYỂN XE',
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/Button_QLBaiXe_ChuyenBai.png',
+                                ),
+                              ],
+                            ), () {
                           _handleButtonTap(ChuyenXePage());
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // if (userHasPermission(menuRoles, 'tim-xe-mobi'))
-                    CustomButton(
-                      'TÌM XE',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
-                          ),
-                        ],
-                      ),
-                      () {
+                        }),
+                      SizedBox(width: 10),
+                      CustomButton(
+                          'TÌM XE',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                              ),
+                            ],
+                          ), () {
                         _handleButtonTap(TimXePage());
-                      },
-                    ),
-                    SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'dong-cont-mobi'))
-                      CustomButton(
-                        'ĐÓNG CONT',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_DongCont.png',
-                            ),
-                          ],
+                      }),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 20),
+                      if (userHasPermission(menuRoles, 'dong-cont-mobi'))
+                        CustomButton(
+                          'ĐÓNG CONT',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe_DongCont.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(XuatCongXePage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(XuatCongXePage());
-                        },
-                      ),
-                  ],
-                ),
-                SizedBox(width: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'dong-seal-mobi'))
-                      CustomButton(
-                        'ĐÓNG SEAL',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_DongSeal.png',
-                            ),
-                          ],
+                      SizedBox(width: 20),
+                      if (userHasPermission(menuRoles, 'dong-seal-mobi'))
+                        CustomButton(
+                          'ĐÓNG SEAL',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe_DongSeal.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(DongSealPage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(DongSealPage());
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 30),
+                    ],
+                  ),
 
-                // PageIndicator(currentPage: currentPage, pageCount: pageCount),
-              ],
+                  const SizedBox(height: 30),
+                  // PageIndicator(currentPage: currentPage, pageCount: pageCount),
+                ],
+              ),
             ),
           );
   }
@@ -236,27 +221,25 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
 
 Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
-    onTap: onTap,
-    child: Column(
-      children: [
-        Container(
-          width: 130,
-          height: 150,
-          alignment: Alignment.center,
-          child: page,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          buttonText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-            color: AppConfig.titleColor,
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 25.w,
+            height: 20.h,
+            alignment: Alignment.center,
+            child: page,
           ),
-        ),
-      ],
-    ),
-  );
+          Text(
+            buttonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppConfig.titleColor,
+            ),
+          ),
+        ],
+      ));
 }

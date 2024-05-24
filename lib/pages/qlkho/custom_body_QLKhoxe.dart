@@ -34,7 +34,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     with TickerProviderStateMixin, ChangeNotifier {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
   String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
@@ -61,9 +61,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   @override
   void initState() {
     super.initState();
-    // getData(context, DonVi_Id, PhanMem_Id);
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
-    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     _menuRoleFuture = _fetchMenuRoles();
   }
 
@@ -153,136 +151,92 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
 
   @override
   Widget _buildContent(List<MenuRoleModel> menuRoles) {
-    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _loading
         ? LoadingWidget(context)
-        : Container(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            margin: const EdgeInsets.only(top: 30, bottom: 30),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
-                      CustomButton(
-                        'KIỂM TRA NHẬN XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_NhanXe_3b.png',
-                            ),
-                          ],
+        : SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              margin: const EdgeInsets.only(top: 30, bottom: 30),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
+                        CustomButton(
+                          'KIỂM TRA NHẬN XE',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_NhanXe_3b.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(NhanXePage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(NhanXePage());
-                        },
-                      ),
-                    const SizedBox(width: 20),
-                    if (userHasPermission(menuRoles, 'quan-ly-bai-xe-mobi'))
-                      CustomButton(
-                        'QUẢN LÝ BÃI XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe.png',
-                            ),
-                          ],
+                      const SizedBox(width: 20),
+                      if (userHasPermission(menuRoles, 'quan-ly-bai-xe-mobi'))
+                        CustomButton(
+                          'QUẢN LÝ BÃI XE',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(QLBaiXePage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(QLBaiXePage());
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'giao-xe-mobi'))
-                      CustomButton(
-                        'VẬN CHUYỂN\nGIAO XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_VC_GX.png',
-                            ),
-                          ],
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (userHasPermission(menuRoles, 'giao-xe-mobi'))
+                        CustomButton(
+                          'VẬN CHUYỂN\nGIAO XE',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_VC_GX.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(VanChuyenPage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(VanChuyenPage());
-                        },
-                      ),
-                    SizedBox(width: 20),
-                    if (userHasPermission(
-                        menuRoles, 'tracking-xe-thanh-pham-mobi'))
-                      // Column(
-                      //   children: [
-                      //     Container(
-                      //       width: 130,
-                      //       height: 170,
-                      //       // decoration: const BoxDecoration(
-                      //       //   shape: BoxShape.circle,
-                      //       //   boxShadow: [
-                      //       //     BoxShadow(
-                      //       //       offset: Offset(0, 4),
-                      //       //       blurRadius: 4,
-                      //       //       spreadRadius: 0,
-                      //       //       color: Color(0x40000000),
-                      //       //     ),
-                      //       //   ],
-                      //       //   color: AppConfig.primaryColor,
-                      //       // ),
-                      //       alignment: Alignment.center,
-                      //       child: IconButton(
-                      //         onPressed: () {
-                      //           _handleButtonTap(TrackingXeVitriPage());
-                      //         },
-                      //         icon: Stack(
-                      //           alignment: Alignment.center,
-                      //           children: [
-                      //             Image.asset(
-                      //               'assets/images/Button_Tracking.png',
-                      //               width: 130,
-                      //               height: 170,
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     const Text(
-                      //       'TRACKING XE\nTHÀNH PHẨM',
-                      //       style: TextStyle(
-                      //         fontFamily: 'Roboto',
-                      //         fontSize: 15,
-                      //         fontWeight: FontWeight.w800,
-                      //         color: AppConfig.titleColor,
-                      //       ),
-                      //     )
-                      //   ],
-                      // ),
-                      CustomButton(
-                        'TRACKING XE\nTHÀNH PHẨM',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_Tracking.png',
-                            ),
-                          ],
+                      SizedBox(width: 20),
+                      if (userHasPermission(
+                          menuRoles, 'tracking-xe-thanh-pham-mobi'))
+                        CustomButton(
+                          'TRACKING XE\nTHÀNH PHẨM',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_Tracking.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(TrackingXeVitriPage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(TrackingXeVitriPage());
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                // PageIndicator(currentPage: currentPage, pageCount: pageCount),
-              ],
+                    ],
+                  ),
+
+                  // PageIndicator(currentPage: currentPage, pageCount: pageCount),
+                ],
+              ),
             ),
           );
   }
@@ -303,26 +257,27 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
 Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
-    child: Column(
-      children: [
-        Container(
-          width: 130,
-          height: 150,
-          alignment: Alignment.center,
-          child: page,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          buttonText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-            color: AppConfig.titleColor,
+    child: Container(
+      width: 40.w,
+      height: 35.h,
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: page,
           ),
-        ),
-      ],
+          Text(
+            buttonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppConfig.titleColor,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

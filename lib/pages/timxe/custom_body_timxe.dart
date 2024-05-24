@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -36,10 +38,17 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
 
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
+  Completer<GoogleMapController> _googleMapController = Completer();
+  CameraPosition? _cameraPosition;
+  Location? _location;
+  LocationData? _currentLocation;
+  Set<Marker> _markers = {};
+  MapType _currentMapType = MapType.normal;
 
   @override
   void initState() {
     super.initState();
+    // _init();
     _bl = Provider.of<TimXeBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -58,20 +67,162 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     super.dispose();
   }
 
+  void _toggleMapType() {
+    setState(() {
+      if (_currentMapType == MapType.normal) {
+        _currentMapType = MapType.satellite;
+      } else {
+        _currentMapType = MapType.normal;
+      }
+    });
+  }
+
+  // _init() async {
+  //   _location = Location();
+  //   _cameraPosition = CameraPosition(
+  //       target: LatLng(
+  //         double.parse(_data?.toaDo?.split(',')[0] , _data?.toaDo?.split(',')[1]) ), // this is just the example lat and lng for initializing
+  //       zoom: 15);
+  //   _initLocation();
+  //   // _addMarker(LatLng(0, 0)); // Add initial marker
+  // }
+  // _init() async {
+  //   _location = Location();
+  //   // Provide default values if _data or _data?.toaDo is null
+  //   String coordinates = _data?.toaDo ?? "0,0";
+  //   List<String> latLng = coordinates.split(',');
+
+  //   // Ensure the values are non-null and parse them
+  //   double latitude = double.parse(latLng[0]);
+  //   double longitude = double.parse(latLng[1]);
+
+  //   _cameraPosition = CameraPosition(
+  //     target: LatLng(latitude, longitude),
+  //     zoom: 15,
+  //   );
+
+  //   _initLocation();
+  //   // _addMarker(LatLng(0, 0)); // Add initial marker
+  // }
+
+  // _initLocation() {
+  //   _location?.getLocation().then((location) {
+  //     _currentLocation = location;
+  //   });
+  //   _location?.onLocationChanged.listen((newLocation) {
+  //     _currentLocation = newLocation;
+  //     if (mounted) {
+  //       setState(() {
+  //         moveToPosition(LatLng(_currentLocation?.latitude ?? 0,
+  //             _currentLocation?.longitude ?? 0));
+  //       });
+  //     }
+  //   });
+  // }
+
+  _initLocation() {
+    //use this to go to current location instead
+    _location?.getLocation().then((location) {
+      _currentLocation = location;
+    });
+    _location?.onLocationChanged.listen((newLocation) {
+      _currentLocation = newLocation;
+      moveToPosition(LatLng(
+          _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
+    });
+  }
+
+  moveToPosition(LatLng latLng) async {
+    GoogleMapController mapController = await _googleMapController.future;
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: latLng, zoom: 15)));
+
+    print('New Position: ${latLng}');
+    _updateMarkerPosition(latLng); // Update marker position
+  }
+
+  // Function to add a marker
+  _addMarker(LatLng latLng) {
+    final Marker marker = Marker(
+      markerId: MarkerId('current_position'),
+      position: latLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    if (mounted) {
+      setState(() {
+        _markers.add(marker);
+      });
+    }
+  }
+
+// Function to update marker position
+  _updateMarkerPosition(LatLng latLng) {
+    if (mounted) {
+      setState(() {
+        _markers.clear(); // Clear existing markers
+        _addMarker(latLng); // Add new marker
+      });
+    }
+  }
+
+  Widget _buildMapToggle() {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: FloatingActionButton(
+          onPressed: _toggleMapType,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.map),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return _getMap();
+  }
+
+  Widget _getMap() {
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: _cameraPosition!,
+          mapType: _currentMapType,
+          onMapCreated: (GoogleMapController controller) {
+            if (!_googleMapController.isCompleted) {
+              _googleMapController.complete(controller);
+            }
+          },
+          markers: _markers,
+        ),
+        _buildMapToggle(), // Thêm nút chuyển đổi
+      ],
+    );
+  }
+
+  LatLng convertToLatLng(String coordinates) {
+    try {
+      final parts = coordinates.split(',');
+      if (parts.length == 2) {
+        final latitude = double.parse(parts[0]);
+        final longitude = double.parse(parts[1]);
+        print(LatLng(latitude, longitude));
+        return LatLng(latitude, longitude);
+      } else {
+        throw FormatException('Invalid coordinate format');
+      }
+    } catch (e) {
+      throw FormatException('Error parsing coordinates: $e');
+    }
+  }
+
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       height: 11.h,
       margin: const EdgeInsets.only(top: 10),
-      // decoration: BoxDecoration(
-      //   // Đặt border radius cho card
-      //   borderRadius: BorderRadius.circular(10),
-      //   border: Border.all(
-      //     color: const Color(0xFF818180), // Màu của đường viền
-      //     width: 1, // Độ dày của đường viền
-      //   ),
-      //   color: Colors.white, // Màu nền của card
-      // ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -107,20 +258,6 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
             ),
           ),
           SizedBox(width: 10),
-          // Expanded(
-          //   child: Container(
-          //     padding: EdgeInsets.symmetric(horizontal: 10),
-          //     child: Text(
-          //       barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
-          //       style: TextStyle(
-          //         fontFamily: 'Comfortaa',
-          //         fontSize: 15,
-          //         fontWeight: FontWeight.w600,
-          //         color: AppConfig.primaryColor,
-          //       ),
-          //     ),
-          //   ),
-          // ),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -191,6 +328,9 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
         }
         _loading = false;
         _data = _bl.timxe;
+        moveToPosition(convertToLatLng(_data?.toaDo ?? ""));
+        // final LatLng newPosition = convertToLatLng(_data?.toaDo ?? "");
+        // moveToPosition(newPosition);
       });
     });
   }
@@ -202,62 +342,76 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
         children: [
           CardVin(),
           const SizedBox(height: 5),
-          Center(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _loading
-                      ? LoadingWidget(context)
-                      : Container(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Thông Tin Tìm Kiếm',
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _loading
+                        ? LoadingWidget(context)
+                        : Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Thông Tin Tìm Kiếm',
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              const Divider(
-                                  height: 1, color: Color(0xFFA71C20)),
-                              Container(
-                                margin: EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Item(
-                                      title: 'Kho Xe:',
-                                      value: _data?.tenKho,
-                                    ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Bãi Xe:',
-                                      value: _data?.tenBaiXe,
-                                    ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Vị Trí xe:',
-                                      value: _data?.tenViTri,
-                                    ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
-                                  ],
+                                const Divider(
+                                    height: 1, color: Color(0xFFA71C20)),
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      Item(
+                                        title: 'Kho Xe:',
+                                        value: _data?.tenKho,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Bãi Xe:',
+                                        value: _data?.tenBaiXe,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Vị Trí xe:',
+                                        value: _data?.tenViTri,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Tọa độ:',
+                                        value: _data?.toaDo,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Container(
+                                        width: 90.w,
+                                        height: 45.h,
+                                        child: _buildBody(),
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -280,34 +434,31 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 8.h,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF818180),
-                ),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
               ),
-              SizedBox(height: 5),
-              Text(
-                value ?? "",
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: AppConfig.primaryColor,
-                ),
+            ),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Thilogi/models/user.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/models/scan.dart';
@@ -9,7 +11,9 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import '../../blocs/scan_bloc.dart';
+import '../../blocs/user_bloc.dart';
 import '../../config/config.dart';
+import '../../models/getdata.dart';
 import '../../utils/next_screen.dart';
 import '../../widgets/loading.dart';
 
@@ -32,8 +36,10 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   String _qrData = '';
   final _qrDataController = TextEditingController();
   ScanModel? _data;
+  DataModel? _model;
   bool _loading = false;
-  String barcodeScanResult = '';
+
+  String? barcodeScanResult;
   late ScanBloc _sb;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
@@ -42,14 +48,19 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   void initState() {
     super.initState();
     _sb = Provider.of<ScanBloc>(context, listen: false);
+
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
+  }
+
+  String checkSlash() {
+    return (_data != null || _model != null) ? '/' : '';
   }
 
   @override
@@ -102,7 +113,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                barcodeScanResult ?? '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
@@ -126,7 +137,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
             },
           ),
         ],
@@ -140,12 +151,20 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
       _qrData = '';
       _qrDataController.text = '';
       _data = null;
+      _model = null;
       Future.delayed(const Duration(seconds: 1), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
         _onScan(barcodeScanResult);
       });
     });
+  }
+
+  String formatCurrentDateTime() {
+    DateTime now = DateTime.now();
+    // Định dạng lại đối tượng DateTime thành chuỗi với định dạng mong muốn
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(now);
+    return formattedDate;
   }
 
   _onScan(value) {
@@ -155,18 +174,27 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     _sb.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
-        if (_sb.scan == null) {
+        print(_sb.scan);
+        print(_sb.data);
+        if (_sb.scan != null) {
+          _data = _sb.scan;
+          _loading = false;
+        } else if (_sb.data != null) {
+          _model = _sb.data;
+          _loading = false;
+        } else {
           _qrData = '';
           _qrDataController.text = '';
+          barcodeScanResult = null;
+          _loading = false;
         }
-        _loading = false;
-        _data = _sb.scan;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final UserBloc ub = context.watch<UserBloc>();
     return Container(
         child: Column(
       children: [
@@ -175,134 +203,133 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
         const SizedBox(height: 15),
         _loading
             ? LoadingWidget(context)
-            : Container(
-                width: 90.w,
-                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                margin: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+            : Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    width: 90.w,
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    margin: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: Container(
-                            height: 8.h,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                _data?.tenSanPham ?? "",
-                                style: TextStyle(
-                                  fontFamily: 'Coda Caption',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppConfig.primaryColor,
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 7.h,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      'Loại xe:',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF818180),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(left: 5),
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width <
+                                                    330
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.69
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.7),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        _data?.tenSanPham ??
+                                            _model?.tenSanPham ??
+                                            '',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: 'Coda Caption',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w800,
+                                          color: AppConfig.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        showInfoXe(
+                          'Số khung :',
+                          _data?.soKhung ?? _model?.soKhung ?? "",
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        showInfoXe(
+                          'Màu:',
+                          // _data?.tenMau ?? _model?.tenMau ?? "",
+                          _data != null
+                              ? "${_data?.tenMau ?? ""}${checkSlash()}${_data?.maMau ?? ""}"
+                              : "${_model?.tenMau ?? ""}${checkSlash()}${_model?.maMau ?? ""}",
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                        showInfoXe(
+                          'Nhà máy:',
+                          _data?.tenKho ?? _model?.tenKho ?? "",
+                        ),
+                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Container(
-                          width: 16.w,
-                          height: 3.h,
-                          margin: EdgeInsets.only(right: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: const Color(0xFF428FCA),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                padding: const EdgeInsets.all(0),
+                          padding: EdgeInsets.all(10),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _handleButtonTap(NhanXe2Page(
+                                soKhung:
+                                    _data?.soKhung ?? _model?.soKhung ?? "",
+                                soMay: _data?.soMay ?? "",
+                                tenMau: _data?.tenMau ?? _model?.maMau ?? "",
+                                tenSanPham: _data?.tenSanPham ??
+                                    _model?.tenSanPham ??
+                                    "",
+                                ngayXuatKhoView: _data?.ngayXuatKhoView ??
+                                    formatCurrentDateTime(),
+                                tenTaiXe: _data?.tenTaiXe ?? ub.name ?? "",
+                                ghiChu: _data?.ghiChu ?? _model?.ghiChu ?? "",
+                                tenKho: _data?.tenKho ?? _model?.tenKho ?? "",
+                                phuKien:
+                                    _data?.phuKien ?? _model?.phuKien ?? [],
+                              ));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE96327),
+                              fixedSize: Size(85.w, 7.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
                               ),
-                              child: const Text(
-                                'Chờ nhận',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppConfig.textButton,
-                                ),
+                            ),
+                            child: const Text(
+                              'NHẬN XE',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: AppConfig.textButton,
                               ),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
-                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                    Container(
-                      height: 13.h,
-                      padding: const EdgeInsets.only(left: 5, right: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          showInfoXe(
-                            'Số khung (VIN):',
-                            _data?.soKhung ?? "",
-                          ),
-                          showInfoXe(
-                            'Màu:',
-                            _data?.tenMau ?? "",
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                    Container(
-                      height: 13.h,
-                      padding: const EdgeInsets.only(left: 5, right: 5),
-                      child: Row(
-                        children: [
-                          showInfoXe(
-                            'Nhà máy:',
-                            _data?.tenKho ?? "",
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _handleButtonTap(NhanXe2Page(
-                            soKhung: _data!.soKhung ?? "",
-                            soMay: _data!.soMay ?? "",
-                            tenMau: _data!.tenMau ?? "",
-                            tenSanPham: _data!.tenSanPham ?? "",
-                            ngayXuatKhoView: _data!.ngayXuatKhoView ?? "",
-                            tenTaiXe: _data!.tenTaiXe ?? " ",
-                            ghiChu: _data!.ghiChu ?? "",
-                            tenKho: _data!.tenKho ?? "",
-                            phuKien: _data!.phuKien ?? [],
-                          ));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE96327),
-                          fixedSize: Size(85.w, 7.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        child: const Text(
-                          'NHẬN XE',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppConfig.textButton,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
               ),
       ],
@@ -324,30 +351,32 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
 Widget showInfoXe(String title, String value) {
   return Container(
-    padding: EdgeInsets.only(top: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontFamily: 'Comfortaa',
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF818180),
+    height: 8.h,
+    padding: const EdgeInsets.all(10),
+    child: Center(
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF818180),
+            ),
           ),
-        ),
-        SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: 'Comfortaa',
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: AppConfig.primaryColor,
+          SizedBox(width: 5),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
+            ),
           ),
-        )
-      ],
+        ],
+      ),
     ),
   );
 }

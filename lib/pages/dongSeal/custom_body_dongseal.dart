@@ -62,7 +62,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   DongSealModel? _data;
   bool _loading = false;
-  String barcodeScanResult = '';
   String? lat;
   String? long;
   bool _hasError = false;
@@ -175,10 +174,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     _isLoading = true;
 
     try {
-      // var newScanData = scanData;
-      // newScanData.soKhung =
-      //     newScanData.soKhung == 'null' ? null : newScanData.soKhung;
-      // print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
           'KhoThanhPham/DongSeal?SoSeal=$soSeal&ViTri=$viTri&SoCont=$soCont&TauId=$TauId',
           _data?.toJson());
@@ -522,6 +517,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                             "object : ${SoContId}");
                                                       }
                                                     },
+                                                    buttonStyleData:
+                                                        const ButtonStyleData(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16),
+                                                      height: 40,
+                                                      width: 200,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        const DropdownStyleData(
+                                                      maxHeight: 200,
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 40,
+                                                    ),
                                                     dropdownSearchData:
                                                         DropdownSearchData(
                                                       searchController:
@@ -700,6 +711,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                         TauId = newValue;
                                                       });
                                                     },
+                                                    buttonStyleData:
+                                                        const ButtonStyleData(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16),
+                                                      height: 40,
+                                                      width: 200,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        const DropdownStyleData(
+                                                      maxHeight: 200,
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 40,
+                                                    ),
                                                     dropdownSearchData:
                                                         DropdownSearchData(
                                                       searchController:
@@ -784,9 +811,9 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   ),
                                   SizedBox(height: 4),
                                   _buildTableOptions(context),
-                                  // CheckSheetUploadAnh(
-                                  //   lstFiles: [],
-                                  // )
+                                  CheckSheetUploadAnh(
+                                    lstFiles: [],
+                                  )
                                 ],
                               ),
                             ],

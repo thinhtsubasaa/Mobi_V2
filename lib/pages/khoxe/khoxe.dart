@@ -20,12 +20,13 @@ class KhoXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              decoration: const BoxDecoration(
-                  //   image: DecorationImage(
-                  //     image: AssetImage(AppConfig.backgroundImagePath),
-                  //     fit: BoxFit.cover,
-                  //   ),
-                  ),
+              decoration: BoxDecoration(
+                //   image: DecorationImage(
+                //     image: AssetImage(AppConfig.backgroundImagePath),
+                //     fit: BoxFit.cover,
+                //   ),
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               child: CustomBodyKhoXe(),
             ),
           ),
@@ -44,17 +45,12 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color(0xFFE96327),
-            Color(0xFFBC2925),
-          ],
-        ),
+        color: AppConfig.bottom,
       ),
-      child: customTitle(
-        'KIỂM TRA - VẬN CHUYỂN XE',
+      child: Center(
+        child: customTitle(
+          'KIỂM TRA - VẬN CHUYỂN XE',
+        ),
       ),
     );
   }

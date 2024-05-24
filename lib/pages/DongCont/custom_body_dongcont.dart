@@ -54,7 +54,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   DongContModel? _data;
   DSX_DongContModel? _dc;
   bool _loading = false;
-  String barcodeScanResult = '';
+  String? barcodeScanResult;
   String? lat;
   String? long;
   bool _hasError = false;
@@ -83,6 +83,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DongContBloc>(context, listen: false);
+    getSoCont();
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -90,7 +91,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
   }
 
@@ -138,7 +139,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
     try {
       var newScanData = scanData;
-
       newScanData?.soKhung =
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData?.soKhung}");
@@ -187,11 +187,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF818180), // Màu của đường viền
-          width: 1, // Độ dày của đường viền
+          color: const Color(0xFF818180),
+          width: 1,
         ),
         color: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -226,7 +225,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                barcodeScanResult ?? '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
@@ -250,7 +249,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
             },
           ),
         ],
@@ -284,6 +283,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         if (_bl.dongcont == null) {
           _qrData = '';
           _qrDataController.text = '';
+          barcodeScanResult = null;
         }
         _loading = false;
         _data = _bl.dongcont;
@@ -345,6 +345,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               .then((_) {
             setState(() {
               _data = null;
+              soContId = null;
+              barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
@@ -387,7 +389,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   @override
   Widget build(BuildContext context) {
-    getSoCont();
     return Container(
         child: Column(
       children: [
@@ -519,6 +520,22 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                         soContId = newValue;
                                                       });
                                                     },
+                                                    buttonStyleData:
+                                                        const ButtonStyleData(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 16),
+                                                      height: 40,
+                                                      width: 200,
+                                                    ),
+                                                    dropdownStyleData:
+                                                        const DropdownStyleData(
+                                                      maxHeight: 200,
+                                                    ),
+                                                    menuItemStyleData:
+                                                        const MenuItemStyleData(
+                                                      height: 40,
+                                                    ),
                                                     dropdownSearchData:
                                                         DropdownSearchData(
                                                       searchController:
@@ -613,36 +630,53 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                         margin: EdgeInsets.all(10),
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  _data?.tenSanPham ?? "",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontFamily: 'Coda Caption',
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFFA71C20),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
                             Container(
+                              height: 7.h,
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Item(
-                                    title: 'Số khung:',
-                                    value: _data?.soKhung,
+                                  Container(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      'Loại xe:',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF818180),
+                                      ),
+                                    ),
                                   ),
-                                  Item(
-                                    title: 'Màu:',
-                                    value: _data?.tenMau,
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.70),
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Text(
+                                        _data?.tenSanPham ?? '',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: 'Coda Caption',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w800,
+                                          color: AppConfig.primaryColor,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Số khung:',
+                              value: _data?.soKhung,
+                            ),
+                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Màu:',
+                              value: _data?.tenMau,
                             ),
                             const Divider(height: 1, color: Color(0xFFCCCCCC)),
                             Item(
@@ -764,34 +798,32 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 8.h,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF818180),
-                ),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
               ),
-              SizedBox(height: 5),
-              Text(
-                value ?? "",
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: AppConfig.primaryColor,
-                ),
+            ),
+            SizedBox(width: 5),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

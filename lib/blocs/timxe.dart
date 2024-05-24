@@ -43,6 +43,7 @@ class TimXeBloc extends ChangeNotifier {
             tenKho: decodedData['tenKho'],
             tenBaiXe: decodedData['tenBaiXe'],
             tenViTri: decodedData['tenViTri'],
+            toaDo: decodedData['toaDo'],
           );
         }
       } else {

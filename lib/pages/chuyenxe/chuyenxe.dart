@@ -11,6 +11,7 @@ class ChuyenXePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: customAppBar(context),
       body: Column(
         children: [
@@ -18,12 +19,15 @@ class ChuyenXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              decoration: const BoxDecoration(
-                  // image: DecorationImage(
-                  //   image: AssetImage(AppConfig.backgroundImagePath),
-                  //   fit: BoxFit.cover,
-                  // ),
-                  ),
+              // decoration: const BoxDecoration(
+              //     // image: DecorationImage(
+              //     //   image: AssetImage(AppConfig.backgroundImagePath),
+              //     //   fit: BoxFit.cover,
+              //     // ),
+              //     ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               child: CustomBodyChuyenXe(),
             ),
           ),
@@ -42,17 +46,12 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color(0xFFE96327),
-            Color(0xFFBC2925),
-          ],
-        ),
+        color: AppConfig.bottom,
       ),
-      child: customTitle(
-        'KIỂM TRA - ĐIỀU CHUYỂN XE',
+      child: Center(
+        child: customTitle(
+          'KIỂM TRA - ĐIỀU CHUYỂN XE',
+        ),
       ),
     );
   }

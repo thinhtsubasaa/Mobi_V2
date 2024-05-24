@@ -19,18 +19,16 @@ class VanChuyenPage extends StatelessWidget {
         children: [
           CustomCard(),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                width: 100.w,
-                height: MediaQuery.of(context).size.height,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(AppConfig.backgroundImagePath),
-                    fit: BoxFit.cover,
-                  ),
+            child: Container(
+              width: 100.w,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(AppConfig.backgroundImagePath),
+                  fit: BoxFit.cover,
                 ),
-                child: CustomBodyVanChuyen(),
               ),
+              child: CustomBodyVanChuyen(),
             ),
           ),
           BottomContent(),
@@ -48,14 +46,7 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height / 11,
       padding: EdgeInsets.all(10),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            Color(0xFFE96327),
-            Color(0xFFBC2925),
-          ],
-        ),
+        color: AppConfig.bottom,
       ),
       child: customTitle(
         'KIỂM TRA - VẬN CHUYỂN / GIAO XE',

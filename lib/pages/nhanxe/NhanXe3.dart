@@ -39,8 +39,7 @@ class NhanXe3Page extends StatelessWidget {
                   Positioned.fill(
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(
-                            0.8), // Adjust the opacity here for darkness
+                        Colors.black.withOpacity(0.8),
                         BlendMode.srcATop,
                       ),
                       child: Container(
@@ -111,17 +110,15 @@ class CustomCardVIN extends StatelessWidget {
       height: 50,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF818180), // Màu của đường viền
-          width: 1, // Độ dày của đường viền
+          color: const Color(0xFF818180),
+          width: 1,
         ),
-        color: Colors.white, // Màu nền của card
+        color: Colors.white,
       ),
       child: Row(
         children: [
-          // Phần Text 1
           Container(
             width: 76.48,
             height: 48,
@@ -135,7 +132,6 @@ class CustomCardVIN extends StatelessWidget {
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text trong cột
                 Text(
                   'Số Khung\n(VIN)',
                   textAlign: TextAlign.center,
@@ -143,9 +139,8 @@ class CustomCardVIN extends StatelessWidget {
                     fontFamily: 'Comfortaa',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
+                    height: 1.08,
                     letterSpacing: 0,
-
                     color: Colors.white,
                   ),
                 ),
@@ -153,7 +148,6 @@ class CustomCardVIN extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          // Phần Text 2
           const Text(
             'MALA851CBHM557809',
             style: TextStyle(
@@ -166,7 +160,6 @@ class CustomCardVIN extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 3),
-          // Phần Icon Barcode
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,

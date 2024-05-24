@@ -12,13 +12,13 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
-  // WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = new MyHttpOverrides();
-  // await FlutterDownloader.initialize(
-  //   debug: true,
-  //   ignoreSsl: true,
-  // );
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
 
   runApp(MyApp());
 }

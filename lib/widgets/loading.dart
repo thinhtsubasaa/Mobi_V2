@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 Widget LoadingWidget(BuildContext context) {
-  final height = MediaQuery.of(context).size.width * 0.5;
+  final height = MediaQuery.of(context).size.height * 0.5;
   return Container(
     decoration: BoxDecoration(
       color: Theme.of(context).colorScheme.onPrimary,

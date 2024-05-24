@@ -44,7 +44,6 @@ class NhanXe2Page extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // Background Image
                   Positioned.fill(
                     child: ColorFiltered(
                       colorFilter: ColorFilter.mode(
@@ -136,7 +135,6 @@ class CustomCardVIN extends StatelessWidget {
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Text trong cột
                 Text(
                   'Số Khung\n(VIN)',
                   textAlign: TextAlign.center,
@@ -144,9 +142,8 @@ class CustomCardVIN extends StatelessWidget {
                     fontFamily: 'Comfortaa',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    height: 1.08, // Corresponds to line-height of 13px
+                    height: 1.08,
                     letterSpacing: 0,
-
                     color: Colors.white,
                   ),
                 ),
@@ -154,7 +151,7 @@ class CustomCardVIN extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          // Phần Text 2
+
           const Text(
             'MALA851CBHM557809',
             style: TextStyle(
@@ -167,7 +164,7 @@ class CustomCardVIN extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 3),
-          // Phần Icon Barcode
+
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,

@@ -66,7 +66,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   @override
   void initState() {
     super.initState();
-    // getData(context, DonVi_Id, PhanMem_Id);
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
   }
@@ -157,55 +156,55 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
 
   @override
   Widget _buildContent(List<MenuRoleModel> menuRoles) {
-    // _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _loading
         ? LoadingWidget(context)
-        : Container(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            margin: const EdgeInsets.only(top: 30, bottom: 30),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (userHasPermission(menuRoles, 'giao-xe-mobi'))
-                      CustomButton(
-                        'VẬN CHUYỂN',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_XuatBai.png',
-                            ),
-                          ],
+        : SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              margin: const EdgeInsets.only(top: 30, bottom: 30),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (userHasPermission(menuRoles, 'giao-xe-mobi'))
+                        CustomButton(
+                          'VẬN CHUYỂN',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe_XuatBai.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(KhoXePage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(KhoXePage());
-                        },
-                      ),
-                    SizedBox(width: 15),
-                    if (userHasPermission(menuRoles, 'xuat-kho-xe-mobi'))
-                      CustomButton(
-                        'GIAO XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_XuatBai.png',
-                            ),
-                          ],
+                      SizedBox(width: 15),
+                      if (userHasPermission(menuRoles, 'xuat-kho-xe-mobi'))
+                        CustomButton(
+                          'GIAO XE',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_QLBaiXe_XuatBai.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(GiaoXePage());
+                          },
                         ),
-                        () {
-                          _handleButtonTap(GiaoXePage());
-                        },
-                      ),
-                  ],
-                ),
+                    ],
+                  ),
 
-                const SizedBox(height: 30),
-
-                // PageIndicator(currentPage: currentPage, pageCount: pageCount),
-              ],
+                  const SizedBox(height: 30),
+                  // PageIndicator(currentPage: currentPage, pageCount: pageCount),
+                ],
+              ),
             ),
           );
   }

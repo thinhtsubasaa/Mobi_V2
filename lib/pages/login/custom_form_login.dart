@@ -1,14 +1,11 @@
-import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
 import 'package:Thilogi/models/icon_data.dart';
-import 'package:Thilogi/pages/menu/MainMenu.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/auth_service.dart';
 import 'package:Thilogi/utils/next_screen.dart';
-import 'package:Thilogi/utils/snackbar.dart';
 import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
@@ -50,9 +47,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late String selectedDomain;
   List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
   Map<String, String> domainTitles = {
+    '': 'Cá nhân',
     'thilogi.com.vn': '@thilogi.com.vn',
     'thaco.com.vn': '@thaco.com.vn',
-    '': 'Cá nhân'
   };
 
   final _btnController = RoundedLoadingButtonController();

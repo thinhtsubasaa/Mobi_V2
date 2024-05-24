@@ -24,6 +24,7 @@ import '../../config/config.dart';
 import '../../models/diadiem.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
+import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyGiaoXe extends StatelessWidget {
@@ -50,7 +51,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   final _qrDataController = TextEditingController();
   GiaoXeModel? _data;
   bool _loading = false;
-  String barcodeScanResult = '';
+  String? barcodeScanResult;
   String? viTri;
 
   late GiaoXeBloc _bl;
@@ -64,15 +65,9 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   List<PhuongThucVanChuyenModel>? _phuongthucvanchuyenList;
   List<PhuongThucVanChuyenModel>? get phuongthucvanchuyenList =>
       _phuongthucvanchuyenList;
-  bool _hasError = false;
-  bool get hasError => _hasError;
-  String? _errorCode;
-  String? get errorCode => _errorCode;
+
   bool _isLoading = true;
   bool get isLoading => _isLoading;
-
-  bool _success = false;
-  bool get success => _success;
 
   String? _message;
   String? get message => _message;
@@ -83,7 +78,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<GiaoXeBloc>(context, listen: false);
-    // _ib = Provider.of<ImageBloc>(context, listen: false);
+
     requestLocationPermission();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -91,7 +86,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
         barcodeScanResult = result.data;
       });
       print(barcodeScanResult);
-      _handleBarcodeScanResult(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
   }
 
@@ -164,11 +159,10 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
       height: 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
-        // Đặt border radius cho card
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF818180), // Màu của đường viền
-          width: 1, // Độ dày của đường viền
+          color: const Color(0xFF818180),
+          width: 1,
         ),
         color: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -203,7 +197,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                barcodeScanResult.isNotEmpty ? barcodeScanResult : '',
+                barcodeScanResult ?? '',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
@@ -227,7 +221,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                 barcodeScanResult = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
             },
           ),
         ],
@@ -237,7 +231,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print(barcodeScanResult);
-    // Process the barcode scan result here
+
     setState(() {
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
@@ -258,6 +252,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
       setState(() {
         _qrData = value;
         if (_bl.giaoxe == null) {
+          barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
         }
@@ -295,7 +290,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
-      // Assuming `_data` is not null
       setState(() {
         lat = "${position.latitude}";
         long = "${position.longitude}";
@@ -303,6 +297,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
       _data?.toaDo = "${lat},${long}";
       print("Vi tri: ${_data?.toaDo}");
+      print("vi Tri: ${_data?.kho_Id}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -319,6 +314,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
           postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
+              barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
@@ -394,71 +390,85 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                 height: 1,
                                 color: AppConfig.primaryColor,
                               ),
-                              const SizedBox(height: 10),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 10,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: 7.h,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.only(left: 10),
+                                            child: Text(
+                                              'Loại xe:',
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color(0xFF818180),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            constraints: BoxConstraints(
+                                                maxWidth: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.70),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Text(
+                                                _data?.tenSanPham ?? '',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontFamily: 'Coda Caption',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppConfig.primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Số khung:',
+                                      value: _data?.soKhung,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Màu:',
+                                      value: _data?.tenMau,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Số máy:',
+                                      value: _data?.soMay,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Nơi giao:',
+                                      value: _data?.noigiao,
+                                    ),
+                                    CheckSheetUploadAnh(
+                                      lstFiles: [],
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                  Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width *
-                                              0.87),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Text(
-                                      _data?.tenSanPham ?? "",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: 'Coda Caption',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
-                                        color: AppConfig.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Item(
-                                    title: 'Số khung:',
-                                    value: _data?.soKhung,
-                                  ),
-                                  Item(
-                                    title: 'Màu:',
-                                    value: _data?.tenMau,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                              title: 'Số máy:',
-                              value: _data?.soMay,
-                            ),
-                            const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                            Item(
-                              title: 'Nơi giao:',
-                              value: _data?.noigiao,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -503,34 +513,32 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 8.h,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF818180),
-                ),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
               ),
-              SizedBox(height: 5),
-              Text(
-                value ?? "",
-                style: TextStyle(
-                  fontFamily: 'Comfortaa',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppConfig.primaryColor,
-                ),
+            ),
+            SizedBox(width: 5),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -19,15 +19,11 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard>
     with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
-  String? _fullName;
 
   @override
   void initState() {
     super.initState();
     _ub = Provider.of<UserBloc>(context, listen: false);
-    setState(() {
-      _fullName = _ub?.name;
-    });
   }
 
   @override
@@ -61,81 +57,88 @@ class _CustomCardState extends State<CustomCard>
               ),
             ),
           ),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.only(right: 2.w, bottom: 3),
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
-              ),
-              Container(
-                child: Text(
-                  _fullName ?? "No name",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Comfortaa',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(right: 2.w),
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                child: PopupMenuButton<MenuOption>(
-                  // elevation: 50,
-                  onSelected: (MenuOption result) {
-                    switch (result) {
-                      case MenuOption.Settings:
-                        nextScreen(context, SettingPage());
-                        break;
-                      case MenuOption.Profile:
-                        nextScreen(context, AccountPage());
-                        break;
-                      case MenuOption.Logout:
-                        signOut(context);
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    PopupMenuItem(
-                      value: MenuOption.Settings,
-                      child: Row(
-                        children: [
-                          Icon(Icons.settings),
-                          SizedBox(width: 8.0),
-                          Text('Cài đặt'),
-                        ],
-                      ),
+                Container(
+                  width: 40.w,
+                  child: Text(
+                    _ub?.name ?? "",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Comfortaa',
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
                     ),
-                    PopupMenuItem(
-                      value: MenuOption.Profile,
-                      child: Row(
-                        children: [
-                          Icon(Icons.person),
-                          SizedBox(width: 8.0),
-                          Text('Thông tin cá nhân'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: MenuOption.Logout,
-                      child: Row(
-                        children: [
-                          Icon(Icons.logout),
-                          SizedBox(width: 8.0),
-                          Text('Đăng xuất'),
-                        ],
-                      ),
-                    ),
-                  ],
-                  icon: const Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.white,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  child: PopupMenuButton<MenuOption>(
+                    // elevation: 50,
+                    onSelected: (MenuOption result) {
+                      switch (result) {
+                        case MenuOption.Settings:
+                          nextScreen(context, SettingPage());
+                          break;
+                        case MenuOption.Profile:
+                          nextScreen(context, AccountPage());
+                          break;
+                        case MenuOption.Logout:
+                          signOut(context);
+                          break;
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      PopupMenuItem(
+                        value: MenuOption.Settings,
+                        child: Row(
+                          children: [
+                            Icon(Icons.settings),
+                            SizedBox(width: 8.0),
+                            Text('Cài đặt'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: MenuOption.Profile,
+                        child: Row(
+                          children: [
+                            Icon(Icons.person),
+                            SizedBox(width: 8.0),
+                            Text('Thông tin cá nhân'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: MenuOption.Logout,
+                        child: Row(
+                          children: [
+                            Icon(Icons.logout),
+                            SizedBox(width: 8.0),
+                            Text('Đăng xuất'),
+                          ],
+                        ),
+                      ),
+                    ],
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
