@@ -249,25 +249,100 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
+  // Widget CardVin() {
+  //   return Container(
+  //     width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+  //     height: 8.h,
+  //     margin: const EdgeInsets.only(top: 10),
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(10),
+  //       border: Border.all(
+  //         color: const Color(0xFF818180),
+  //         width: 1,
+  //       ),
+  //       color: Theme.of(context).colorScheme.onPrimary,
+  //     ),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Container(
+  //           width: 20.w,
+  //           height: 8.h,
+  //           decoration: BoxDecoration(
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(5),
+  //               bottomLeft: Radius.circular(5),
+  //             ),
+  //             color: AppConfig.primaryColor,
+  //           ),
+  //           child: Center(
+  //             child: Text(
+  //               'Số khung\n(VIN)',
+  //               textAlign: TextAlign.center,
+  //               style: TextStyle(
+  //                 fontFamily: 'Comfortaa',
+  //                 fontSize: 12,
+  //                 fontWeight: FontWeight.w400,
+  //                 color: Colors.white,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(width: 10),
+  //         Expanded(
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 10),
+  //             child: Text(
+  //               barcodeScanResult ?? '',
+  //               style: TextStyle(
+  //                 fontFamily: 'Comfortaa',
+  //                 fontSize: 15,
+  //                 fontWeight: FontWeight.w600,
+  //                 color: Color(0xFFA71C20),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         IconButton(
+  //           icon: const Icon(Icons.qr_code_scanner),
+  //           color: Colors.black,
+  //           onPressed: () async {
+  //             String result = await FlutterBarcodeScanner.scanBarcode(
+  //               '#A71C20',
+  //               'Cancel',
+  //               false,
+  //               ScanMode.QR,
+  //             );
+  //             setState(() {
+  //               barcodeScanResult = result;
+  //             });
+  //             print(barcodeScanResult);
+  //             _handleBarcodeScanResult(barcodeScanResult ?? " ");
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: 8.h,
+      height: 11.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: const Color(0xFF818180),
           width: 1,
         ),
-        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: 20.w,
-            height: 8.h,
+            height: 11.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -281,7 +356,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -292,13 +367,19 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                barcodeScanResult ?? '',
+              child: TextField(
+                controller: _qrDataController,
+                decoration: InputDecoration(
+                  hintText: 'Nhập hoặc quét mã VIN',
+                ),
+                onSubmitted: (value) {
+                  _handleBarcodeScanResult(value);
+                },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA71C20),
+                  color: AppConfig.primaryColor,
                 ),
               ),
             ),
@@ -315,9 +396,10 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
               );
               setState(() {
                 barcodeScanResult = result;
+                _qrDataController.text = result;
               });
               print(barcodeScanResult);
-              _handleBarcodeScanResult(barcodeScanResult ?? " ");
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
             },
           ),
         ],

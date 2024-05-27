@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var passwordCtrl = TextEditingController();
   bool obscureText = true;
   late String selectedDomain;
-  List<String> items = ['thilogi.com.vn', 'thaco.com.vn', ''];
+  List<String> items = ['', 'thilogi.com.vn', 'thaco.com.vn'];
   Map<String, String> domainTitles = {
     '': 'Cá nhân',
     'thilogi.com.vn': '@thilogi.com.vn',

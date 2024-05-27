@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Thilogi/models/tinhtrangdonhang.dart';
 import 'package:Thilogi/pages/tracking/custom_body_trackingxe.dart';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -9,15 +10,19 @@ import 'package:Thilogi/pages/tracking/custom_body_tracking_vitri.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../blocs/TrackingXe.dart';
+import '../../models/lsgiaoxe.dart';
 import '../../models/lsnhapbai.dart';
 import '../../models/lsxequa.dart';
 import '../../models/lsxuatxe.dart';
 import '../../widgets/custom_title.dart';
+import '../../widgets/loading.dart';
 
 class TrackingXeVitriPage extends StatefulWidget {
   const TrackingXeVitriPage({super.key});
@@ -43,11 +48,23 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   List<LSNhapBaiModel>? get nhapbai => _nhapbai;
   List<LSXuatXeModel>? _xuatxe;
   List<LSXuatXeModel>? get xuatxe => _xuatxe;
+  List<LSGiaoXeModel>? _giaoxe;
+  List<LSGiaoXeModel>? get giaoxe => _giaoxe;
+  TinhTrangDonHangModel? _tinhtrang;
+  TinhTrangDonHangModel? get tinhtrang => _tinhtrang;
   late StreamSubscription<ScanResult> scanSubscription;
+  Completer<GoogleMapController> _googleMapController = Completer();
+  CameraPosition? _cameraPosition;
+  Location? _location;
+  LocationData? _currentLocation;
+  Set<Marker> _markers = {};
+  MapType _currentMapType = MapType.normal;
+
   @override
   void initState() {
     super.initState();
     _bl = Provider.of<TrackingBloc>(context, listen: false);
+    _init();
     _tabController = TabController(vsync: this, length: 2);
     _tabController!.addListener(_handleTabChange);
 
@@ -59,6 +76,122 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
+  }
+
+  _init() async {
+    _loading = true;
+    _location = Location();
+    _currentLocation = await _location?.getLocation();
+    LatLng initialPosition;
+    if (_currentLocation != null) {
+      initialPosition = LatLng(
+        _currentLocation?.latitude ?? 0,
+        _currentLocation?.longitude ?? 0,
+      );
+
+      _cameraPosition = CameraPosition(
+        target: initialPosition,
+        zoom: 15,
+      );
+      _loading = false;
+      _moveToPosition(_cameraPosition!.target);
+      _addMarker(_cameraPosition!.target);
+    }
+    // _initLocation();
+    // Thêm marker cho vị trí ban đầu
+  }
+
+  void _toggleMapType() {
+    setState(() {
+      if (_currentMapType == MapType.normal) {
+        _currentMapType = MapType.satellite;
+      } else {
+        _currentMapType = MapType.normal;
+      }
+    });
+  }
+
+  _moveToPosition(LatLng latLng) async {
+    _cameraPosition = CameraPosition(
+      target: latLng,
+      zoom: 15,
+    );
+    _updateMarkerPosition(latLng);
+  }
+
+  _addMarker(LatLng latLng) {
+    final Marker marker = Marker(
+      markerId: MarkerId('current_position'),
+      position: latLng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+    if (mounted) {
+      setState(() {
+        _markers.add(marker);
+      });
+    }
+  }
+
+  _updateMarkerPosition(LatLng latLng) {
+    if (mounted) {
+      setState(() {
+        _markers.clear();
+        _addMarker(latLng);
+      });
+    }
+  }
+
+  Widget _buildMapToggle() {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: FloatingActionButton(
+          onPressed: _toggleMapType,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.map),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return _getMap();
+  }
+
+  Widget _getMap() {
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: _cameraPosition!,
+          mapType: _currentMapType,
+          onMapCreated: (GoogleMapController controller) {
+            if (!_googleMapController.isCompleted) {
+              _googleMapController.complete(controller);
+            }
+          },
+          markers: _markers,
+        ),
+        _buildMapToggle(),
+      ],
+    );
+  }
+
+  LatLng convertToLatLng(String coordinates) {
+    try {
+      final parts = coordinates.split(',');
+      if (parts.length == 2) {
+        final latitude = double.parse(parts[0]);
+        final longitude = double.parse(parts[1]);
+        print(LatLng(latitude, longitude));
+        return LatLng(latitude, longitude);
+      } else {
+        throw FormatException('Invalid coordinate format');
+      }
+    } catch (e) {
+      throw FormatException('Error parsing coordinates: $e');
+    }
   }
 
   void _handleTabChange() {
@@ -160,6 +293,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
       _xequa = null;
       _nhapbai = null;
       _xuatxe = null;
+      _giaoxe = null;
       Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
@@ -185,7 +319,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
         _qrData = value;
         if (_bl.lsxequa == null &&
             _bl.lsnhapbai == null &&
-            _bl.lsxuatxe == null) {
+            _bl.lsxuatxe == null &&
+            _bl.lsgiaoxe == null &&
+            _bl.tinhtrangdh == null) {
           QuickAlert.show(
             // ignore: use_build_context_synchronously
             context: context,
@@ -194,13 +330,35 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
             text: 'Không có dữ liệu',
             confirmBtnText: 'Đồng ý',
           );
+          _moveToPosition(LatLng(0, 0));
+          _loading = false;
           barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
         } else {
+          _loading = false;
           _xequa = _bl.lsxequa;
           _nhapbai = _bl.lsnhapbai;
           _xuatxe = _bl.lsxuatxe;
+          _giaoxe = _bl.lsgiaoxe;
+          _tinhtrang = _bl.tinhtrangdh;
+          if (_tinhtrang?.toaDo == null) {
+            QuickAlert.show(
+              // ignore: use_build_context_synchronously
+              context: context,
+              type: QuickAlertType.info,
+              title: '',
+              text: 'Xe chưa có vị trí tọa độ trên bản đồ',
+              confirmBtnText: 'Đồng ý',
+            );
+            _moveToPosition(LatLng(0, 0));
+          }
+          _moveToPosition(convertToLatLng(_tinhtrang?.toaDo ?? ""));
+          print('1:$_xequa');
+          print('2:$_nhapbai');
+          print('3:$_xuatxe');
+          print('4:$_giaoxe');
+          print('5:$_tinhtrang');
         }
       });
     });
@@ -255,69 +413,249 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: [
-                      CustomTrackingXeVitri(),
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              width: 90.w,
+                              height: 45.h,
+                              child: _buildBody(),
+                            ),
                       SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (_xequa != null)
-                              Column(
-                                children: _xequa!.map((item) {
-                                  return buildRowItem(
-                                    customImage: CustomImage4(),
-                                    textLine:
-                                        formatDateTime(item.tuNgay ?? "") +
-                                            ' - ' +
-                                            (item.noiNhan ?? "") +
-                                            '-' +
-                                            'Người nhận:' +
-                                            (item.nguoiNhan ?? ""),
-                                  );
-                                }).toList(),
-                              ),
-                            if (_nhapbai != null)
-                              Column(
-                                children: _nhapbai!.map((item) {
-                                  return buildRowItem(
-                                    customImage: CustomImage3(),
-                                    textLine: (item.ngay != null
-                                            ? formatDateTime(item.ngay ?? "")
-                                            : "") +
-                                        '-' +
-                                        (item.thongTinChiTiet ?? ""),
-                                  );
-                                }).toList(),
-                              ),
-                            // buildDivider(),
-
-                            if (_xuatxe != null)
-                              Column(
-                                children: _xuatxe!.map((item) {
-                                  return buildRowItem(
-                                    customImage: CustomImage2(),
-                                    textLine: (item.ngay != null
-                                            ? formatDateTime(item.ngay ?? "")
-                                            : "") +
-                                        '-' +
-                                        (item.thongTinChiTiet ?? "") +
-                                        '-' +
-                                        (item.thongtinvanchuyen ?? ""),
-                                  );
-                                }).toList(),
-                              ),
-                            // buildDivider(),
-
-                            if (_xequa == null &&
-                                _nhapbai == null &&
-                                _xuatxe == null)
-                              Container(
-                                child: Text(
-                                  'Không có dữ liệu',
+                        child: Container(
+                          width: 100.w,
+                          alignment: Alignment.bottomCenter,
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height < 600
+                                ? MediaQuery.of(context).size.height * 1.2
+                                : MediaQuery.of(context).size.height * 0.6,
+                            // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                            border: Border.all(
+                              color: Color(0xFFCCCCCC),
+                              width: 1,
+                            ),
+                            color: Colors.white,
+                          ),
+                          child: Stack(
+                            children: [
+                              // Phần Text 1
+                              Positioned(
+                                left: 0, // Adjust left position as needed
+                                top: 0, // Adjust top position as needed
+                                child: Container(
+                                  width: 15.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(10),
+                                      bottomRight: Radius.circular(10),
+                                    ),
+                                    color: Color(0xFFF6C6C7),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 16.0, bottom: 16.0),
+                                    child: Image.asset(
+                                      'assets/images/road.png',
+                                      height: MediaQuery.of(context)
+                                                  .size
+                                                  .height <
+                                              600
+                                          ? MediaQuery.of(context).size.height *
+                                              1.2
+                                          : MediaQuery.of(context).size.height *
+                                              0.6,
+                                    ),
+                                  ),
                                 ),
                               ),
-                          ],
+                              // Your BodyTrackingXe widget goes here
+                              Positioned(
+                                left: 0, // Adjust left position as needed
+                                top: 0, // Adjust top position as needed
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      if (_giaoxe != null)
+                                        Column(
+                                          children: _giaoxe!.map((item) {
+                                            return buildRowItem(
+                                              customImage: CustomImage1(),
+                                              textLine: (item.ngay != null
+                                                      ? formatDateTime(
+                                                          item.ngay ?? "")
+                                                      : "") +
+                                                  '-' +
+                                                  (item.noiGiao ?? "") +
+                                                  '-' +
+                                                  'Số TBGX' +
+                                                  (item.soTBGX ?? ""),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      if (_xuatxe != null)
+                                        Column(
+                                          children: _xuatxe!.map((item) {
+                                            return buildRowItem(
+                                              customImage: CustomImage2(),
+                                              textLine: (item.ngay != null
+                                                      ? formatDateTime(
+                                                          item.ngay ?? "")
+                                                      : "") +
+                                                  '-' +
+                                                  (item.thongTinChiTiet ?? "") +
+                                                  '-' +
+                                                  (item.thongtinvanchuyen ??
+                                                      ""),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      if (_nhapbai != null)
+                                        Column(
+                                          children: _nhapbai!.map((item) {
+                                            return buildRowItem(
+                                              customImage: CustomImage3(),
+                                              textLine: (item.thoiGianVao !=
+                                                          null
+                                                      ? (item.thoiGianVao ?? "")
+                                                      : "") +
+                                                  '-' +
+                                                  (item.kho ?? "") +
+                                                  '-' +
+                                                  (item.baiXe ?? "") +
+                                                  '-' +
+                                                  (item.toaDo ?? ""),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      if (_xequa != null)
+                                        Column(
+                                          children: _xequa!.map((item) {
+                                            return buildRowItem(
+                                              customImage: CustomImage4(),
+                                              textLine: formatDateTime(
+                                                      item.ngayNhan ?? "") +
+                                                  ' - ' +
+                                                  (item.noiNhan ?? "") +
+                                                  '-' +
+                                                  'Người nhận:' +
+                                                  (item.nguoiNhan ?? ""),
+                                            );
+                                          }).toList(),
+                                        ),
+
+                                      // buildDivider(),
+
+                                      // buildDivider(),
+
+                                      if (_xequa == null &&
+                                          _nhapbai == null &&
+                                          _xuatxe == null &&
+                                          _giaoxe == null)
+                                        Container(
+                                          padding: EdgeInsets.only(left: 30.w),
+                                          child: Text(
+                                            'Không có dữ liệu',
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                      // SingleChildScrollView(
+                      //   child: Column(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //     children: [
+                      //       if (_giaoxe != null)
+                      //         Column(
+                      //           children: _giaoxe!.map((item) {
+                      //             return buildRowItem(
+                      //               customImage: CustomImage1(),
+                      //               textLine: (item.ngay != null
+                      //                       ? formatDateTime(item.ngay ?? "")
+                      //                       : "") +
+                      //                   '-' +
+                      //                   (item.noiGiao ?? "") +
+                      //                   '-' +
+                      //                   'Số TBGX' +
+                      //                   (item.soTBGX ?? ""),
+                      //             );
+                      //           }).toList(),
+                      //         ),
+                      //       if (_xuatxe != null)
+                      //         Column(
+                      //           children: _xuatxe!.map((item) {
+                      //             return buildRowItem(
+                      //               customImage: CustomImage2(),
+                      //               textLine: (item.ngay != null
+                      //                       ? formatDateTime(item.ngay ?? "")
+                      //                       : "") +
+                      //                   '-' +
+                      //                   (item.thongTinChiTiet ?? "") +
+                      //                   '-' +
+                      //                   (item.thongtinvanchuyen ?? ""),
+                      //             );
+                      //           }).toList(),
+                      //         ),
+                      //       if (_nhapbai != null)
+                      //         Column(
+                      //           children: _nhapbai!.map((item) {
+                      //             return buildRowItem(
+                      //               customImage: CustomImage3(),
+                      //               textLine: (item.thoiGianVao != null
+                      //                       ? (item.thoiGianVao ?? "")
+                      //                       : "") +
+                      //                   '-' +
+                      //                   (item.kho ?? "") +
+                      //                   '-' +
+                      //                   (item.baiXe ?? "") +
+                      //                   '-' +
+                      //                   (item.toaDo ?? ""),
+                      //             );
+                      //           }).toList(),
+                      //         ),
+                      //       if (_xequa != null)
+                      //         Column(
+                      //           children: _xequa!.map((item) {
+                      //             return buildRowItem(
+                      //               customImage: CustomImage4(),
+                      //               textLine:
+                      //                   formatDateTime(item.ngayNhan ?? "") +
+                      //                       ' - ' +
+                      //                       (item.noiNhan ?? "") +
+                      //                       '-' +
+                      //                       'Người nhận:' +
+                      //                       (item.nguoiNhan ?? ""),
+                      //             );
+                      //           }).toList(),
+                      //         ),
+
+                      //       // buildDivider(),
+
+                      //       // buildDivider(),
+
+                      //       if (_xequa == null &&
+                      //           _nhapbai == null &&
+                      //           _xuatxe == null &&
+                      //           _giaoxe == null)
+                      //         Container(
+                      //           child: Text(
+                      //             'Không có dữ liệu',
+                      //           ),
+                      //         ),
+                      //     ],
+                      //   ),
+                      // ),
 
                       // BodyTrackingXe(),
                     ],

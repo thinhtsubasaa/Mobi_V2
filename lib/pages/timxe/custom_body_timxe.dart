@@ -9,6 +9,7 @@ import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/loading.dart';
@@ -48,7 +49,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
   @override
   void initState() {
     super.initState();
-    // _init();
+    _init();
     _bl = Provider.of<TimXeBloc>(context, listen: false);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -77,71 +78,37 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     });
   }
 
-  // _init() async {
-  //   _location = Location();
-  //   _cameraPosition = CameraPosition(
-  //       target: LatLng(
-  //         double.parse(_data?.toaDo?.split(',')[0] , _data?.toaDo?.split(',')[1]) ), // this is just the example lat and lng for initializing
-  //       zoom: 15);
-  //   _initLocation();
-  //   // _addMarker(LatLng(0, 0)); // Add initial marker
-  // }
-  // _init() async {
-  //   _location = Location();
-  //   // Provide default values if _data or _data?.toaDo is null
-  //   String coordinates = _data?.toaDo ?? "0,0";
-  //   List<String> latLng = coordinates.split(',');
+  _init() async {
+    _loading = true;
+    _location = Location();
+    _currentLocation = await _location?.getLocation();
+    LatLng initialPosition;
+    if (_currentLocation != null) {
+      initialPosition = LatLng(
+        _currentLocation?.latitude ?? 0,
+        _currentLocation?.longitude ?? 0,
+      );
 
-  //   // Ensure the values are non-null and parse them
-  //   double latitude = double.parse(latLng[0]);
-  //   double longitude = double.parse(latLng[1]);
-
-  //   _cameraPosition = CameraPosition(
-  //     target: LatLng(latitude, longitude),
-  //     zoom: 15,
-  //   );
-
-  //   _initLocation();
-  //   // _addMarker(LatLng(0, 0)); // Add initial marker
-  // }
-
-  // _initLocation() {
-  //   _location?.getLocation().then((location) {
-  //     _currentLocation = location;
-  //   });
-  //   _location?.onLocationChanged.listen((newLocation) {
-  //     _currentLocation = newLocation;
-  //     if (mounted) {
-  //       setState(() {
-  //         moveToPosition(LatLng(_currentLocation?.latitude ?? 0,
-  //             _currentLocation?.longitude ?? 0));
-  //       });
-  //     }
-  //   });
-  // }
-
-  _initLocation() {
-    //use this to go to current location instead
-    _location?.getLocation().then((location) {
-      _currentLocation = location;
-    });
-    _location?.onLocationChanged.listen((newLocation) {
-      _currentLocation = newLocation;
-      moveToPosition(LatLng(
-          _currentLocation?.latitude ?? 0, _currentLocation?.longitude ?? 0));
-    });
+      _cameraPosition = CameraPosition(
+        target: initialPosition,
+        zoom: 15,
+      );
+      _loading = false;
+      _moveToPosition(_cameraPosition!.target);
+      _addMarker(_cameraPosition!.target);
+    }
+    // _initLocation();
+    // Thêm marker cho vị trí ban đầu
   }
 
-  moveToPosition(LatLng latLng) async {
-    GoogleMapController mapController = await _googleMapController.future;
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: latLng, zoom: 15)));
-
-    print('New Position: ${latLng}');
-    _updateMarkerPosition(latLng); // Update marker position
+  _moveToPosition(LatLng latLng) async {
+    _cameraPosition = CameraPosition(
+      target: latLng,
+      zoom: 15,
+    );
+    _updateMarkerPosition(latLng);
   }
 
-  // Function to add a marker
   _addMarker(LatLng latLng) {
     final Marker marker = Marker(
       markerId: MarkerId('current_position'),
@@ -155,12 +122,11 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     }
   }
 
-// Function to update marker position
   _updateMarkerPosition(LatLng latLng) {
     if (mounted) {
       setState(() {
-        _markers.clear(); // Clear existing markers
-        _addMarker(latLng); // Add new marker
+        _markers.clear();
+        _addMarker(latLng);
       });
     }
   }
@@ -197,7 +163,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
           },
           markers: _markers,
         ),
-        _buildMapToggle(), // Thêm nút chuyển đổi
+        _buildMapToggle(),
       ],
     );
   }
@@ -328,9 +294,18 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
         }
         _loading = false;
         _data = _bl.timxe;
-        moveToPosition(convertToLatLng(_data?.toaDo ?? ""));
-        // final LatLng newPosition = convertToLatLng(_data?.toaDo ?? "");
-        // moveToPosition(newPosition);
+        if (_data?.toaDo == null) {
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.info,
+            title: '',
+            text: 'Xe chưa có vị trí tọa độ trên bản đồ',
+            confirmBtnText: 'Đồng ý',
+          );
+          _moveToPosition(LatLng(0, 0));
+        }
+        _moveToPosition(convertToLatLng(_data?.toaDo ?? ""));
       });
     });
   }

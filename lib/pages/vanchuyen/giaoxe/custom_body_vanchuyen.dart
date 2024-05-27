@@ -183,7 +183,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                           },
                         ),
                       SizedBox(width: 15),
-                      if (userHasPermission(menuRoles, 'xuat-kho-xe-mobi'))
+                      if (userHasPermission(menuRoles, 'van-chuyen-mobi'))
                         CustomButton(
                           'GIAO XE',
                           Stack(

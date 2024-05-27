@@ -55,7 +55,7 @@ class _SettingPageState extends State<SettingPage> {
         setState(() {
           _version = tmpVal["maPhienBan"];
           values = tmpVal;
-          callUpdateAction(tmpVal);
+          // callUpdateAction(tmpVal);
         });
       }
     }
@@ -70,80 +70,80 @@ class _SettingPageState extends State<SettingPage> {
         ?.send([id, status.value, progress]);
   }
 
-  callUpdateAction(values) async {
-    if ((values["maPhienBan"] != _ab.appVersion) &&
-        values["isCapNhat"] == true) {
-      // show a dialog to ask the user to download the update
-      // ignore: use_build_context_synchronously
-      bool shouldUpdate = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Cập nhật"),
-            content: const Text(
-              "Ứng dụng đã có phiên bản mới. Bạn có muốn tải về không?",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text("Huỷ"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text("Tải về và cài đặt"),
-              ),
-            ],
-          );
-        },
-      );
+  // callUpdateAction(values) async {
+  //   if ((values["maPhienBan"] != _ab.appVersion) &&
+  //       values["isCapNhat"] == true) {
+  //     // show a dialog to ask the user to download the update
+  //     // ignore: use_build_context_synchronously
+  //     bool shouldUpdate = await showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text("Cập nhật"),
+  //           content: const Text(
+  //             "Ứng dụng đã có phiên bản mới. Bạn có muốn tải về không?",
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context, false),
+  //               child: const Text("Huỷ"),
+  //             ),
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context, true),
+  //               child: const Text("Tải về và cài đặt"),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
 
-      if (shouldUpdate) {
-        await createDownloadDirectory();
-        Directory? downloadsDirectory = await getExternalStorageDirectory();
-        List<String> tmpArr = values["fileUrl"].split('/');
-        // Get the file path
-        final String filePath =
-            '${downloadsDirectory!.path}/Download/${tmpArr.last}';
+  //     if (shouldUpdate) {
+  //       await createDownloadDirectory();
+  //       Directory? downloadsDirectory = await getExternalStorageDirectory();
+  //       List<String> tmpArr = values["fileUrl"].split('/');
+  //       // Get the file path
+  //       final String filePath =
+  //           '${downloadsDirectory!.path}/Download/${tmpArr.last}';
 
-        // Check if the file exists
-        final bool fileExists = File(filePath).existsSync();
+  //       // Check if the file exists
+  //       final bool fileExists = File(filePath).existsSync();
 
-        // Delete the file if it exists
-        if (fileExists) {
-          File(filePath).deleteSync();
-        }
+  //       // Delete the file if it exists
+  //       if (fileExists) {
+  //         File(filePath).deleteSync();
+  //       }
 
-        String? downloadId = await FlutterDownloader.enqueue(
-          url: '${_ab.apiUrl}/${values["fileUrl"]}',
-          savedDir: '${downloadsDirectory.path}/Download',
-          showNotification: true,
-          openFileFromNotification: true,
-          fileName: values["fileName"],
-        );
+  //       String? downloadId = await FlutterDownloader.enqueue(
+  //         url: '${_ab.apiUrl}/${values["fileUrl"]}',
+  //         savedDir: '${downloadsDirectory.path}/Download',
+  //         showNotification: true,
+  //         openFileFromNotification: true,
+  //         fileName: values["fileName"],
+  //       );
 
-        // wait for the download to complete
-        bool isComplete = false;
-        while (!isComplete) {
-          List<DownloadTask>? tasks = await FlutterDownloader.loadTasks();
-          DownloadTask? task =
-              tasks?.firstWhere((task) => task.taskId == downloadId);
+  //       // wait for the download to complete
+  //       bool isComplete = false;
+  //       while (!isComplete) {
+  //         List<DownloadTask>? tasks = await FlutterDownloader.loadTasks();
+  //         DownloadTask? task =
+  //             tasks?.firstWhere((task) => task.taskId == downloadId);
 
-          if (task?.status == DownloadTaskStatus.complete) {
-            isComplete = true;
-            // Install the update using install_plugin_v2
-            await InstallPlugin.installApk(
-              '${downloadsDirectory.path}/Download/${tmpArr.last}',
-              'com.thilogi.vn.logistics',
-            ).then((value) {
-              if (value == 'Success') {
-                openSnackBar(context, "Tải xuống thành công");
-              }
-            });
-          }
-        }
-      }
-    }
-  }
+  //         if (task?.status == DownloadTaskStatus.complete) {
+  //           isComplete = true;
+  //           // Install the update using install_plugin_v2
+  //           await InstallPlugin.installApk(
+  //             '${downloadsDirectory.path}/Download/${tmpArr.last}',
+  //             'com.thilogi.vn.logistics',
+  //           ).then((value) {
+  //             if (value == 'Success') {
+  //               openSnackBar(context, "Tải xuống thành công");
+  //             }
+  //           });
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   createDownloadDirectory() async {
     // Get the directory where the downloaded files should be saved
@@ -182,7 +182,7 @@ class _SettingPageState extends State<SettingPage> {
             child: UserUI(
               version: _version,
               values: values,
-              updateAction: callUpdateAction,
+              // updateAction: callUpdateAction,
             ),
           ),
           const SizedBox(
@@ -267,12 +267,12 @@ class _SettingPageState extends State<SettingPage> {
 class UserUI extends StatelessWidget {
   final String? version;
   final Map<String, dynamic>? values;
-  final Function updateAction;
+  // final Function updateAction;
   const UserUI({
     super.key,
     required this.version,
     required this.values,
-    required this.updateAction,
+    // required this.updateAction,
   });
 
   @override
@@ -314,21 +314,21 @@ class UserUI extends StatelessWidget {
             ),
           ),
           title: Text("Phiên bản ${ab.appVersion}"),
-          trailing: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Colors.green,
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-            ),
-            child: Text(
-              "$version",
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
+          // trailing: Container(
+          //   padding: const EdgeInsets.all(10),
+          //   decoration: const BoxDecoration(
+          //     color: Colors.green,
+          //     borderRadius: BorderRadius.all(
+          //       Radius.circular(10),
+          //     ),
+          //   ),
+          //   child: Text(
+          //     "$version",
+          //     style: const TextStyle(color: Colors.white),
+          //   ),
+          // ),
           onTap: () {
-            updateAction(values);
+            // updateAction(values);
           },
         ),
         const DividerWidget(),

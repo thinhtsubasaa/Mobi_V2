@@ -112,96 +112,84 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
             child: Container(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 25, bottom: 25),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
-                        CustomButton(
-                            'NHẬP BÃI XE',
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/Button_QLBaiXe_NhapBai.png',
-                                ),
-                              ],
-                            ), () {
-                          _handleButtonTap(BaiXePage());
-                        }),
-                      const SizedBox(width: 10),
-                      if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
-                        CustomButton(
-                            'ĐIỀU CHUYỂN XE',
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/Button_QLBaiXe_ChuyenBai.png',
-                                ),
-                              ],
-                            ), () {
-                          _handleButtonTap(ChuyenXePage());
-                        }),
-                      SizedBox(width: 10),
-                      CustomButton(
-                          'TÌM XE',
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
-                              ),
-                            ],
-                          ), () {
-                        _handleButtonTap(TimXePage());
-                      }),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(width: 20),
-                      if (userHasPermission(menuRoles, 'dong-cont-mobi'))
-                        CustomButton(
-                          'ĐÓNG CONT',
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/Button_QLBaiXe_DongCont.png',
-                              ),
-                            ],
+              child: Wrap(
+                spacing: 15.0, // khoảng cách giữa các nút
+                runSpacing: 20.0, // khoảng cách giữa các hàng
+                alignment: WrapAlignment.center,
+                children: [
+                  if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
+                    CustomButton(
+                        'NHẬP BÃI XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_QLBaiXe_NhapBai.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(BaiXePage());
+                    }),
+                  if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
+                    CustomButton(
+                        'ĐIỀU CHUYỂN XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_QLBaiXe_ChuyenBai.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(ChuyenXePage());
+                    }),
+                  if (userHasPermission(menuRoles, 'tim-xe-mobi'))
+                    CustomButton(
+                        'TÌM XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(TimXePage());
+                    }),
+                  if (userHasPermission(menuRoles, 'dong-cont-mobi'))
+                    CustomButton(
+                      'ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_DongCont.png',
                           ),
-                          () {
-                            _handleButtonTap(XuatCongXePage());
-                          },
-                        ),
-                      SizedBox(width: 20),
-                      if (userHasPermission(menuRoles, 'dong-seal-mobi'))
-                        CustomButton(
-                          'ĐÓNG SEAL',
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/Button_QLBaiXe_DongSeal.png',
-                              ),
-                            ],
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(XuatCongXePage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'dong-seal-mobi'))
+                    CustomButton(
+                      'ĐÓNG SEAL',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_DongSeal.png',
                           ),
-                          () {
-                            _handleButtonTap(DongSealPage());
-                          },
-                        ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
-                  // PageIndicator(currentPage: currentPage, pageCount: pageCount),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(DongSealPage());
+                      },
+                    ),
                 ],
               ),
+
+              // PageIndicator(currentPage: currentPage, pageCount: pageCount),
             ),
           );
   }

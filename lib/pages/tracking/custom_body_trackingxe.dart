@@ -254,33 +254,33 @@ class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
           SizedBox(
             height: 20,
           ),
-          if (_data != null)
-            Column(
-              children: _data!.map((lsxeQuaModel) {
-                return buildRowItem(
-                  customImage: CustomImage1(),
-                  textLine: formatDateTime(lsxeQuaModel.tuNgay ?? "") +
-                      ' - ' +
-                      (lsxeQuaModel.noiNhan ?? "") +
-                      ': ' +
-                      (lsxeQuaModel.nguoiNhan ?? ""),
-                );
-              }).toList(),
-            ),
+          // if (_data != null)
+          //   Column(
+          //     children: _data!.map((lsxeQuaModel) {
+          //       return buildRowItem(
+          //         customImage: CustomImage1(),
+          //         textLine: formatDateTime(lsxeQuaModel.tuNgay ?? "") +
+          //             ' - ' +
+          //             (lsxeQuaModel.noiNhan ?? "") +
+          //             ': ' +
+          //             (lsxeQuaModel.nguoiNhan ?? ""),
+          //       );
+          //     }).toList(),
+          //   ),
           // buildDivider(),
-          if (_data1 != null)
-            Column(
-              children: _data1!.map((item) {
-                return buildRowItem(
-                  customImage: CustomImage2(),
-                  textLine: (item.ngay != null
-                          ? formatDateTime(item.ngay ?? "")
-                          : "") +
-                      '-' +
-                      (item.thongTinChiTiet ?? ""),
-                );
-              }).toList(),
-            ),
+          // if (_data1 != null)
+          //   Column(
+          //     children: _data1!.map((item) {
+          //       return buildRowItem(
+          //         customImage: CustomImage2(),
+          //         textLine: (item.ngay != null
+          //                 ? formatDateTime(item.ngay ?? "")
+          //                 : "") +
+          //             '-' +
+          //             (item.thongTinChiTiet ?? ""),
+          //       );
+          //     }).toList(),
+          //   ),
 
           // buildDivider(),
           if (_data2 != null)
@@ -368,10 +368,10 @@ class CustomImage1 extends StatelessWidget {
         Image.asset(
           'assets/images/car4.png',
           width: 65,
-          height: 85,
+          height: 75,
         ),
         Transform.translate(
-          offset: const Offset(-40, -5),
+          offset: const Offset(-25, -15),
           child: Image.asset(
             'assets/images/tick.png',
             width: 40,

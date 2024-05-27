@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:Thilogi/models/lsxequa.dart';
+import 'package:Thilogi/models/tinhtrangdonhang.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
+import '../models/lsgiaoxe.dart';
 import '../models/lsnhapbai.dart';
 import '../models/lsxuatxe.dart';
 
@@ -17,6 +19,10 @@ class TrackingBloc extends ChangeNotifier {
   List<LSNhapBaiModel>? get lsnhapbai => _lsnhapbai;
   List<LSXuatXeModel>? _lsxuatxe;
   List<LSXuatXeModel>? get lsxuatxe => _lsxuatxe;
+  List<LSGiaoXeModel>? _lsgiaoxe;
+  List<LSGiaoXeModel>? get lsgiaoxe => _lsgiaoxe;
+  TinhTrangDonHangModel? _tinhtrangdh;
+  TinhTrangDonHangModel? get tinhtrangdh => _tinhtrangdh;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -37,58 +43,78 @@ class TrackingBloc extends ChangeNotifier {
     _lsxequa = null;
     _lsnhapbai = null;
     _lsxuatxe = null;
+    _lsgiaoxe = null;
     try {
       final http.Response response = await requestHelper
-          .getData('GetDataXeThaPham/TrackingXeThanhPham?SoKhung=$soKhung');
+          .getData('KhoThanhPham/TraCuuXeThongTinXe?SoKhung=$soKhung');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
-          if (decodedData['infor_LsXeQua'] != null &&
-              decodedData['infor_LsXeQua'].isNotEmpty) {
-            List<dynamic> lsXeQuaDataList = decodedData['infor_LsXeQua'];
+          var data = decodedData['data'];
+          var lsxequaData = decodedData['lichsuxequathilogi'];
+          var lsnNhapbaiData = decodedData['lichsuluanchuyen'];
+          var lsxuatxeData = decodedData['lichsuxuatxelist'];
+          var lsgiaoxeData = decodedData['lichsuGiaoxelist'];
+          var tinhtrang = decodedData['tinhtrangdonhang'];
 
-            // Tạo danh sách để lưu trữ các thông tin xe qua
-            List<LSXeQuaModel> lsXeQuaList = [];
+          try {
+            if (lsxequaData != null && lsxequaData.isNotEmpty) {
+              List<dynamic> lsXeQuaDataList = lsxequaData;
 
-            // Duyệt qua từng phần tử trong danh sách và thêm vào danh sách kết quả
-            lsXeQuaDataList.forEach((lsXeQuaData) {
-              LSXeQuaModel xeQuaModel = LSXeQuaModel(
-                id: lsXeQuaData['id'],
-                tuNgay: lsXeQuaData['tuNgay'],
-                nguoiNhan: lsXeQuaData['nguoiNhan'],
-                noiNhan: lsXeQuaData['noiNhan'],
-                toaDo: lsXeQuaData['toaDo'],
-              );
-              lsXeQuaList.add(xeQuaModel);
-            });
+              // Tạo danh sách để lưu trữ các thông tin xe qua
+              List<LSXeQuaModel> lsXeQuaList = [];
 
-            // Lưu danh sách thông tin xe qua vào biến _lsxequa
-            _lsxequa = lsXeQuaList;
+              // Duyệt qua từng phần tử trong danh sách và thêm vào danh sách kết quả
+              lsXeQuaDataList.forEach((lsXeQuaData) {
+                LSXeQuaModel xeQuaModel = LSXeQuaModel(
+                  id: lsXeQuaData['id'],
+                  ngayNhan: lsXeQuaData['ngayNhan'],
+                  nguoiNhan: lsXeQuaData['nguoiNhan'],
+                  noiNhan: lsXeQuaData['noiNhan'],
+                  toaDo: lsXeQuaData['toaDo'],
+                );
+                lsXeQuaList.add(xeQuaModel);
+              });
+
+              // Lưu danh sách thông tin xe qua vào biến _lsxequa
+              _lsxequa = lsXeQuaList;
+              print("Processed lsxequaData");
+            }
+          } catch (e) {
+            print("Error processing lsxequaData: $e");
           }
-          if (decodedData['infor_NhapBai'] != null &&
-              decodedData['infor_NhapBai'].isNotEmpty) {
-            List<dynamic> lsNhapBaiDataList = decodedData['infor_NhapBai'];
+          try {
+            if (lsnNhapbaiData != null && lsnNhapbaiData.isNotEmpty) {
+              List<dynamic> lsNhapBaiDataList = lsnNhapbaiData;
 
-            // Tạo danh sách để lưu trữ các thông tin xe qua
-            List<LSNhapBaiModel> lsNhapBaiList = [];
-            lsNhapBaiDataList.forEach((lsNhapBaiData) {
-              LSNhapBaiModel nhapBaiModel = LSNhapBaiModel(
-                id: lsNhapBaiData['id'],
-                ngay: lsNhapBaiData['ngay'],
-                thongTinChiTiet: lsNhapBaiData['thongTinChiTiet'],
-                toaDo: lsNhapBaiData['toaDo'],
-              );
+              // Tạo danh sách để lưu trữ các thông tin xe qua
+              List<LSNhapBaiModel> lsNhapBaiList = [];
+              lsNhapBaiDataList.forEach((lsNhapBaiData) {
+                LSNhapBaiModel nhapBaiModel = LSNhapBaiModel(
+                  id: lsNhapBaiData['id'],
+                  kho: lsNhapBaiData['kho'],
+                  baiXe: lsNhapBaiData['baiXe'],
+                  thoiGianVao: lsNhapBaiData['thoiGianVao'],
+                  thoiGianRa: lsNhapBaiData['thoiGianRa'],
+                  soNgay: lsNhapBaiData['soNgay'].toString(),
+                  ngayVao: lsNhapBaiData['ngayVao'],
+                  ngayRa: lsNhapBaiData['ngayRa'],
+                  toaDo: lsNhapBaiData['toaDo'],
+                );
 
-              lsNhapBaiList.add(nhapBaiModel);
-            });
+                lsNhapBaiList.add(nhapBaiModel);
+              });
 
-            // Lưu danh sách thông tin xe qua vào biến _lsxequa
-            _lsnhapbai = lsNhapBaiList;
+              // Lưu danh sách thông tin xe qua vào biến _lsxequa
+              _lsnhapbai = lsNhapBaiList;
+              print("Processed lsnNhapbaiData");
+            }
+          } catch (e) {
+            print("Error processing lsnNhapbaiData: $e");
           }
-          if (decodedData['infor_LsXuatXe'] != null &&
-              decodedData['infor_LsXuatXe'].isNotEmpty) {
-            List<dynamic> lsXuatXeDataList = decodedData['infor_LsXuatXe'];
+          if (lsxuatxeData != null && lsxuatxeData.isNotEmpty) {
+            List<dynamic> lsXuatXeDataList = lsxuatxeData;
 
             // Tạo danh sách để lưu trữ các thông tin xe qua
             List<LSXuatXeModel> lsXuatXeList = [];
@@ -98,6 +124,7 @@ class TrackingBloc extends ChangeNotifier {
                 ngay: lsXuatXeData['ngay'],
                 thongTinChiTiet: lsXuatXeData['thongTinChiTiet'],
                 thongtinvanchuyen: lsXuatXeData['thongtinvanchuyen'],
+                thongtinMap: lsXuatXeData['thongtinMap'],
                 toaDo: lsXuatXeData['toaDo'],
               );
               lsXuatXeList.add(xuatXeModel);
@@ -105,6 +132,38 @@ class TrackingBloc extends ChangeNotifier {
 
             // Lưu danh sách thông tin xe qua vào biến _lsxequa
             _lsxuatxe = lsXuatXeList;
+          }
+          if (lsgiaoxeData != null && lsgiaoxeData.isNotEmpty) {
+            List<dynamic> lsGiaoXeDataList = lsgiaoxeData;
+
+            // Tạo danh sách để lưu trữ các thông tin xe qua
+            List<LSGiaoXeModel> lsGiaoXeList = [];
+            lsGiaoXeDataList.forEach((lsGiaoXeData) {
+              LSGiaoXeModel giaoXeModel = LSGiaoXeModel(
+                id: lsGiaoXeData['id'],
+                noiGiao: lsGiaoXeData['noiGiao'],
+                soTBGX: lsGiaoXeData['soTBGX'],
+                ngay: lsGiaoXeData['ngay'],
+                toaDo: lsGiaoXeData['toaDo'],
+              );
+              lsGiaoXeList.add(giaoXeModel);
+            });
+
+            // Lưu danh sách thông tin xe qua vào biến _lsxequa
+            _lsgiaoxe = lsGiaoXeList;
+          }
+          if (tinhtrang != null && tinhtrang.isNotEmpty) {
+            TinhTrangDonHangModel tinhTrangModel = TinhTrangDonHangModel(
+              id: tinhtrang['id'],
+              isNhanXe: tinhtrang['isNhanXe'],
+              isNhapKho: tinhtrang['isNhapKho'],
+              isXuatKho: tinhtrang['isXuatKho'],
+              isDaGiao: tinhtrang['isDaGiao'],
+              toaDo: tinhtrang['toaDo'],
+            );
+
+            // Lưu thông tin đơn hàng vào biến _tinhtrangdh
+            _tinhtrangdh = tinhTrangModel;
           }
         } else {
           String errorMessage = response.body.replaceAll('"', '');
@@ -123,6 +182,7 @@ class TrackingBloc extends ChangeNotifier {
           _lsxequa = null;
           _lsnhapbai = null;
           _lsxuatxe = null;
+          _lsgiaoxe = null;
           _isLoading = false;
         }
 
