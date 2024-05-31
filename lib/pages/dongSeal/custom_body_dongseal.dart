@@ -251,6 +251,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
               soCont = null;
               _soSeal.text = '';
               TauId = null;
+              _dsdongcontList = null;
               _data = null;
               _qrData = '';
               _qrDataController.text = '';

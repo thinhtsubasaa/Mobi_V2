@@ -291,21 +291,24 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
         if (_bl.timxe == null) {
           _qrData = '';
           _qrDataController.text = '';
-        }
-        _loading = false;
-        _data = _bl.timxe;
-        if (_data?.toaDo == null) {
-          QuickAlert.show(
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: QuickAlertType.info,
-            title: '',
-            text: 'Xe chưa có vị trí tọa độ trên bản đồ',
-            confirmBtnText: 'Đồng ý',
-          );
+          _loading = false;
           _moveToPosition(LatLng(0, 0));
+        } else {
+          _loading = false;
+          _data = _bl.timxe;
+          if (_data?.toaDo == null) {
+            QuickAlert.show(
+              // ignore: use_build_context_synchronously
+              context: context,
+              type: QuickAlertType.info,
+              title: '',
+              text: 'Xe chưa có vị trí tọa độ trên bản đồ',
+              confirmBtnText: 'Đồng ý',
+            );
+            _moveToPosition(LatLng(0, 0));
+          }
+          _moveToPosition(convertToLatLng(_data?.toaDo ?? ""));
         }
-        _moveToPosition(convertToLatLng(_data?.toaDo ?? ""));
       });
     });
   }

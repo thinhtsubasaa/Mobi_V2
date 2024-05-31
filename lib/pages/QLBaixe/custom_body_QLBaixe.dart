@@ -113,7 +113,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 25, bottom: 25),
               child: Wrap(
-                spacing: 15.0, // khoảng cách giữa các nút
+                spacing: 13.0, // khoảng cách giữa các nút
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [

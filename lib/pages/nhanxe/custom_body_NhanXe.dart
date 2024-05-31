@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:Thilogi/models/user.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -238,16 +237,8 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                     padding: EdgeInsets.only(left: 5),
                                     constraints: BoxConstraints(
                                         maxWidth:
-                                            MediaQuery.of(context).size.width <
-                                                    330
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.69
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.7),
+                                            MediaQuery.of(context).size.width *
+                                                0.69),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(

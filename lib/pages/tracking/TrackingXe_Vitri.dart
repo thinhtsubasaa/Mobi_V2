@@ -67,7 +67,6 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
     _init();
     _tabController = TabController(vsync: this, length: 2);
     _tabController!.addListener(_handleTabChange);
-
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -428,7 +427,6 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                             maxHeight: MediaQuery.of(context).size.height < 600
                                 ? MediaQuery.of(context).size.height * 1.2
                                 : MediaQuery.of(context).size.height * 0.6,
-                            // Đặt chiều cao tối đa của popup là 90% của chiều cao màn hình
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -445,8 +443,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                             children: [
                               // Phần Text 1
                               Positioned(
-                                left: 0, // Adjust left position as needed
-                                top: 0, // Adjust top position as needed
+                                left: 0,
+                                top: 0,
                                 child: Container(
                                   width: 15.w,
                                   decoration: BoxDecoration(
@@ -475,8 +473,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                               ),
                               // Your BodyTrackingXe widget goes here
                               Positioned(
-                                left: 0, // Adjust left position as needed
-                                top: 0, // Adjust top position as needed
+                                left: 0,
+                                top: 0,
                                 child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisAlignment:
@@ -551,9 +549,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                         ),
 
                                       // buildDivider(),
-
                                       // buildDivider(),
-
                                       if (_xequa == null &&
                                           _nhapbai == null &&
                                           _xuatxe == null &&
@@ -572,90 +568,6 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                           ),
                         ),
                       ),
-                      // SingleChildScrollView(
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //     children: [
-                      //       if (_giaoxe != null)
-                      //         Column(
-                      //           children: _giaoxe!.map((item) {
-                      //             return buildRowItem(
-                      //               customImage: CustomImage1(),
-                      //               textLine: (item.ngay != null
-                      //                       ? formatDateTime(item.ngay ?? "")
-                      //                       : "") +
-                      //                   '-' +
-                      //                   (item.noiGiao ?? "") +
-                      //                   '-' +
-                      //                   'Số TBGX' +
-                      //                   (item.soTBGX ?? ""),
-                      //             );
-                      //           }).toList(),
-                      //         ),
-                      //       if (_xuatxe != null)
-                      //         Column(
-                      //           children: _xuatxe!.map((item) {
-                      //             return buildRowItem(
-                      //               customImage: CustomImage2(),
-                      //               textLine: (item.ngay != null
-                      //                       ? formatDateTime(item.ngay ?? "")
-                      //                       : "") +
-                      //                   '-' +
-                      //                   (item.thongTinChiTiet ?? "") +
-                      //                   '-' +
-                      //                   (item.thongtinvanchuyen ?? ""),
-                      //             );
-                      //           }).toList(),
-                      //         ),
-                      //       if (_nhapbai != null)
-                      //         Column(
-                      //           children: _nhapbai!.map((item) {
-                      //             return buildRowItem(
-                      //               customImage: CustomImage3(),
-                      //               textLine: (item.thoiGianVao != null
-                      //                       ? (item.thoiGianVao ?? "")
-                      //                       : "") +
-                      //                   '-' +
-                      //                   (item.kho ?? "") +
-                      //                   '-' +
-                      //                   (item.baiXe ?? "") +
-                      //                   '-' +
-                      //                   (item.toaDo ?? ""),
-                      //             );
-                      //           }).toList(),
-                      //         ),
-                      //       if (_xequa != null)
-                      //         Column(
-                      //           children: _xequa!.map((item) {
-                      //             return buildRowItem(
-                      //               customImage: CustomImage4(),
-                      //               textLine:
-                      //                   formatDateTime(item.ngayNhan ?? "") +
-                      //                       ' - ' +
-                      //                       (item.noiNhan ?? "") +
-                      //                       '-' +
-                      //                       'Người nhận:' +
-                      //                       (item.nguoiNhan ?? ""),
-                      //             );
-                      //           }).toList(),
-                      //         ),
-
-                      //       // buildDivider(),
-
-                      //       // buildDivider(),
-
-                      //       if (_xequa == null &&
-                      //           _nhapbai == null &&
-                      //           _xuatxe == null &&
-                      //           _giaoxe == null)
-                      //         Container(
-                      //           child: Text(
-                      //             'Không có dữ liệu',
-                      //           ),
-                      //         ),
-                      //     ],
-                      //   ),
-                      // ),
 
                       // BodyTrackingXe(),
                     ],
@@ -690,7 +602,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                   TabBar(
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: 'Vị trí trên đường'),
+                      Tab(text: 'Vị trí trên bản đồ'),
                       Tab(text: 'Trạng thái vận chuyển'),
                     ],
                   ),

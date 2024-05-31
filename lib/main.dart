@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:Thilogi/app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override

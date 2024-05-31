@@ -50,6 +50,13 @@ class ScanBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
+          List<PhuKien> phuKienList = [];
+          if (decodedData['phuKien'] != null &&
+              decodedData['phuKien'] is List) {
+            phuKienList = (decodedData['phuKien'] as List<dynamic>)
+                .map((item) => PhuKien.fromJson(item))
+                .toList();
+          }
           _scan = ScanModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -69,9 +76,10 @@ class ScanBloc extends ChangeNotifier {
             Kho_Id: decodedData['Kho_Id'],
             BaiXe_Id: decodedData['BaiXe_Id'],
             viTri_Id: decodedData['viTri_Id'],
-            phuKien: (decodedData['phuKien'] as List<dynamic>)
-                .map((item) => PhuKien.fromJson(item))
-                .toList(),
+            // phuKien: (decodedData['phuKien'] as List<dynamic>)
+            //     .map((item) => PhuKien.fromJson(item))
+            //     .toList(),
+            phuKien: phuKienList,
           );
         }
       } else {
@@ -82,6 +90,7 @@ class ScanBloc extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _hasError = true;
+
       _errorCode = e.toString();
       notifyListeners();
     }
@@ -120,8 +129,7 @@ class ScanBloc extends ChangeNotifier {
             //       .toList(),
           );
         } else {
-          _showErrorDialog(
-              context, "Số khung xe không chính xác hoặc đã nhận xe");
+          _showErrorDialog(context, "Xe đã nhận rồi, vui lòng kiểm tra lại");
         }
       } else {
         _showErrorDialog(context, response.body.replaceAll('"', ''));

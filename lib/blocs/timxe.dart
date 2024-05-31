@@ -50,7 +50,7 @@ class TimXeBloc extends ChangeNotifier {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
         if (errorMessage.isEmpty) {
-          errorMessage = "Số khung xe không chính xác hoặc đã nhập bãi";
+          errorMessage = "Xe chưa nhập kho";
         }
 
         QuickAlert.show(

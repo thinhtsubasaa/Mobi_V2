@@ -1,13 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:Thilogi/widgets/checksheet_upload_anh.dart';
 import 'package:flutter/material.dart';
-import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
-import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
-import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +34,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 // ignore: use_key_in_widget_constructors, must_be_immutable
 class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     with TickerProviderStateMixin, ChangeNotifier {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
   String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
@@ -182,7 +177,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                             _handleButtonTap(KhoXePage());
                           },
                         ),
-                      SizedBox(width: 15),
+                      SizedBox(width: 20),
                       if (userHasPermission(menuRoles, 'van-chuyen-mobi'))
                         CustomButton(
                           'GIAO XE',
@@ -225,26 +220,28 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
 Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
-    child: Column(
-      children: [
-        Container(
-          width: 130,
-          height: 150,
-          alignment: Alignment.center,
-          child: page,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          buttonText,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-            color: AppConfig.titleColor,
+    child: Container(
+      width: 35.w,
+      height: 35.h,
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: page,
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            buttonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: AppConfig.titleColor,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
