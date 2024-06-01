@@ -157,7 +157,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
         : SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
-              margin: const EdgeInsets.only(top: 30, bottom: 30),
+              margin: const EdgeInsets.only(top: 25, bottom: 25),
               //             child: Column(
               //               children: <Widget>[
               //                 Row(
@@ -347,7 +347,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
     onTap: onTap,
     child: Container(
       width: 40.w,
-      height: 35.h,
+      // height: 35.h,
       child: Column(
         children: [
           Container(
