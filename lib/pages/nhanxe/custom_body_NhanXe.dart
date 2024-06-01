@@ -267,12 +267,19 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
-                          'Màu:',
-                          // _data?.tenMau ?? _model?.tenMau ?? "",
-                          _data != null
-                              ? "${_data?.tenMau ?? ""}${checkSlash()}${_data?.maMau ?? ""}"
-                              : "${_model?.tenMau ?? ""}${checkSlash()}${_model?.maMau ?? ""}",
-                        ),
+                            'Màu:',
+                            // _data?.tenMau ?? _model?.tenMau ?? "",
+                            // _data != null
+                            //     ? "${_data?.tenMau ?? ""}(${_data?.maMau ?? ""})"
+                            //     : "${_model?.tenMau ?? ""}'(${_model?.maMau ?? ""})'",
+                            _data != null
+                                ? (_data?.tenMau != null && _data?.maMau != null
+                                    ? "${_data?.tenMau} (${_data?.maMau})"
+                                    : "")
+                                : (_model?.tenMau != null &&
+                                        _model?.maMau != null
+                                    ? "${_model?.tenMau} (${_model?.maMau})"
+                                    : "")),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
                           'Nhà máy:',

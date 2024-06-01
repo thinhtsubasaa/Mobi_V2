@@ -63,8 +63,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   @override
   void initState() {
     super.initState();
-    _bl = Provider.of<TrackingBloc>(context, listen: false);
     _init();
+    _bl = Provider.of<TrackingBloc>(context, listen: false);
     _tabController = TabController(vsync: this, length: 2);
     _tabController!.addListener(_handleTabChange);
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
@@ -209,22 +209,22 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: 8.h,
+      height: 11.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: const Color(0xFF818180),
           width: 1,
         ),
-        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: 20.w,
-            height: 8.h,
+            height: 11.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -238,7 +238,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
@@ -249,18 +249,23 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                barcodeScanResult ?? '',
+              child: TextField(
+                controller: _qrDataController,
+                decoration: InputDecoration(
+                  hintText: 'Nhập hoặc quét mã VIN',
+                ),
+                onSubmitted: (value) {
+                  _handleBarcodeScanResult(value);
+                },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA71C20),
+                  color: AppConfig.primaryColor,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.qr_code_scanner),
             color: Colors.black,
@@ -273,6 +278,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
               );
               setState(() {
                 barcodeScanResult = result;
+                _qrDataController.text = result;
               });
               print(barcodeScanResult);
               _handleBarcodeScanResult(barcodeScanResult ?? "");
@@ -305,7 +311,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
     // Parse chuỗi ngày tháng thành đối tượng DateTime
     DateTime dateTime = DateTime.parse(dateTimeString);
     // Định dạng lại đối tượng DateTime thành chuỗi với định dạng mong muốn
-    String formattedDate = DateFormat('dd/MM/yyyy HH:mm:ss').format(dateTime);
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
     return formattedDate;
   }
 
@@ -319,16 +325,15 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
         if (_bl.lsxequa == null &&
             _bl.lsnhapbai == null &&
             _bl.lsxuatxe == null &&
-            _bl.lsgiaoxe == null &&
-            _bl.tinhtrangdh == null) {
-          QuickAlert.show(
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: QuickAlertType.info,
-            title: '',
-            text: 'Không có dữ liệu',
-            confirmBtnText: 'Đồng ý',
-          );
+            _bl.lsgiaoxe == null) {
+          // QuickAlert.show(
+          //   // ignore: use_build_context_synchronously
+          //   context: context,
+          //   type: QuickAlertType.info,
+          //   title: '',
+          //   text: 'Không có dữ liệu',
+          //   confirmBtnText: 'Đồng ý',
+          // );
           _moveToPosition(LatLng(0, 0));
           _loading = false;
           barcodeScanResult = null;
@@ -365,6 +370,10 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
 
   @override
   Widget build(BuildContext context) {
+    _xuatxe?.sort((a, b) =>
+        DateTime.parse(b.ngay ?? "").compareTo(DateTime.parse(a.ngay ?? "")));
+    _nhapbai?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
+        .compareTo(DateTime.parse(a.ngayVao ?? "")));
     return Scaffold(
       appBar: AppBar(
         // automaticallyImplyLeading: false,
@@ -425,8 +434,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                           alignment: Alignment.bottomCenter,
                           constraints: BoxConstraints(
                             maxHeight: MediaQuery.of(context).size.height < 600
-                                ? MediaQuery.of(context).size.height * 1.2
-                                : MediaQuery.of(context).size.height * 0.6,
+                                ? MediaQuery.of(context).size.height * 1.5
+                                : MediaQuery.of(context).size.height * 0.8,
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.only(
@@ -464,9 +473,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                   .height <
                                               600
                                           ? MediaQuery.of(context).size.height *
-                                              1.2
+                                              1.5
                                           : MediaQuery.of(context).size.height *
-                                              0.6,
+                                              0.8,
                                     ),
                                   ),
                                 ),
@@ -491,9 +500,10 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                       : "") +
                                                   '-' +
                                                   (item.noiGiao ?? "") +
-                                                  '-' +
-                                                  'Số TBGX' +
-                                                  (item.soTBGX ?? ""),
+                                                  ' - Số TBGX: ' +
+                                                  (item.soTBGX ?? "") +
+                                                  "- Người phụ trách:" +
+                                                  (item.nguoiPhuTrach ?? ""),
                                             );
                                           }).toList(),
                                         ),
@@ -506,11 +516,14 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                       ? formatDateTime(
                                                           item.ngay ?? "")
                                                       : "") +
-                                                  '-' +
-                                                  (item.thongTinChiTiet ?? "") +
+                                                  (item.thongTinChiTiet != null
+                                                      ? ('-${(item.thongTinChiTiet ?? "")}')
+                                                      : "") +
                                                   '-' +
                                                   (item.thongtinvanchuyen ??
-                                                      ""),
+                                                      "") +
+                                                  " - Người phụ trách:" +
+                                                  (item.nguoiPhuTrach ?? ""),
                                             );
                                           }).toList(),
                                         ),
@@ -518,18 +531,20 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                         Column(
                                           children: _nhapbai!.map((item) {
                                             return buildRowItem(
-                                              customImage: CustomImage3(),
-                                              textLine: (item.thoiGianVao !=
-                                                          null
-                                                      ? (item.thoiGianVao ?? "")
-                                                      : "") +
-                                                  '-' +
-                                                  (item.kho ?? "") +
-                                                  '-' +
-                                                  (item.baiXe ?? "") +
-                                                  '-' +
-                                                  (item.toaDo ?? ""),
-                                            );
+                                                customImage: CustomImage3(),
+                                                textLine: (item.thoiGianVao !=
+                                                            null
+                                                        ? (item.thoiGianVao ??
+                                                            "")
+                                                        : "") +
+                                                    '-' +
+                                                    (item.kho ?? "") +
+                                                    '-' +
+                                                    (item.baiXe ?? "") +
+                                                    "- Vị trí " +
+                                                    (item.viTri ?? "") +
+                                                    " - Người nhập bãi:" +
+                                                    (item.nguoiNhapBai ?? ""));
                                           }).toList(),
                                         ),
                                       if (_xequa != null)
@@ -539,8 +554,9 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                               customImage: CustomImage4(),
                                               textLine: formatDateTime(
                                                       item.ngayNhan ?? "") +
-                                                  ' - ' +
-                                                  (item.noiNhan ?? "") +
+                                                  (item.noiNhan != null
+                                                      ? ('-${(item.noiNhan ?? "")}')
+                                                      : "") +
                                                   '-' +
                                                   'Người nhận:' +
                                                   (item.nguoiNhan ?? ""),

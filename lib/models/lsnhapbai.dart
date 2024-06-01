@@ -8,6 +8,8 @@ class LSNhapBaiModel {
   String? ngayVao;
   String? toaDo;
   String? ngayRa;
+  String? nguoiNhapBai;
+  String? viTri;
 
   LSNhapBaiModel({
     this.id,
@@ -19,6 +21,8 @@ class LSNhapBaiModel {
     this.soNgay,
     this.thoiGianRa,
     this.thoiGianVao,
+    this.nguoiNhapBai,
+    this.viTri,
   });
   factory LSNhapBaiModel.fromJson(Map<String, dynamic> json) {
     return LSNhapBaiModel(
@@ -31,6 +35,8 @@ class LSNhapBaiModel {
       ngayVao: json["ngayVao"],
       ngayRa: json["ngayRa"],
       toaDo: json["toaDo"],
+      nguoiNhapBai: json["nguoiNhapBai"],
+      viTri: json["viTri"],
     );
   }
 }

@@ -328,7 +328,8 @@ class buildRowItem extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            customImage, // Custom Image widget goes here
+            customImage,
+            // Custom Image widget goes here
             RichText(
               textAlign: TextAlign.left,
               text: TextSpan(

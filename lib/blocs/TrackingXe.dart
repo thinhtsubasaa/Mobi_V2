@@ -101,6 +101,8 @@ class TrackingBloc extends ChangeNotifier {
                   ngayVao: lsNhapBaiData['ngayVao'],
                   ngayRa: lsNhapBaiData['ngayRa'],
                   toaDo: lsNhapBaiData['toaDo'],
+                  nguoiNhapBai: lsNhapBaiData['nguoiNhapBai'],
+                  viTri: lsNhapBaiData['viTri'],
                 );
 
                 lsNhapBaiList.add(nhapBaiModel);
@@ -126,6 +128,7 @@ class TrackingBloc extends ChangeNotifier {
                 thongtinvanchuyen: lsXuatXeData['thongtinvanchuyen'],
                 thongtinMap: lsXuatXeData['thongtinMap'],
                 toaDo: lsXuatXeData['toaDo'],
+                nguoiPhuTrach: lsXuatXeData['nguoiPhuTrach'],
               );
               lsXuatXeList.add(xuatXeModel);
             });
@@ -145,6 +148,7 @@ class TrackingBloc extends ChangeNotifier {
                 soTBGX: lsGiaoXeData['soTBGX'],
                 ngay: lsGiaoXeData['ngay'],
                 toaDo: lsGiaoXeData['toaDo'],
+                nguoiPhuTrach: lsGiaoXeData['nguoiPhuTrach'],
               );
               lsGiaoXeList.add(giaoXeModel);
             });
@@ -165,29 +169,29 @@ class TrackingBloc extends ChangeNotifier {
             // Lưu thông tin đơn hàng vào biến _tinhtrangdh
             _tinhtrangdh = tinhTrangModel;
           }
-        } else {
-          String errorMessage = response.body.replaceAll('"', '');
-          notifyListeners();
-          if (errorMessage.isEmpty) {
-            errorMessage = "Không có dữ liệu";
-          }
-          QuickAlert.show(
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: QuickAlertType.info,
-            title: '',
-            text: errorMessage,
-            confirmBtnText: 'Đồng ý',
-          );
-          _lsxequa = null;
-          _lsnhapbai = null;
-          _lsxuatxe = null;
-          _lsgiaoxe = null;
-          _isLoading = false;
         }
-
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
+        if (errorMessage.isEmpty) {
+          errorMessage = "Không có dữ liệu";
+        }
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
+        _lsxequa = null;
+        _lsnhapbai = null;
+        _lsxuatxe = null;
+        _lsgiaoxe = null;
+        _isLoading = false;
       }
+
+      notifyListeners();
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();

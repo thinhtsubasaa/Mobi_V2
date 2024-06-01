@@ -1,0 +1,345 @@
+import 'dart:async';
+
+import 'package:Thilogi/widgets/divider.dart';
+import 'package:flutter/material.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_datawedge/flutter_datawedge.dart';
+import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:flutter_icons/flutter_icons.dart';
+import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
+import '../../blocs/user_bloc.dart';
+import '../../models/khothanhpham.dart';
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/custom_card.dart';
+import '../../widgets/custom_title.dart';
+
+class TraCuuPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: customAppBar(context),
+      body: Column(
+        children: [
+          CustomCard(),
+          Expanded(
+            child: Container(
+              width: 100.w,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: CustomBodyAccount(),
+            ),
+          ),
+          BottomContent(),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomBodyAccount extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(child: BodyAccountScreen());
+  }
+}
+
+class BodyAccountScreen extends StatefulWidget {
+  const BodyAccountScreen({Key? key}) : super(key: key);
+
+  @override
+  _BodyAccountScreenState createState() => _BodyAccountScreenState();
+}
+
+class _BodyAccountScreenState extends State<BodyAccountScreen>
+    with SingleTickerProviderStateMixin {
+  late UserBloc? ub;
+  String _qrData = '';
+  final _qrDataController = TextEditingController();
+  bool _loading = false;
+  KhoThanhPhamModel? _data;
+  String? barcodeScanResult = '';
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
+  bool _success = false;
+  bool get success => _success;
+
+  String? _message;
+  String? get message => _message;
+  late FlutterDataWedge dataWedge;
+  late StreamSubscription<ScanResult> scanSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    ub = Provider.of<UserBloc>(context, listen: false);
+  }
+
+  Widget CardVin() {
+    return Container(
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+      height: 11.h,
+      margin: const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFF818180),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 20.w,
+            height: 11.h,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5),
+                bottomLeft: Radius.circular(5),
+              ),
+              color: AppConfig.primaryColor,
+            ),
+            child: Center(
+              child: Text(
+                'Số khung\n(VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _qrDataController,
+                decoration: InputDecoration(
+                  hintText: 'Nhập hoặc quét mã VIN',
+                ),
+                onSubmitted: (value) {
+                  _handleBarcodeScanResult(value);
+                },
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppConfig.primaryColor,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            color: Colors.black,
+            onPressed: () async {
+              String result = await FlutterBarcodeScanner.scanBarcode(
+                '#A71C20',
+                'Cancel',
+                false,
+                ScanMode.QR,
+              );
+              setState(() {
+                barcodeScanResult = result;
+                _qrDataController.text = result;
+              });
+              print(barcodeScanResult);
+              _handleBarcodeScanResult(barcodeScanResult ?? "");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleBarcodeScanResult(String barcodeScanResult) {
+    print("abc: ${barcodeScanResult}");
+    // Process the barcode scan result here
+    setState(() {
+      _qrData = '';
+      _qrDataController.text = '';
+      _data = null;
+      Future.delayed(const Duration(seconds: 0), () {
+        _qrData = barcodeScanResult;
+        _qrDataController.text = barcodeScanResult;
+        // _onScan(barcodeScanResult);
+      });
+    });
+  }
+
+  // _onScan(value) {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   _bl.getData(context, value).then((_) {
+  //     setState(() {
+  //       _qrData = value;
+  //       if (_bl.baixe == null) {
+  //         barcodeScanResult = null;
+  //         _qrData = '';
+  //         _qrDataController.text = '';
+  //       }
+
+  //       _loading = false;
+  //       _data = _bl.baixe;
+  //     });
+  //   });
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(children: [
+          CardVin(),
+          const SizedBox(height: 5),
+          Center(
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Thông Tin Nhân Viên',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const Divider(height: 1, color: Color(0xFFA71C20)),
+                        const SizedBox(height: 10),
+                        Column(
+                          children: [
+                            ListTile(
+                              contentPadding: EdgeInsets.all(0),
+                              title: Container(
+                                width: 200,
+                                height: 200,
+                                child: Image.network(
+                                  ub?.hinhAnhUrl ?? "",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.blueAccent,
+                                radius: 18,
+                                child: Icon(
+                                  Feather.user_check,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.name ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.blueAccent,
+                                radius: 18,
+                                child: Icon(
+                                  Feather.user_plus,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.accessRole ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const DividerWidget(),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.indigoAccent[100],
+                                radius: 18,
+                                child: const Icon(
+                                  Feather.mail,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                ub?.email ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+class BottomContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 11,
+      padding: EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        color: AppConfig.bottom,
+      ),
+      child: Center(
+        child: customTitle(
+          'KIỂM TRA - THÔNG TIN NHÂN VIÊN',
+        ),
+      ),
+    );
+  }
+}

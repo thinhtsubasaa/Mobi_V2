@@ -903,7 +903,7 @@ class MyInputWidget extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Container(
-              padding: EdgeInsets.only(top: 5, left: 15.sp),
+              padding: EdgeInsets.only(left: 15.sp),
               child: TextFormField(
                 controller: controller,
                 style: textStyle,

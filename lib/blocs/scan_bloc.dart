@@ -105,28 +105,35 @@ class ScanBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data2: ${decodedData}");
         if (decodedData != null) {
+          List<HuKien> huKienList = [];
+          if (decodedData['phuKien'] != null &&
+              decodedData['phuKien'] is List) {
+            huKienList = (decodedData['phuKien'] as List<dynamic>)
+                .map((item) => HuKien.fromJson(item))
+                .toList();
+          }
+          print("phu kien: ${decodedData['phuKien']}");
           _data = DataModel(
             id: decodedData['id'],
             soKhung: decodedData['soKhung'],
             maSanPham: decodedData['maSanPham'],
             tenSanPham: decodedData['tenSanPham'],
-
-            // soMay: decodedData['soMay'],
+            soMay: decodedData['soMay'],
             maMau: decodedData['maMau'],
             tenMau: decodedData['tenMau'],
-            //   tenKho: decodedData['tenKho'],
-            //   maViTri: decodedData['maViTri'],
-            //   tenViTri: decodedData['tenViTri'],
-            //   mauSon: decodedData['mauSon'],
-            //   ngayXuatKhoView: decodedData['ngayXuatKhoView'],
-            //   tenTaiXe: decodedData['tenTaiXe'],
-            //   ghiChu: decodedData['ghiChu'],
-            //   Kho_Id: decodedData['Kho_Id'],
-            //   BaiXe_Id: decodedData['BaiXe_Id'],
-            //   viTri_Id: decodedData['viTri_Id'],
-            //   phuKien: (decodedData['phuKien'] as List<dynamic>)
-            //       .map((item) => HuKien.fromJson(item))
-            //       .toList(),
+            tenKho: decodedData['tenKho'],
+            maViTri: decodedData['maViTri'],
+            tenViTri: decodedData['tenViTri'],
+            mauSon: decodedData['mauSon'],
+            ngayXuatKhoView: decodedData['ngayXuatKhoView'],
+            tenTaiXe: decodedData['tenTaiXe'],
+            ghiChu: decodedData['ghiChu'],
+            Kho_Id: decodedData['Kho_Id'],
+            BaiXe_Id: decodedData['BaiXe_Id'],
+            viTri_Id: decodedData['viTri_Id'],
+            // phuKien: (decodedData['phuKien'] as List<dynamic>)
+            //     .map((item) => HuKien.fromJson(item))
+            //     .toList(),
           );
         } else {
           _showErrorDialog(context, "Xe đã nhận rồi, vui lòng kiểm tra lại");

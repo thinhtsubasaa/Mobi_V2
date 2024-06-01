@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
@@ -305,6 +306,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       ),
                       () {
                         _handleButtonTap(TrackingXeVitriPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
+                    CustomButton(
+                      'TRA CỨU THÔNG TIN NHÂN VIÊN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_NhanXe_3b.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(TraCuuPage());
                       },
                     ),
                 ],
