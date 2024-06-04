@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
-class TimXeBloc extends ChangeNotifier {
+class Scan_NhanVienBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   NhanVienModel? _nhanvien;
@@ -30,26 +30,27 @@ class TimXeBloc extends ChangeNotifier {
     _nhanvien = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetTimXeTrongBai?SoKhung=$soKhung');
+          .getData('Account/thongtincbnv?plainText=$soKhung');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
           _nhanvien = NhanVienModel(
-              // key: decodedData["key"],
-              // id: decodedData['id'],
-              // soKhung: decodedData['soKhung'],
-              // tenKho: decodedData['tenKho'],
-              // tenBaiXe: decodedData['tenBaiXe'],
-              // tenViTri: decodedData['tenViTri'],
-              // toaDo: decodedData['toaDo'],
-              );
+            id: decodedData['id'],
+            email: decodedData['email'],
+            fullName: decodedData['fullName'],
+            mustChangePass: decodedData['mustChangePass'],
+            token: decodedData['token'],
+            refreshToken: decodedData['refreshToken'],
+            accessRole: decodedData['accessRole'],
+            hinhAnhUrl: decodedData['hinhAnhUrl'],
+          );
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
         if (errorMessage.isEmpty) {
-          errorMessage = "Xe chưa nhập kho";
+          errorMessage = "Không có thông tin CBNV";
         }
 
         QuickAlert.show(

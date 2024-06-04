@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Thilogi/blocs/scan_nhanvien_bloc.dart';
+import 'package:Thilogi/models/nhanvien.dart';
 import 'package:Thilogi/widgets/divider.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
@@ -56,11 +58,11 @@ class BodyAccountScreen extends StatefulWidget {
 
 class _BodyAccountScreenState extends State<BodyAccountScreen>
     with SingleTickerProviderStateMixin {
-  late UserBloc? ub;
+  late Scan_NhanVienBloc ub;
   String _qrData = '';
   final _qrDataController = TextEditingController();
   bool _loading = false;
-  KhoThanhPhamModel? _data;
+  NhanVienModel? _data;
   String? barcodeScanResult = '';
 
   bool _hasError = false;
@@ -82,7 +84,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
   @override
   void initState() {
     super.initState();
-    ub = Provider.of<UserBloc>(context, listen: false);
+    ub = Provider.of<Scan_NhanVienBloc>(context, listen: false);
   }
 
   Widget CardVin() {
@@ -178,29 +180,29 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
       Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
-        // _onScan(barcodeScanResult);
+        _onScan(barcodeScanResult);
       });
     });
   }
 
-  // _onScan(value) {
-  //   setState(() {
-  //     _loading = true;
-  //   });
-  //   _bl.getData(context, value).then((_) {
-  //     setState(() {
-  //       _qrData = value;
-  //       if (_bl.baixe == null) {
-  //         barcodeScanResult = null;
-  //         _qrData = '';
-  //         _qrDataController.text = '';
-  //       }
+  _onScan(value) {
+    setState(() {
+      _loading = true;
+    });
+    ub.getData(context, value).then((_) {
+      setState(() {
+        _qrData = value;
+        if (ub.nhanvien == null) {
+          barcodeScanResult = null;
+          _qrData = '';
+          _qrDataController.text = '';
+        }
 
-  //       _loading = false;
-  //       _data = _bl.baixe;
-  //     });
-  //   });
-  // }
+        _loading = false;
+        _data = ub.nhanvien;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +244,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                 width: 200,
                                 height: 200,
                                 child: Image.network(
-                                  ub?.hinhAnhUrl ?? "",
+                                  _data?.hinhAnhUrl ?? "",
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -260,7 +262,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                 ),
                               ),
                               title: Text(
-                                ub?.name ?? "",
+                                _data?.fullName ?? "",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -281,7 +283,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                 ),
                               ),
                               title: Text(
-                                ub?.accessRole ?? "",
+                                _data?.accessRole ?? "",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
@@ -302,7 +304,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                 ),
                               ),
                               title: Text(
-                                ub?.email ?? "",
+                                _data?.email ?? "",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

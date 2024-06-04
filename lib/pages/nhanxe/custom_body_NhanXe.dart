@@ -70,23 +70,24 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
   Widget CardVin() {
     return Container(
-      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: 8.h,
+      // width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+      width: 100.w,
+      height: MediaQuery.of(context).size.width < 885 ? 9.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: const Color(0xFF818180),
           width: 1,
         ),
-        color: Theme.of(context).colorScheme.onPrimary,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             width: 20.w,
-            height: 8.h,
+            height: 11.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -111,13 +112,19 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                barcodeScanResult ?? '',
+              child: TextField(
+                controller: _qrDataController,
+                decoration: InputDecoration(
+                  hintText: 'Nhập hoặc quét mã VIN',
+                ),
+                onSubmitted: (value) {
+                  _handleBarcodeScanResult(value);
+                },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFFA71C20),
+                  color: AppConfig.primaryColor,
                 ),
               ),
             ),
@@ -134,6 +141,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
               );
               setState(() {
                 barcodeScanResult = result;
+                _qrDataController.text = result;
               });
               print(barcodeScanResult);
               _handleBarcodeScanResult(barcodeScanResult ?? "");

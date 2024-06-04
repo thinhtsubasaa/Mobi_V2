@@ -113,7 +113,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 25, bottom: 25),
               child: Wrap(
-                spacing: 13.0, // khoảng cách giữa các nút
+                spacing: 15.0, // khoảng cách giữa các nút
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
@@ -209,12 +209,14 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
 
 Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
-      onTap: onTap,
+    onTap: onTap,
+    child: Container(
+      width: 28.w,
       child: Column(
         children: [
           Container(
-            width: 25.w,
-            height: 20.h,
+            //  width: 28.w,
+            // height: 35.h,
             alignment: Alignment.center,
             child: page,
           ),
@@ -223,11 +225,13 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w800,
               color: AppConfig.titleColor,
             ),
           ),
         ],
-      ));
+      ),
+    ),
+  );
 }

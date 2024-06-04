@@ -21,11 +21,13 @@ class NhanVienModel {
   factory NhanVienModel.fromJson(Map<String, dynamic> json) {
     return NhanVienModel(
       id: json["id"].toString(),
-      // ngay: json["ngay"],
-      // noiGiao: json["noiGiao"],
-      // soTBGX: json["soTBGX"],
-      // toaDo: json["toaDo"],
-      // nguoiPhuTrach: json["nguoiPhuTrach"],
+      email: json["email"],
+      fullName: json["fullName"],
+      mustChangePass: json["mustChangePass"],
+      accessRole: json["accessRole"],
+      token: json["token"],
+      refreshToken: json["refreshToken"],
+      hinhAnhUrl: json["hinhAnhUrl"],
     );
   }
 }

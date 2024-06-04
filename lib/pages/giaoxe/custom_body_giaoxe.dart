@@ -156,7 +156,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: 11.h,
+      // height: 11.h,
+      height: MediaQuery.of(context).size.width < 885 ? 11.h : 9.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
