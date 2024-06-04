@@ -35,15 +35,18 @@ class Scan_NhanVienBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
+          var data = decodedData['result'];
+          var vaocong = decodedData['isVaoCong'];
           _nhanvien = NhanVienModel(
-            id: decodedData['id'],
-            email: decodedData['email'],
-            fullName: decodedData['fullName'],
-            mustChangePass: decodedData['mustChangePass'],
-            token: decodedData['token'],
-            refreshToken: decodedData['refreshToken'],
-            accessRole: decodedData['accessRole'],
-            hinhAnhUrl: decodedData['hinhAnhUrl'],
+            id: data['id'],
+            email: data['email'],
+            tenNhanVien: data['tenNhanVien'],
+            mustChangePass: data['mustChangePass'],
+            token: data['token'],
+            hinhAnh_Url: data['hinhAnh_Url'],
+            maNhanVien: data['maNhanVien'],
+            tenPhongBan: data['tenPhongBan'],
+            isVaoCong: vaocong,
           );
         }
       } else {

@@ -10,12 +10,14 @@ import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import '../../blocs/user_bloc.dart';
 import '../../models/khothanhpham.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
+import '../../widgets/loading.dart';
 
 class TraCuuPage extends StatelessWidget {
   @override
@@ -59,6 +61,7 @@ class BodyAccountScreen extends StatefulWidget {
 class _BodyAccountScreenState extends State<BodyAccountScreen>
     with SingleTickerProviderStateMixin {
   late Scan_NhanVienBloc ub;
+  late UserBloc? _us;
   String _qrData = '';
   final _qrDataController = TextEditingController();
   bool _loading = false;
@@ -85,6 +88,21 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
   void initState() {
     super.initState();
     ub = Provider.of<Scan_NhanVienBloc>(context, listen: false);
+    _us = Provider.of<UserBloc>(context, listen: false);
+    dataWedge = FlutterDataWedge(profileName: "Example Profile");
+    scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
+      setState(() {
+        barcodeScanResult = result.data;
+      });
+      print(barcodeScanResult);
+      _handleBarcodeScanResult(barcodeScanResult ?? "");
+    });
+  }
+
+  @override
+  void dispose() {
+    scanSubscription.cancel();
+    super.dispose();
   }
 
   Widget CardVin() {
@@ -172,7 +190,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print("abc: ${barcodeScanResult}");
-    // Process the barcode scan result here
+
     setState(() {
       _qrData = '';
       _qrDataController.text = '';
@@ -196,12 +214,31 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
           barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
+        } else {
+          _loading = false;
+          _data = ub.nhanvien;
+          if (_data?.isVaoCong == true) {
+            String errorMessage = "Không được vào cổng";
+            QuickAlert.show(
+              // ignore: use_build_context_synchronously
+              context: context,
+              type: QuickAlertType.info,
+              title: '',
+              text: errorMessage,
+              confirmBtnText: 'Đồng ý',
+            );
+          }
         }
-
+      });
+    }).then((_) {
+      setState(() {
+        barcodeScanResult = null;
+        _qrData = '';
+        _qrDataController.text = '';
         _loading = false;
-        _data = ub.nhanvien;
       });
     });
+    ;
   }
 
   @override
@@ -220,103 +257,117 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Thông Tin Nhân Viên',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                  _loading
+                      ? LoadingWidget(context)
+                      : Container(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 10),
+                              const Text(
+                                'Thông Tin Nhân Viên',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const Divider(
+                                  height: 1, color: Color(0xFFA71C20)),
+                              const SizedBox(height: 10),
+                              Column(
+                                children: [
+                                  ListTile(
+                                    contentPadding: EdgeInsets.all(0),
+                                    title: Container(
+                                      width: 200,
+                                      height: 200,
+                                      child: _data?.hinhAnh_Url != null
+                                          ? Image.network(
+                                              _data?.hinhAnh_Url ?? "",
+                                              fit: BoxFit.contain,
+                                            )
+                                          : Image.network(
+                                              _us?.hinhAnhUrl ?? "",
+                                              fit: BoxFit.contain,
+                                            ),
+                                    ),
+                                  ),
+                                  const DividerWidget(),
+                                  ListTile(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    leading: const CircleAvatar(
+                                      backgroundColor: Colors.blueAccent,
+                                      radius: 18,
+                                      child: Icon(
+                                        Feather.user_check,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      _data?.tenNhanVien ?? "",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const DividerWidget(),
+                                  ListTile(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    leading: const CircleAvatar(
+                                      backgroundColor: Colors.blueAccent,
+                                      radius: 18,
+                                      child: Icon(
+                                        Feather.user_plus,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      _data?.maNhanVien ?? "",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                  ),
+                                  const DividerWidget(),
+                                  ListTile(
+                                    contentPadding: const EdgeInsets.all(0),
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.indigoAccent[100],
+                                      radius: 18,
+                                      child: const Icon(
+                                        Feather.mail,
+                                        size: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      _data?.tenPhongBan ?? "",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        const Divider(height: 1, color: Color(0xFFA71C20)),
-                        const SizedBox(height: 10),
-                        Column(
-                          children: [
-                            ListTile(
-                              contentPadding: EdgeInsets.all(0),
-                              title: Container(
-                                width: 200,
-                                height: 200,
-                                child: Image.network(
-                                  _data?.hinhAnhUrl ?? "",
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                            const DividerWidget(),
-                            ListTile(
-                              contentPadding: const EdgeInsets.all(0),
-                              leading: const CircleAvatar(
-                                backgroundColor: Colors.blueAccent,
-                                radius: 18,
-                                child: Icon(
-                                  Feather.user_check,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              title: Text(
-                                _data?.fullName ?? "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                            const DividerWidget(),
-                            ListTile(
-                              contentPadding: const EdgeInsets.all(0),
-                              leading: const CircleAvatar(
-                                backgroundColor: Colors.blueAccent,
-                                radius: 18,
-                                child: Icon(
-                                  Feather.user_plus,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              title: Text(
-                                _data?.accessRole ?? "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                            const DividerWidget(),
-                            ListTile(
-                              contentPadding: const EdgeInsets.all(0),
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.indigoAccent[100],
-                                radius: 18,
-                                child: const Icon(
-                                  Feather.mail,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              title: Text(
-                                _data?.email ?? "",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),

@@ -29,6 +29,7 @@ class _SplashPageState extends State<SplashPage> {
         _goToHomePage();
       } else {
         _goToLoginPage();
+        print(("API: ${_ab.apiUrl}"));
       }
     });
   }

@@ -308,7 +308,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(TrackingXeVitriPage());
                       },
                     ),
-                  if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
+                  if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
                     CustomButton(
                       'TRA CỨU THÔNG TIN NHÂN VIÊN',
                       Stack(
