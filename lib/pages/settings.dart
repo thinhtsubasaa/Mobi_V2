@@ -1,5 +1,3 @@
-
-
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
 
@@ -10,7 +8,6 @@ import 'package:flutter_icons/flutter_icons.dart';
 
 import '../blocs/theme_bloc.dart';
 import '../utils/sign_out.dart';
-import '../utils/snackbar.dart';
 import '../widgets/divider.dart';
 
 // ignore: must_be_immutable

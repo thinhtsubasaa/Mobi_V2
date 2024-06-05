@@ -1,3 +1,5 @@
+import 'package:Thilogi/pages/tracuu/tracuu.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -7,95 +9,95 @@ import '../../config/config.dart';
 class CustomBodyGuess extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 60.h,
-
-        // ignore: prefer_const_constructors
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromRGBO(246, 198, 199, 0.2),
-              Color.fromRGBO(66, 143, 202, 0.2),
-            ],
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: MainButton());
+    return Container(width: 100.w, child: MainButton());
   }
 }
 
 class MainButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            width: 35.w,
-            height: 30.h,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, 4),
-                  blurRadius: 4,
-                  spreadRadius: 0,
-                  color: Color(0x40000000),
-                ),
-              ],
-              color: Color(0xFF428FCA),
-            ),
-            alignment: Alignment.center,
-            child: const Center(
-              child: Text(
-                'THÔNG TIN\n DỊCH VỤ',
-                style: TextStyle(
-                  color: AppConfig.textButton,
-                  fontFamily: 'Comfortaa',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        margin: const EdgeInsets.only(top: 25, bottom: 25),
+        child: Wrap(
+          spacing: 20.0, // khoảng cách giữa các nút
+          runSpacing: 20.0, // khoảng cách giữa các hàng
+          alignment: WrapAlignment.center,
+          children: [
+            CustomButton(
+              'THÔNG TIN DỊCH VỤ',
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/Button_NhanXe_3b.png',
+                  ),
+                ],
               ),
+              () {
+                nextScreen(context, TraCuuPage());
+              },
             ),
-          ),
-        ),
-        SizedBox(width: 5.w),
-        GestureDetector(
-          onTap: () {},
-          child: Container(
-            width: 35.w,
-            height: 30.h,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, 4),
-                  blurRadius: 4,
-                  spreadRadius: 0,
-                  color: Color(0x40000000),
-                ),
-              ],
-              color: Color(0xFF428FCA),
-            ),
-            alignment: Alignment.center,
-            child: const Center(
-              child: Text(
-                'TRA CỨU\nĐƠN HÀNG',
-                style: TextStyle(
-                  color: AppConfig.textButton,
-                  fontFamily: 'Comfortaa',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
+            CustomButton(
+              'TRA CỨU ĐƠN HÀNG',
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/Button_NhanXe_3b.png',
+                  ),
+                ],
               ),
+              () {
+                nextScreen(context, TraCuuPage());
+              },
             ),
-          ),
+            CustomButton(
+              'TRA CỨU THÔNG TIN NHÂN VIÊN',
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/Button_NhanXe_3b.png',
+                  ),
+                ],
+              ),
+              () {
+                nextScreen(context, TraCuuPage());
+              },
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
+}
+
+Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 40.w,
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: page,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            buttonText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: AppConfig.titleColor,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

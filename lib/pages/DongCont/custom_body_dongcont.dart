@@ -97,7 +97,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   @override
   void dispose() {
-    scanSubscription.cancel();
     textEditingController.dispose();
     super.dispose();
   }
@@ -185,7 +184,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       // height: 11.h,
-      height: MediaQuery.of(context).size.width < 885 ? 11.h : 9.h,
+      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -235,7 +234,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -666,7 +665,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         style: TextStyle(
                                           fontFamily: 'Coda Caption',
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w700,
                                           color: AppConfig.primaryColor,
                                         ),
                                       ),
@@ -826,7 +825,7 @@ class Item extends StatelessWidget {
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 17,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),

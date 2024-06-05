@@ -16,6 +16,8 @@ import 'package:Thilogi/blocs/xuatkho_bloc.dart';
 import 'package:Thilogi/models/theme.dart';
 import 'package:Thilogi/pages/splash.dart';
 import 'package:Thilogi/services/auth_service.dart';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -87,6 +89,7 @@ class MyApp extends StatelessWidget {
                 title: 'THILOGI ',
                 theme: ThemeModel().lightTheme,
                 darkTheme: ThemeModel().darkTheme,
+
                 themeMode:
                     mode.darkTheme == true ? ThemeMode.dark : ThemeMode.light,
                 // theme: ThemeData(

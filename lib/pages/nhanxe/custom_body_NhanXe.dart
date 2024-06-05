@@ -58,21 +58,16 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     });
   }
 
-  String checkSlash() {
-    return (_data != null || _model != null) ? '/' : '';
-  }
-
   @override
   void dispose() {
-    scanSubscription.cancel();
     super.dispose();
   }
 
   Widget CardVin() {
     return Container(
-      // width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      width: 100.w,
-      height: MediaQuery.of(context).size.width < 885 ? 9.h : 8.h,
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+      // width: 100.w,
+      height: MediaQuery.of(context).size.height < 885 ? 9.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -122,7 +117,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -257,7 +252,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                         style: TextStyle(
                                           fontFamily: 'Coda Caption',
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w700,
                                           color: AppConfig.primaryColor,
                                         ),
                                       ),
@@ -297,24 +292,32 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                         Container(
                           padding: EdgeInsets.all(10),
                           child: ElevatedButton(
-                            onPressed: () {
-                              _handleButtonTap(NhanXe2Page(
-                                soKhung:
-                                    _data?.soKhung ?? _model?.soKhung ?? "",
-                                soMay: _data?.soMay ?? "",
-                                tenMau: _data?.tenMau ?? _model?.maMau ?? "",
-                                tenSanPham: _data?.tenSanPham ??
-                                    _model?.tenSanPham ??
-                                    "",
-                                ngayXuatKhoView: _data?.ngayXuatKhoView ??
-                                    formatCurrentDateTime(),
-                                tenTaiXe: _data?.tenTaiXe ?? ub.name ?? "",
-                                ghiChu: _data?.ghiChu ?? _model?.ghiChu ?? "",
-                                tenKho: _data?.tenKho ?? _model?.tenKho ?? "",
-                                phuKien:
-                                    _data?.phuKien ?? _model?.phuKien ?? [],
-                              ));
-                            },
+                            onPressed: (_data != null || _model != null)
+                                ? () {
+                                    _handleButtonTap(NhanXe2Page(
+                                      soKhung: _data?.soKhung ??
+                                          _model?.soKhung ??
+                                          "",
+                                      soMay: _data?.soMay ?? "",
+                                      tenMau:
+                                          _data?.tenMau ?? _model?.maMau ?? "",
+                                      tenSanPham: _data?.tenSanPham ??
+                                          _model?.tenSanPham ??
+                                          "",
+                                      ngayXuatKhoView: _data?.ngayXuatKhoView ??
+                                          formatCurrentDateTime(),
+                                      tenTaiXe:
+                                          _data?.tenTaiXe ?? ub.name ?? "",
+                                      ghiChu:
+                                          _data?.ghiChu ?? _model?.ghiChu ?? "",
+                                      tenKho:
+                                          _data?.tenKho ?? _model?.tenKho ?? "",
+                                      phuKien: _data?.phuKien ??
+                                          _model?.phuKien ??
+                                          [],
+                                    ));
+                                  }
+                                : null,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFE96327),
                               fixedSize: Size(85.w, 7.h),

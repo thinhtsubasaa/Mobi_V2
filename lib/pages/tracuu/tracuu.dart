@@ -13,7 +13,6 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import '../../blocs/user_bloc.dart';
-import '../../models/khothanhpham.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
@@ -68,17 +67,6 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
   NhanVienModel? _data;
   String? barcodeScanResult = '';
 
-  bool _hasError = false;
-  bool get hasError => _hasError;
-
-  String? _errorCode;
-  String? get errorCode => _errorCode;
-  bool _isLoading = true;
-  bool get isLoading => _isLoading;
-
-  bool _success = false;
-  bool get success => _success;
-
   String? _message;
   String? get message => _message;
   late FlutterDataWedge dataWedge;
@@ -101,14 +89,13 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
 
   @override
   void dispose() {
-    scanSubscription.cancel();
     super.dispose();
   }
 
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: 11.h,
+      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -289,7 +276,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                                               fit: BoxFit.contain,
                                             )
                                           : Image.network(
-                                              _us?.hinhAnhUrl ?? "",
+                                              AppConfig.defaultImage,
                                               fit: BoxFit.contain,
                                             ),
                                     ),
@@ -390,7 +377,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - THÔNG TIN NHÂN VIÊN',
+          'THÔNG TIN THẺ NHÂN VIÊN',
         ),
       ),
     );

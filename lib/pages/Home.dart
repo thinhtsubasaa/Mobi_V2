@@ -34,7 +34,9 @@ class BottomContent extends StatelessWidget {
       height: MediaQuery.of(context).size.height > 885 ? 30.h : null,
       child: Column(
         children: [
-          customTitleHome('LOGISTIC TRỌN GÓI\nHÀNG ĐẦU MIỀN TRUNG'),
+          Center(
+            child: customTitleHome('LOGISTIC TRỌN GÓI\nHÀNG ĐẦU MIỀN TRUNG'),
+          ),
           const SizedBox(height: 10),
           CustomImage(imagePath: AppConfig.bottomHomeImagePath),
           const SizedBox(height: 15),

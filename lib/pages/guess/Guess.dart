@@ -6,81 +6,62 @@ import 'package:sizer/sizer.dart';
 import '../../config/config.dart';
 import '../../widgets/custom_page_indicator.dart';
 
+import 'package:flutter/material.dart';
+import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/qlkho/custom_body_QLKhoxe.dart';
+
+import 'package:sizer/sizer.dart';
+
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/custom_bottom.dart';
+import '../../widgets/custom_card.dart';
+import '../../widgets/custom_title.dart';
+
 class GuessPage extends StatelessWidget {
-  int currentPage = 0;
+  int currentPage = 0; // Đặt giá trị hiện tại của trang
   int pageCount = 3;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(key: Key('customAppBar')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                children: [
-                  Container(
-                    child: Column(
-                      children: [
-                        CustomBodyGuess(),
-                        const SizedBox(height: 20),
-                        Container(
-                          width: 100.w,
-                          height: MediaQuery.of(context).size.height / 2,
-                          color: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            children: [
-                              customTitle(
-                                'THÔNG TIN DỊCH VỤ\n DÀNH CHO KHÁCH HÀNG',
-                              ),
-                              SizedBox(height: 10),
-                              Text("......"),
-                              const SizedBox(height: 20),
-                              PageIndicator(
-                                currentPage: currentPage,
-                                pageCount: pageCount,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+      appBar: customAppBar(context),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              width: 100.w,
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(AppConfig.backgroundImagePath),
+                  fit: BoxFit.cover,
+                ),
               ),
+              child: CustomBodyGuess(),
             ),
-          );
-        },
+          ),
+          BottomContent(),
+        ],
       ),
     );
   }
 }
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  final Key? key;
-
-  const CustomAppBar({this.key}) : super(key: key);
-
+class BottomContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      // automaticallyImplyLeading: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            AppConfig.appBarImagePath,
-            width: 70.w,
-          ),
-        ],
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 12,
+      padding: EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        color: AppConfig.bottom,
+      ),
+      child: Center(
+        child: customTitle(
+          'KIỂM TRA - TRA CỨU THÔNG TIN',
+        ),
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

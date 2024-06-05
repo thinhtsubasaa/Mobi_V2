@@ -209,7 +209,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.width < 885 ? 11.h : 9.h,
+      height: MediaQuery.of(context).size.height < 885 ? 11.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -259,7 +259,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -375,6 +375,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
     _nhapbai?.sort((a, b) => DateTime.parse(b.ngayVao ?? "")
         .compareTo(DateTime.parse(a.ngayVao ?? "")));
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         // automaticallyImplyLeading: false,
         title: Column(

@@ -92,7 +92,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
 
   @override
   void dispose() {
-    scanSubscription.cancel();
     super.dispose();
   }
 
@@ -157,7 +156,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       // height: 11.h,
-      height: MediaQuery.of(context).size.width < 885 ? 11.h : 9.h,
+      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -207,7 +206,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),

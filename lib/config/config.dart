@@ -30,4 +30,6 @@ class AppConfig {
   static const String homeImagePath = 'assets/images/BodyHome.png';
   static const String bottomHomeImagePath = 'assets/images/BottomHome.png';
   static const String logoSplash = 'assets/images/thilogi_logo_white.png';
+  static const String defaultImage =
+      'https://portalgroupapi.thacochulai.vn/Uploads/noimage.jpg';
 }
