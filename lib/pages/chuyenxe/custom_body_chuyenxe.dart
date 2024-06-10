@@ -301,7 +301,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -511,7 +511,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                 padding:
                                                     EdgeInsets.only(left: 10),
                                                 child: Text(
-                                                  'Loại xe:',
+                                                  'Loại xe: ',
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 15,
@@ -551,14 +551,14 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Số khung:',
+                                          title: 'Số khung: ',
                                           value: _data?.soKhung,
                                         ),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Màu:',
+                                          title: 'Màu: ',
                                           value: _data != null
                                               ? "${_data?.tenMau} (${_data?.maMau})"
                                               : "",
@@ -567,28 +567,28 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Số máy:',
+                                          title: 'Số máy: ',
                                           value: _data?.soMay,
                                         ),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Kho đi:',
+                                          title: 'Kho đi: ',
                                           value: _data?.tenKho ?? "",
                                         ),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Bãi xe đi:',
+                                          title: 'Bãi xe đi: ',
                                           value: _data?.tenBaiXe ?? "",
                                         ),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Vị trí:',
+                                          title: 'Vị trí: ',
                                           value: _data?.tenViTri ?? "",
                                         ),
                                         const Divider(
@@ -1220,7 +1220,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 8.h,
+      height: 9.h,
       padding: const EdgeInsets.all(10),
       child: Center(
         child: Row(
@@ -1234,7 +1234,6 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            SizedBox(width: 5),
             Text(
               value ?? "",
               style: TextStyle(

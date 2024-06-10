@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:Thilogi/models/dsxchoxuat.dart';
 import 'package:Thilogi/widgets/checksheet_upload_anh.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   void initState() {
     super.initState();
     _bl = Provider.of<DongSealBloc>(context, listen: false);
+    // getDSXChoXuat();
     requestLocationPermission();
   }
 

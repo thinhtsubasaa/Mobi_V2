@@ -1,4 +1,4 @@
-import 'package:Thilogi/pages/timxe/custom_body_timxe.dart';
+import 'package:Thilogi/pages/dsxchoxuat/custom_body_dsx.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -6,10 +6,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class TimXePage extends StatelessWidget {
-  final String? soKhung;
-
-  TimXePage({this.soKhung});
+class DSXPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,13 +18,16 @@ class TimXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppConfig.backgroundImagePath),
-                  fit: BoxFit.cover,
-                ),
+              // decoration: const BoxDecoration(
+              //     // image: DecorationImage(
+              //     //   image: AssetImage(AppConfig.backgroundImagePath),
+              //     //   fit: BoxFit.cover,
+              //     // ),
+              //     ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyTimXe(soKhung: soKhung),
+              child: CustomBodyDSX(),
             ),
           ),
           BottomContent(),

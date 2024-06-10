@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
 import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -70,41 +71,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
-  }
-
-  Future<void> getData(
-      BuildContext context, DonVi_Id, String PhanMem_Id) async {
-    _isLoading = true;
-    _menurole = null;
-
-    try {
-      final http.Response response = await requestHelper
-          .getData('Menu/By_User?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
-
-      print("statusCode: ${response.statusCode}");
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        print("data:${decodedData}");
-
-        if (decodedData != null) {
-          _menurole = (decodedData as List).map((p) {
-            return MenuRoleModel.fromJson(p);
-          }).toList();
-
-          print(_menurole);
-        }
-        notifyListeners();
-      } else {
-        _menurole = null;
-        _isLoading = false;
-      }
-    } catch (e) {
-      _hasError = true;
-      _isLoading = false;
-      _message = e.toString();
-      _errorCode = e.toString();
-      notifyListeners();
-    }
   }
 
   // bool userHasPermission(String? url1) {
@@ -208,6 +174,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(VanChuyenPage());
                       },
                     ),
+                  // if (userHasPermission(menuRoles, 'quan-ly-dong-cont-mobi'))
+                  CustomButton(
+                    'QUẢN LÝ ĐÓNG CONT',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_DongCont.png',
+                        ),
+                      ],
+                    ),
+                    () {
+                      _handleButtonTap(QLDongContPage());
+                    },
+                  ),
                   if (userHasPermission(
                       menuRoles, 'tracking-xe-thanh-pham-mobi'))
                     CustomButton(
@@ -231,7 +212,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_NhanXe_3b.png',
+                            'assets/images/Button_TTTheNhanVien.png',
                           ),
                         ],
                       ),

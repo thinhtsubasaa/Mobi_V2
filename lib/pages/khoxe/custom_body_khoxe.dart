@@ -209,7 +209,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -413,7 +413,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                           Container(
                                             padding: EdgeInsets.only(left: 10),
                                             child: Text(
-                                              'Loại xe:',
+                                              'Loại xe: ',
                                               style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 15,
@@ -448,13 +448,13 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Số khung:',
+                                      title: 'Số khung: ',
                                       value: _data?.soKhung,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Màu:',
+                                      title: 'Màu: ',
                                       value: _data != null
                                           ? "${_data?.tenMau} (${_data?.maMau})"
                                           : "",
@@ -462,37 +462,37 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Số máy:',
+                                      title: 'Số máy: ',
                                       value: _data?.soMay,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Phương thức vận chuyển:',
+                                      title: 'Phương thức vận chuyển: ',
                                       value: _data?.tenPhuongThucVanChuyen,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Bên vận chuyển:',
+                                      title: 'Bên vận chuyển: ',
                                       value: _data?.benVanChuyen,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Biển số:',
+                                      title: 'Biển số: ',
                                       value: _data?.soXe,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Nơi đi:',
+                                      title: 'Nơi đi: ',
                                       value: _data?.noidi,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Nơi đến:',
+                                      title: 'Nơi đến: ',
                                       value: _data?.noiden,
                                     ),
                                     const Divider(
@@ -561,7 +561,6 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            SizedBox(width: 2),
             Text(
               value ?? "",
               style: TextStyle(

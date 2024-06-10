@@ -64,7 +64,7 @@ class _SplashPageState extends State<SplashPage> {
                 height: 20,
               ),
               Text(
-                'HỆ THỐNG QUẢN LÝ\n NGUỒN LỰC DOANH NGHIỆP (ERP)',
+                'HỆ THỐNG QUẢN LÝ DOANH NGHIỆP (BMS)',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15.0, color: AppConfig.textInput),
               ),

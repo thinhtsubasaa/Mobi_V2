@@ -145,7 +145,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),

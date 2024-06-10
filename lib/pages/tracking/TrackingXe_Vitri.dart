@@ -59,7 +59,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
   LocationData? _currentLocation;
   Set<Marker> _markers = {};
   MapType _currentMapType = MapType.normal;
-
+  String? previousKho;
+  List<CombinedItem> combinedItems = [];
   @override
   void initState() {
     super.initState();
@@ -108,6 +109,11 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
         _currentMapType = MapType.normal;
       }
     });
+  }
+
+  void addItemToList(DateTime? dateTime, Widget customImage, String textLine) {
+    combinedItems.add(CombinedItem(
+        dateTime: dateTime, customImage: customImage, textLine: textLine));
   }
 
   _moveToPosition(LatLng latLng) async {
@@ -259,7 +265,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -422,13 +428,6 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: [
-                      _loading
-                          ? LoadingWidget(context)
-                          : Container(
-                              width: 90.w,
-                              height: 45.h,
-                              child: _buildBody(),
-                            ),
                       SingleChildScrollView(
                         child: Container(
                           width: 100.w,
@@ -499,68 +498,149 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                                       ? formatDateTime(
                                                           item.ngay ?? "")
                                                       : "") +
-                                                  '-' +
+                                                  '\n' +
                                                   (item.noiGiao ?? "") +
-                                                  ' - Số TBGX: ' +
+                                                  '\n' +
+                                                  'Số TBGX: ' +
                                                   (item.soTBGX ?? "") +
-                                                  "- Người phụ trách:" +
+                                                  '\n' +
                                                   (item.nguoiPhuTrach ?? ""),
                                             );
                                           }).toList(),
                                         ),
+                                      // if (_xuatxe != null)
+                                      //   Column(
+                                      //     children: _xuatxe!.map((item) {
+                                      //       return buildRowItem(
+                                      //         customImage: CustomImage2(),
+                                      //         textLine: (item.ngay != null
+                                      //                 ? formatDateTime(
+                                      //                     item.ngay ?? "")
+                                      //                 : "") +
+                                      //             '\n' +
+                                      //             (item.thongTinChiTiet !=
+                                      //                     null
+                                      //                 ? ('${(item.thongTinChiTiet ?? "")}')
+                                      //                 : "") +
+                                      //             '\n' +
+                                      //             (item.thongtinvanchuyen !=
+                                      //                     null
+                                      //                 ? ('${(item.thongtinvanchuyen ?? "")}')
+                                      //                 : "") +
+                                      //             '\n' +
+                                      //             (item.nguoiPhuTrach ?? ""),
+                                      //       );
+                                      //     }).toList(),
+                                      //   ),
                                       if (_xuatxe != null)
                                         Column(
                                           children: _xuatxe!.map((item) {
+                                            List<String> textLines = [];
+
+                                            // Kiểm tra và thêm chuỗi không rỗng
+                                            if (item.ngay != null &&
+                                                item.ngay!.isNotEmpty) {
+                                              textLines.add(formatDateTime(
+                                                  item.ngay ?? ""));
+                                            }
+                                            if (item.thongTinChiTiet != null &&
+                                                item.thongTinChiTiet!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.thongTinChiTiet ?? "");
+                                            }
+                                            if (item.thongtinvanchuyen !=
+                                                    null &&
+                                                item.thongtinvanchuyen!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.thongtinvanchuyen ?? "");
+                                            }
+                                            if (item.nguoiPhuTrach != null &&
+                                                item.nguoiPhuTrach!
+                                                    .isNotEmpty) {
+                                              textLines.add(
+                                                  item.nguoiPhuTrach ?? "");
+                                            }
+
+                                            // Nối các chuỗi với ký tự xuống dòng
+                                            String textLine =
+                                                textLines.join('\n');
+
                                             return buildRowItem(
                                               customImage: CustomImage2(),
-                                              textLine: (item.ngay != null
-                                                      ? formatDateTime(
-                                                          item.ngay ?? "")
-                                                      : "") +
-                                                  (item.thongTinChiTiet != null
-                                                      ? ('-${(item.thongTinChiTiet ?? "")}')
-                                                      : "") +
-                                                  '-' +
-                                                  (item.thongtinvanchuyen ??
-                                                      "") +
-                                                  " - Người phụ trách:" +
-                                                  (item.nguoiPhuTrach ?? ""),
+                                              textLine: textLine,
                                             );
                                           }).toList(),
                                         ),
                                       if (_nhapbai != null)
                                         Column(
                                           children: _nhapbai!.map((item) {
+                                            bool isNewKho =
+                                                item.kho != previousKho;
+                                            previousKho = item.kho;
                                             return buildRowItem(
-                                                customImage: CustomImage3(),
+                                                customImage: isNewKho
+                                                    ? CustomImage3()
+                                                    : SizedBox(width: 105),
+                                                // customImage: CustomImage3(),
                                                 textLine: (item.thoiGianVao !=
                                                             null
                                                         ? (item.thoiGianVao ??
                                                             "")
                                                         : "") +
-                                                    '-' +
+                                                    '\n' +
                                                     (item.kho ?? "") +
-                                                    '-' +
+                                                    ' - ' +
                                                     (item.baiXe ?? "") +
-                                                    "- Vị trí " +
+                                                    " - Vị trí: " +
                                                     (item.viTri ?? "") +
-                                                    " - Người nhập bãi:" +
+                                                    '\n' +
                                                     (item.nguoiNhapBai ?? ""));
                                           }).toList(),
                                         ),
+                                      // if (_xequa != null)
+                                      //   Column(
+                                      //     children: _xequa!.map((item) {
+                                      //       return buildRowItem(
+                                      //         customImage: CustomImage4(),
+                                      //         textLine: formatDateTime(
+                                      //                 item.ngayNhan ?? "") +
+                                      //             '\n' +
+                                      //             (item.noiNhan != null
+                                      //                 ? ('${(item.noiNhan ?? "")}')
+                                      //                 : "") +
+                                      //             '\n' +
+                                      //             (item.nguoiNhan ?? ""),
+                                      //       );
+                                      //     }).toList(),
+                                      //   ),
                                       if (_xequa != null)
                                         Column(
                                           children: _xequa!.map((item) {
+                                            List<String> textLines = [];
+
+                                            // Kiểm tra và thêm chuỗi không rỗng
+                                            if (item.ngayNhan != null &&
+                                                item.ngayNhan!.isNotEmpty) {
+                                              textLines.add(formatDateTime(
+                                                  item.ngayNhan ?? ""));
+                                            }
+                                            if (item.noiNhan != null &&
+                                                item.noiNhan!.isNotEmpty) {
+                                              textLines.add(item.noiNhan ?? "");
+                                            }
+                                            if (item.nguoiNhan != null &&
+                                                item.nguoiNhan!.isNotEmpty) {
+                                              textLines
+                                                  .add(item.nguoiNhan ?? "");
+                                            }
+                                            String textLine =
+                                                textLines.join('\n');
+
                                             return buildRowItem(
                                               customImage: CustomImage4(),
-                                              textLine: formatDateTime(
-                                                      item.ngayNhan ?? "") +
-                                                  (item.noiNhan != null
-                                                      ? ('-${(item.noiNhan ?? "")}')
-                                                      : "") +
-                                                  '-' +
-                                                  'Người nhận:' +
-                                                  (item.nguoiNhan ?? ""),
+                                              textLine: textLine,
                                             );
                                           }).toList(),
                                         ),
@@ -585,6 +665,13 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                           ),
                         ),
                       ),
+                      _loading
+                          ? LoadingWidget(context)
+                          : Container(
+                              width: 90.w,
+                              height: 45.h,
+                              child: _buildBody(),
+                            ),
 
                       // BodyTrackingXe(),
                     ],
@@ -619,8 +706,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                   TabBar(
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: 'Vị trí trên bản đồ'),
                       Tab(text: 'Trạng thái vận chuyển'),
+                      Tab(text: 'Vị trí trên bản đồ'),
                     ],
                   ),
                 ],
@@ -631,4 +718,16 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
       ),
     );
   }
+}
+
+class CombinedItem {
+  final DateTime? dateTime;
+  final Widget customImage;
+  final String textLine;
+
+  CombinedItem({
+    required this.dateTime,
+    required this.customImage,
+    required this.textLine,
+  });
 }

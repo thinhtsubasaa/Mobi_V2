@@ -283,29 +283,83 @@ class _CustomTrackingXeScreenState extends State<CustomTrackingXeScreen>
           //   ),
 
           // buildDivider(),
-          if (_data2 != null)
-            Column(
-              children: _data2!.map((item) {
-                return buildRowItem(
-                  customImage: CustomImage3(),
-                  textLine: (item.ngay != null
-                          ? formatDateTime(item.ngay ?? "")
-                          : "") +
-                      '-' +
-                      (item.thongTinChiTiet ?? "") +
-                      ': ' +
-                      (item.thongtinvanchuyen ?? ""),
-                );
-              }).toList(),
-            ),
-          if (_data == null && _data1 == null && _data2 == null)
-            Text('Không có dữ liệu'),
+          // if (_data2 != null)
+          //   Column(
+          //     children: _data2!.map((item) {
+          //       return buildRowItem(
+          //         customImage: CustomImage3(),
+          //         textLine: (item.ngay != null
+          //                 ? formatDateTime(item.ngay ?? "")
+          //                 : "") +
+          //             '-' +
+          //             (item.thongTinChiTiet ?? "") +
+          //             ': ' +
+          //             (item.thongtinvanchuyen ?? ""),
+          //       );
+          //     }).toList(),
+          //   ),
+          // if (_data == null && _data1 == null && _data2 == null)
+          //   Text('Không có dữ liệu'),
         ],
       ),
     );
   }
 }
 
+// class buildRowItem extends StatelessWidget {
+//   final Widget customImage;
+//   final String textLine;
+
+//   const buildRowItem({
+//     required this.customImage,
+//     required this.textLine,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       constraints: BoxConstraints(
+//         maxWidth: MediaQuery.of(context).size.width < 330
+//             ? MediaQuery.of(context).size.width * 0.9
+//             : MediaQuery.of(context).size.width * 0.9,
+//       ),
+//       height: 80, // Set a fixed height as needed
+//       child: SingleChildScrollView(
+//         scrollDirection: Axis.horizontal,
+//         child: Row(
+//           children: [
+//             customImage,
+//             // Custom Image widget goes here
+//             RichText(
+//               textAlign: TextAlign.left,
+//               text: TextSpan(
+//                 children: [
+//                   TextSpan(
+//                     text: '• ', // Dot character
+//                     style: TextStyle(
+//                       fontSize: 13,
+//                       fontWeight: FontWeight.w600,
+//                       color: Color(0xFF0469B9),
+//                     ),
+//                   ),
+//                   TextSpan(
+//                     text: textLine,
+//                     style: TextStyle(
+//                       fontFamily: 'Comfortaa',
+//                       fontSize: 13,
+//                       fontWeight: FontWeight.w600,
+//                       color: Color(0xFF0469B9),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 class buildRowItem extends StatelessWidget {
   final Widget customImage;
   final String textLine;
@@ -324,62 +378,185 @@ class buildRowItem extends StatelessWidget {
             : MediaQuery.of(context).size.width * 0.9,
       ),
       height: 80, // Set a fixed height as needed
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            customImage,
-            // Custom Image widget goes here
-            RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: '• ', // Dot character
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0469B9),
-                    ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          customImage,
+          SizedBox(width: 8), // Add some space between image and text
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '• ', // Dot character
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0469B9),
+                        ),
+                      ),
+                      TextSpan(
+                        text: textLine,
+                        style: TextStyle(
+                          fontFamily: 'Comfortaa',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0469B9),
+                        ),
+                      ),
+                    ],
                   ),
-                  TextSpan(
-                    text: textLine,
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0469B9),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
+// class CustomImage1 extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         Image.asset(
+//           'assets/images/car4.png',
+//           width: 65,
+//           height: 75,
+//         ),
+//         Transform.translate(
+//           offset: const Offset(-25, -15),
+//           child: Image.asset(
+//             'assets/images/tick.png',
+//             width: 40,
+//             height: 40,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class CustomImage2 extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       alignment: Alignment.center,
+//       children: [
+//         Image.asset(
+//           'assets/images/car5.png',
+//           width: 105,
+//           height: 80,
+//         ),
+//         Transform.translate(
+//           offset: const Offset(0, -3),
+//           child: Padding(
+//             padding: const EdgeInsets.only(right: 60),
+//             child: Image.asset(
+//               'assets/images/car4.png',
+//               width: 35,
+//               height: 40,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class CustomImage3 extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       alignment: Alignment.center,
+//       children: [
+//         Image.asset(
+//           'assets/images/car3.png',
+//           width: 105,
+//           height: 80,
+//         ),
+//         Transform.translate(
+//           offset: const Offset(0, 3),
+//           child: Padding(
+//             padding: const EdgeInsets.only(right: 55),
+//             child: Image.asset(
+//               'assets/images/car4.png',
+//               width: 40,
+//               height: 40,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class CustomImage4 extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         Image.asset(
+//           'assets/images/car4.png',
+//           width: 65,
+//           height: 75,
+//         ),
+//         Transform.translate(
+//           offset: const Offset(-25, -15),
+//           child: Image.asset(
+//             'assets/images/search.png',
+//             width: 40,
+//             height: 60,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+// class CustomImage5 extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Transform.translate(
+//       offset: const Offset(-50, -5),
+//       child: Image.asset(
+//         'assets/images/car4.png',
+//         width: 70,
+//         height: 80,
+//       ),
+//     );
+//   }
+// }
 class CustomImage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(
-          'assets/images/car4.png',
-          width: 65,
-          height: 75,
-        ),
-        Transform.translate(
-          offset: const Offset(-25, -15),
-          child: Image.asset(
-            'assets/images/tick.png',
-            width: 40,
-            height: 40,
+    return Container(
+      width: 105,
+      height: 80,
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/images/car4.png',
+            width: 65,
+            height: 75,
           ),
-        ),
-      ],
+          Transform.translate(
+            offset: const Offset(-25, -15),
+            child: Image.asset(
+              'assets/images/tick.png',
+              width: 40,
+              height: 40,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -387,26 +564,30 @@ class CustomImage1 extends StatelessWidget {
 class CustomImage2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset(
-          'assets/images/car5.png',
-          width: 105,
-          height: 80,
-        ),
-        Transform.translate(
-          offset: const Offset(0, -3),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 60),
-            child: Image.asset(
-              'assets/images/car4.png',
-              width: 35,
-              height: 40,
+    return Container(
+      width: 105,
+      height: 80,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            'assets/images/car5.png',
+            width: 105,
+            height: 80,
+          ),
+          Transform.translate(
+            offset: const Offset(0, -3),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 60),
+              child: Image.asset(
+                'assets/images/car4.png',
+                width: 35,
+                height: 40,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -414,26 +595,30 @@ class CustomImage2 extends StatelessWidget {
 class CustomImage3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset(
-          'assets/images/car3.png',
-          width: 105,
-          height: 80,
-        ),
-        Transform.translate(
-          offset: const Offset(0, 3),
-          child: Padding(
-            padding: const EdgeInsets.only(right: 55),
-            child: Image.asset(
-              'assets/images/car4.png',
-              width: 40,
-              height: 40,
+    return Container(
+      width: 105,
+      height: 80,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            'assets/images/car3.png',
+            width: 105,
+            height: 80,
+          ),
+          Transform.translate(
+            offset: const Offset(0, 3),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 55),
+              child: Image.asset(
+                'assets/images/car4.png',
+                width: 40,
+                height: 40,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -441,22 +626,26 @@ class CustomImage3 extends StatelessWidget {
 class CustomImage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(
-          'assets/images/car4.png',
-          width: 65,
-          height: 75,
-        ),
-        Transform.translate(
-          offset: const Offset(-25, -15),
-          child: Image.asset(
-            'assets/images/search.png',
-            width: 40,
-            height: 60,
+    return Container(
+      width: 105,
+      height: 80,
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/images/car4.png',
+            width: 65,
+            height: 75,
           ),
-        ),
-      ],
+          Transform.translate(
+            offset: const Offset(-25, -15),
+            child: Image.asset(
+              'assets/images/search.png',
+              width: 40,
+              height: 60,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -464,12 +653,16 @@ class CustomImage4 extends StatelessWidget {
 class CustomImage5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Transform.translate(
-      offset: const Offset(-50, -5),
-      child: Image.asset(
-        'assets/images/car4.png',
-        width: 70,
-        height: 80,
+    return Container(
+      width: 105,
+      height: 80,
+      child: Transform.translate(
+        offset: const Offset(-50, -5),
+        child: Image.asset(
+          'assets/images/car4.png',
+          width: 70,
+          height: 80,
+        ),
       ),
     );
   }

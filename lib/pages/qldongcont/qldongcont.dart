@@ -1,19 +1,20 @@
-import 'package:Thilogi/pages/timxe/custom_body_timxe.dart';
+import 'package:Thilogi/pages/qldongcont/custom_body_qldongcont.dart';
+import 'package:Thilogi/pages/vanchuyen/giaoxe/custom_body_vanchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
-import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_card.dart';
-import '../../widgets/custom_title.dart';
 
-class TimXePage extends StatelessWidget {
-  final String? soKhung;
+import '../../../widgets/custom_appbar.dart';
+import '../../../widgets/custom_card.dart';
+import '../../../widgets/custom_title.dart';
 
-  TimXePage({this.soKhung});
+class QLDongContPage extends StatelessWidget {
+  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int pageCount = 3;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: customAppBar(context),
       body: Column(
         children: [
@@ -21,13 +22,14 @@ class TimXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
+              height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(AppConfig.backgroundImagePath),
                   fit: BoxFit.cover,
                 ),
               ),
-              child: CustomBodyTimXe(soKhung: soKhung),
+              child: CustomBodyQLDongCont(),
             ),
           ),
           BottomContent(),
@@ -47,10 +49,8 @@ class BottomContent extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppConfig.bottom,
       ),
-      child: Center(
-        child: customTitle(
-          'KIỂM TRA - TÌM XE TRONG BÃI',
-        ),
+      child: customTitle(
+        'KIỂM TRA - QUẢN LÝ ĐÓNG CONT',
       ),
     );
   }

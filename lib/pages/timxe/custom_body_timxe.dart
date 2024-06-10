@@ -15,14 +15,17 @@ import 'package:sizer/sizer.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyTimXe extends StatelessWidget {
+  final String? soKhung;
+  CustomBodyTimXe({this.soKhung});
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyTimXeScreen());
+    return Container(child: BodyTimXeScreen(soKhung: soKhung));
   }
 }
 
 class BodyTimXeScreen extends StatefulWidget {
-  const BodyTimXeScreen({Key? key}) : super(key: key);
+  final String? soKhung;
+  const BodyTimXeScreen({Key? key, this.soKhung}) : super(key: key);
 
   @override
   _BodyTimXeScreenState createState() => _BodyTimXeScreenState();
@@ -31,7 +34,8 @@ class BodyTimXeScreen extends StatefulWidget {
 class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     with TickerProviderStateMixin, ChangeNotifier {
   String _qrData = '';
-  final _qrDataController = TextEditingController();
+  // final _qrDataController = TextEditingController();
+  late TextEditingController _qrDataController;
   bool _loading = false;
   TimXeModel? _data;
   late TimXeBloc _bl;
@@ -51,7 +55,12 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     super.initState();
     _init();
     _bl = Provider.of<TimXeBloc>(context, listen: false);
+    _qrDataController = TextEditingController(text: widget.soKhung ?? '');
+    if (widget.soKhung != null && widget.soKhung!.isNotEmpty) {
+      _handleBarcodeScanResult(widget.soKhung!);
+    }
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
+
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -65,6 +74,21 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
   void dispose() {
     _qrDataController.dispose();
     super.dispose();
+  }
+
+  void _scanVIN() async {
+    String result = await FlutterBarcodeScanner.scanBarcode(
+      '#A71C20',
+      'Cancel',
+      false,
+      ScanMode.QR,
+    );
+    setState(() {
+      _qrData = result;
+      _qrDataController.text = result;
+    });
+    print(result);
+    _handleBarcodeScanResult(result);
   }
 
   void _toggleMapType() {
@@ -238,7 +262,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -260,6 +284,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                 _qrDataController.text = result;
               });
               print(barcodeScanResult);
+
               _handleBarcodeScanResult(barcodeScanResult);
             },
           ),
@@ -270,16 +295,18 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print("abc: ${barcodeScanResult}");
-    setState(() {
-      _qrData = '';
-      _qrDataController.text = '';
-      _data = null;
-      Future.delayed(const Duration(seconds: 0), () {
-        _qrData = barcodeScanResult;
-        _qrDataController.text = barcodeScanResult;
-        _onScan(barcodeScanResult);
+    if (_qrDataController != null) {
+      setState(() {
+        _qrData = '';
+        _qrDataController.text = '';
+        _data = null;
+        Future.delayed(const Duration(seconds: 0), () {
+          _qrData = barcodeScanResult;
+          _qrDataController.text = barcodeScanResult;
+          _onScan(barcodeScanResult);
+        });
       });
-    });
+    }
   }
 
   _onScan(value) {
@@ -352,26 +379,26 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                   margin: EdgeInsets.all(10),
                                   child: Column(
                                     children: [
-                                      Item(
-                                        title: 'Kho Xe:',
+                                      CustomItem(
+                                        title: 'Kho Xe: ',
                                         value: _data?.tenKho,
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
-                                      Item(
-                                        title: 'Bãi Xe:',
+                                      CustomItem(
+                                        title: 'Bãi Xe: ',
                                         value: _data?.tenBaiXe,
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
-                                        title: 'Vị Trí xe:',
+                                        title: 'Vị Trí xe: ',
                                         value: _data?.tenViTri,
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
-                                        title: 'Tọa độ:',
+                                        title: 'Tọa độ: ',
                                         value: _data?.toaDo,
                                       ),
                                       const Divider(
@@ -400,6 +427,57 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
   }
 }
 
+class CustomItem extends StatelessWidget {
+  final String title;
+  final String? value;
+
+  const CustomItem({
+    Key? key,
+    required this.title,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 9.h,
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 10),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+          ),
+          Container(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.67),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Text(
+                value ?? "",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontFamily: 'Coda Caption',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class Item extends StatelessWidget {
   final String title;
   final String? value;
@@ -413,7 +491,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 8.h,
+      height: 9.h,
       padding: const EdgeInsets.all(10),
       child: Center(
         child: Row(

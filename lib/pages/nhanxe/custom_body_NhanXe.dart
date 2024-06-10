@@ -117,7 +117,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -227,7 +227,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                   Container(
                                     padding: EdgeInsets.only(left: 10),
                                     child: Text(
-                                      'Loại xe:',
+                                      'Loại xe: ',
                                       style: TextStyle(
                                         fontFamily: 'Comfortaa',
                                         fontSize: 15,
@@ -237,11 +237,10 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                     ),
                                   ),
                                   Container(
-                                    padding: EdgeInsets.only(left: 5),
                                     constraints: BoxConstraints(
                                         maxWidth:
                                             MediaQuery.of(context).size.width *
-                                                0.69),
+                                                0.68),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Text(
@@ -265,12 +264,12 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
-                          'Số khung :',
+                          'Số khung: ',
                           _data?.soKhung ?? _model?.soKhung ?? "",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
-                            'Màu:',
+                            'Màu: ',
                             // _data?.tenMau ?? _model?.tenMau ?? "",
                             // _data != null
                             //     ? "${_data?.tenMau ?? ""}(${_data?.maMau ?? ""})"
@@ -285,7 +284,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                     : "")),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         showInfoXe(
-                          'Nhà máy:',
+                          'Nhà máy: ',
                           _data?.tenKho ?? _model?.tenKho ?? "",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
@@ -360,7 +359,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
 
 Widget showInfoXe(String title, String value) {
   return Container(
-    height: 8.h,
+    height: 9.h,
     padding: const EdgeInsets.all(10),
     child: Center(
       child: Row(
@@ -374,7 +373,6 @@ Widget showInfoXe(String title, String value) {
               color: Color(0xFF818180),
             ),
           ),
-          SizedBox(width: 5),
           Text(
             value,
             style: TextStyle(

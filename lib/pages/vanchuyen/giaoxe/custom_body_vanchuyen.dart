@@ -8,7 +8,6 @@ import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../blocs/menu_roles.dart';
 import '../../../config/config.dart';
 import '../../../models/menurole.dart';
@@ -42,7 +41,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   late MenuRoleBloc _mb;
   List<MenuRoleModel>? _menurole;
   List<MenuRoleModel>? get menurole => _menurole;
-
   static RequestHelper requestHelper = RequestHelper();
   bool _isLoading = true;
   bool get isLoading => _isLoading;
@@ -69,41 +67,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
-  }
-
-  Future<void> getData(
-      BuildContext context, DonVi_Id, String PhanMem_Id) async {
-    _isLoading = true;
-    _menurole = null;
-
-    try {
-      final http.Response response = await requestHelper
-          .getData('Menu/By_User?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
-
-      print("statusCode: ${response.statusCode}");
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        print("data:${decodedData}");
-
-        if (decodedData != null) {
-          _menurole = (decodedData as List).map((p) {
-            return MenuRoleModel.fromJson(p);
-          }).toList();
-
-          print(_menurole);
-        }
-        notifyListeners();
-      } else {
-        _menurole = null;
-        _isLoading = false;
-      }
-    } catch (e) {
-      _hasError = true;
-      _isLoading = false;
-      _message = e.toString();
-      _errorCode = e.toString();
-      notifyListeners();
-    }
   }
 
   // bool userHasPermission(String? url1) {
@@ -157,48 +120,43 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
             child: Container(
               padding: const EdgeInsets.only(top: 10, bottom: 10),
               margin: const EdgeInsets.only(top: 30, bottom: 30),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (userHasPermission(menuRoles, 'giao-xe-mobi'))
-                        CustomButton(
-                          'VẬN CHUYỂN',
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/Button_QLBaiXe_XuatBai.png',
-                              ),
-                            ],
+              child: Wrap(
+                spacing: 25.0, // khoảng cách giữa các nút
+                runSpacing: 20.0, // khoảng cách giữa các hàng
+                alignment: WrapAlignment.center,
+                children: [
+                  if (userHasPermission(menuRoles, 'van-chuyen-mobi'))
+                    CustomButton(
+                      'VẬN CHUYỂN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_XuatBai.png',
                           ),
-                          () {
-                            _handleButtonTap(KhoXePage());
-                          },
-                        ),
-                      SizedBox(width: 20),
-                      if (userHasPermission(menuRoles, 'van-chuyen-mobi'))
-                        CustomButton(
-                          'GIAO XE',
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/Button_QLBaiXe_XuatBai.png',
-                              ),
-                            ],
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(KhoXePage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'giao-xe-mobi'))
+                    CustomButton(
+                      'GIAO XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_GiaoXe.png',
                           ),
-                          () {
-                            _handleButtonTap(GiaoXePage());
-                          },
-                        ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
-                  // PageIndicator(currentPage: currentPage, pageCount: pageCount),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(GiaoXePage());
+                      },
+                    ),
                 ],
+                // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ),
             ),
           );
@@ -222,7 +180,6 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
     onTap: onTap,
     child: Container(
       width: 35.w,
-      height: 35.h,
       child: Column(
         children: [
           Container(

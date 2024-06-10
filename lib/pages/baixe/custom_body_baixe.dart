@@ -234,7 +234,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -859,7 +859,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               Container(
                                 padding: EdgeInsets.only(left: 10),
                                 child: Text(
-                                  'Loại xe:',
+                                  'Loại xe: ',
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
                                     fontSize: 15,
@@ -892,19 +892,19 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Item(
-                          title: 'Số khung:',
+                          title: 'Số khung: ',
                           value: _data?.soKhung,
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Item(
-                          title: 'Màu:',
+                          title: 'Màu: ',
                           value: _data != null
                               ? "${_data?.tenMau} (${_data?.maMau})"
                               : "",
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Item(
-                          title: 'Số máy:',
+                          title: 'Số máy: ',
                           value: _data?.soMay,
                         ),
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
@@ -958,7 +958,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 8.h,
+      height: 9.h,
       padding: const EdgeInsets.all(10),
       child: Center(
         child: Row(
@@ -972,7 +972,6 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            SizedBox(width: 5),
             Text(
               value ?? "",
               style: TextStyle(
