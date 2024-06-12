@@ -98,6 +98,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   }
 
   void getDSXChoXuat(String? id) async {
+    _cx = [];
     try {
       final http.Response response = await requestHelper
           .getData('KhoThanhPham/GetDanhSachXeChoXuat?id=$id');
@@ -145,9 +146,10 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
           Table(
             border: TableBorder.all(),
             columnWidths: {
-              0: FlexColumnWidth(0.4),
-              1: FlexColumnWidth(0.4),
-              2: FlexColumnWidth(0.2),
+              0: FlexColumnWidth(0.35),
+              1: FlexColumnWidth(0.35),
+              2: FlexColumnWidth(0.18),
+              3: FlexColumnWidth(0.12),
             },
             children: [
               TableRow(
@@ -163,6 +165,10 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                   ),
                   Container(
                     color: Colors.red,
+                    child: _buildTableCell('Vị trí', textColor: Colors.white),
+                  ),
+                  Container(
+                    color: Colors.red,
                     child: _buildTableCell(''),
                   ),
                 ],
@@ -175,18 +181,23 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                         // _buildTableCell(index.toString()), // Số thứ tự
                         _buildTableCell(item.loaiXe ?? ""),
                         _buildTableCell(item.soKhung ?? ""),
-                        IconButton(
-                          icon: Icon(Icons.remove_red_eye),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => TimXePage(
-                                  soKhung: item.soKhung ?? "",
+                        _buildTableCell(item.tenViTri ?? ""),
+                        Center(
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.remove_red_eye),
+                            iconSize: 20.0,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TimXePage(
+                                    soKhung: item.soKhung ?? "",
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ],
                     );
@@ -196,6 +207,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                 children: [
                   _buildTableCell('Tổng số', textColor: Colors.red),
                   _buildTableCell(_cx?.length.toString() ?? ''),
+                  Container(),
                   Container(),
                 ],
               ),

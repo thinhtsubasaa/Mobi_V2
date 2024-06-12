@@ -174,21 +174,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(VanChuyenPage());
                       },
                     ),
-                  // if (userHasPermission(menuRoles, 'quan-ly-dong-cont-mobi'))
-                  CustomButton(
-                    'QUẢN LÝ ĐÓNG CONT',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_DongCont.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'quan-ly-dong-cont-mobi'))
+                    CustomButton(
+                      'QUẢN LÝ ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_DongCont.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(QLDongContPage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(QLDongContPage());
-                    },
-                  ),
                   if (userHasPermission(
                       menuRoles, 'tracking-xe-thanh-pham-mobi'))
                     CustomButton(

@@ -36,7 +36,7 @@ class MenuRoleBloc extends ChangeNotifier {
 
     try {
       final http.Response response = await requestHelper
-          .getData('Menu/By_User?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
+          .getData('Menu/By_User1?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
