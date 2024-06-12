@@ -157,20 +157,20 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                         ), () {
                       _handleButtonTap(TimXePage());
                     }),
-                  // if (userHasPermission(
-                  //     menuRoles, 'danh-sach-xe-cho-xuat-mobi'))
-                  CustomButton(
-                      'DS XE CHỜ XUẤT',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
-                          ),
-                        ],
-                      ), () {
-                    _handleButtonTap(DSXPage());
-                  }),
+                  if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-cho-xuat-mobi'))
+                    CustomButton(
+                        'DANH SÁCH XE CHỜ XUẤT',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(DSXPage());
+                    }),
                 ],
               ),
 

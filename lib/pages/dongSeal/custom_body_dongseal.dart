@@ -135,7 +135,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
           await requestHelper.getData('DSX_DongCont/Mobi?SoCont_Id=$SoContId');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-
         _dsdongcontList = (decodedData as List)
             .map((item) => DS_DongContModel.fromJson(item))
             .toList();
