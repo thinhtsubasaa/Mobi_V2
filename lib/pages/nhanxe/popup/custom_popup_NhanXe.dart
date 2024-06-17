@@ -13,7 +13,7 @@ import 'package:sizer/sizer.dart';
 import '../../../utils/snackbar.dart';
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class PopUp extends StatelessWidget {
+class PopUp extends StatefulWidget {
   String soKhung;
   String soMay;
   String tenMau;
@@ -23,7 +23,7 @@ class PopUp extends StatelessWidget {
   String ghiChu;
   String tenKho;
   List phuKien;
-
+  final TextEditingController ghiChuController = TextEditingController();
   PopUp(
       {required this.soKhung,
       required this.soMay,
@@ -34,6 +34,24 @@ class PopUp extends StatelessWidget {
       required this.ghiChu,
       required this.tenKho,
       required this.phuKien});
+
+  @override
+  _PopUpState createState() => _PopUpState();
+}
+
+class _PopUpState extends State<PopUp> {
+  late TextEditingController ghiChuController;
+  @override
+  void initState() {
+    super.initState();
+    ghiChuController = TextEditingController(text: widget.ghiChu);
+  }
+
+  @override
+  void dispose() {
+    ghiChuController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,22 +157,23 @@ class PopUp extends StatelessWidget {
             children: [
               CustomInputBox(
                 text: "Ngày nhận",
-                ngayXuatKhoView: ngayXuatKhoView,
+                ngayXuatKhoView: widget.ngayXuatKhoView,
               ),
               const SizedBox(height: 4),
               CustomInputBox(
                 text: "Nơi nhận xe",
-                tenKho: tenKho,
+                tenKho: widget.tenKho,
               ),
               const SizedBox(height: 4),
               CustomInputBox(
                 text: "Người nhận",
-                tenTaiXe: tenTaiXe,
+                tenTaiXe: widget.tenTaiXe,
               ),
               const SizedBox(height: 4),
               CustomInputBox(
                 text: "Ghi chú",
-                ghiChu: ghiChu,
+                // ghiChu: ghiChu,
+                ghiChuController: ghiChuController,
               ),
             ],
           ),
@@ -178,7 +197,7 @@ class PopUp extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Text(
-                        tenSanPham,
+                        widget.tenSanPham,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontFamily: 'Coda Caption',
@@ -199,11 +218,11 @@ class PopUp extends StatelessWidget {
                   children: [
                     showInfoXe(
                       'Số khung (VIN):',
-                      soKhung,
+                      widget.soKhung,
                     ),
                     showInfoXe(
                       'Màu:',
-                      tenMau,
+                      widget.tenMau,
                     ),
                   ],
                 ),
@@ -215,7 +234,7 @@ class PopUp extends StatelessWidget {
                   children: [
                     showInfoXe(
                       'Nhà máy',
-                      tenKho,
+                      widget.tenKho,
                     ),
                   ],
                 ),
@@ -266,10 +285,10 @@ class PopUp extends StatelessWidget {
               nextScreen(
                 context,
                 NhanXe3Page(
-                  soKhung: soKhung,
-                  tenMau: tenMau,
-                  tenSanPham: tenSanPham,
-                  phuKien: phuKien,
+                  soKhung: widget.soKhung,
+                  tenMau: widget.tenMau,
+                  tenSanPham: widget.tenSanPham,
+                  phuKien: widget.phuKien,
                 ),
               );
             },
@@ -343,7 +362,8 @@ class PopUp extends StatelessWidget {
                   },
                   onConfirmBtnTap: () {
                     Navigator.of(context).pop();
-                    _cv.getData(context, _btnController, soKhung, toaDo ?? "");
+                    _cv.getData(
+                        context, _btnController, widget.soKhung, toaDo ?? "");
                   });
             },
           ),
@@ -360,6 +380,7 @@ class CustomInputBox extends StatelessWidget {
   final String? tenKho;
   final String? tenTaiXe;
   final String? ghiChu;
+  final TextEditingController? ghiChuController;
 
   CustomInputBox({
     required this.text,
@@ -367,32 +388,44 @@ class CustomInputBox extends StatelessWidget {
     this.tenKho,
     this.tenTaiXe,
     this.ghiChu,
+    this.ghiChuController,
   });
 
   @override
   Widget build(BuildContext context) {
     String displayText = '';
+    Widget? inputWidget;
 
     // Chọn dữ liệu phù hợp để hiển thị
     switch (text) {
+      // case 'Ngày nhận':
+      //   displayText = ngayXuatKhoView ?? '';
+      //   break;
+      // case 'Nơi nhận xe':
+      //   displayText = tenKho ?? '';
+      //   break;
+      // case 'Người nhận':
+      //   displayText = tenTaiXe ?? '';
+      //   break;
       case 'Ngày nhận':
-        displayText = ngayXuatKhoView ?? '';
+        inputWidget = _buildDisplayBox(ngayXuatKhoView ?? '');
         break;
       case 'Nơi nhận xe':
-        displayText = tenKho ?? '';
+        inputWidget = _buildDisplayBox(tenKho ?? '');
         break;
       case 'Người nhận':
-        displayText = tenTaiXe ?? '';
+        inputWidget = _buildDisplayBox(tenTaiXe ?? '');
         break;
       case 'Ghi chú':
-        displayText = ghiChu ?? '';
+        // displayText = ghiChuController?.text ?? "";
+        inputWidget = _buildEditableBox(ghiChuController);
         break;
       default:
         break;
     }
 
     return Container(
-      height: 5.h,
+      height: 6.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
@@ -433,23 +466,58 @@ class CustomInputBox extends StatelessWidget {
             child: Container(
               color: Colors.white,
               child: Center(
-                child: Text(
-                  displayText,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    fontFamily: 'Comfortaa',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF000000),
-                  ),
-                ),
+                child: inputWidget,
               ),
             ),
+            // child: Container(
+            //   color: Colors.white,
+            //   child: Center(
+            //     child: Text(
+            //       displayText,
+            //       textAlign: TextAlign.left,
+            //       style: const TextStyle(
+            //         fontFamily: 'Comfortaa',
+            //         fontSize: 12,
+            //         fontWeight: FontWeight.w400,
+            //         color: Color(0xFF000000),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ),
         ],
       ),
     );
   }
+}
+
+Widget _buildDisplayBox(String displayText) {
+  return Text(
+    displayText,
+    textAlign: TextAlign.left,
+    style: const TextStyle(
+      fontFamily: 'Comfortaa',
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF000000),
+    ),
+  );
+}
+
+Widget _buildEditableBox(TextEditingController? controller) {
+  return TextFormField(
+    controller: controller,
+    decoration: const InputDecoration(
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+    ),
+    style: const TextStyle(
+      fontFamily: 'Comfortaa',
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: Color(0xFF000000),
+    ),
+  );
 }
 
 Widget showInfoXe(String title, String value) {
