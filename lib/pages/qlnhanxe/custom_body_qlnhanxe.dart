@@ -141,7 +141,7 @@ class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen>
                     ),
                   if (userHasPermission(menuRoles, 'danh-sach-xe-da-nhan-mobi'))
                     CustomButton(
-                      'DANH SÁCH XE ĐÃ NHẬN',
+                      'LỊCH SỬ XE ĐÃ NHẬN',
                       Stack(
                         alignment: Alignment.center,
                         children: [

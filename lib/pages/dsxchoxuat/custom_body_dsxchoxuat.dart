@@ -55,8 +55,8 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
   @override
   void initState() {
     super.initState();
-    getData();
-    getBaiXeList(KhoXeId ?? "");
+    // getData();
+    // getBaiXeList(KhoXeId ?? "");
   }
 
   void getData() async {
@@ -236,6 +236,8 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   @override
   Widget build(BuildContext context) {
+    getData();
+    getBaiXeList(KhoXeId ?? "");
     return Container(
       child: Column(
         children: [

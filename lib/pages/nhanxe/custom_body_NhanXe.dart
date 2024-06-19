@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:Thilogi/models/dsxdanhan.dart';
+import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -15,6 +18,7 @@ import '../../config/config.dart';
 import '../../models/getdata.dart';
 import '../../utils/next_screen.dart';
 import '../../widgets/loading.dart';
+import 'package:http/http.dart' as http;
 
 class CustomBodyNhanXe extends StatelessWidget {
   @override
@@ -31,7 +35,8 @@ class BodyNhanxeScreen extends StatefulWidget {
 }
 
 class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, ChangeNotifier {
+  static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   final _qrDataController = TextEditingController();
   ScanModel? _data;
@@ -42,10 +47,18 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
   late ScanBloc _sb;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
+  List<DS_DaNhanModel>? _dn;
+  List<DS_DaNhanModel>? get dn => _dn;
+  bool _hasError = false;
+  bool get hasError => _hasError;
+  String? id;
+  String? _errorCode;
+  String? get errorCode => _errorCode;
 
   @override
   void initState() {
     super.initState();
+    getDSXDaNhan(id ?? "");
     _sb = Provider.of<ScanBloc>(context, listen: false);
 
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
@@ -194,6 +207,129 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
     });
   }
 
+  void getDSXDaNhan(String? id) async {
+    _dn = [];
+    try {
+      final http.Response response = await requestHelper
+          .getData('KhoThanhPham/GetDanhSachXeDaNhan?LoaiXe_Id=$id');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        _dn = (decodedData as List)
+            .map((item) => DS_DaNhanModel.fromJson(item))
+            .toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Widget _buildTableOptions(BuildContext context) {
+    int index = 0; // Biến đếm số thứ tự
+    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
+    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
+    const String defaultDate = "1970-01-01 ";
+
+    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
+    _dn?.sort((a, b) {
+      try {
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
+            .parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
+            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        return bTime.compareTo(aTime); // Sắp xếp giảm dần
+      } catch (e) {
+        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
+        return 0;
+      }
+    });
+
+    return Container(
+      width: 100.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '',
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Table(
+            border: TableBorder.all(),
+            columnWidths: {
+              0: FlexColumnWidth(0.25),
+              1: FlexColumnWidth(0.375),
+              2: FlexColumnWidth(0.375),
+            },
+            children: [
+              TableRow(
+                children: [
+                  Container(
+                    color: Colors.red,
+                    child: _buildTableCell('Giờ nhận', textColor: Colors.white),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    color: Colors.red,
+                    child: _buildTableCell('Loại Xe', textColor: Colors.white),
+                  ),
+                  Container(
+                    color: Colors.red,
+                    child: _buildTableCell('Số Khung', textColor: Colors.white),
+                  ),
+                ],
+              ),
+              ..._dn?.map((item) {
+                    index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                    return TableRow(
+                      children: [
+                        // _buildTableCell(index.toString()), // Số thứ tự
+                        _buildTableCell(item.gioNhan ?? ""),
+                        _buildTableCell(item.loaiXe ?? ""),
+                        _buildTableCell(item.soKhung ?? ""),
+                      ],
+                    );
+                  }).toList() ??
+                  [],
+              TableRow(
+                children: [
+                  _buildTableCell('Tổng số', textColor: Colors.red),
+                  _buildTableCell(_dn?.length.toString() ?? ''),
+                  Container(),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Text(
+        content,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'Comfortaa',
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final UserBloc ub = context.watch<UserBloc>();
@@ -336,7 +472,33 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                               ),
                             ),
                           ),
-                        )
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Danh sách xe đã nhận',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const Divider(
+                                  height: 1, color: Color(0xFFA71C20)),
+                              Container(
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                child: Column(
+                                  children: [
+                                    _buildTableOptions(context),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

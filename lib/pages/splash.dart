@@ -16,6 +16,12 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    super.initState();
+    _afterSplash();
+  }
+
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
@@ -42,11 +48,11 @@ class _SplashPageState extends State<SplashPage> {
     nextScreenReplace(context, MyHomePage());
   }
 
-  @override
-  void initState() {
-    _afterSplash();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   _afterSplash();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

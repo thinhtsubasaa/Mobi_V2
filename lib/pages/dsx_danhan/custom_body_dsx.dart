@@ -8,6 +8,7 @@ import 'package:Thilogi/models/timxe.dart';
 import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
@@ -42,14 +43,12 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   List<BaiXeModel>? get baixeList => _baixeList;
   String? id;
   String? KhoXeId;
-  List<KhoXeModel>? _khoxeList;
-  List<KhoXeModel>? get khoxeList => _khoxeList;
-  List<DS_ChoXuatModel>? _cx;
-  List<DS_ChoXuatModel>? get cx => _cx;
+
   List<DS_DaNhanModel>? _dn;
   List<DS_DaNhanModel>? get dn => _dn;
   bool _hasError = false;
   bool get hasError => _hasError;
+  String? selectedDate;
 
   String? _errorCode;
   String? get errorCode => _errorCode;
@@ -58,134 +57,170 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   @override
   void initState() {
     super.initState();
-    getDSXDaNhan(id ?? "");
-    getData();
-    getBaiXeList(KhoXeId ?? "");
+    // getDSXDaNhan(id ?? "", selectedDate);
+
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    getDSXDaNhan(selectedDate);
   }
 
-  void getData() async {
-    try {
-      final http.Response response =
-          await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
+  // void getDSXDaNhan(String? id, String? ngay) async {
+  //   _dn = [];
+  //   try {
+  //     final http.Response response = await requestHelper.getData(
+  //         'KhoThanhPham/GetDanhSachXeDaNhanAll?LoaiXe_Id=$id&Ngay=$ngay');
+  //     if (response.statusCode == 200) {
+  //       var decodedData = jsonDecode(response.body);
+  //       print("data: " + decodedData);
+  //       if (decodedData != null) {
+  //         _dn = (decodedData as List)
+  //             .map((item) => DS_DaNhanModel.fromJson(item))
+  //             .toList();
 
-        _khoxeList = (decodedData as List)
-            .map((item) => KhoXeModel.fromJson(item))
-            .toList();
-
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
-      }
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  void getBaiXeList(String KhoXeId) async {
-    try {
-      final http.Response response =
-          await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
-      if (response.statusCode == 200) {
-        var decodedData = jsonDecode(response.body);
-        _baixeList = (decodedData as List)
-            .map((item) => BaiXeModel.fromJson(item))
-            .toList();
-      }
-    } catch (e) {
-      _hasError = true;
-      _errorCode = e.toString();
-    }
-  }
-
-  void getDSXDaNhan(String? id) async {
+  //         // Gọi setState để cập nhật giao diện
+  //         setState(() {
+  //           _loading = false;
+  //         });
+  //       }
+  //     }
+  //   } catch (e) {
+  //     _hasError = true;
+  //     _errorCode = e.toString();
+  //   }
+  // }
+  void getDSXDaNhan(String? ngay) async {
     _dn = [];
+    print("Date: $ngay");
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDaNhan?LoaiXe_Id=$id');
+          .getData('KhoThanhPham/GetDanhSachXeDaNhanAll?Ngay=$ngay');
+
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dn = (decodedData as List)
-            .map((item) => DS_DaNhanModel.fromJson(item))
-            .toList();
-
-        // Gọi setState để cập nhật giao diện
-        setState(() {
-          _loading = false;
-        });
+        print("data: " +
+            decodedData.toString()); // In dữ liệu nhận được từ API để kiểm tra
+        if (decodedData != null) {
+          _dn = (decodedData as List)
+              .map((item) => DS_DaNhanModel.fromJson(item))
+              .toList();
+          setState(() {
+            _loading =
+                false; // Đã nhận được dữ liệu, không còn trong quá trình loading nữa
+          });
+        }
       }
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+        // Gọi API với ngày đã chọn
+        _loading = false;
+      });
+      print("Selected Date: $selectedDate");
+      getDSXDaNhan(selectedDate);
     }
   }
 
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
-    return Container(
-      width: 100.w,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Table(
-            border: TableBorder.all(),
-            columnWidths: {
-              0: FlexColumnWidth(0.4),
-              1: FlexColumnWidth(0.4),
-              2: FlexColumnWidth(0.25),
-            },
-            children: [
-              TableRow(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    color: Colors.red,
-                    child: _buildTableCell('Loại Xe', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Số Khung', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Giờ nhận', textColor: Colors.white),
-                  ),
-                ],
-              ),
-              ..._dn?.map((item) {
-                    index++; // Tăng số thứ tự sau mỗi lần lặp
+    const String defaultDate = "1970-01-01 ";
 
-                    return TableRow(
-                      children: [
-                        // _buildTableCell(index.toString()), // Số thứ tự
-                        _buildTableCell(item.loaiXe ?? ""),
-                        _buildTableCell(item.soKhung ?? ""),
-                        _buildTableCell(item.gioNhan ?? ""),
-                      ],
-                    );
-                  }).toList() ??
-                  [],
-              TableRow(
-                children: [
-                  _buildTableCell('Tổng số', textColor: Colors.red),
-                  _buildTableCell(_dn?.length.toString() ?? ''),
-                  Container(),
-                ],
+    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
+    _dn?.sort((a, b) {
+      try {
+        DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
+            .parse(defaultDate + (a.gioNhan ?? "00:00"));
+        DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
+            .parse(defaultDate + (b.gioNhan ?? "00:00"));
+        return bTime.compareTo(aTime); // Sắp xếp giảm dần
+      } catch (e) {
+        // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
+        return 0;
+      }
+    });
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 1.5,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '',
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
               ),
-            ],
-          ),
-        ],
+            ),
+            Table(
+              border: TableBorder.all(),
+              columnWidths: {
+                0: FlexColumnWidth(0.2),
+                1: FlexColumnWidth(0.2),
+                2: FlexColumnWidth(0.2),
+                3: FlexColumnWidth(0.2),
+                4: FlexColumnWidth(0.2),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Màu xe', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Người nhận',
+                          textColor: Colors.white),
+                    ),
+                  ],
+                ),
+                ..._dn?.map((item) {
+                      index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                      return TableRow(
+                        children: [
+                          // _buildTableCell(index.toString()), // Số thứ tự
+                          _buildTableCell(item.gioNhan ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
+                          _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.mauXe ?? ""),
+                          _buildTableCell(item.nguoiNhan ?? ""),
+                        ],
+                      );
+                    }).toList() ??
+                    [],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -198,7 +233,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Comfortaa',
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: FontWeight.w700,
           color: textColor,
         ),
@@ -229,226 +264,67 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đã nhận',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Danh sách xe đã nhận',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.blue),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              selectedDate ?? 'Chọn ngày',
+                                              style:
+                                                  TextStyle(color: Colors.blue),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 4,
                                 ),
                                 const Divider(
                                     height: 1, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.all(10),
                                   child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      // Container(
-                                      //   height:
-                                      //       MediaQuery.of(context).size.height <
-                                      //               600
-                                      //           ? 10.h
-                                      //           : 7.h,
-                                      //   decoration: BoxDecoration(
-                                      //     borderRadius:
-                                      //         BorderRadius.circular(5),
-                                      //     border: Border.all(
-                                      //       color: const Color(0xFF818180),
-                                      //       width: 1,
-                                      //     ),
-                                      //   ),
-                                      //   child: Row(
-                                      //     children: [
-                                      //       Container(
-                                      //         width: 20.w,
-                                      //         decoration: const BoxDecoration(
-                                      //           color: Color(0xFFF6C6C7),
-                                      //           border: Border(
-                                      //             right: BorderSide(
-                                      //               color: Color(0xFF818180),
-                                      //               width: 1,
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //         child: Center(
-                                      //           child: Text(
-                                      //             "Bãi Xe",
-                                      //             textAlign: TextAlign.left,
-                                      //             style: const TextStyle(
-                                      //               fontFamily: 'Comfortaa',
-                                      //               fontSize: 16,
-                                      //               fontWeight: FontWeight.w400,
-                                      //               color: AppConfig.textInput,
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //       ),
-                                      //       Expanded(
-                                      //         flex: 1,
-                                      //         child: Container(
-                                      //             padding: EdgeInsets.only(
-                                      //                 top:
-                                      //                     MediaQuery.of(context)
-                                      //                                 .size
-                                      //                                 .height <
-                                      //                             600
-                                      //                         ? 0
-                                      //                         : 5),
-                                      //             child:
-                                      //                 DropdownButtonHideUnderline(
-                                      //               child:
-                                      //                   DropdownButton2<String>(
-                                      //                 isExpanded: true,
-                                      //                 items: _baixeList
-                                      //                     ?.map((item) {
-                                      //                   return DropdownMenuItem<
-                                      //                       String>(
-                                      //                     value: item.id,
-                                      //                     child: Container(
-                                      //                       constraints: BoxConstraints(
-                                      //                           maxWidth: MediaQuery.of(
-                                      //                                       context)
-                                      //                                   .size
-                                      //                                   .width *
-                                      //                               0.9),
-                                      //                       child:
-                                      //                           SingleChildScrollView(
-                                      //                         scrollDirection:
-                                      //                             Axis.horizontal,
-                                      //                         child: Text(
-                                      //                           item.tenBaiXe ??
-                                      //                               "",
-                                      //                           textAlign:
-                                      //                               TextAlign
-                                      //                                   .center,
-                                      //                           style:
-                                      //                               const TextStyle(
-                                      //                             fontFamily:
-                                      //                                 'Comfortaa',
-                                      //                             fontSize: 14,
-                                      //                             fontWeight:
-                                      //                                 FontWeight
-                                      //                                     .w600,
-                                      //                             color: AppConfig
-                                      //                                 .textInput,
-                                      //                           ),
-                                      //                         ),
-                                      //                       ),
-                                      //                     ),
-                                      //                   );
-                                      //                 }).toList(),
-                                      //                 value: id,
-                                      //                 onChanged: (newValue) {
-                                      //                   setState(() {
-                                      //                     id = newValue;
-                                      //                   });
-                                      //                   if (newValue != null) {
-                                      //                     getDSXDaNhan(
-                                      //                         newValue);
-                                      //                     print(
-                                      //                         "object : ${id}");
-                                      //                   }
-                                      //                 },
-                                      //                 buttonStyleData:
-                                      //                     const ButtonStyleData(
-                                      //                   padding: EdgeInsets
-                                      //                       .symmetric(
-                                      //                           horizontal: 16),
-                                      //                   height: 40,
-                                      //                   width: 200,
-                                      //                 ),
-                                      //                 dropdownStyleData:
-                                      //                     const DropdownStyleData(
-                                      //                   maxHeight: 200,
-                                      //                 ),
-                                      //                 menuItemStyleData:
-                                      //                     const MenuItemStyleData(
-                                      //                   height: 40,
-                                      //                 ),
-                                      //                 dropdownSearchData:
-                                      //                     DropdownSearchData(
-                                      //                   searchController:
-                                      //                       textEditingController,
-                                      //                   searchInnerWidgetHeight:
-                                      //                       50,
-                                      //                   searchInnerWidget:
-                                      //                       Container(
-                                      //                     height: 50,
-                                      //                     padding:
-                                      //                         const EdgeInsets
-                                      //                             .only(
-                                      //                       top: 8,
-                                      //                       bottom: 4,
-                                      //                       right: 8,
-                                      //                       left: 8,
-                                      //                     ),
-                                      //                     child: TextFormField(
-                                      //                       expands: true,
-                                      //                       maxLines: null,
-                                      //                       controller:
-                                      //                           textEditingController,
-                                      //                       decoration:
-                                      //                           InputDecoration(
-                                      //                         isDense: true,
-                                      //                         contentPadding:
-                                      //                             const EdgeInsets
-                                      //                                 .symmetric(
-                                      //                           horizontal: 10,
-                                      //                           vertical: 8,
-                                      //                         ),
-                                      //                         hintText:
-                                      //                             'Tìm bãi xe',
-                                      //                         hintStyle:
-                                      //                             const TextStyle(
-                                      //                                 fontSize:
-                                      //                                     12),
-                                      //                         border:
-                                      //                             OutlineInputBorder(
-                                      //                           borderRadius:
-                                      //                               BorderRadius
-                                      //                                   .circular(
-                                      //                                       8),
-                                      //                         ),
-                                      //                       ),
-                                      //                     ),
-                                      //                   ),
-                                      //                   searchMatchFn: (item,
-                                      //                       searchValue) {
-                                      //                     if (item
-                                      //                         is DropdownMenuItem<
-                                      //                             String>) {
-                                      //                       // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                      //                       String itemId =
-                                      //                           item.value ??
-                                      //                               "";
-                                      //                       // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                      //                       return _baixeList?.any((baiXe) =>
-                                      //                               baiXe.id ==
-                                      //                                   itemId &&
-                                      //                               baiXe.tenBaiXe
-                                      //                                       ?.toLowerCase()
-                                      //                                       .contains(searchValue.toLowerCase()) ==
-                                      //                                   true) ??
-                                      //                           false;
-                                      //                     } else {
-                                      //                       return false;
-                                      //                     }
-                                      //                   },
-                                      //                 ),
-                                      //                 onMenuStateChange:
-                                      //                     (isOpen) {
-                                      //                   if (!isOpen) {
-                                      //                     textEditingController
-                                      //                         .clear();
-                                      //                   }
-                                      //                 },
-                                      //               ),
-                                      //             )),
-                                      //       ),
-                                      //     ],
-                                      //   ),
-                                      // ),
-
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      Text(
+                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                        style: TextStyle(
+                                          fontFamily: 'Comfortaa',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                                       _buildTableOptions(context),
                                     ],
                                   ),
