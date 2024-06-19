@@ -303,10 +303,12 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen>
                                       tenSanPham: _data?.tenSanPham ??
                                           _model?.tenSanPham ??
                                           "",
-                                      ngayXuatKhoView: _data?.ngayXuatKhoView ??
+                                      ngayXuatKhoView:
+                                          // _data?.ngayXuatKhoView ??
                                           formatCurrentDateTime(),
                                       tenTaiXe:
-                                          _data?.tenTaiXe ?? ub.name ?? "",
+                                          // _data?.tenTaiXe ??
+                                          ub.name ?? "",
                                       ghiChu:
                                           _data?.ghiChu ?? _model?.ghiChu ?? "",
                                       tenKho:

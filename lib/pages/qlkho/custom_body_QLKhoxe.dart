@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
+import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -129,7 +130,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
+                  if (userHasPermission(menuRoles, 'kiem-tra-nhan-xe-mobi'))
                     CustomButton(
                       'KIỂM TRA NHẬN XE',
                       Stack(
@@ -141,7 +142,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         ],
                       ),
                       () {
-                        _handleButtonTap(NhanXePage());
+                        _handleButtonTap(QLNhanXePage());
                       },
                     ),
                   if (userHasPermission(menuRoles, 'quan-ly-bai-xe-mobi'))

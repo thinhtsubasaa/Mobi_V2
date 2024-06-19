@@ -175,8 +175,8 @@ class _CheckSheetUploadAnhState extends State<CheckSheetUploadAnh> {
                       backgroundColor: Colors.orangeAccent,
                     ),
                     onPressed: () => imageSelector(context, 'gallery'),
-                    icon: const Icon(Icons.browse_gallery),
-                    label: const Text("Thư viện"),
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text(""),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
@@ -184,8 +184,8 @@ class _CheckSheetUploadAnhState extends State<CheckSheetUploadAnh> {
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: () => imageSelector(context, 'camera'),
-                    icon: const Icon(Icons.camera),
-                    label: const Text("Chụp ảnh"),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text(""),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton.icon(
@@ -195,8 +195,8 @@ class _CheckSheetUploadAnhState extends State<CheckSheetUploadAnh> {
                     onPressed: (_loading || _allowUploadFile() == false)
                         ? null
                         : () => _uploadAnh(),
-                    icon: const Icon(Feather.save),
-                    label: const Text("Upload ảnh"),
+                    icon: const Icon(Icons.cloud_upload),
+                    label: const Text(""),
                   ),
                 ],
               ),

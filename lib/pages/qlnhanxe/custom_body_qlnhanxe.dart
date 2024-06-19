@@ -1,48 +1,53 @@
-import 'package:Thilogi/pages/dongSeal/dongseal.dart';
 import 'package:Thilogi/pages/dsx_danhan/dsx_choxuat.dart';
-import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
-import 'package:Thilogi/widgets/loading.dart';
+import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
+import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
+import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:Thilogi/pages/baixe/baixe.dart';
-import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
-import 'package:Thilogi/pages/DongCont/dongcont.dart';
+
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../blocs/menu_roles.dart';
-import '../../config/config.dart';
-import '../../models/menurole.dart';
-import '../../services/request_helper.dart';
-import '../khoxe/khoxe.dart';
-import '../timxe/timxe.dart';
+import 'package:http/http.dart' as http;
+import '../../../blocs/menu_roles.dart';
+import '../../../config/config.dart';
+import '../../../models/menurole.dart';
+import '../../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
-class CustomBodyQLBaiXe extends StatelessWidget {
+class CustomBodyQLNhanXe extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(width: 100.w, child: BodyQLBaiXeScreen());
+    return Container(width: 100.w, child: BodyQLNhanXeScreen());
   }
 }
 
-class BodyQLBaiXeScreen extends StatefulWidget {
-  const BodyQLBaiXeScreen({Key? key}) : super(key: key);
+class BodyQLNhanXeScreen extends StatefulWidget {
+  const BodyQLNhanXeScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyQLBaiXeScreenState createState() => _BodyQLBaiXeScreenState();
+  _BodyQLNhanXeScreenState createState() => _BodyQLNhanXeScreenState();
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
+class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen>
     with TickerProviderStateMixin, ChangeNotifier {
-  int currentPage = 0; // Đặt giá trị hiện tại của trang
+  int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
   String DonVi_Id = '99108b55-1baa-46d0-ae06-f2a6fb3a41c8';
   String PhanMem_Id = 'cd9961bf-f656-4382-8354-803c16090314';
   late MenuRoleBloc _mb;
+  List<MenuRoleModel>? _menurole;
+  List<MenuRoleModel>? get menurole => _menurole;
   static RequestHelper requestHelper = RequestHelper();
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+  bool _hasError = false;
+  bool get hasError => _hasError;
+
+  String? _errorCode;
+  String? get errorCode => _errorCode;
 
   String? _message;
   String? get message => _message;
@@ -70,7 +75,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
   //   if (_mb.menurole != null) {
   //     url = _mb.menurole!
   //         .firstWhere((menuRole) => menuRole.url == url1,
-  //             orElse: () => MenuRoleModel() as MenuRoleModel)
+  //             orElse: () => MenuRoleModel())
   //         ?.url;
   //     print('url1:$url');
   //     if (url == url1) {
@@ -119,63 +124,39 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  if (userHasPermission(menuRoles, 'nhap-bai-xe-mobi'))
+                  if (userHasPermission(menuRoles, 'nhan-xe-mobi'))
                     CustomButton(
-                        'NHẬP BÃI XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_NhapBai.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(BaiXePage());
-                    }),
-                  if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
+                      'NHẬN XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_XuatBai.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(NhanXePage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'danh-sach-xe-da-nhan-mobi'))
                     CustomButton(
-                        'ĐIỀU CHUYỂN XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_ChuyenBai.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(ChuyenXePage());
-                    }),
-                  if (userHasPermission(menuRoles, 'tim-xe-mobi'))
-                    CustomButton(
-                        'TÌM XE',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(TimXePage());
-                    }),
-                  if (userHasPermission(
-                      menuRoles, 'danh-sach-xe-cho-xuat-mobi'))
-                    CustomButton(
-                        'DANH SÁCH XE CHỜ XUẤT',
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
-                            ),
-                          ],
-                        ), () {
-                      _handleButtonTap(DSXChoXuatPage());
-                    }),
+                      'DANH SÁCH XE ĐÃ NHẬN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(DSXDaNhanPage());
+                      },
+                    ),
                 ],
+                // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ),
-
-              // PageIndicator(currentPage: currentPage, pageCount: pageCount),
             ),
           );
   }
@@ -197,21 +178,20 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 33.w,
+      width: 35.w,
       child: Column(
         children: [
           Container(
-            //  width: 28.w,
-            // height: 35.h,
             alignment: Alignment.center,
             child: page,
           ),
+          const SizedBox(height: 8),
           Text(
             buttonText,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w800,
               color: AppConfig.titleColor,
             ),

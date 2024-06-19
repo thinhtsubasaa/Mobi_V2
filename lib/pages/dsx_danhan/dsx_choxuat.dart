@@ -1,5 +1,4 @@
 import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
-import 'package:Thilogi/pages/dsxchoxuat/custom_body_dsxchoxuat.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -7,7 +6,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class DSXChoXuatPage extends StatelessWidget {
+class DSXDaNhanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +27,7 @@ class DSXChoXuatPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyDSXChoXuat(),
+              child: CustomBodyDSXDaNhan(),
             ),
           ),
           BottomContent(),
@@ -50,7 +49,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'KIỂM TRA - DANH SÁCH XE CHỜ XUẤT',
+          'KIỂM TRA - DANH SÁCH XE ĐÃ NHẬN',
         ),
       ),
     );

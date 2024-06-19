@@ -17,21 +17,21 @@ import 'package:http/http.dart' as http;
 
 import '../timxe/custom_body_timxe.dart';
 
-class CustomBodyDSX extends StatelessWidget {
+class CustomBodyDSXChoXuat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyDSXScreen());
+    return Container(child: BodyDSXScreenChoXuat());
   }
 }
 
-class BodyDSXScreen extends StatefulWidget {
-  const BodyDSXScreen({Key? key}) : super(key: key);
+class BodyDSXScreenChoXuat extends StatefulWidget {
+  const BodyDSXScreenChoXuat({Key? key}) : super(key: key);
 
   @override
-  _BodyDSXScreenState createState() => _BodyDSXScreenState();
+  _BodyDSXScreenChoXuatState createState() => _BodyDSXScreenChoXuatState();
 }
 
-class _BodyDSXScreenState extends State<BodyDSXScreen>
+class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
     with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
