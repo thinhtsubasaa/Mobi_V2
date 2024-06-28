@@ -59,6 +59,9 @@ class DieuChuyenBloc extends ChangeNotifier {
             taiXe_Id: decodedData['taiXe_Id'],
             viTri: decodedData['viTri'],
             toaDo: decodedData['toaDo'],
+            thoiGianBatDau: decodedData['thoiGianBatDau'],
+            thoiGianKetThuc: decodedData['thoiGianKetThuc'],
+            dangDiChuyen: decodedData['dangDiChuyen'],
           );
         }
       } else {

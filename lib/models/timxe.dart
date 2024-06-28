@@ -6,6 +6,7 @@ class TimXeModel {
   String? tenBaiXe;
   String? tenViTri;
   String? toaDo;
+  String? nguoiPhuTrach;
 
   TimXeModel(
       {this.key,
@@ -14,7 +15,8 @@ class TimXeModel {
       this.soKhung,
       this.tenKho,
       this.tenBaiXe,
-      this.toaDo});
+      this.toaDo,
+      this.nguoiPhuTrach});
 
   factory TimXeModel.fromJson(Map<String, dynamic> json) {
     return TimXeModel(
@@ -24,7 +26,8 @@ class TimXeModel {
         tenKho: json["tenKho"],
         tenViTri: json["tenViTr"],
         tenBaiXe: json["tenBaiXe"],
-        toaDo: json["toaDo"]);
+        toaDo: json["toaDo"],
+        nguoiPhuTrach: json["nguoiPhuTrach"]);
   }
   Map<String, dynamic> toJson() => {
         'key': key,

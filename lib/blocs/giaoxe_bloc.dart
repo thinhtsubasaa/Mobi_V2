@@ -61,6 +61,7 @@ class GiaoXeBloc extends ChangeNotifier {
             tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
             toaDo: decodedData['toaDo'],
             noigiao: decodedData['noigiao'],
+            dangDiChuyen: decodedData['dangDiChuyen'],
           );
         }
       } else {

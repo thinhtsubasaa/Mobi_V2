@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
@@ -154,6 +155,21 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                       ),
                       () {
                         _handleButtonTap(DongSealPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'them-moi-dong-cont-mobi'))
+                    CustomButton(
+                      'THÊM MỚI ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_QLBaiXe_DongCont.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(ThemDongContPage());
                       },
                     ),
                 ],

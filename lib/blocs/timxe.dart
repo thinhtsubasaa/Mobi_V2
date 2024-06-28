@@ -44,6 +44,7 @@ class TimXeBloc extends ChangeNotifier {
             tenBaiXe: decodedData['tenBaiXe'],
             tenViTri: decodedData['tenViTri'],
             toaDo: decodedData['toaDo'],
+            nguoiPhuTrach: decodedData['nguoiPhuTrach'],
           );
         }
       } else {

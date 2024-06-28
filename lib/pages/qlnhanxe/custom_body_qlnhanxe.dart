@@ -1,4 +1,5 @@
-import 'package:Thilogi/pages/dsx_danhan/dsx_choxuat.dart';
+import 'package:Thilogi/pages/dsx_danhan/dsx_danhan.dart';
+import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -131,7 +132,7 @@ class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_XuatBai.png',
+                            'assets/images/nhanxe.png',
                           ),
                         ],
                       ),
@@ -141,17 +142,17 @@ class _BodyQLNhanXeScreenState extends State<BodyQLNhanXeScreen>
                     ),
                   if (userHasPermission(menuRoles, 'danh-sach-xe-da-nhan-mobi'))
                     CustomButton(
-                      'LỊCH SỬ XE ĐÃ NHẬN',
+                      'DANH SÁCH XE ĐÃ NHẬN',
                       Stack(
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
                           ),
                         ],
                       ),
                       () {
-                        _handleButtonTap(DSXDaNhanPage());
+                        _handleButtonTap(LSDaNhanPage());
                       },
                     ),
                 ],

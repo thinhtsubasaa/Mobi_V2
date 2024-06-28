@@ -1,6 +1,8 @@
 import 'package:Thilogi/pages/dongSeal/dongseal.dart';
-import 'package:Thilogi/pages/dsx_danhan/dsx_choxuat.dart';
+import 'package:Thilogi/pages/dsx_danhan/dsx_danhan.dart';
 import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
+import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
+import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
 import 'package:Thilogi/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
@@ -166,11 +168,39 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                           alignment: Alignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/Button_QLBaiXe_TimXeTrongBai.png',
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
                             ),
                           ],
                         ), () {
                       _handleButtonTap(DSXChoXuatPage());
+                    }),
+                  if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-nhap-bai-mobi'))
+                    CustomButton(
+                        'LỊCH SỬ XE NHẬP BÃI',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(LSNhapBaiPage());
+                    }),
+                  if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
+                    CustomButton(
+                        'LỊCH SỬ XE ĐIỀU CHUYỂN',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(LSDieuChuyenPage());
                     }),
                 ],
               ),

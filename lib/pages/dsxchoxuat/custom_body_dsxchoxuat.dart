@@ -203,14 +203,14 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                     );
                   }).toList() ??
                   [],
-              TableRow(
-                children: [
-                  _buildTableCell('Tổng số', textColor: Colors.red),
-                  _buildTableCell(_cx?.length.toString() ?? ''),
-                  Container(),
-                  Container(),
-                ],
-              ),
+              // TableRow(
+              //   children: [
+              //     _buildTableCell('Tổng số', textColor: Colors.red),
+              //     _buildTableCell(_cx?.length.toString() ?? ''),
+              //     Container(),
+              //     Container(),
+              //   ],
+              // ),
             ],
           ),
         ],
@@ -480,8 +480,26 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
-                                      SizedBox(height: 4),
-                                      _buildTableOptions(context),
+                                      Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 4,
+                                            ),
+                                            Text(
+                                              'Tổng số xe: ${_cx?.length.toString() ?? ''}',
+                                              style: TextStyle(
+                                                fontFamily: 'Comfortaa',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            _buildTableOptions(context),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),

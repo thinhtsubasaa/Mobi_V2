@@ -67,6 +67,7 @@ class XuatKhoBloc extends ChangeNotifier {
             benVanChuyen: decodedData['benVanChuyen'],
             soXe: decodedData['soXe'],
             maSoNhanVien: decodedData['maSoNhanVien'],
+            dangDiChuyen: decodedData['dangDiChuyen'],
           );
         }
       } else {

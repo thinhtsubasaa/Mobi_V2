@@ -60,7 +60,6 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
       _handleBarcodeScanResult(widget.soKhung!);
     }
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
-
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
@@ -380,6 +379,12 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                   child: Column(
                                     children: [
                                       CustomItem(
+                                        title: 'Số khung: ',
+                                        value: _data?.soKhung,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
                                         title: 'Kho Xe: ',
                                         value: _data?.tenKho,
                                       ),
@@ -392,8 +397,14 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
                                       Item(
-                                        title: 'Vị Trí xe: ',
+                                        title: 'Vị Trí Xe: ',
                                         value: _data?.tenViTri,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Người phụ trách: ',
+                                        value: _data?.nguoiPhuTrach,
                                       ),
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
@@ -440,7 +451,7 @@ class CustomItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 9.h,
+      height: 7.h,
       child: Row(
         children: [
           Container(
@@ -491,7 +502,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 9.h,
+      height: 8.h,
       padding: const EdgeInsets.all(10),
       child: Center(
         child: Row(

@@ -1,12 +1,14 @@
+import 'package:Thilogi/pages/dsx_danhan/custom_body_dsx.dart';
+import 'package:Thilogi/pages/lsnhanxe/custom_body_lsdanhan.dart';
+import 'package:Thilogi/pages/lsnhapchuyenbai/custom_body_lsnhapchuyen.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/nhanxe/custom_body_NhanXe.dart';
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class NhanXePage extends StatelessWidget {
+class LSNhapChuyenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,14 +20,16 @@ class NhanXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
-              height: MediaQuery.of(context).size.height,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(AppConfig.backgroundImagePath),
-                  fit: BoxFit.cover,
-                ),
+              // decoration: const BoxDecoration(
+              //     // image: DecorationImage(
+              //     //   image: AssetImage(AppConfig.backgroundImagePath),
+              //     //   fit: BoxFit.cover,
+              //     // ),
+              //     ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyNhanXe(),
+              child: CustomBodyLSNhapChuyen(),
             ),
           ),
           BottomContent(),
@@ -47,7 +51,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'NHẬN XE',
+          'KIỂM TRA - LỊCH SỬ XE ĐÃ NHẬN',
         ),
       ),
     );
