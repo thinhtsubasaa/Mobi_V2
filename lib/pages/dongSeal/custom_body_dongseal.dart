@@ -300,8 +300,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Danh sách xe',
+          Text(
+            'Danh sách xe : ${_dsdongcontList?.length.toString() ?? ''} xe',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 18,
@@ -340,12 +340,12 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                     );
                   }).toList() ??
                   [],
-              TableRow(
-                children: [
-                  _buildTableCell('Tổng số', textColor: Colors.red),
-                  _buildTableCell(_dsdongcontList?.length.toString() ?? ''),
-                ],
-              ),
+              // TableRow(
+              //   children: [
+              //     _buildTableCell('Tổng số', textColor: Colors.red),
+              //     _buildTableCell(_dsdongcontList?.length.toString() ?? ''),
+              //   ],
+              // ),
             ],
           ),
         ],

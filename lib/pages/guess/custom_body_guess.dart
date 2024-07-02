@@ -25,48 +25,48 @@ class MainButton extends StatelessWidget {
           runSpacing: 20.0, // khoảng cách giữa các hàng
           alignment: WrapAlignment.center,
           children: [
-            CustomButton(
-              'THÔNG TIN DỊCH VỤ',
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/Button_NhanXe_3b.png',
-                  ),
-                ],
-              ),
-              () {
-                nextScreen(context, TraCuuPage());
-              },
-            ),
-            CustomButton(
-              'TRA CỨU ĐƠN HÀNG',
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/Button_NhanXe_3b.png',
-                  ),
-                ],
-              ),
-              () {
-                nextScreen(context, TraCuuPage());
-              },
-            ),
-            CustomButton(
-              'TRA CỨU THÔNG TIN NHÂN VIÊN',
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/Button_NhanXe_3b.png',
-                  ),
-                ],
-              ),
-              () {
-                nextScreen(context, TraCuuPage());
-              },
-            ),
+            // CustomButton(
+            //   'THÔNG TIN DỊCH VỤ',
+            //   Stack(
+            //     alignment: Alignment.center,
+            //     children: [
+            //       Image.asset(
+            //         'assets/images/Button_NhanXe_3b.png',
+            //       ),
+            //     ],
+            //   ),
+            //   () {
+            //     nextScreen(context, TraCuuPage());
+            //   },
+            // ),
+            // CustomButton(
+            //   'TRA CỨU ĐƠN HÀNG',
+            //   Stack(
+            //     alignment: Alignment.center,
+            //     children: [
+            //       Image.asset(
+            //         'assets/images/Button_NhanXe_3b.png',
+            //       ),
+            //     ],
+            //   ),
+            //   () {
+            //     nextScreen(context, TraCuuPage());
+            //   },
+            // ),
+            // CustomButton(
+            //   'TRA CỨU THÔNG TIN NHÂN VIÊN',
+            //   Stack(
+            //     alignment: Alignment.center,
+            //     children: [
+            //       Image.asset(
+            //         'assets/images/Button_NhanXe_3b.png',
+            //       ),
+            //     ],
+            //   ),
+            //   () {
+            //     nextScreen(context, TraCuuPage());
+            //   },
+            // ),
           ],
         ),
       ),

@@ -26,6 +26,7 @@ class DieuChuyenModel {
   String? toaDo;
   String? thoiGianBatDau;
   String? thoiGianKetThuc;
+  String? nguoiPhuTrach;
   bool? dangDiChuyen;
 
   DieuChuyenModel(
@@ -56,7 +57,8 @@ class DieuChuyenModel {
       this.toaDo,
       this.thoiGianBatDau,
       this.thoiGianKetThuc,
-      this.dangDiChuyen});
+      this.dangDiChuyen,
+      this.nguoiPhuTrach});
 
   factory DieuChuyenModel.fromJson(Map<String, dynamic> json) {
     return DieuChuyenModel(
@@ -88,6 +90,7 @@ class DieuChuyenModel {
       thoiGianBatDau: json["thoiGianBatDau"],
       thoiGianKetThuc: json["thoiGianKetThuc"],
       dangDiChuyen: json["dangDiChuyen"],
+      nguoiPhuTrach: json["nguoiPhuTrach"],
     );
   }
   Map<String, dynamic> toJson() => {

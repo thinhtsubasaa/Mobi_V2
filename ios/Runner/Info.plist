@@ -7,6 +7,10 @@
 
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app needs access to location even when in the background.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo Use</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Video Call</string>
 	<key>FLTEnableImpeller</key>
 	<false />
 

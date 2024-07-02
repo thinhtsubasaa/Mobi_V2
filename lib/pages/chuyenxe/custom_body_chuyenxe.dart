@@ -69,6 +69,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   List<TaiXeModel>? get taixeList => _taixeList;
 
   bool _isMovingStarted = false;
+  String? _selectedViTri;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -604,11 +605,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         });
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialog(BuildContext context, String viTri) {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn điều chuyển không?',
+        text: 'Bạn có muốn xác nhận tới vị trí $viTri',
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
@@ -1164,6 +1165,12 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     onChanged: (newValue) {
                                                       setState(() {
                                                         ViTriId = newValue;
+                                                        _selectedViTri = _vitriList
+                                                            ?.firstWhere(
+                                                                (item) =>
+                                                                    item.id ==
+                                                                    newValue)
+                                                            .tenViTri;
                                                       });
                                                       print(
                                                           "object : ${ViTriId}");
@@ -1367,6 +1374,10 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
+                                        Item(
+                                          title: 'Người phụ trách: ',
+                                          value: _data?.nguoiPhuTrach ?? "",
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -1473,7 +1484,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           )),
                       controller: _btnController,
                       onPressed: (_isMovingStarted == true)
-                          ? () => _showConfirmationDialog(context)
+                          ? () => _showConfirmationDialog(
+                              context, _selectedViTri ?? "")
                           : null),
                 ),
             ],
