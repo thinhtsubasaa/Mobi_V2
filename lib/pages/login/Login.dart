@@ -95,9 +95,8 @@ class CustomButtonLogin extends StatelessWidget {
         style: TextStyle(
           color: AppConfig.textButton,
           fontFamily: 'Roboto',
-          fontSize: 16.sp,
+          fontSize: 16,
           fontWeight: FontWeight.w600,
-          height: 1.16,
         ),
       ),
     );
@@ -118,7 +117,6 @@ PreferredSizeWidget customAppBar(BuildContext context) {
         ],
       ),
     ),
-
   );
 }
 

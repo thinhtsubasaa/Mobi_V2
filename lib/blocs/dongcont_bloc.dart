@@ -60,6 +60,7 @@ class DongContBloc extends ChangeNotifier {
             lat: decodedData['lat'],
             long: decodedData['long'],
             toaDo: decodedData['toaDo'],
+            khuVuc: decodedData['khuVuc'],
           );
         }
       } else {

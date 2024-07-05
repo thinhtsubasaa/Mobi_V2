@@ -130,90 +130,107 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
-    return Container(
-      width: 100.w,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Table(
-            border: TableBorder.all(),
-            columnWidths: {
-              0: FlexColumnWidth(0.35),
-              1: FlexColumnWidth(0.35),
-              2: FlexColumnWidth(0.18),
-              3: FlexColumnWidth(0.12),
-            },
-            children: [
-              TableRow(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    color: Colors.red,
-                    child: _buildTableCell('Loại Xe', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Số Khung', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Vị trí', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell(''),
-                  ),
-                ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '',
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
               ),
-              ..._cx?.map((item) {
-                    index++; // Tăng số thứ tự sau mỗi lần lặp
+            ),
+            Table(
+              border: TableBorder.all(),
+              columnWidths: {
+                0: FlexColumnWidth(0.3),
+                1: FlexColumnWidth(0.35),
+                2: FlexColumnWidth(0.35),
+                3: FlexColumnWidth(0.3),
+                4: FlexColumnWidth(0.18),
+                5: FlexColumnWidth(0.12),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Đơn vị vận chuyển',
+                          textColor: Colors.white),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Mã Màu', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Vị trí', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell(''),
+                    ),
+                  ],
+                ),
+                ..._cx?.map((item) {
+                      index++; // Tăng số thứ tự sau mỗi lần lặp
 
-                    return TableRow(
-                      children: [
-                        // _buildTableCell(index.toString()), // Số thứ tự
-                        _buildTableCell(item.loaiXe ?? ""),
-                        _buildTableCell(item.soKhung ?? ""),
-                        _buildTableCell(item.tenViTri ?? ""),
-                        Center(
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            icon: Icon(Icons.remove_red_eye),
-                            iconSize: 20.0,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => TimXePage(
-                                    soKhung: item.soKhung ?? "",
+                      return TableRow(
+                        children: [
+                          _buildTableCell(item.donVi ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
+                          _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.maMau ?? ""),
+                          _buildTableCell(item.tenViTri ?? ""),
+                          Center(
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.remove_red_eye),
+                              iconSize: 20.0,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TimXePage(
+                                      soKhung: item.soKhung ?? "",
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  }).toList() ??
-                  [],
-              // TableRow(
-              //   children: [
-              //     _buildTableCell('Tổng số', textColor: Colors.red),
-              //     _buildTableCell(_cx?.length.toString() ?? ''),
-              //     Container(),
-              //     Container(),
-              //   ],
-              // ),
-            ],
-          ),
-        ],
+                        ],
+                      );
+                    }).toList() ??
+                    [],
+                // TableRow(
+                //   children: [
+                //     _buildTableCell('Tổng số', textColor: Colors.red),
+                //     _buildTableCell(_cx?.length.toString() ?? ''),
+                //     Container(),
+                //     Container(),
+                //   ],
+                // ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

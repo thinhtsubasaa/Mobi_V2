@@ -1,13 +1,13 @@
-import 'dart:convert';
-
+import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
+import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../blocs/menu_roles.dart';
 import '../../../config/config.dart';
@@ -61,6 +61,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
   @override
   void initState() {
     super.initState();
+    _checkInternetAndShowAlert();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
   }
@@ -69,6 +70,22 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
+    });
   }
 
   // bool userHasPermission(String? url1) {
@@ -159,7 +176,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                     ),
                   if (userHasPermission(menuRoles, 'them-moi-dong-cont-mobi'))
                     CustomButton(
-                      'THÊM MỚI ĐÓNG CONT',
+                      'THÊM MỚI CONT',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -170,6 +187,22 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                       ),
                       () {
                         _handleButtonTap(ThemDongContPage());
+                      },
+                    ),
+                  if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-dong-cont-mobi'))
+                    CustomButton(
+                      'DANH SÁCH XE ĐÓNG CONT ',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSDaDongContPage());
                       },
                     ),
                 ],

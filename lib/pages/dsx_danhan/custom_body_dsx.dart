@@ -4,6 +4,7 @@ import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/dsxdanhan.dart';
 import 'package:Thilogi/models/khoxe.dart';
+import 'package:Thilogi/models/nhamay.dart';
 import 'package:Thilogi/models/timxe.dart';
 import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -39,11 +40,10 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   String _qrData = '';
   final _qrDataController = TextEditingController();
   bool _loading = false;
-  List<BaiXeModel>? _baixeList;
-  List<BaiXeModel>? get baixeList => _baixeList;
-  String? id;
+  String? id = "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38";
   String? KhoXeId;
-
+  List<NhaMayModel>? _nhamayList;
+  List<NhaMayModel>? get nhamayList => _nhamayList;
   List<DS_DaNhanModel>? _dn;
   List<DS_DaNhanModel>? get dn => _dn;
   bool _hasError = false;
@@ -59,8 +59,14 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
     super.initState();
     // getDSXDaNhan(id ?? "", selectedDate);
 
+    getData();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXDaNhan(selectedDate);
+    getDSXDaNhan(selectedDate, id);
+    setState(() {
+      if (id == "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
+        getDSXDaNhanALL(selectedDate);
+      }
+    });
   }
 
   // void getDSXDaNhan(String? id, String? ngay) async {
@@ -87,12 +93,61 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
   //     _errorCode = e.toString();
   //   }
   // }
-  void getDSXDaNhan(String? ngay) async {
+  void getData() async {
+    try {
+      final http.Response response = await requestHelper.getData('NhaMay');
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _nhamayList = (decodedData as List)
+            .map((item) => NhaMayModel.fromJson(item))
+            .toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDSXDaNhanALL(String? ngay) async {
     _dn = [];
     print("Date: $ngay");
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDaNhanAll?Ngay=$ngay');
+          .getData('KhoThanhPham/GetDanhSachXeDaNhanAllNM?Ngay=$ngay');
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " +
+            decodedData.toString()); // In dữ liệu nhận được từ API để kiểm tra
+        if (decodedData != null) {
+          _dn = (decodedData as List)
+              .map((item) => DS_DaNhanModel.fromJson(item))
+              .toList();
+          setState(() {
+            _loading =
+                false; // Đã nhận được dữ liệu, không còn trong quá trình loading nữa
+          });
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDSXDaNhan(String? ngay, String? id) async {
+    _dn = [];
+    print("Date: $ngay");
+    try {
+      final http.Response response = await requestHelper.getData(
+          'KhoThanhPham/GetDanhSachXeDaNhanAll?Ngay=$ngay&NhaMay_Id=$id');
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -128,7 +183,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
         _loading = false;
       });
       print("Selected Date: $selectedDate");
-      getDSXDaNhan(selectedDate);
+      getDSXDaNhan(selectedDate, id);
     }
   }
 
@@ -152,7 +207,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 1.5,
+        width: MediaQuery.of(context).size.width * 2,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -172,6 +227,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                 2: FlexColumnWidth(0.2),
                 3: FlexColumnWidth(0.2),
                 4: FlexColumnWidth(0.2),
+                5: FlexColumnWidth(0.2),
               },
               children: [
                 TableRow(
@@ -180,6 +236,11 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                       color: Colors.red,
                       child:
                           _buildTableCell('Giờ nhận', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Nhà Máy', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -209,6 +270,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
+                          _buildTableCell(item.nhaMay ?? ""),
                           _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
                           _buildTableCell(item.mauXe ?? ""),
@@ -309,6 +371,203 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                                 ),
                                 const Divider(
                                     height: 1, color: Color(0xFFA71C20)),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height < 600
+                                          ? 10.h
+                                          : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Nhà máy",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                top: MediaQuery.of(context)
+                                                            .size
+                                                            .height <
+                                                        600
+                                                    ? 0
+                                                    : 5),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                items: _nhamayList?.map((item) {
+                                                  return DropdownMenuItem<
+                                                      String>(
+                                                    value: item.id,
+                                                    child: Container(
+                                                      constraints: BoxConstraints(
+                                                          maxWidth: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.9),
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        child: Text(
+                                                          item.tenNhaMay ?? "",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily:
+                                                                'Comfortaa',
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: AppConfig
+                                                                .textInput,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: id,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    id = newValue;
+                                                  });
+                                                  if (newValue != null) {
+                                                    if (id ==
+                                                        "004cbc8d-1a72-42cf-cbf6-08dc9bff5b38") {
+                                                      getDSXDaNhanALL(
+                                                          selectedDate);
+                                                    } else {
+                                                      getDSXDaNhan(selectedDate,
+                                                          newValue);
+                                                      print("object : ${id}");
+                                                    }
+                                                  }
+                                                },
+                                                buttonStyleData:
+                                                    const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 16),
+                                                  height: 40,
+                                                  width: 200,
+                                                ),
+                                                dropdownStyleData:
+                                                    const DropdownStyleData(
+                                                  maxHeight: 200,
+                                                ),
+                                                menuItemStyleData:
+                                                    const MenuItemStyleData(
+                                                  height: 40,
+                                                ),
+                                                dropdownSearchData:
+                                                    DropdownSearchData(
+                                                  searchController:
+                                                      textEditingController,
+                                                  searchInnerWidgetHeight: 50,
+                                                  searchInnerWidget: Container(
+                                                    height: 50,
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 4,
+                                                      right: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: TextFormField(
+                                                      expands: true,
+                                                      maxLines: null,
+                                                      controller:
+                                                          textEditingController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        isDense: true,
+                                                        contentPadding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 8,
+                                                        ),
+                                                        hintText: 'Tìm nhà máy',
+                                                        hintStyle:
+                                                            const TextStyle(
+                                                                fontSize: 12),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  searchMatchFn:
+                                                      (item, searchValue) {
+                                                    if (item
+                                                        is DropdownMenuItem<
+                                                            String>) {
+                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                      String itemId =
+                                                          item.value ?? "";
+                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                      return _nhamayList?.any((baiXe) =>
+                                                              baiXe.id ==
+                                                                  itemId &&
+                                                              baiXe.tenNhaMay
+                                                                      ?.toLowerCase()
+                                                                      .contains(
+                                                                          searchValue
+                                                                              .toLowerCase()) ==
+                                                                  true) ??
+                                                          false;
+                                                    } else {
+                                                      return false;
+                                                    }
+                                                  },
+                                                ),
+                                                onMenuStateChange: (isOpen) {
+                                                  if (!isOpen) {
+                                                    textEditingController
+                                                        .clear();
+                                                  }
+                                                },
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                                 Container(
                                   child: Column(
                                     crossAxisAlignment:

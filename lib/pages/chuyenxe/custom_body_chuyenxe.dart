@@ -17,6 +17,7 @@ import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../config/config.dart';
@@ -98,7 +99,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     super.initState();
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
     getData();
+    _loadSavedValues();
     requestLocationPermission();
+    _checkInternetAndShowAlert();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -106,6 +109,96 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       });
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult ?? "");
+    });
+  }
+
+  Future<void> _loadSavedValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedKhoXeId = prefs.getString('B1');
+    String? savedBaiXeId = prefs.getString('B2');
+    String? savedViTriId = prefs.getString('B3');
+    await getData();
+    if (savedKhoXeId != null) {
+      setState(() {
+        KhoXeId = savedKhoXeId;
+      });
+      await getBaiXeList(savedKhoXeId);
+    }
+
+    if (savedBaiXeId != null) {
+      setState(() {
+        BaiXeId = savedBaiXeId;
+      });
+      await getViTriList(savedBaiXeId);
+    }
+    if (savedViTriId != null) {
+      if (_vitriList != null &&
+          _vitriList!.any((item) => item.id == savedViTriId)) {
+        setState(() {
+          ViTriId = savedViTriId;
+        });
+      } else {
+        setState(() {
+          ViTriId = null;
+        });
+      }
+    }
+    // if (savedViTriId != null) {
+    //   setState(() {
+    //     ViTriId = savedViTriId;
+    //   });
+    // }
+  }
+
+  Future<void> _saveValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('B1', KhoXeId ?? '');
+    await prefs.setString('B2', BaiXeId ?? '');
+    await prefs.setString('B3', ViTriId ?? '');
+  }
+
+  void onKhoXeChanged(String? newValue) {
+    setState(() {
+      KhoXeId = newValue;
+    });
+    _saveValues();
+    if (newValue != null) {
+      getBaiXeList(newValue);
+      print("object : ${KhoXeId}");
+    }
+  }
+
+  void onBaiXeChanged(String? newValue) {
+    setState(() {
+      BaiXeId = newValue;
+    });
+    _saveValues();
+    if (newValue != null) {
+      getViTriList(newValue);
+      print("object2 : ${BaiXeId}");
+    }
+  }
+
+  void onViTriChanged(String? newValue) {
+    setState(() {
+      ViTriId = newValue;
+    });
+    _saveValues();
+    print("object3 : ${ViTriId}");
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
     });
   }
 
@@ -133,7 +226,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
-  void getData() async {
+  Future<void> getData() async {
     try {
       final http.Response response =
           await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
@@ -163,7 +256,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
-  void getBaiXeList(String KhoXeId) async {
+  Future<void> getBaiXeList(String KhoXeId) async {
     try {
       final http.Response response =
           await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
@@ -189,7 +282,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     }
   }
 
-  void getViTriList(String BaiXeId) async {
+  Future<void> getViTriList(String BaiXeId) async {
     try {
       final http.Response response = await requestHelper
           .getData('DM_WMS_Kho_ViTri/Mobi?baiXe_Id=$BaiXeId');
@@ -494,14 +587,15 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
-              KhoXeId = null;
-              BaiXeId = null;
-              ViTriId = null;
+              // KhoXeId = null;
+              // BaiXeId = null;
+              // ViTriId = null;
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
               _isMovingStarted = false;
+              _saveValues();
             });
           });
         }
@@ -563,9 +657,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         } else {
           BatDauDieuChuyen(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
-              KhoXeId = null;
-              BaiXeId = null;
-              ViTriId = null;
+              // KhoXeId = null;
+              // BaiXeId = null;
+              // ViTriId = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
@@ -768,14 +862,15 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     }).toList(),
                                                     value: KhoXeId,
                                                     onChanged: (newValue) {
-                                                      setState(() {
-                                                        KhoXeId = newValue;
-                                                      });
-                                                      if (newValue != null) {
-                                                        getBaiXeList(newValue);
-                                                        print(
-                                                            "object : ${KhoXeId}");
-                                                      }
+                                                      onKhoXeChanged(newValue);
+                                                      // setState(() {
+                                                      //   KhoXeId = newValue;
+                                                      // });
+                                                      // if (newValue != null) {
+                                                      //   getBaiXeList(newValue);
+                                                      //   print(
+                                                      //       "object : ${KhoXeId}");
+                                                      // }
                                                     },
                                                     buttonStyleData:
                                                         const ButtonStyleData(
@@ -972,14 +1067,15 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     }).toList(),
                                                     value: BaiXeId,
                                                     onChanged: (newValue) {
-                                                      setState(() {
-                                                        BaiXeId = newValue;
-                                                      });
-                                                      if (newValue != null) {
-                                                        getViTriList(newValue);
-                                                        print(
-                                                            "object : ${BaiXeId}");
-                                                      }
+                                                      onBaiXeChanged(newValue);
+                                                      // setState(() {
+                                                      //   BaiXeId = newValue;
+                                                      // });
+                                                      // if (newValue != null) {
+                                                      //   getViTriList(newValue);
+                                                      //   print(
+                                                      //       "object : ${BaiXeId}");
+                                                      // }
                                                     },
                                                     buttonStyleData:
                                                         const ButtonStyleData(
@@ -1163,17 +1259,18 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     }).toList(),
                                                     value: ViTriId,
                                                     onChanged: (newValue) {
-                                                      setState(() {
-                                                        ViTriId = newValue;
-                                                        _selectedViTri = _vitriList
-                                                            ?.firstWhere(
-                                                                (item) =>
-                                                                    item.id ==
-                                                                    newValue)
-                                                            .tenViTri;
-                                                      });
-                                                      print(
-                                                          "object : ${ViTriId}");
+                                                      onViTriChanged(newValue);
+                                                      // setState(() {
+                                                      //   ViTriId = newValue;
+                                                      //   _selectedViTri = _vitriList
+                                                      //       ?.firstWhere(
+                                                      //           (item) =>
+                                                      //               item.id ==
+                                                      //               newValue)
+                                                      //       .tenViTri;
+                                                      // });
+                                                      // print(
+                                                      //     "object : ${ViTriId}");
                                                     },
                                                     buttonStyleData:
                                                         const ButtonStyleData(
@@ -1338,11 +1435,16 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
                                         Item(
-                                          title: 'Màu: ',
-                                          value: _data != null
-                                              ? "${_data?.tenMau} (${_data?.maMau})"
-                                              : "",
-                                        ),
+                                            title: 'Màu: ',
+                                            // value: _data != null
+                                            //     ? "${_data?.tenMau} (${_data?.maMau})"
+                                            //     : "",
+                                            value: _data != null
+                                                ? (_data?.tenMau != null &&
+                                                        _data?.maMau != null
+                                                    ? "${_data?.tenMau} (${_data?.maMau})"
+                                                    : "")
+                                                : ""),
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
@@ -1374,10 +1476,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                         const Divider(
                                             height: 1,
                                             color: Color(0xFFCCCCCC)),
-                                        Item(
-                                          title: 'Người phụ trách: ',
-                                          value: _data?.nguoiPhuTrach ?? "",
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -1509,8 +1607,8 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 8.h,
-      padding: const EdgeInsets.all(10),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
           children: [
@@ -1518,7 +1616,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -1527,8 +1625,8 @@ class Item extends StatelessWidget {
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
                 color: AppConfig.primaryColor,
               ),
             ),

@@ -83,6 +83,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
     super.initState();
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
     requestLocationPermission();
+    _checkInternetAndShowAlert();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -96,6 +97,22 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
+    });
   }
 
   void requestLocationPermission() async {
@@ -454,11 +471,16 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen>
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Màu: ',
-                                      value: _data != null
-                                          ? "${_data?.tenMau} (${_data?.maMau})"
-                                          : "",
-                                    ),
+                                        title: 'Màu: ',
+                                        // value: _data != null
+                                        //     ? "${_data?.tenMau} (${_data?.maMau})"
+                                        //     : "",
+                                        value: _data != null
+                                            ? (_data?.tenMau != null &&
+                                                    _data?.maMau != null
+                                                ? "${_data?.tenMau} (${_data?.maMau})"
+                                                : "")
+                                            : ""),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
@@ -547,8 +569,8 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 9.h,
-      padding: const EdgeInsets.all(10),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
           children: [
@@ -556,7 +578,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),

@@ -452,11 +452,16 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
-                                      title: 'Màu: ',
-                                      value: _data != null
-                                          ? "${_data?.tenMau} (${_data?.maMau})"
-                                          : "",
-                                    ),
+                                        title: 'Màu: ',
+                                        // value: _data != null
+                                        //     ? "${_data?.tenMau} (${_data?.maMau})"
+                                        //     : "",
+                                        value: _data != null
+                                            ? (_data?.tenMau != null &&
+                                                    _data?.maMau != null
+                                                ? "${_data?.tenMau} (${_data?.maMau})"
+                                                : "")
+                                            : ""),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
@@ -522,8 +527,8 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 9.h,
-      padding: const EdgeInsets.all(10),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
           children: [
@@ -531,7 +536,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),

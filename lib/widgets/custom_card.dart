@@ -131,7 +131,7 @@ class _CustomCardState extends State<CustomCard>
                         ),
                       ),
                     ],
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
                     ),

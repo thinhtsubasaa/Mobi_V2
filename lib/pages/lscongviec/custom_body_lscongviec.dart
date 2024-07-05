@@ -1,14 +1,19 @@
 import 'package:Thilogi/pages/dsx_danhan/dsx_danhan.dart';
+import 'package:Thilogi/pages/lsx_dongcont/ls_dongcont.dart';
 import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/pages/lsnhapchuyenbai/ls_nhapchuyen.dart';
+import 'package:Thilogi/pages/lsx_giaoxe/lsx_giaoxe.dart';
+import 'package:Thilogi/pages/lsx_vanchuyen/lsx_vanchuyen.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
+import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 import '../../../blocs/menu_roles.dart';
@@ -60,6 +65,7 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
   @override
   void initState() {
     super.initState();
+    _checkInternetAndShowAlert();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
   }
@@ -68,6 +74,22 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
+    });
   }
 
   // bool userHasPermission(String? url1) {
@@ -188,9 +210,54 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         _handleButtonTap(LSDaNhanPage());
                       },
                     ),
-                  if (userHasPermission(menuRoles, 'lich-su-nhap-bai-mobi'))
+                  if (userHasPermission(menuRoles, 'lich-su-dong-cont-mobi'))
                     CustomButton(
-                      'LỊCH SỬ NHẬP BÃI',
+                      'LỊCH SỬ ĐÓNG CONT',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_NhapChuyenBai.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSDongContPage());
+                      },
+                    ),
+                  // if (userHasPermission(menuRoles, 'lich-su-nhap-bai-mobi'))
+                  //   CustomButton(
+                  //     'LỊCH SỬ NHẬP BÃI',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(DSXDaNhanPage());
+                  //     },
+                  //   ),
+                  // if (userHasPermission(menuRoles, 'lich-su-xuat-bai-mobi'))
+                  //   CustomButton(
+                  //     'LỊCH SỬ XUẤT BÃI',
+                  //     Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     () {
+                  //       _handleButtonTap(DSXDaNhanPage());
+                  //     },
+                  //   ),
+                  if (userHasPermission(menuRoles, 'lich-su-van-chuyen-mobi'))
+                    CustomButton(
+                      'LỊCH SỬ VẬN CHUYỂN',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -200,39 +267,24 @@ class _BodyLSCongViecScreenState extends State<BodyLSCongViecScreen>
                         ],
                       ),
                       () {
-                        _handleButtonTap(DSXDaNhanPage());
+                        _handleButtonTap(LSVanChuyenPage());
                       },
                     ),
-                  if (userHasPermission(menuRoles, 'lich-su-xuat-bai-mobi'))
-                    CustomButton(
-                      'LỊCH SỬ XUẤT BÃI',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(DSXDaNhanPage());
-                      },
+                  // if (userHasPermission(menuRoles, 'lich-su-giao-xe-mobi'))
+                  CustomButton(
+                    'LỊCH SỬ GIAO XE',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                        ),
+                      ],
                     ),
-                  if (userHasPermission(menuRoles, 'lich-su-giao-xe-mobi'))
-                    CustomButton(
-                      'LỊCH SỬ GIAO XE',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(DSXDaNhanPage());
-                      },
-                    ),
+                    () {
+                      _handleButtonTap(LSGiaoXePage());
+                    },
+                  ),
                 ],
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),
               ),

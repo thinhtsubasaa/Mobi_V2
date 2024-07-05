@@ -1,11 +1,15 @@
 import 'dart:convert';
 
+import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
+import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
+import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/giaoxe/giaoxe.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 import '../../../blocs/menu_roles.dart';
@@ -59,6 +63,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   @override
   void initState() {
     super.initState();
+    _checkInternetAndShowAlert();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
   }
@@ -67,6 +72,22 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
+    });
   }
 
   // bool userHasPermission(String? url1) {
@@ -153,6 +174,37 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                       ),
                       () {
                         _handleButtonTap(GiaoXePage());
+                      },
+                    ),
+                  if (userHasPermission(
+                      menuRoles, 'danh-sach-xe-van-chuyen-mobi'))
+                    CustomButton(
+                      'DANH SÁCH XE VẬN CHUYỂN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(DSVanChuyenPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'danh-sach-xe-da-giao-mobi'))
+                    CustomButton(
+                      'DANH SÁCH XE ĐÃ GIAO',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSDaGiaoPage());
                       },
                     ),
                 ],

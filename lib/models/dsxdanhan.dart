@@ -3,6 +3,7 @@ class DS_DaNhanModel {
   String? loaiXe;
   String? soKhung;
   String? mauXe;
+  String? nhaMay;
   String? nguoiNhan;
   String? gioNhan;
 
@@ -11,6 +12,7 @@ class DS_DaNhanModel {
       this.loaiXe,
       this.soKhung,
       this.mauXe,
+      this.nhaMay,
       this.gioNhan,
       this.nguoiNhan});
 
@@ -21,6 +23,7 @@ class DS_DaNhanModel {
       soKhung: json["soKhung"],
       mauXe: json["mauXe"],
       nguoiNhan: json["nguoiNhan"],
+      nhaMay: json["nhaMay"],
       gioNhan: json["gioNhan"],
     );
   }

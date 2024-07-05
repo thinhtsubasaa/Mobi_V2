@@ -60,21 +60,20 @@ class NhanXe3Page extends StatelessWidget {
                         width: 100.w,
                         child: Column(
                           children: [
-                            CustomCardVIN(),
-                            const SizedBox(height: 20),
-
+                            // CustomCardVIN(),
+                            // const SizedBox(height: 20),
                             // ignore: avoid_unnecessary_containers
-                            Container(
-                              child: Column(
-                                children: [
-                                  customTitle('KIỂM TRA - NHẬN XE'),
-                                  SizedBox(height: 10),
-                                  customBottom(
-                                    "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
-                                  ),
-                                ],
-                              ),
-                            ),
+                            // Container(
+                            //   child: Column(
+                            //     children: [
+                            //       customTitle('KIỂM TRA - NHẬN XE'),
+                            //       SizedBox(height: 10),
+                            //       // customBottom(
+                            //       //   "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
+                            //       // ),
+                            //     ],
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

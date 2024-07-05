@@ -66,13 +66,13 @@ class NhanXe2Page extends StatelessWidget {
                     children: [
                       SizedBox(height: 5.0.h), // 5% of the screen's height
                       // CustomCardQLKhoXe(),
-                      CustomCardVIN(),
-                      SizedBox(height: 2.0.h),
-                      customTitle('KIỂM TRA - NHẬN XE'),
-                      SizedBox(height: 1.0.h),
-                      customBottom(
-                        "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
-                      ),
+                      // CustomCardVIN(),
+                      // SizedBox(height: 2.0.h),
+                      // // customTitle('KIỂM TRA - NHẬN XE'),
+                      // SizedBox(height: 1.0.h),
+                      // customBottom(
+                      //   "Kiểm tra chất lượng, tình trạng xe;\n Xác nhận nhận xe vào kho THILOGI,",
+                      // ),
                     ],
                   ),
 

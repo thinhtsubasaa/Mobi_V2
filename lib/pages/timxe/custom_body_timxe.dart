@@ -502,8 +502,8 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 8.h,
-      padding: const EdgeInsets.all(10),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
           children: [
@@ -511,7 +511,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -520,7 +520,7 @@ class Item extends StatelessWidget {
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),

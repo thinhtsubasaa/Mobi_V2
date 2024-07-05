@@ -4,10 +4,19 @@ class DS_ChoXuatModel {
   String? tenViTri;
   String? loaiXe;
   String? soKhung;
+  String? donVi;
+  String? maMau;
   bool? isKeHoach;
 
   DS_ChoXuatModel(
-      {this.key, this.id, this.loaiXe, this.soKhung,this.tenViTri, this.isKeHoach});
+      {this.key,
+      this.id,
+      this.loaiXe,
+      this.soKhung,
+      this.tenViTri,
+      this.donVi,
+      this.maMau,
+      this.isKeHoach});
 
   factory DS_ChoXuatModel.fromJson(Map<String, dynamic> json) {
     return DS_ChoXuatModel(
@@ -16,6 +25,8 @@ class DS_ChoXuatModel {
       loaiXe: json["loaiXe"],
       soKhung: json["soKhung"],
       tenViTri: json["tenViTri"],
+      donVi: json["donVi"],
+      maMau: json["maMau"],
       isKeHoach: json["isKeHoach"],
     );
   }

@@ -692,6 +692,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                               value: _data?.soMay,
                             ),
                             const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                            Item(
+                              title: 'Khu Vực: ',
+                              value: _data?.khuVuc,
+                            ),
                           ],
                         ),
                       ),

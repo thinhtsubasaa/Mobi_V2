@@ -5,6 +5,7 @@ import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
+import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
@@ -12,6 +13,7 @@ import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,6 +67,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
   @override
   void initState() {
     super.initState();
+    _checkInternetAndShowAlert();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
   }
@@ -73,6 +76,22 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
     // Thực hiện lấy dữ liệu từ MenuRoleBloc
     await _mb.getData(context, DonVi_Id, PhanMem_Id);
     return _mb.menurole ?? [];
+  }
+
+  void _checkInternetAndShowAlert() {
+    AppService().checkInternet().then((hasInternet) async {
+      if (!hasInternet!) {
+        // Reset the button state if necessary
+
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      }
+    });
   }
 
   // bool userHasPermission(String? url1) {
