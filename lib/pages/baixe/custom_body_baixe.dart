@@ -105,7 +105,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedKhoXeId = prefs.getString('A1');
     String? savedBaiXeId = prefs.getString('A2');
-    String? savedViTriId = prefs.getString('A3');
+
     await getData();
     if (savedKhoXeId != null) {
       setState(() {
@@ -120,18 +120,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
       });
       await getViTriList(savedBaiXeId);
     }
-    if (savedViTriId != null) {
-      if (_vitriList != null &&
-          _vitriList!.any((item) => item.id == savedViTriId)) {
-        setState(() {
-          ViTriId = savedViTriId;
-        });
-      } else {
-        setState(() {
-          ViTriId = null;
-        });
-      }
-    }
+
     // if (savedViTriId != null) {
     //   setState(() {
     //     ViTriId = savedViTriId;
@@ -143,7 +132,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('A1', KhoXeId ?? '');
     await prefs.setString('A2', BaiXeId ?? '');
-    await prefs.setString('A3', ViTriId ?? '');
   }
 
   void onBaiXeChanged(String? newValue) {
@@ -161,7 +149,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     setState(() {
       ViTriId = newValue;
     });
-
     print("object3 : ${ViTriId}");
   }
 

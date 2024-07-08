@@ -50,7 +50,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   String _qrData = '';
   String? lat;
   String? long;
-  String? KhoXeId;
+
+  String? KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
   String? BaiXeId;
   String? ViTriId;
   String? TaiXeId;
@@ -99,6 +100,12 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     super.initState();
     _bl = Provider.of<DieuChuyenBloc>(context, listen: false);
     getData();
+    setState(() {
+      if (KhoXeId == "9001663f-0164-477d-b576-09c7541f4cce") {
+        getBaiXeList(KhoXeId ?? "");
+      }
+    });
+
     _loadSavedValues();
     requestLocationPermission();
     _checkInternetAndShowAlert();
@@ -115,8 +122,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
   Future<void> _loadSavedValues() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedKhoXeId = prefs.getString('B1');
+
     String? savedBaiXeId = prefs.getString('B2');
-    String? savedViTriId = prefs.getString('B3');
+
     await getData();
     if (savedKhoXeId != null) {
       setState(() {
@@ -131,18 +139,18 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       });
       await getViTriList(savedBaiXeId);
     }
-    if (savedViTriId != null) {
-      if (_vitriList != null &&
-          _vitriList!.any((item) => item.id == savedViTriId)) {
-        setState(() {
-          ViTriId = savedViTriId;
-        });
-      } else {
-        setState(() {
-          ViTriId = null;
-        });
-      }
-    }
+    // if (savedViTriId != null) {
+    //   if (_vitriList != null &&
+    //       _vitriList!.any((item) => item.id == savedViTriId)) {
+    //     setState(() {
+    //       ViTriId = savedViTriId;
+    //     });
+    //   } else {
+    //     setState(() {
+    //       ViTriId = null;
+    //     });
+    //   }
+    // }
     // if (savedViTriId != null) {
     //   setState(() {
     //     ViTriId = savedViTriId;
@@ -154,7 +162,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('B1', KhoXeId ?? '');
     await prefs.setString('B2', BaiXeId ?? '');
-    await prefs.setString('B3', ViTriId ?? '');
   }
 
   void onKhoXeChanged(String? newValue) {
@@ -183,7 +190,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     setState(() {
       ViTriId = newValue;
     });
-    _saveValues();
     print("object3 : ${ViTriId}");
   }
 
@@ -243,9 +249,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         });
         setState(() {
           // Reset ViTri list and selected ViTriId
-          _baixeList = [];
-          KhoXeId = null;
-          BaiXeId = null;
+          // _baixeList = [];
+          // KhoXeId = null;
+          // BaiXeId = null;
         });
       }
       notifyListeners();
@@ -511,6 +517,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         _qrData = value;
 
         if (_bl.dieuchuyen == null) {
+          _loading = false;
           _qrData = '';
           _qrDataController.text = '';
           barcodeScanResult = null;
@@ -589,7 +596,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
               _data = null;
               // KhoXeId = null;
               // BaiXeId = null;
-              // ViTriId = null;
+              ViTriId = null;
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -659,7 +666,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
             setState(() {
               // KhoXeId = null;
               // BaiXeId = null;
-              // ViTriId = null;
+              ViTriId = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
