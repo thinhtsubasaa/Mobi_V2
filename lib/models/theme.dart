@@ -7,15 +7,12 @@ class ThemeModel {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       primarySwatch: Colors.pink,
       primaryColor: AppConfig.appThemeColor,
-      backgroundColor: Colors.white,
+     
       scaffoldBackgroundColor: Colors.grey[100],
       shadowColor: Colors.grey[200],
       brightness: Brightness.light,
       fontFamily: 'MyriadPro',
-      textTheme: TextTheme(
-        headline1: TextStyle(color: AppConfig.appThemeColor),
-        bodyText1: TextStyle(color: AppConfig.appThemeColor),
-      ),
+      
       colorScheme: ColorScheme.light(
         primary: Colors.black, //text
         secondary: Colors.grey[300]!, //text
@@ -82,15 +79,12 @@ class ThemeModel {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     primarySwatch: Colors.pink,
     primaryColor: AppConfig.appThemeColor,
-    backgroundColor: const Color(0xff303030),
+    
     scaffoldBackgroundColor: const Color(0xff303030),
     shadowColor: Colors.grey[850],
     brightness: Brightness.dark,
     fontFamily: 'MyriadPro',
-    textTheme: const TextTheme(
-      headline1: TextStyle(color: Colors.white),
-      bodyText1: TextStyle(color: Colors.white),
-    ),
+    
     colorScheme: ColorScheme.dark(
       primary: Colors.white, //text
       secondary: Colors.grey[200]!, //text

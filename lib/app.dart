@@ -87,14 +87,14 @@ class MyApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
 
                 title: 'THILOGI ',
-                theme: ThemeModel().lightTheme,
-                darkTheme: ThemeModel().darkTheme,
+                // theme: ThemeModel().lightTheme,
+                // darkTheme: ThemeModel().darkTheme,
 
-                themeMode:
-                    mode.darkTheme == true ? ThemeMode.dark : ThemeMode.light,
-                // theme: ThemeData(
-                //   primarySwatch: Colors.blue,
-                // ),
+                // themeMode:
+                //     mode.darkTheme == true ? ThemeMode.dark : ThemeMode.light,
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                ),
                 home: SplashPage(),
               ),
             ),
