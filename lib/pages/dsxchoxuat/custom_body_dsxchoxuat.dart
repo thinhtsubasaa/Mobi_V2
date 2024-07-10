@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/baixe.dart';
+import 'package:Thilogi/models/doitac.dart';
 import 'package:Thilogi/models/khoxe.dart';
-import 'package:Thilogi/models/timxe.dart';
 import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -14,8 +14,6 @@ import 'package:sizer/sizer.dart';
 import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
-
-import '../timxe/custom_body_timxe.dart';
 
 class CustomBodyDSXChoXuat extends StatelessWidget {
   @override
@@ -34,15 +32,16 @@ class BodyDSXScreenChoXuat extends StatefulWidget {
 class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
     with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
-  String _qrData = '';
-  final _qrDataController = TextEditingController();
   bool _loading = false;
   List<BaiXeModel>? _baixeList;
   List<BaiXeModel>? get baixeList => _baixeList;
   String? id;
   String? KhoXeId;
+  String? doiTac_Id;
   List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
+  List<DoiTacModel>? _doitacList;
+  List<DoiTacModel>? get doitacList => _doitacList;
   List<DS_ChoXuatModel>? _cx;
   List<DS_ChoXuatModel>? get cx => _cx;
   bool _hasError = false;
@@ -55,8 +54,31 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
   @override
   void initState() {
     super.initState();
+
     // getData();
     // getBaiXeList(KhoXeId ?? "");
+  }
+
+  void getDoiTac() async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('DM_DoiTac/Get_DoiTac');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _doitacList = (decodedData as List)
+            .map((item) => DoiTacModel.fromJson(item))
+            .toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
   }
 
   void getData() async {
@@ -97,11 +119,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
     }
   }
 
-  void getDSXChoXuat(String? id) async {
+  void getDSXChoXuat(String? id, String? doiTac_Id) async {
     _cx = [];
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeChoXuat?id=$id');
+      final http.Response response = await requestHelper.getData(
+          'KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
@@ -152,7 +174,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
-                4: FlexColumnWidth(0.3),
+                4: FlexColumnWidth(0.25),
                 5: FlexColumnWidth(0.18),
                 6: FlexColumnWidth(0.12),
               },
@@ -262,6 +284,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
   Widget build(BuildContext context) {
     getData();
     getBaiXeList(KhoXeId ?? "");
+    getDoiTac();
     return Container(
       child: Column(
         children: [
@@ -398,7 +421,8 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                         });
                                                         if (newValue != null) {
                                                           getDSXChoXuat(
-                                                              newValue);
+                                                              newValue,
+                                                              doiTac_Id ?? "");
                                                           print(
                                                               "object : ${id}");
                                                         }
@@ -480,6 +504,214 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                                     baiXe.id ==
                                                                         itemId &&
                                                                     baiXe.tenBaiXe
+                                                                            ?.toLowerCase()
+                                                                            .contains(searchValue.toLowerCase()) ==
+                                                                        true) ??
+                                                                false;
+                                                          } else {
+                                                            return false;
+                                                          }
+                                                        },
+                                                      ),
+                                                      onMenuStateChange:
+                                                          (isOpen) {
+                                                        if (!isOpen) {
+                                                          textEditingController
+                                                              .clear();
+                                                        }
+                                                      },
+                                                    ),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Container(
+                                        height:
+                                            MediaQuery.of(context).size.height <
+                                                    600
+                                                ? 10.h
+                                                : 7.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: const Color(0xFF818180),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 20.w,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFF6C6C7),
+                                                border: Border(
+                                                  right: BorderSide(
+                                                    color: Color(0xFF818180),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Đơn vị",
+                                                  textAlign: TextAlign.left,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppConfig.textInput,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                  padding: EdgeInsets.only(
+                                                      top:
+                                                          MediaQuery.of(context)
+                                                                      .size
+                                                                      .height <
+                                                                  600
+                                                              ? 0
+                                                              : 5),
+                                                  child:
+                                                      DropdownButtonHideUnderline(
+                                                    child:
+                                                        DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      items: _doitacList
+                                                          ?.map((item) {
+                                                        return DropdownMenuItem<
+                                                            String>(
+                                                          value: item.id,
+                                                          child: Container(
+                                                            constraints: BoxConstraints(
+                                                                maxWidth: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.9),
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              child: Text(
+                                                                item.tenDoiTac ??
+                                                                    "",
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontFamily:
+                                                                      'Comfortaa',
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  color: AppConfig
+                                                                      .textInput,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      value: doiTac_Id,
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          doiTac_Id = newValue;
+                                                        });
+                                                        if (newValue != null) {
+                                                          getDSXChoXuat(
+                                                              id, newValue);
+                                                          print(
+                                                              "object : ${doiTac_Id}");
+                                                        }
+                                                      },
+                                                      buttonStyleData:
+                                                          const ButtonStyleData(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 16),
+                                                        height: 40,
+                                                        width: 200,
+                                                      ),
+                                                      dropdownStyleData:
+                                                          const DropdownStyleData(
+                                                        maxHeight: 200,
+                                                      ),
+                                                      menuItemStyleData:
+                                                          const MenuItemStyleData(
+                                                        height: 40,
+                                                      ),
+                                                      dropdownSearchData:
+                                                          DropdownSearchData(
+                                                        searchController:
+                                                            textEditingController,
+                                                        searchInnerWidgetHeight:
+                                                            50,
+                                                        searchInnerWidget:
+                                                            Container(
+                                                          height: 50,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                            top: 8,
+                                                            bottom: 4,
+                                                            right: 8,
+                                                            left: 8,
+                                                          ),
+                                                          child: TextFormField(
+                                                            expands: true,
+                                                            maxLines: null,
+                                                            controller:
+                                                                textEditingController,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              isDense: true,
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 8,
+                                                              ),
+                                                              hintText:
+                                                                  'Tìm đơn vị',
+                                                              hintStyle:
+                                                                  const TextStyle(
+                                                                      fontSize:
+                                                                          12),
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        searchMatchFn: (item,
+                                                            searchValue) {
+                                                          if (item
+                                                              is DropdownMenuItem<
+                                                                  String>) {
+                                                            // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                            String itemId =
+                                                                item.value ??
+                                                                    "";
+                                                            // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                            return _doitacList?.any((baiXe) =>
+                                                                    baiXe.id ==
+                                                                        itemId &&
+                                                                    baiXe.tenDoiTac
                                                                             ?.toLowerCase()
                                                                             .contains(searchValue.toLowerCase()) ==
                                                                         true) ??

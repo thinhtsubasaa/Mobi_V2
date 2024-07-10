@@ -1,18 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:Thilogi/models/dsxchoxuat.dart';
 import 'package:Thilogi/widgets/checksheet_upload_anh.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
@@ -301,7 +297,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Danh sách xe : ${_dsdongcontList?.length.toString() ?? ''} xe',
+            'Danh sách xe : ${_dsdongcontList?.length.toString() ?? ''}',
             style: TextStyle(
               fontFamily: 'Comfortaa',
               fontSize: 18,

@@ -1,12 +1,8 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/dsxdanhan.dart';
-import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/nhamay.dart';
-import 'package:Thilogi/models/timxe.dart';
-import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,11 +10,8 @@ import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
 
-import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
-
-import '../timxe/custom_body_timxe.dart';
 
 class CustomBodyDSXDaNhan extends StatelessWidget {
   @override
