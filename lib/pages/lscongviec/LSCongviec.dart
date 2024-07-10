@@ -51,7 +51,7 @@ class BottomContent extends StatelessWidget {
         color: AppConfig.bottom,
       ),
       child: customTitle(
-        'KIỂM TRA - NHẬN XE',
+        'LỊCH SỬ CÔNG VIỆC',
       ),
     );
   }

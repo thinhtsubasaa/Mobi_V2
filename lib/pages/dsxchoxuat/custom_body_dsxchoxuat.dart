@@ -418,6 +418,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                       onChanged: (newValue) {
                                                         setState(() {
                                                           id = newValue;
+                                                          doiTac_Id = null;
                                                         });
                                                         if (newValue != null) {
                                                           getDSXChoXuat(
