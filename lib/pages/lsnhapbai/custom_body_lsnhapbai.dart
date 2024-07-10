@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/models/dsxdanhan.dart';
 import 'package:Thilogi/models/lsxnhapbai.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'package:sizer/sizer.dart';
 
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
@@ -127,15 +124,15 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                           _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
                       width: double.infinity,
                       color: Colors.red,
                       child:
                           _buildTableCell('Loại Xe', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -151,8 +148,8 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.noiNhap ?? ""),
                         ],
                       );

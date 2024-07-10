@@ -6,6 +6,7 @@ class DS_ChoXuatModel {
   String? soKhung;
   String? donVi;
   String? maMau;
+  String? phuongThuc;
   bool? isKeHoach;
 
   DS_ChoXuatModel(
@@ -16,6 +17,7 @@ class DS_ChoXuatModel {
       this.tenViTri,
       this.donVi,
       this.maMau,
+      this.phuongThuc,
       this.isKeHoach});
 
   factory DS_ChoXuatModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class DS_ChoXuatModel {
       tenViTri: json["tenViTri"],
       donVi: json["donVi"],
       maMau: json["maMau"],
+      phuongThuc: json["phuongThuc"],
       isKeHoach: json["isKeHoach"],
     );
   }

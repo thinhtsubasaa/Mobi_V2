@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:Thilogi/models/lsxdongcont.dart';
 import 'package:Thilogi/models/lsu_giaoxe.dart';
-
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -132,7 +130,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
               border: TableBorder.all(),
               columnWidths: {
                 0: FlexColumnWidth(0.2),
-                1: FlexColumnWidth(0.2),
+                1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.2),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
@@ -149,12 +147,12 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                          _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -179,8 +177,8 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.mauXe ?? ""),
                           _buildTableCell(item.noiGiao ?? ""),
                           _buildTableCell(item.nguoiPhuTrach ?? ""),

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/lsxdongcont.dart';
-import 'package:Thilogi/models/lsxdieuchuyen.dart';
 
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -154,12 +153,12 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                          _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -186,8 +185,8 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen>
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
                           _buildTableCell(item.bienSo ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soCont ?? ""),
                           _buildTableCell(item.soSeal ?? ""),
                           _buildTableCell(item.taiXe ?? ""),

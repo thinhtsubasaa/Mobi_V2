@@ -105,8 +105,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         getBaiXeList(KhoXeId ?? "");
       }
     });
-
-    _loadSavedValues();
     requestLocationPermission();
     _checkInternetAndShowAlert();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
@@ -119,56 +117,56 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     });
   }
 
-  Future<void> _loadSavedValues() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedKhoXeId = prefs.getString('B1');
+  // Future<void> _loadSavedValues() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? savedKhoXeId = prefs.getString('B1');
 
-    String? savedBaiXeId = prefs.getString('B2');
+  //   String? savedBaiXeId = prefs.getString('B2');
 
-    await getData();
-    if (savedKhoXeId != null) {
-      setState(() {
-        KhoXeId = savedKhoXeId;
-      });
-      await getBaiXeList(savedKhoXeId);
-    }
+  //   await getData();
+  //   if (savedKhoXeId != null) {
+  //     setState(() {
+  //       KhoXeId = savedKhoXeId;
+  //     });
+  //     await getBaiXeList(savedKhoXeId);
+  //   }
 
-    if (savedBaiXeId != null) {
-      setState(() {
-        BaiXeId = savedBaiXeId;
-      });
-      await getViTriList(savedBaiXeId);
-    }
-    // if (savedViTriId != null) {
-    //   if (_vitriList != null &&
-    //       _vitriList!.any((item) => item.id == savedViTriId)) {
-    //     setState(() {
-    //       ViTriId = savedViTriId;
-    //     });
-    //   } else {
-    //     setState(() {
-    //       ViTriId = null;
-    //     });
-    //   }
-    // }
-    // if (savedViTriId != null) {
-    //   setState(() {
-    //     ViTriId = savedViTriId;
-    //   });
-    // }
-  }
+  //   if (savedBaiXeId != null) {
+  //     setState(() {
+  //       BaiXeId = savedBaiXeId;
+  //     });
+  //     await getViTriList(savedBaiXeId);
+  //   }
+  //   // if (savedViTriId != null) {
+  //   //   if (_vitriList != null &&
+  //   //       _vitriList!.any((item) => item.id == savedViTriId)) {
+  //   //     setState(() {
+  //   //       ViTriId = savedViTriId;
+  //   //     });
+  //   //   } else {
+  //   //     setState(() {
+  //   //       ViTriId = null;
+  //   //     });
+  //   //   }
+  //   // }
+  //   // if (savedViTriId != null) {
+  //   //   setState(() {
+  //   //     ViTriId = savedViTriId;
+  //   //   });
+  //   // }
+  // }
 
-  Future<void> _saveValues() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('B1', KhoXeId ?? '');
-    await prefs.setString('B2', BaiXeId ?? '');
-  }
+  // Future<void> _saveValues() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('B1', KhoXeId ?? '');
+  //   await prefs.setString('B2', BaiXeId ?? '');
+  // }
 
   void onKhoXeChanged(String? newValue) {
     setState(() {
       KhoXeId = newValue;
     });
-    _saveValues();
+
     if (newValue != null) {
       getBaiXeList(newValue);
       print("object : ${KhoXeId}");
@@ -179,18 +177,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
     setState(() {
       BaiXeId = newValue;
     });
-    _saveValues();
+
     if (newValue != null) {
       getViTriList(newValue);
       print("object2 : ${BaiXeId}");
     }
-  }
-
-  void onViTriChanged(String? newValue) {
-    setState(() {
-      ViTriId = newValue;
-    });
-    print("object3 : ${ViTriId}");
   }
 
   void _checkInternetAndShowAlert() {
@@ -578,6 +569,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
       print("viTri: ${_data?.toaDo}");
       print("Kho_ID:${_data?.khoDen_Id}");
       print("Bai_ID:${_data?.baiXe_Id}");
+      print("ViTri_ID:${_data?.viTri_Id}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -594,15 +586,14 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
           postData(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
               _data = null;
-              // KhoXeId = null;
-              // BaiXeId = null;
+              KhoXeId = null;
+              BaiXeId = null;
               ViTriId = null;
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _loading = false;
               _isMovingStarted = false;
-              _saveValues();
             });
           });
         }
@@ -664,8 +655,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         } else {
           BatDauDieuChuyen(_data!, _data?.toaDo ?? "").then((_) {
             setState(() {
-              // KhoXeId = null;
-              // BaiXeId = null;
+              KhoXeId = null;
+              BaiXeId = null;
               ViTriId = null;
               _qrData = '';
               _qrDataController.text = '';
@@ -1266,18 +1257,17 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                                                     }).toList(),
                                                     value: ViTriId,
                                                     onChanged: (newValue) {
-                                                      onViTriChanged(newValue);
-                                                      // setState(() {
-                                                      //   ViTriId = newValue;
-                                                      //   _selectedViTri = _vitriList
-                                                      //       ?.firstWhere(
-                                                      //           (item) =>
-                                                      //               item.id ==
-                                                      //               newValue)
-                                                      //       .tenViTri;
-                                                      // });
-                                                      // print(
-                                                      //     "object : ${ViTriId}");
+                                                      setState(() {
+                                                        ViTriId = newValue;
+                                                        _selectedViTri = _vitriList
+                                                            ?.firstWhere(
+                                                                (item) =>
+                                                                    item.id ==
+                                                                    newValue)
+                                                            .tenViTri;
+                                                      });
+                                                      print(
+                                                          "object : ${ViTriId}");
                                                     },
                                                     buttonStyleData:
                                                         const ButtonStyleData(

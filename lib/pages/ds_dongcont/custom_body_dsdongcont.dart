@@ -124,15 +124,15 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                       child: _buildTableCell('Tàu', textColor: Colors.white),
                     ),
                     Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
                       width: double.infinity,
                       color: Colors.red,
                       child:
                           _buildTableCell('Loại Xe', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -154,8 +154,8 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
                           _buildTableCell(item.bienSo ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soCont ?? ""),
                           _buildTableCell(item.soSeal ?? ""),
                         ],

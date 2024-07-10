@@ -133,7 +133,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2,
+        width: MediaQuery.of(context).size.width * 2.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -149,11 +149,12 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
               border: TableBorder.all(),
               columnWidths: {
                 0: FlexColumnWidth(0.3),
-                1: FlexColumnWidth(0.35),
-                2: FlexColumnWidth(0.35),
+                1: FlexColumnWidth(0.3),
+                2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
-                4: FlexColumnWidth(0.18),
-                5: FlexColumnWidth(0.12),
+                4: FlexColumnWidth(0.3),
+                5: FlexColumnWidth(0.18),
+                6: FlexColumnWidth(0.12),
               },
               children: [
                 TableRow(
@@ -164,15 +165,20 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                           textColor: Colors.white),
                     ),
                     Container(
-                      width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Phương thức',
+                          textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
                           _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -194,8 +200,9 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                       return TableRow(
                         children: [
                           _buildTableCell(item.donVi ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
+                          _buildTableCell(item.phuongThuc ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.maMau ?? ""),
                           _buildTableCell(item.tenViTri ?? ""),
                           Center(

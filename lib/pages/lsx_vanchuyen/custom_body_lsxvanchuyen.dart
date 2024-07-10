@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:Thilogi/models/lsu_vanchuyen.dart';
 import 'package:Thilogi/models/lsvanchuyen.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -127,7 +126,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
               border: TableBorder.all(),
               columnWidths: {
                 0: FlexColumnWidth(0.2),
-                1: FlexColumnWidth(0.2),
+                1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.2),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
@@ -144,12 +143,12 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                          _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -175,8 +174,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.thongTinChiTiet ?? ""),
                           _buildTableCell(item.thongTinVanChuyen ?? ""),
                           _buildTableCell(item.nguoiVanChuyen ?? ""),

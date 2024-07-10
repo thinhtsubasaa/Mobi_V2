@@ -245,12 +245,12 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                          _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -271,8 +271,8 @@ class _BodyDSXScreenState extends State<BodyDSXScreen>
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
                           _buildTableCell(item.nhaMay ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.mauXe ?? ""),
                           _buildTableCell(item.nguoiNhan ?? ""),
                         ],

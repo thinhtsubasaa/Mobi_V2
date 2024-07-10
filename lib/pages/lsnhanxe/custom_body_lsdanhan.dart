@@ -130,13 +130,13 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                     child: _buildTableCell('Giờ nhận', textColor: Colors.white),
                   ),
                   Container(
+                    color: Colors.red,
+                    child: _buildTableCell('Số Khung', textColor: Colors.white),
+                  ),
+                  Container(
                     width: double.infinity,
                     color: Colors.red,
                     child: _buildTableCell('Loại Xe', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Số Khung', textColor: Colors.white),
                   ),
                 ],
               ),
@@ -147,8 +147,8 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                       children: [
                         // _buildTableCell(index.toString()), // Số thứ tự
                         _buildTableCell(item.gioNhan ?? ""),
-                        _buildTableCell(item.loaiXe ?? ""),
                         _buildTableCell(item.soKhung ?? ""),
+                        _buildTableCell(item.loaiXe ?? ""),
                       ],
                     );
                   }).toList() ??

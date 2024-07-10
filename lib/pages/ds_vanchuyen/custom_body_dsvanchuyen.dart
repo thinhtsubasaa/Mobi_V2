@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/models/lsu_vanchuyen.dart';
 
 import 'package:Thilogi/services/request_helper.dart';
@@ -120,15 +119,15 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                           _buildTableCell('Giờ nhận', textColor: Colors.white),
                     ),
                     Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
                       width: double.infinity,
                       color: Colors.red,
                       child:
                           _buildTableCell('Loại Xe', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -149,8 +148,8 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.thongTinVanChuyen ?? ""),
                           _buildTableCell(item.thongTinChiTiet ?? ""),
                         ],

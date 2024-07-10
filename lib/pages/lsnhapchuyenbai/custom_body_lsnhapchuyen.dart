@@ -1,25 +1,13 @@
 import 'dart:convert';
 
-import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/baixe.dart';
-import 'package:Thilogi/models/dsxdanhan.dart';
-import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/lsxnhapbai.dart';
 import 'package:Thilogi/models/lsxnhapchuyenbai.dart';
-import 'package:Thilogi/models/timxe.dart';
-import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'package:sizer/sizer.dart';
-
-import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
-
-import '../timxe/custom_body_timxe.dart';
 
 class CustomBodyLSNhapChuyen extends StatelessWidget {
   @override
@@ -196,17 +184,17 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                     ),
                     Container(
                       color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
                       child: _buildTableCell('Nơi đi', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
                           _buildTableCell('Nơi đến', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -226,14 +214,15 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen>
                               ? data.gioNhan ?? ""
                               : (data as LSX_NhapBaiModel).gioNhan ?? ""),
                           _buildTableCell(data is LSX_NhapChuyenBaiModel
+                              ? data.soKhung ?? ""
+                              : (data as LSX_NhapBaiModel).soKhung ?? ""),
+                          _buildTableCell(data is LSX_NhapChuyenBaiModel
                               ? data.noiDi ?? ""
                               : ""),
                           _buildTableCell(data is LSX_NhapChuyenBaiModel
                               ? data.noiDen ?? ""
                               : (data as LSX_NhapBaiModel).noiDen ?? ""),
-                          _buildTableCell(data is LSX_NhapChuyenBaiModel
-                              ? data.loaiXe ?? ""
-                              : (data as LSX_NhapBaiModel).loaiXe ?? ""),
+
                           _buildTableCell(data is LSX_NhapChuyenBaiModel
                               ? data.nguoiNhapBai ?? ""
                               : (data as LSX_NhapBaiModel).nguoiNhapBai ?? ""),

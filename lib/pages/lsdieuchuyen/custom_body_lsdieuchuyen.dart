@@ -130,12 +130,12 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                          _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -155,8 +155,8 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                         children: [
                           // _buildTableCell(index.toString()), // Số thứ tự
                           _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.soKhung ?? ""),
+                          _buildTableCell(item.loaiXe ?? ""),
                           _buildTableCell(item.noiDi ?? ""),
                           _buildTableCell(item.noiDen ?? ""),
                         ],
