@@ -3,7 +3,6 @@ import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/pages/Home.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
-import 'package:Thilogi/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
 import 'package:flutter/services.dart';
@@ -118,3 +117,44 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 }
+
+
+
+// void _checkVersion() async {
+//   final newVersion = NewVersion(
+//     iOSId: "com.thilogi.vn.logistics",
+//     androidId: "com.thilogi.vn.logistics",
+//   );
+//   final status = await newVersion.getVersionStatus();
+//   if (status != null) {
+//     if (_isVersionLower(status.localVersion, status.storeVersion)) {
+//       newVersion.showUpdateDialog(
+//         context: context,
+//         versionStatus: status,
+//         dialogTitle: "CẬP NHẬT",
+//         dismissButtonText: "Bỏ qua",
+//         dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
+//             "${status.localVersion}" +
+//             " lên " +
+//             "${status.storeVersion}",
+//         dismissAction: () {
+//           SystemNavigator.pop();
+//         },
+//         updateButtonText: "Cập nhật",
+//       );
+//     }
+//   }
+// }
+
+// bool _isVersionLower(String localVersion, String storeVersion) {
+//   final localParts = localVersion.split('.').map(int.parse).toList();
+//   final storeParts = storeVersion.split('.').map(int.parse).toList();
+
+//   for (int i = 0; i < localParts.length; i++) {
+//     if (localParts[i] < storeParts[i]) return true;
+//     if (localParts[i] > storeParts[i]) return false;
+//   }
+
+//   // If we get here, all parts are equal
+//   return false;
+// }
