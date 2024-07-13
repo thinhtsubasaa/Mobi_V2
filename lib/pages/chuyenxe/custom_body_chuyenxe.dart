@@ -374,8 +374,9 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
-          title: "Thành công",
-          text: "Bắt đầu di chuyển ",
+          title: "Bắt đầu di chuyển",
+          text:
+              "Bạn đang di chuyển xe:  ${_data?.soKhung}\n lưu ý xác nhận VỊ TRÍ MỚI khi hoàn thành di chuyển ",
           confirmBtnText: 'Đồng ý',
         );
         _isMovingStarted = true;
@@ -697,11 +698,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
         });
   }
 
-  void _showConfirmationDialog(BuildContext context, String viTri) {
+  void _showConfirmationDialog(BuildContext context, String viTri, String Kho) {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
-        text: 'Bạn có muốn xác nhận tới vị trí $viTri',
+        text: 'Vui lòng xác nhận vị trí mới: \n$viTri\n$Kho ',
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
@@ -1579,8 +1580,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                           )),
                       controller: _btnController,
                       onPressed: (_isMovingStarted == true)
-                          ? () => _showConfirmationDialog(
-                              context, _selectedViTri ?? "")
+                          ? () => _showConfirmationDialog(context,
+                              _selectedViTri ?? "", _data?.tenKho ?? "")
                           : null),
                 ),
             ],

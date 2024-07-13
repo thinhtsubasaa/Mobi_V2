@@ -216,47 +216,66 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                     ),
                   ],
                 ),
-                ..._cx?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          _buildTableCell(item.donVi ?? ""),
-                          _buildTableCell(item.phuongThuc ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.maMau ?? ""),
-                          _buildTableCell(item.tenViTri ?? ""),
-                          Center(
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: Icon(Icons.remove_red_eye),
-                              iconSize: 20.0,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TimXePage(
-                                      soKhung: item.soKhung ?? "",
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
-                // TableRow(
-                //   children: [
-                //     _buildTableCell('Tổng số', textColor: Colors.red),
-                //     _buildTableCell(_cx?.length.toString() ?? ''),
-                //     Container(),
-                //     Container(),
-                //   ],
-                // ),
               ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.3),
+                    1: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.3),
+                    4: FlexColumnWidth(0.25),
+                    5: FlexColumnWidth(0.18),
+                    6: FlexColumnWidth(0.12),
+                  },
+                  children: [
+                    ..._cx?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                          return TableRow(
+                            children: [
+                              _buildTableCell(item.donVi ?? ""),
+                              _buildTableCell(item.phuongThuc ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                              _buildTableCell(item.maMau ?? ""),
+                              _buildTableCell(item.tenViTri ?? ""),
+                              Center(
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(Icons.remove_red_eye),
+                                  iconSize: 20.0,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => TimXePage(
+                                          soKhung: item.soKhung ?? "",
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                    // TableRow(
+                    //   children: [
+                    //     _buildTableCell('Tổng số', textColor: Colors.red),
+                    //     _buildTableCell(_cx?.length.toString() ?? ''),
+                    //     Container(),
+                    //     Container(),
+                    //   ],
+                    // ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -272,8 +291,8 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Comfortaa',
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
           color: textColor,
         ),
       ),

@@ -148,7 +148,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                 children: [
                   if (userHasPermission(menuRoles, 'van-chuyen-mobi'))
                     CustomButton(
-                      'VẬN CHUYỂN',
+                      'XUẤT XE - VẬN CHUYỂN',
                       Stack(
                         alignment: Alignment.center,
                         children: [

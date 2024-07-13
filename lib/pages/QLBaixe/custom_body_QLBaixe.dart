@@ -155,7 +155,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                     }),
                   if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
                     CustomButton(
-                        'ĐIỀU CHUYỂN XE',
+                        'CHUYỂN BÃI',
                         Stack(
                           alignment: Alignment.center,
                           children: [
@@ -210,7 +210,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                   if (userHasPermission(
                       menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
                     CustomButton(
-                        'LỊCH SỬ XE ĐIỀU CHUYỂN',
+                        'LỊCH SỬ XE CHUYỂN BÃI',
                         Stack(
                           alignment: Alignment.center,
                           children: [

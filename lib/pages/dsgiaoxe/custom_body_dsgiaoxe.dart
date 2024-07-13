@@ -105,7 +105,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.2),
+                0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -136,21 +136,37 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                     ),
                   ],
                 ),
-                ..._dn?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          // _buildTableCell(index.toString()), // Số thứ tự
-                          _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.noiGiao ?? ""),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
               ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.3),
+                  },
+                  children: [
+                    ..._dn?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                          return TableRow(
+                            children: [
+                              // _buildTableCell(index.toString()), // Số thứ tự
+                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                              _buildTableCell(item.noiGiao ?? ""),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ],
+                ),
+              ),
             ),
           ],
         ),

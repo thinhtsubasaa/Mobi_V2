@@ -340,6 +340,129 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     });
   }
 
+  void _showDetailDialog(BuildContext context) {
+    final TimXeBloc timXeBloc = Provider.of<TimXeBloc>(context, listen: false);
+    timXeBloc.timxe!.dieuChuyen!
+        .sort((a, b) => b.gioNhan!.compareTo(a.gioNhan!));
+
+    // Sắp xếp nhapKho theo thời gian gioNhan mới nhất đầu tiên
+    timXeBloc.timxe!.nhapKho!.sort((a, b) => b.gioNhan!.compareTo(a.gioNhan!));
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white, // Đặt màu nền
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0), // Đặt border radius
+          ),
+          contentPadding: EdgeInsets.fromLTRB(0, 0, 0.0, 0.0),
+          title: const Center(
+            child: Text(
+              'LỊCH SỬ LƯU BÃI ',
+              style: TextStyle(
+                fontFamily: 'Comfortaa', // Font family
+                fontSize: 16, // Kích thước chữ
+                fontWeight: FontWeight.w600, // Độ đậm của chữ
+                color: Color(0xFFBC2925), // Màu sắc chữ// Màu sắc chữ
+              ),
+            ),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (timXeBloc.timxe != null)
+                    Column(
+                      children: [
+                        ...timXeBloc.timxe!.dieuChuyen!.map((dieuChuyen) {
+                          return ListTile(
+                            title: Text(
+                              '. ${dieuChuyen.gioNhan ?? ''}',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa', // Font family
+                                fontSize: 13, // Kích thước chữ
+                                fontWeight: FontWeight.w600, // Độ đậm của chữ
+                                color: Color(
+                                    0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${dieuChuyen.noiDen ?? ''} \n${dieuChuyen.nguoiNhapBai ?? ''}',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa', // Font family
+                                fontSize: 13, // Kích thước chữ
+                                fontWeight: FontWeight.w500, // Độ đậm của chữ
+                                color:
+                                    Colors.black, // Màu sắc chữ// Màu sắc chữ
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        ...timXeBloc.timxe!.nhapKho!.map((nhapKho) {
+                          return ListTile(
+                            title: Text(
+                              '. ${nhapKho.gioNhan ?? ''}',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa', // Font family
+                                fontSize: 13, // Kích thước chữ
+                                fontWeight: FontWeight.w600, // Độ đậm của chữ
+                                color: Color(
+                                    0xFF0469B9), // Màu sắc chữ// Màu sắc chữ
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${nhapKho.noiDen ?? ''} \n${nhapKho.nguoiNhapBai ?? ''}',
+                              style: TextStyle(
+                                  fontFamily: 'Comfortaa', // Font family
+                                  fontSize: 13, // Kích thước chữ
+                                  fontWeight: FontWeight.w500, // Độ đậm của chữ
+                                  color:
+                                      Colors.black // Màu sắc chữ// Màu sắc chữ
+                                  ),
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    )
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            Center(
+              child: Container(
+                width: 30.w, // Đảm bảo nút chiếm hết chiều rộng của dialog
+                // Đặt margin cho nút
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(15.0), // Đặt border radius cho nút
+                  border: Border.all(
+                    color: Colors.blue, // Đặt màu viền
+                    width: 2.0, // Đặt độ dày của viền
+                  ),
+                  color: Colors.blue, // Đặt màu nền
+                ),
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text(
+                    'Đóng',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Comfortaa', // Font family
+                      fontSize: 15, // Kích thước chữ
+                      fontWeight: FontWeight.w500,
+                    ), // Đặt màu chữ
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -364,14 +487,36 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Thông Tin Tìm Kiếm',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Thông Tin Lưu bãi',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.visibility),
+                                      onPressed: () {
+                                        // Hành động khi nhấn vào icon
+                                        _showDetailDialog(context);
+                                        // Điều hướng đến trang lịch sử hoặc thực hiện hành động khác
+                                      },
+                                    ),
+                                  ],
                                 ),
+                                // const Text(
+                                //   'Thông Tin Tìm Kiếm',
+                                //   style: TextStyle(
+                                //     fontFamily: 'Comfortaa',
+                                //     fontSize: 20,
+                                //     fontWeight: FontWeight.w700,
+                                //   ),
+                                // ),
                                 const Divider(
                                     height: 1, color: Color(0xFFA71C20)),
                                 Container(

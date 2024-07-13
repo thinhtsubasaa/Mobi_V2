@@ -104,7 +104,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.2),
+                0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -141,22 +141,39 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                     ),
                   ],
                 ),
-                ..._dn?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          // _buildTableCell(index.toString()), // Số thứ tự
-                          _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.thongTinVanChuyen ?? ""),
-                          _buildTableCell(item.thongTinChiTiet ?? ""),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
               ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.3),
+                    4: FlexColumnWidth(0.3),
+                  },
+                  children: [
+                    ..._dn?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                          return TableRow(
+                            children: [
+                              // _buildTableCell(index.toString()), // Số thứ tự
+                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                              _buildTableCell(item.thongTinVanChuyen ?? ""),
+                              _buildTableCell(item.thongTinChiTiet ?? ""),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ],
+                ),
+              ),
             ),
           ],
         ),

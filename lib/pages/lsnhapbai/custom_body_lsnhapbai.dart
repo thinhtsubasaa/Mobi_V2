@@ -95,7 +95,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 1.5,
+        width: MediaQuery.of(context).size.width * 1.7,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -110,7 +110,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.3),
+                0: FlexColumnWidth(0.15),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
@@ -141,21 +141,37 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
                     ),
                   ],
                 ),
-                ..._dn?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          // _buildTableCell(index.toString()), // Số thứ tự
-                          _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.noiNhap ?? ""),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
               ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.3),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.3),
+                  },
+                  children: [
+                    ..._dn?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                          return TableRow(
+                            children: [
+                              // _buildTableCell(index.toString()), // Số thứ tự
+                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                              _buildTableCell(item.noiNhap ?? ""),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -172,7 +188,7 @@ class _BodyLSNhapBaiScreenState extends State<BodyLSNhapBaiScreen>
         style: TextStyle(
           fontFamily: 'Comfortaa',
           fontSize: 12,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
           color: textColor,
         ),
       ),

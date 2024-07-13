@@ -104,8 +104,8 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
             Table(
               border: TableBorder.all(),
               columnWidths: {
-                0: FlexColumnWidth(0.2),
-                1: FlexColumnWidth(0.3),
+                0: FlexColumnWidth(0.15),
+                1: FlexColumnWidth(0.2),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
@@ -146,23 +146,41 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                     ),
                   ],
                 ),
-                ..._dn?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          // _buildTableCell(index.toString()), // Số thứ tự
-                          _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.bienSo ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.soCont ?? ""),
-                          _buildTableCell(item.soSeal ?? ""),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
               ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.2),
+                    2: FlexColumnWidth(0.3),
+                    3: FlexColumnWidth(0.3),
+                    4: FlexColumnWidth(0.3),
+                    5: FlexColumnWidth(0.3),
+                  },
+                  children: [
+                    ..._dn?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+
+                          return TableRow(
+                            children: [
+                              // _buildTableCell(index.toString()), // Số thứ tự
+                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.bienSo ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                              _buildTableCell(item.soCont ?? ""),
+                              _buildTableCell(item.soSeal ?? ""),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -178,8 +196,8 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Comfortaa',
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
           color: textColor,
         ),
       ),

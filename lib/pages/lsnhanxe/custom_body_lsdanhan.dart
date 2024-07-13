@@ -102,60 +102,81 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
       }
     });
 
-    return Container(
-      width: 100.w,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '',
-            style: TextStyle(
-              fontFamily: 'Comfortaa',
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Table(
-            border: TableBorder.all(),
-            columnWidths: {
-              0: FlexColumnWidth(0.25),
-              1: FlexColumnWidth(0.375),
-              2: FlexColumnWidth(0.375),
-            },
-            children: [
-              TableRow(
-                children: [
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Giờ nhận', textColor: Colors.white),
-                  ),
-                  Container(
-                    color: Colors.red,
-                    child: _buildTableCell('Số Khung', textColor: Colors.white),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    color: Colors.red,
-                    child: _buildTableCell('Loại Xe', textColor: Colors.white),
-                  ),
-                ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 1.2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '',
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
               ),
-              ..._dn?.map((item) {
-                    index++; // Tăng số thứ tự sau mỗi lần lặp
+            ),
+            Table(
+              border: TableBorder.all(),
+              columnWidths: {
+                0: FlexColumnWidth(0.15),
+                1: FlexColumnWidth(0.35),
+                2: FlexColumnWidth(0.35),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Giờ nhận', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Số Khung', textColor: Colors.white),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(),
+                  columnWidths: {
+                    0: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.35),
+                    2: FlexColumnWidth(0.35),
+                  },
+                  children: [
+                    ..._dn?.map((item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
 
-                    return TableRow(
-                      children: [
-                        // _buildTableCell(index.toString()), // Số thứ tự
-                        _buildTableCell(item.gioNhan ?? ""),
-                        _buildTableCell(item.soKhung ?? ""),
-                        _buildTableCell(item.loaiXe ?? ""),
-                      ],
-                    );
-                  }).toList() ??
-                  [],
-            ],
-          ),
-        ],
+                          return TableRow(
+                            children: [
+                              // _buildTableCell(index.toString()), // Số thứ tự
+                              _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.soKhung ?? ""),
+                              _buildTableCell(item.loaiXe ?? ""),
+                            ],
+                          );
+                        }).toList() ??
+                        [],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

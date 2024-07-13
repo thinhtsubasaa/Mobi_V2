@@ -94,84 +94,138 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
         return 0;
       }
     });
+    int countNotDash = _dn?.where((item) => item.noiDen != "-").length ?? 0;
+    // int countDash = _dn?.where((item) => item.noiDen == "-").length ?? 0;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 1.5,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '',
-              style: TextStyle(
-                fontFamily: 'Comfortaa',
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Tổng số xe đã thực hiện: ${countNotDash}/${_dn?.length.toString() ?? ""}',
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 2.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '',
+                    style: TextStyle(
+                      fontFamily: 'Comfortaa',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Table(
+                    border: TableBorder.all(),
+                    columnWidths: {
+                      0: FlexColumnWidth(0.15),
+                      1: FlexColumnWidth(0.35),
+                      2: FlexColumnWidth(0.3),
+                      3: FlexColumnWidth(0.2),
+                      4: FlexColumnWidth(0.35),
+                      5: FlexColumnWidth(0.35),
+                    },
+                    children: [
+                      TableRow(
+                        children: [
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Giờ nhận',
+                                textColor: Colors.white),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Số khung',
+                                textColor: Colors.white),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Loại Xe',
+                                textColor: Colors.white),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Màu xe',
+                                textColor: Colors.white),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Nơi đi',
+                                textColor: Colors.white),
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: _buildTableCell('Nơi đến',
+                                textColor: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height:
+                        MediaQuery.of(context).size.height, // Chiều cao cố định
+                    child: SingleChildScrollView(
+                      child: Table(
+                        border: TableBorder.all(),
+                        columnWidths: {
+                          0: FlexColumnWidth(0.15),
+                          1: FlexColumnWidth(0.35),
+                          2: FlexColumnWidth(0.3),
+                          3: FlexColumnWidth(0.2),
+                          4: FlexColumnWidth(0.35),
+                          5: FlexColumnWidth(0.35),
+                        },
+                        children: [
+                          ..._dn?.map((item) {
+                                index++; // Tăng số thứ tự sau mỗi lần lặp
+                                bool highlightRed = item.noiDen == "-";
+                                return TableRow(
+                                  children: [
+                                    // _buildTableCell(index.toString()), // Số thứ tự
+                                    _buildTableCell(item.gioNhan ?? "",
+                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.soKhung ?? "",
+                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.loaiXe ?? "",
+                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.mauXe ?? "",
+                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.noiDi ?? "",
+                                        highlightRed: highlightRed),
+                                    _buildTableCell(item.noiDen ?? "",
+                                        highlightRed: highlightRed),
+                                  ],
+                                );
+                              }).toList() ??
+                              [],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Table(
-              border: TableBorder.all(),
-              columnWidths: {
-                0: FlexColumnWidth(0.2),
-                1: FlexColumnWidth(0.2),
-                2: FlexColumnWidth(0.2),
-                3: FlexColumnWidth(0.2),
-                4: FlexColumnWidth(0.3),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Giờ nhận', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child: _buildTableCell('Nơi đi', textColor: Colors.white),
-                    ),
-                    Container(
-                      color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi đến', textColor: Colors.white),
-                    ),
-                  ],
-                ),
-                ..._dn?.map((item) {
-                      index++; // Tăng số thứ tự sau mỗi lần lặp
-
-                      return TableRow(
-                        children: [
-                          // _buildTableCell(index.toString()), // Số thứ tự
-                          _buildTableCell(item.gioNhan ?? ""),
-                          _buildTableCell(item.soKhung ?? ""),
-                          _buildTableCell(item.loaiXe ?? ""),
-                          _buildTableCell(item.noiDi ?? ""),
-                          _buildTableCell(item.noiDen ?? ""),
-                        ],
-                      );
-                    }).toList() ??
-                    [],
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
+  Widget _buildTableCell(String content,
+      {Color textColor = Colors.black, bool highlightRed = false}) {
+    if (highlightRed) {
+      textColor = Colors.red;
+    }
     return Container(
       padding: const EdgeInsets.all(8),
       child: Text(
@@ -211,7 +265,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  'Danh sách xe đã điều chuyển',
+                                  'Danh sách xe chuyển bãi',
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
                                     fontSize: 16,
@@ -228,17 +282,17 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        height: 4,
-                                      ),
-                                      Text(
-                                        'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
-                                        style: TextStyle(
-                                          fontFamily: 'Comfortaa',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                                      // SizedBox(
+                                      //   height: 4,
+                                      // ),
+                                      // Text(
+                                      //   'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                      //   style: TextStyle(
+                                      //     fontFamily: 'Comfortaa',
+                                      //     fontSize: 16,
+                                      //     fontWeight: FontWeight.w600,
+                                      //   ),
+                                      // ),
                                       _buildTableOptions(context),
                                     ],
                                   ),

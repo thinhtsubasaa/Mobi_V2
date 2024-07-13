@@ -36,6 +36,20 @@ class TimXeBloc extends ChangeNotifier {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         if (decodedData != null) {
+          List<DieuChuyen> dieuChuyenList = [];
+          if (decodedData['dieuChuyen'] != null &&
+              decodedData['dieuChuyen'] is List) {
+            dieuChuyenList = (decodedData['dieuChuyen'] as List<dynamic>)
+                .map((item) => DieuChuyen.fromJson(item))
+                .toList();
+          }
+          List<NhapKho> nhapKhoList = [];
+          if (decodedData['nhapKho'] != null &&
+              decodedData['nhapKho'] is List) {
+            nhapKhoList = (decodedData['nhapKho'] as List<dynamic>)
+                .map((item) => NhapKho.fromJson(item))
+                .toList();
+          }
           _timxe = TimXeModel(
             key: decodedData["key"],
             id: decodedData['id'],
@@ -45,6 +59,8 @@ class TimXeBloc extends ChangeNotifier {
             tenViTri: decodedData['tenViTri'],
             toaDo: decodedData['toaDo'],
             nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+            dieuChuyen: dieuChuyenList,
+            nhapKho: nhapKhoList,
           );
         }
       } else {
