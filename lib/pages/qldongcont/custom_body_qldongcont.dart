@@ -2,6 +2,7 @@ import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/widgets/custom_page_indicator.dart';
 import 'package:Thilogi/utils/next_screen.dart';
@@ -254,7 +255,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           ),
           const SizedBox(height: 8),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

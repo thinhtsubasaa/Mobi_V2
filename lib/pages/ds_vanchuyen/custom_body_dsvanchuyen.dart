@@ -41,14 +41,15 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
   @override
   void initState() {
     super.initState();
-    getDSXVanChuyen();
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    getDSXVanChuyen(selectedDate);
   }
 
-  void getDSXVanChuyen() async {
+  Future<void> getDSXVanChuyen(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response =
-          await requestHelper.getData('KhoThanhPham/GetDanhSachXeVanChuyen');
+      final http.Response response = await requestHelper
+          .getData('KhoThanhPham/GetDanhSachXeVanChuyen?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _dn = (decodedData as List)
@@ -63,6 +64,29 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+        // Gọi API với ngày đã chọn
+        _loading = false;
+      });
+      print("Selected Date: $selectedDate");
+      await getDSXVanChuyen(selectedDate);
+      // getDSXDaNhan(selectedDate);
+
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -220,13 +244,45 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đã vận chuyển',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Danh sách xe vận chuyển',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.blue),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              selectedDate ?? 'Chọn ngày',
+                                              style:
+                                                  TextStyle(color: Colors.blue),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 4,

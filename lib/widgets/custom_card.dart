@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -106,7 +107,7 @@ class _CustomCardState extends State<CustomCard>
                           children: [
                             Icon(Icons.settings),
                             SizedBox(width: 8.0),
-                            Text('Cài đặt'),
+                            Text('Cài đặt'.tr()),
                           ],
                         ),
                       ),
@@ -116,7 +117,7 @@ class _CustomCardState extends State<CustomCard>
                           children: [
                             Icon(Icons.person),
                             SizedBox(width: 8.0),
-                            Text('Thông tin cá nhân'),
+                            Text('Thông tin cá nhân'.tr()),
                           ],
                         ),
                       ),
@@ -126,7 +127,7 @@ class _CustomCardState extends State<CustomCard>
                           children: [
                             Icon(Icons.logout),
                             SizedBox(width: 8.0),
-                            Text('Đăng xuất'),
+                            Text('Đăng xuất'.tr()),
                           ],
                         ),
                       ),

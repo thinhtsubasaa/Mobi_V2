@@ -5,6 +5,7 @@ import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
 import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/widgets/loading.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/pages/baixe/baixe.dart';
 import 'package:Thilogi/pages/chuyenxe/chuyenxe.dart';
@@ -256,7 +257,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
             child: page,
           ),
           Text(
-            buttonText,
+            buttonText.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Roboto',

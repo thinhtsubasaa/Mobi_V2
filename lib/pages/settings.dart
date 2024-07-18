@@ -1,5 +1,7 @@
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
+import 'package:Thilogi/utils/language.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -124,19 +126,19 @@ class UserUI extends StatelessWidget {
           ),
         ),
         const DividerWidget(),
-        ListTile(
-          contentPadding: const EdgeInsets.all(0),
-          leading: const CircleAvatar(
-            backgroundColor: Colors.black,
-            radius: 18,
-            child: Icon(
-              Feather.activity,
-              size: 18,
-              color: Colors.white,
-            ),
-          ),
-          title: Text("Phiên bản ${ab.appVersion}"),
-        ),
+        // ListTile(
+        //   contentPadding: const EdgeInsets.all(0),
+        //   leading: const CircleAvatar(
+        //     backgroundColor: Colors.black,
+        //     radius: 18,
+        //     child: Icon(
+        //       Feather.activity,
+        //       size: 18,
+        //       color: Colors.white,
+        //     ),
+        //   ),
+        //   title: Text("Phiên bản ${ab.appVersion}"),
+        // ),
         const DividerWidget(),
         ListTile(
           contentPadding: const EdgeInsets.all(0),
@@ -209,25 +211,21 @@ class UserUI extends StatelessWidget {
             backgroundColor: Colors.blueGrey,
             radius: 18,
             child: Icon(
-              Icons.wb_sunny,
+              Icons.language,
               size: 18,
               color: Colors.white,
             ),
           ),
           title: Text(
-            'Chế độ tối',
+            'Ngôn ngữ',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.primary,
             ),
           ).tr(),
-          trailing: Switch(
-              activeColor: Theme.of(context).primaryColor,
-              value: context.watch<ThemeBloc>().darkTheme,
-              onChanged: (_) {
-                context.read<ThemeBloc>().toggleTheme();
-              }),
+          trailing: const Icon(Feather.chevron_right),
+          onTap: () => nextScreenPopup(context, const LanguagePopup()),
         ),
       ],
     );

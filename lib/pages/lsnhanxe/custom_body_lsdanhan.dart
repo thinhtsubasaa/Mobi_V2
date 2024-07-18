@@ -1,23 +1,11 @@
 import 'dart:convert';
-
-import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/dsxdanhan.dart';
-import 'package:Thilogi/models/khoxe.dart';
-import 'package:Thilogi/models/timxe.dart';
-import 'package:Thilogi/pages/timxe/timxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
-import 'package:sizer/sizer.dart';
-
-import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
-
-import '../timxe/custom_body_timxe.dart';
 
 class CustomBodyLSDaNhan extends StatelessWidget {
   @override
@@ -57,14 +45,15 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
   @override
   void initState() {
     super.initState();
-    getDSXDaNhan(id ?? "");
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    getDSXDaNhan(selectedDate);
   }
 
-  void getDSXDaNhan(String? id) async {
+  void getDSXDaNhan(String? ngay) async {
     _dn = [];
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetDanhSachXeDaNhan?LoaiXe_Id=$id');
+          .getData('KhoThanhPham/GetDanhSachXeDaNhan?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _dn = (decodedData as List)
@@ -79,6 +68,28 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+        // Gọi API với ngày đã chọn
+        _loading = false;
+      });
+      print("Selected Date: $selectedDate");
+      getDSXDaNhan(selectedDate);
+
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -220,13 +231,45 @@ class _BodyLSDaNhanScreenState extends State<BodyLSDaNhanScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đã nhận',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Danh sách xe đã nhận',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.blue),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              selectedDate ?? 'Chọn ngày',
+                                              style:
+                                                  TextStyle(color: Colors.blue),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 4,

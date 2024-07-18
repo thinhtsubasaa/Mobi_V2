@@ -41,14 +41,15 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
   @override
   void initState() {
     super.initState();
-    getDSXDongCont();
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    getDSXDongCont(selectedDate);
   }
 
-  void getDSXDongCont() async {
+  Future<void> getDSXDongCont(String? ngay) async {
     _dn = [];
     try {
-      final http.Response response =
-          await requestHelper.getData('KhoThanhPham/GetDanhSachXeDongCont');
+      final http.Response response = await requestHelper
+          .getData('KhoThanhPham/GetDanhSachXeDongCont?Ngay=$ngay');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _dn = (decodedData as List)
@@ -63,6 +64,29 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+        // Gọi API với ngày đã chọn
+        _loading = false;
+      });
+      print("Selected Date: $selectedDate");
+      await getDSXDongCont(selectedDate);
+      // getDSXDaNhan(selectedDate);
+
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -89,7 +113,7 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2,
+        width: MediaQuery.of(context).size.width * 2.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -227,13 +251,45 @@ class _BodyLSXDongContScreenState extends State<BodyLSXDongContScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đã đóng',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Danh sách xe đã đóng',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          border:
+                                              Border.all(color: Colors.blue),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.calendar_today,
+                                                color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              selectedDate ?? 'Chọn ngày',
+                                              style:
+                                                  TextStyle(color: Colors.blue),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 SizedBox(
                                   height: 4,

@@ -15,21 +15,22 @@ import '../../models/dsxchoxuat.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
 
-class CustomBodyDSXChoXuat extends StatelessWidget {
+class CustomBodyDSXChoVanChuyen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyDSXScreenChoXuat());
+    return Container(child: BodyDSXScreenChoVanChuyen());
   }
 }
 
-class BodyDSXScreenChoXuat extends StatefulWidget {
-  const BodyDSXScreenChoXuat({Key? key}) : super(key: key);
+class BodyDSXScreenChoVanChuyen extends StatefulWidget {
+  const BodyDSXScreenChoVanChuyen({Key? key}) : super(key: key);
 
   @override
-  _BodyDSXScreenChoXuatState createState() => _BodyDSXScreenChoXuatState();
+  _BodyDSXScreenChoVanChuyenState createState() =>
+      _BodyDSXScreenChoVanChuyenState();
 }
 
-class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
+class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen>
     with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   bool _loading = false;
@@ -305,7 +306,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
   Widget build(BuildContext context) {
     getData();
     getBaiXeList(KhoXeId ?? "");
-
+    // getDoiTac();
     return Container(
       child: Column(
         children: [
@@ -580,11 +581,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                               ),
                                               child: Center(
                                                 child: Text(
-                                                  "Đơn vị vận chuyển ",
+                                                  "Đơn vị vận chuyển",
                                                   textAlign: TextAlign.left,
                                                   style: const TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),

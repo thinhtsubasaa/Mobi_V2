@@ -59,6 +59,8 @@ class TimXeBloc extends ChangeNotifier {
             tenViTri: decodedData['tenViTri'],
             toaDo: decodedData['toaDo'],
             nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+            tenMau: decodedData['tenMau'],
+            tenSanPham: decodedData['tenSanPham'],
             dieuChuyen: dieuChuyenList,
             nhapKho: nhapKhoList,
           );

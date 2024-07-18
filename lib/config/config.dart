@@ -32,4 +32,10 @@ class AppConfig {
   static const String logoSplash = 'assets/images/thilogi_logo_white.png';
   static const String defaultImage =
       'https://portalgroupapi.thacochulai.vn/Uploads/noimage.jpg';
+  static const List<String> languages = [
+    'English',
+    'Tiếng Việt',
+    'Chinese',
+    
+  ];
 }

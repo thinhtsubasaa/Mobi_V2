@@ -530,6 +530,18 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
                                       const Divider(
                                           height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
+                                        title: 'Màu xe: ',
+                                        value: _data?.tenMau,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
+                                        title: 'Loại xe: ',
+                                        value: _data?.tenSanPham,
+                                      ),
+                                      const Divider(
+                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
                                         title: 'Kho Xe: ',
                                         value: _data?.tenKho,
                                       ),

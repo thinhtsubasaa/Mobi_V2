@@ -1,15 +1,12 @@
+import 'package:Thilogi/pages/dsxchovanchuyen/custom_body_dsxchovc.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/pages/khoxe/custom_body_khoxe.dart';
-
 import 'package:sizer/sizer.dart';
-
 import '../../widgets/custom_appbar.dart';
-import '../../widgets/custom_bottom.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class KhoXePage extends StatelessWidget {
+class DSXChoVanChuyenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,14 +18,16 @@ class KhoXePage extends StatelessWidget {
           Expanded(
             child: Container(
               width: 100.w,
+              // decoration: const BoxDecoration(
+              //     // image: DecorationImage(
+              //     //   image: AssetImage(AppConfig.backgroundImagePath),
+              //     //   fit: BoxFit.cover,
+              //     // ),
+              //     ),
               decoration: BoxDecoration(
-                //   image: DecorationImage(
-                //     image: AssetImage(AppConfig.backgroundImagePath),
-                //     fit: BoxFit.cover,
-                //   ),
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyKhoXe(),
+              child: CustomBodyDSXChoVanChuyen(),
             ),
           ),
           BottomContent(),
@@ -50,7 +49,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'VẬN CHUYỂN XE',
+          'DANH SÁCH XE CHỜ VẬN CHUYỂN',
         ),
       ),
     );
