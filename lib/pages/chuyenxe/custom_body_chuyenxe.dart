@@ -1373,8 +1373,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen>
                               Column(
                                 children: [
                                   Container(
-                                    margin:
-                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    // margin:
+                                    //     EdgeInsets.only(top: 10, bottom: 10),
                                     child: Column(
                                       children: [
                                         Container(

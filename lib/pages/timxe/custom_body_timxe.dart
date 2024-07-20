@@ -315,6 +315,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen>
     _bl.getData(context, value).then((_) {
       setState(() {
         _qrData = value;
+      
         if (_bl.timxe == null) {
           _qrData = '';
           _qrDataController.text = '';

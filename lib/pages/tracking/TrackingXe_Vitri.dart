@@ -664,8 +664,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage>
                                         Column(
                                           children: _nhapbai!.map((item) {
                                             bool isNewKho =
-                                                item.baiXe != previousKho;
-                                            previousKho = item.baiXe;
+                                                item.kho != previousKho;
+                                            previousKho = item.kho;
                                             return buildRowItem(
                                                 customImage: isNewKho
                                                     ? CustomImage3()

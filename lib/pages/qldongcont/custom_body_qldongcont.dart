@@ -1,4 +1,5 @@
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
+import 'package:Thilogi/pages/rutcont/rutcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -193,7 +194,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                   if (userHasPermission(
                       menuRoles, 'danh-sach-xe-dong-cont-mobi'))
                     CustomButton(
-                      'DANH SÁCH XE ĐÓNG CONT ',
+                      'DANH SÁCH XE ĐÓNG CONT',
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -207,20 +208,20 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                       },
                     ),
                   // if (userHasPermission(menuRoles, 'rut-cont-mobi'))
-                  // CustomButton(
-                  //   'RÚT CONT ',
-                  //   Stack(
-                  //     alignment: Alignment.center,
-                  //     children: [
-                  //       Image.asset(
-                  //         'assets/images/Button_QLBaiXe_DongCont.png',
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   () {
-                  //     _handleButtonTap(LSDaDongContPage());
-                  //   },
-                  // ),
+                  CustomButton(
+                    'RÚT CONT',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_QLBaiXe_DongCont.png',
+                        ),
+                      ],
+                    ),
+                    () {
+                      _handleButtonTap(RutContPage());
+                    },
+                  ),
                 ],
               ),
 

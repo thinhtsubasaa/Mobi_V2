@@ -175,7 +175,8 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
               ],
             ),
             Container(
-              height: MediaQuery.of(context).size.height, // Chiều cao cố định
+              height:
+                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
