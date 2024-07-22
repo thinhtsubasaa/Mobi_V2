@@ -57,9 +57,9 @@ dependencies:
   fluttertoast: ^8.0.9
   dropdown_button2: ^2.3.9
   intl: ^0.18.1
-  # new_version: ^0.3.1
+  new_version: ^0.3.1
   uuid: ^3.0.6
-  upgrader: ^6.0.0
+  # upgrader: ^6.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

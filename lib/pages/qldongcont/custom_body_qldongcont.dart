@@ -153,7 +153,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_QLBaiXe_DongCont.png',
+                            'assets/images/Button_QLBaiXe_DongCont2.png',
                           ),
                         ],
                       ),
