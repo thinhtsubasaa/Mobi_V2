@@ -168,7 +168,7 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen>
                     Container(
                       color: Colors.red,
                       child:
-                          _buildTableCell('Nơi giao', textColor: Colors.white),
+                          _buildTableCell('Nơi đến', textColor: Colors.white),
                     ),
                   ],
                 ),
