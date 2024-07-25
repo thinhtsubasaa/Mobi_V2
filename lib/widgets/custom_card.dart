@@ -49,10 +49,10 @@ class _CustomCardState extends State<CustomCard>
           Container(
             padding: EdgeInsets.only(left: 3.w),
             child: Text(
-              'WMS',
+              'A-WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 24.sp,
+                fontSize: 23.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
