@@ -207,7 +207,7 @@ class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
                   //       _handleButtonTap(LSDaDongContPage());
                   //     },
                   //   ),
-                  // if (userHasPermission(menuRoles, 'rut-cont-mobi'))
+                  if (userHasPermission(menuRoles, 'rut-cont-mobi'))
                   CustomButton(
                     'RÚT CONT',
                     Stack(
