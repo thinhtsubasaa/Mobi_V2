@@ -1,6 +1,7 @@
 import 'package:Thilogi/pages/dsxchoxuat/dsx_choxuat.dart';
 import 'package:Thilogi/pages/lsdieuchuyen/ls_dieuchuyen.dart';
 import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
+import 'package:Thilogi/pages/webview.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/widgets/loading.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -150,6 +151,7 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                         ), () {
                       _handleButtonTap(BaiXePage());
                     }),
+
                   if (userHasPermission(menuRoles, 'dieu-chuyen-xe-mobi'))
                     CustomButton(
                         'CHUYỂN BÃI',
@@ -204,20 +206,19 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen>
                   //       ), () {
                   //     _handleButtonTap(LSNhapBaiPage());
                   //   }),
-                  // if (userHasPermission(
-                  //     menuRoles, 'danh-sach-xe-chuyen-bai-mobi'))
-                  //   CustomButton(
-                  //       'LỊCH SỬ XE CHUYỂN BÃI',
-                  //       Stack(
-                  //         alignment: Alignment.center,
-                  //         children: [
-                  //           Image.asset(
-                  //             'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                  //           ),
-                  //         ],
-                  //       ), () {
-                  //     _handleButtonTap(LSDieuChuyenPage());
-                  //   }),
+                  // if (userHasPermission(menuRoles, 'layout-bai-xe-mobi'))
+                  CustomButton(
+                      'LAYOUT BÃI XE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                          ),
+                        ],
+                      ), () {
+                    _handleButtonTap(MyApp());
+                  }),
                 ],
               ),
 

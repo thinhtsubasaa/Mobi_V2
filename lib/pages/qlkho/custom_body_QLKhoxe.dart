@@ -7,6 +7,7 @@ import 'package:Thilogi/pages/qldongcont/qldongcont.dart';
 import 'package:Thilogi/pages/qlnhanxe/QLNhanXe.dart';
 import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/vanchuyen/giaoxe/VanChuyen.dart';
+import 'package:Thilogi/pages/xeracong/xeracong.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -24,6 +25,7 @@ import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
+import '../webview.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
@@ -267,6 +269,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(TraCuuPage());
                       },
                     ),
+                  // if (userHasPermission(menuRoles, 'thong-tin-xe-ra-cong-mobi'))
+                  CustomButton(
+                    'THÔNG TIN XE RA CỔNG',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_TTTheNhanVien.png',
+                        ),
+                      ],
+                    ),
+                    () {
+                      _handleButtonTap(XeRaCongPage());
+                    },
+                  ),
                 ],
               ),
             ),

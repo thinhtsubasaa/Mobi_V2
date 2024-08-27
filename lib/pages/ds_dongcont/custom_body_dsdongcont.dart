@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Thilogi/models/lsu_dongcont.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
