@@ -436,6 +436,12 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                 ),
                                 child: Column(
                                   children: [
+                                    ItemGiaoXe(
+                                      title: 'Nơi giao: ',
+                                      value: _data?.noigiao,
+                                    ),
+                                    const Divider(
+                                        height: 1, color: Color(0xFFCCCCCC)),
                                     Container(
                                       height: 7.h,
                                       child: Row(
@@ -499,12 +505,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen>
                                     Item(
                                       title: 'Số máy: ',
                                       value: _data?.soMay,
-                                    ),
-                                    const Divider(
-                                        height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Nơi giao: ',
-                                      value: _data?.noigiao,
                                     ),
                                     const Divider(
                                         height: 1, color: Color(0xFFCCCCCC)),
@@ -639,6 +639,59 @@ class ItemGhiChu extends StatelessWidget {
                   hintText: '',
                   contentPadding: EdgeInsets.symmetric(vertical: 9),
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGiaoXe extends StatelessWidget {
+  final String title;
+  final String? value;
+
+  const ItemGiaoXe({
+    Key? key,
+    required this.title,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: value != null
+              ? Colors.red
+              : Theme.of(context).colorScheme.onPrimary,
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        // color: AppConfig.titleColor,
+      ),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            Text(
+              value ?? "",
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
               ),
             ),
           ],

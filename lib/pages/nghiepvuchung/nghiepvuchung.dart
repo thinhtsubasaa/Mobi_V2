@@ -1,13 +1,12 @@
-import 'package:Thilogi/pages/xeracong/custom_body_xeracong.dart';
+import 'package:Thilogi/pages/nghiepvuchung/custom_body_nghiepvu.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
-
 import 'package:sizer/sizer.dart';
 import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
-class XeRaCongPage extends StatelessWidget {
+class NghiepVuChungPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,14 +14,14 @@ class XeRaCongPage extends StatelessWidget {
       appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCard(),
+          CustomCardBms(),
           Expanded(
             child: Container(
               width: 100.w,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyXeRaCong(),
+              child: CustomBodyNghiepVuChung(),
             ),
           ),
           BottomContent(),
@@ -44,7 +43,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'THÔNG TIN XE RA CỔNG',
+          'NGHIỆP VỤ CHUNG',
         ),
       ),
     );

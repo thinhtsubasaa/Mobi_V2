@@ -50,6 +50,9 @@ class AuthService extends ChangeNotifier {
           refreshToken: data['refreshToken'],
           accessRole: data['accessRole'],
           hinhAnhUrl: data['hinhAnhUrl'],
+          qrCode: data['qrCode'],
+          maNhanVien: data['maNhanVien'],
+          tenPhongBan: data['tenPhongBan'],
         );
       } else {
         String errorMessage = response.body.replaceAll('"', '');

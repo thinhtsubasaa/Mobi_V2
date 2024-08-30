@@ -31,6 +31,7 @@ class XeRaCongModel {
   String? nguoiPhuTrach;
   String? hinhAnhUrl;
   String? tenNhanVien;
+  String? maPin;
   String? sdt;
 
   XeRaCongModel(
@@ -66,6 +67,7 @@ class XeRaCongModel {
       this.nguoiPhuTrach,
       this.tenNhanVien,
       this.sdt,
+      this.maPin,
       this.hinhAnhUrl});
 
   factory XeRaCongModel.fromJson(Map<String, dynamic> json) {
@@ -103,6 +105,7 @@ class XeRaCongModel {
       hinhAnhUrl: json["hinhAnhUrl"],
       tenNhanVien: json["tenNhanVien"],
       sdt: json["sdt"],
+      maPin: json["maPin"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -137,5 +140,6 @@ class XeRaCongModel {
         "hinhAnhUrl": hinhAnhUrl,
         "tenNhanVien": tenNhanVien,
         "sdt": sdt,
+        "maPin": maPin,
       };
 }

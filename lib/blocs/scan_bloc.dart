@@ -205,7 +205,7 @@ class ScanBloc extends ChangeNotifier {
     _isLoading = true;
     try {
       final http.Response response = await requestHelper
-          .getData('GetDataXeThaPham/GetDuLieuXe?keyword=$qrcode');
+          .getData('GetDataXeThaPham/GetDuLieuXe_Test?keyword=$qrcode');
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);

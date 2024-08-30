@@ -1,6 +1,7 @@
+import 'package:Thilogi/pages/qrcode.dart';
+import 'package:Thilogi/utils/next_screen.dart';
 import 'package:Thilogi/widgets/divider.dart';
 import 'package:flutter/material.dart';
-import 'package:Thilogi/config/config.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -77,13 +78,24 @@ class _BodyAccountScreenState extends State<BodyAccountScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Thông Tin Cá Nhân',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Thông Tin Cá Nhân',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.qr_code),
+                              onPressed: () {
+                                nextScreen(context, qrCode());
+                              },
+                            ),
+                          ],
                         ),
                         const Divider(height: 1, color: Color(0xFFA71C20)),
                         const SizedBox(height: 10),

@@ -72,6 +72,7 @@ class XeRaCongBloc extends ChangeNotifier {
             hinhAnhUrl: decodedData['hinhAnhUrl'],
             tenNhanVien: decodedData['tenNhanVien'],
             sdt: decodedData['sdt'],
+            maPin: decodedData['maPin'],
           );
         }
       } else {

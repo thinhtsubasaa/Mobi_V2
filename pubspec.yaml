@@ -60,6 +60,7 @@ dependencies:
   new_version: ^0.3.1
   uuid: ^3.0.6
   webview_universal: ^0.0.5
+  qr_flutter: ^4.1.0
   # upgrader: ^6.0.0
 
   # The following adds the Cupertino Icons font to your application.

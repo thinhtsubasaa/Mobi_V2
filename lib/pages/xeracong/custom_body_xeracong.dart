@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/models/xeracong.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -15,12 +12,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
     as GeoLocationAccuracy;
 import 'package:http/http.dart' as http;
-
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../blocs/scan_nhanvien_bloc.dart';
 import '../../config/config.dart';
 import '../../services/app_service.dart';
@@ -58,10 +53,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
 
   late XeRaCongBloc _bl;
   late Scan_NhanVienBloc ub;
-  File? _selectImage;
-  List<File> _selectedImages = [];
-  bool _hasError = false;
-  bool get hasError => _hasError;
 
   String? _errorCode;
   String? get errorCode => _errorCode;
@@ -76,9 +67,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   String? get message => _message;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
-
-  bool _success = false;
-  bool get success => _success;
+  final TextEditingController _ghiChu = TextEditingController();
+  TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -99,7 +89,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     super.dispose();
   }
 
-  Future<void> postData(XeRaCongModel scanData, String? nhanvien) async {
+  Future<void> postData(XeRaCongModel scanData, String? nhanvien, String? noiDi,
+      String? noiDen, String? ghiChu, String? maPin) async {
     _isLoading = true;
 
     try {
@@ -108,20 +99,19 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien', newScanData.toJson());
+          'KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin',
+          newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-
         print("data: ${decodedData}");
-
         notifyListeners();
         _btnController.success();
         QuickAlert.show(
           context: context,
           type: QuickAlertType.success,
           title: 'Thành công',
-          text: "Xe ra cổng thành công",
+          text: "Thành công",
           confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
@@ -258,6 +248,17 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
         }
         _loading = false;
         _data = _bl.xeracong;
+        print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
+        if (_bl.xeracong?.maNhanVien == null) {
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.info,
+            title: '',
+            text: 'Không có thông tin tài xế',
+            confirmBtnText: 'Đồng ý',
+          );
+        }
       });
     });
   }
@@ -289,6 +290,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     _data?.hinhAnhUrl = _bl.xeracong?.hinhAnhUrl;
     _data?.tenNhanVien = _bl.xeracong?.tenNhanVien;
     _data?.sdt = _bl.xeracong?.sdt;
+    _data?.noidi = _bl.xeracong?.noidi;
+    _data?.noiden = _bl.xeracong?.noiden;
+    _data?.ghiChu = _ghiChu.text;
+    _data?.maPin = _textController.text;
+
+    print("MaNhanVien: ${_data?.maNhanVien}");
 
     AppService().checkInternet().then((hasInternet) {
       if (!hasInternet!) {
@@ -302,10 +309,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data!, _data?.maNhanVien ?? "").then((_) {
+        postData(_data!, _data?.maNhanVien ?? "", _data?.noidi ?? "",
+                _data?.noiden ?? "", _ghiChu.text, _textController.text)
+            .then((_) {
           setState(() {
             _data = null;
             barcodeScanResult = null;
+            _ghiChu.text = "";
+            _textController.text = "";
             _qrData = '';
             _qrDataController.text = '';
             _loading = false;
@@ -316,31 +327,169 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   }
 
   void _showConfirmationDialog(BuildContext context) {
-    QuickAlert.show(
-        context: context,
-        type: QuickAlertType.confirm,
-        text: 'Bạn có muốn xác nhận xe ra cổng không?',
-        title: '',
-        confirmBtnText: 'Đồng ý',
-        cancelBtnText: 'Không',
-        confirmBtnTextStyle: TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.bold,
-        ),
-        cancelBtnTextStyle: TextStyle(
-          color: Colors.red,
-          fontSize: 19.0,
-          fontWeight: FontWeight.bold,
-        ),
-        onCancelBtnTap: () {
-          Navigator.of(context).pop();
-          _btnController.reset();
-        },
-        onConfirmBtnTap: () {
-          Navigator.of(context).pop();
-          _onSave();
-        });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Vui lòng nhập mã pin của bạn?',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      labelText: 'Nhập mã pin',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                            10), // Thay đổi giá trị 10 tùy ý để điều chỉnh độ bo tròn
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _btnController.reset();
+                        },
+                        child: Text(
+                          'Không',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 13,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        onPressed: _textController.text != null
+                            ? () {
+                                Navigator.of(context).pop();
+                                _onSave();
+                              }
+                            : null,
+                        child: Text(
+                          'Đồng ý',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 13,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
+
+  // void _showConfirmationDialog(BuildContext context) {
+  //   TextEditingController _textController = TextEditingController();
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           return Scaffold(
+  //             resizeToAvoidBottomInset: true,
+  //             backgroundColor: Colors.transparent,
+  //             body: Center(
+  //               child: Container(
+  //                 padding: EdgeInsets.all(20),
+  //                 margin: EdgeInsets.symmetric(horizontal: 20),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.white,
+  //                   borderRadius: BorderRadius.circular(15),
+  //                 ),
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     Text(
+  //                       'Vui lòng nhập mã pin của bạn?',
+  //                       style: TextStyle(
+  //                         fontSize: 16,
+  //                         fontWeight: FontWeight.bold,
+  //                       ),
+  //                     ),
+  //                     SizedBox(height: 10),
+  //                     TextField(
+  //                       controller: _textController,
+  //                       decoration: InputDecoration(
+  //                         labelText: 'Nhập dữ liệu',
+  //                         border: OutlineInputBorder(),
+  //                       ),
+  //                       onChanged: (text) {
+  //                         setState(() {});
+  //                       },
+  //                     ),
+  //                     SizedBox(height: 20),
+  //                     Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                       children: [
+  //                         ElevatedButton(
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: Colors.red,
+  //                           ),
+  //                           onPressed: () {
+  //                             Navigator.of(context).pop();
+  //                             _btnController.reset();
+  //                           },
+  //                           child: Text('Không'),
+  //                         ),
+  //                         if (_textController.text.isNotEmpty)
+  //                           ElevatedButton(
+  //                             onPressed: () {
+  //                               Navigator.of(context).pop();
+  //                               // Thực hiện hành động post API tại đây
+  //                               _onSave();
+  //                             },
+  //                             child: Text('Đồng ý'),
+  //                           ),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -369,11 +518,10 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Colors.grey, // Màu của border
-                                    width: 2, // Độ dày của border
+                                    color: Colors.grey,
+                                    width: 2,
                                   ),
-                                  borderRadius: BorderRadius.circular(
-                                      8), // Tùy chọn: bo tròn các góc của border
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
                                   children: [
@@ -448,7 +596,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                           const Divider(
                                               height: 1,
                                               color: Color(0xFFCCCCCC)),
-                                          Item(
+                                          ItemNoiden(
                                             title: 'Nơi đến: ',
                                             value: _data?.noiden,
                                           ),
@@ -517,24 +665,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                   ],
                                 ),
                               ),
-                              // ListTile(
-                              //   contentPadding: EdgeInsets.all(0),
-                              //   title: Container(
-                              //     width: 150,
-                              //     height: 150,
-                              //     child: _data?.hinhAnhUrl != null
-                              //         ? Image.network(
-                              //             _data?.hinhAnhUrl ?? "",
-                              //             fit: BoxFit.contain,
-                              //           )
-                              //         : Image.network(
-                              //             AppConfig.defaultImage,
-                              //             fit: BoxFit.contain,
-                              //           ),
-                              //   ),
-                              // ),
-                              // const Divider(
-                              //     height: 1, color: Color(0xFFCCCCCC)),
+                              ItemGhiChu(
+                                title: 'Ghi chú: ',
+                                controller: _ghiChu,
+                              ),
+                              const Divider(
+                                  height: 1, color: Color(0xFFCCCCCC)),
                               CheckSheetUploadAnh(
                                 lstFiles: [],
                               )
@@ -550,8 +686,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           width: 100.w,
           padding: const EdgeInsets.all(5),
           child: Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween, // Đặt khoảng cách giữa các nút
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: ElevatedButton(
@@ -570,6 +705,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                       'Xác nhận',
                       style: TextStyle(
                         fontFamily: 'Comfortaa',
+                        color: Colors.white,
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -586,7 +722,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                       fontSize: 16,
                     ),
                   ),
-                  color: Colors.red, // Màu nền của nút Từ chối
+                  color: Colors.red,
                   controller: _btnController,
                   onPressed: _data?.soKhung != null
                       ? () => _showConfirmationDialog(context)
@@ -685,7 +821,7 @@ class ItemTaiXe extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               color: Color(0xFF818180),
             ),
@@ -694,12 +830,115 @@ class ItemTaiXe extends StatelessWidget {
             value ?? "",
             style: TextStyle(
               fontFamily: 'Comfortaa',
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppConfig.primaryColor,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ItemNoiden extends StatelessWidget {
+  final String title;
+  final String? value;
+  final ValueChanged<String>? onChanged;
+
+  const ItemNoiden({
+    Key? key,
+    required this.title,
+    this.value,
+    this.onChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            Expanded(
+              child: TextFormField(
+                initialValue: value,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                onChanged: onChanged,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 13.2),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

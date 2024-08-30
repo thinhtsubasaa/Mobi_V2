@@ -1,3 +1,4 @@
+import 'package:Thilogi/pages/Bms/bms.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/blocs/app_bloc.dart';
@@ -139,7 +140,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   .then((_) {
                 _btnController.success();
 
-                nextScreenCloseOthers(context, QLKhoXePage());
+                nextScreenCloseOthers(context, BMSPage());
 
                 // _handleButtonTap(QLKhoXePage());
               });

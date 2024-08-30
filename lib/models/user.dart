@@ -7,6 +7,9 @@ class UserModel {
   final String? token;
   final String? refreshToken;
   final String? hinhAnhUrl;
+  final String? qrCode;
+  final String? maNhanVien;
+  final String? tenPhongBan;
 
   UserModel({
     this.fullName,
@@ -17,5 +20,8 @@ class UserModel {
     this.refreshToken,
     this.hinhAnhUrl,
     this.accessRole,
+    this.qrCode,
+    this.maNhanVien,
+    this.tenPhongBan,
   });
 }
