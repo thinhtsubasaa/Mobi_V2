@@ -42,10 +42,19 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
                 data: ub?.qrCode ?? "",
                 version: QrVersions.auto,
                 size: 250,
+                eyeStyle: const QrEyeStyle(
+                  eyeShape: QrEyeShape.square, // Hoặc QrEyeShape.circle
+                  color: Color(0xFFA71C20), // Đổi màu của "mắt" QR code
+                ),
+                dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleShape:
+                      QrDataModuleShape.square, // Hoặc QrDataModuleShape.circle
+                  color: Color(0xFFA71C20), // Đổi màu của các ô dữ liệu nhỏ
+                ),
               ),
             ),
             Text(
-              "${ub?.name ?? ""} - ${ub?.maNhanVien ?? ""}",
+              "${ub?.name?.toUpperCase() ?? ""} - ${ub?.maNhanVien ?? ""}",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 20,

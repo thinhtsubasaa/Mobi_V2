@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/models/xeracong.dart';
+import 'package:Thilogi/pages/baixe/custom_body_baixe.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
+import 'package:Thilogi/widgets/custom_title.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
@@ -68,7 +71,11 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
   final TextEditingController _ghiChu = TextEditingController();
+  final TextEditingController _noiden = TextEditingController();
+  final TextEditingController _lido = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  bool _Isred = false;
+  bool _Iskehoach = false;
 
   @override
   void initState() {
@@ -245,20 +252,29 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           barcodeScanResult = null;
           _qrData = '';
           _qrDataController.text = '';
+          _Iskehoach = false;
+          _Isred = false;
         }
         _loading = false;
         _data = _bl.xeracong;
         print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
+        print("NoiDen: ${_bl.xeracong?.noiden}");
         if (_bl.xeracong?.maNhanVien == null) {
-          QuickAlert.show(
-            // ignore: use_build_context_synchronously
-            context: context,
-            type: QuickAlertType.info,
-            title: '',
-            text: 'Không có thông tin tài xế',
-            confirmBtnText: 'Đồng ý',
-          );
+          // QuickAlert.show(
+          //   // ignore: use_build_context_synchronously
+          //   context: context,
+          //   type: QuickAlertType.info,
+          //   title: '',
+          //   text: 'Không có thông tin tài xế',
+          //   confirmBtnText: 'Đồng ý',
+          // );
+          _Isred = true;
         }
+        if (_bl.xeracong?.noiden == null) {
+          _Iskehoach = true;
+        }
+        print("isred: ${_Isred}");
+        print("iskehoach: ${_Iskehoach}");
       });
     });
   }
@@ -294,6 +310,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     _data?.noiden = _bl.xeracong?.noiden;
     _data?.ghiChu = _ghiChu.text;
     _data?.maPin = _textController.text;
+    _data?.tencong = _bl.xeracong?.tencong;
+    _data?.noiditaixe = _bl.xeracong?.noiditaixe;
 
     print("MaNhanVien: ${_data?.maNhanVien}");
 
@@ -309,7 +327,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data!, _data?.maNhanVien ?? "", _data?.noidi ?? "",
+        postData(_data!, _data?.maNhanVien ?? "", _data?.tencong ?? "",
                 _data?.noiden ?? "", _ghiChu.text, _textController.text)
             .then((_) {
           setState(() {
@@ -320,6 +338,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
             _qrData = '';
             _qrDataController.text = '';
             _loading = false;
+            _Isred = false;
+            _Iskehoach = false;
           });
         });
       }
@@ -344,6 +364,17 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  TextField(
+                    controller: _lido,
+                    decoration: InputDecoration(
+                      labelText: 'Nhập lí do từ chối',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                            10), // Thay đổi giá trị 10 tùy ý để điều chỉnh độ bo tròn
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   Text(
                     'Vui lòng nhập mã pin của bạn?',
                     style: TextStyle(
@@ -388,7 +419,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                         ),
-                        onPressed: _textController.text != null
+                        onPressed: _textController.text != ""
                             ? () {
                                 Navigator.of(context).pop();
                                 _onSave();
@@ -415,81 +446,10 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     );
   }
 
-  // void _showConfirmationDialog(BuildContext context) {
-  //   TextEditingController _textController = TextEditingController();
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           return Scaffold(
-  //             resizeToAvoidBottomInset: true,
-  //             backgroundColor: Colors.transparent,
-  //             body: Center(
-  //               child: Container(
-  //                 padding: EdgeInsets.all(20),
-  //                 margin: EdgeInsets.symmetric(horizontal: 20),
-  //                 decoration: BoxDecoration(
-  //                   color: Colors.white,
-  //                   borderRadius: BorderRadius.circular(15),
-  //                 ),
-  //                 child: Column(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   children: [
-  //                     Text(
-  //                       'Vui lòng nhập mã pin của bạn?',
-  //                       style: TextStyle(
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-  //                     SizedBox(height: 10),
-  //                     TextField(
-  //                       controller: _textController,
-  //                       decoration: InputDecoration(
-  //                         labelText: 'Nhập dữ liệu',
-  //                         border: OutlineInputBorder(),
-  //                       ),
-  //                       onChanged: (text) {
-  //                         setState(() {});
-  //                       },
-  //                     ),
-  //                     SizedBox(height: 20),
-  //                     Row(
-  //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                       children: [
-  //                         ElevatedButton(
-  //                           style: ElevatedButton.styleFrom(
-  //                             backgroundColor: Colors.red,
-  //                           ),
-  //                           onPressed: () {
-  //                             Navigator.of(context).pop();
-  //                             _btnController.reset();
-  //                           },
-  //                           child: Text('Không'),
-  //                         ),
-  //                         if (_textController.text.isNotEmpty)
-  //                           ElevatedButton(
-  //                             onPressed: () {
-  //                               Navigator.of(context).pop();
-  //                               // Thực hiện hành động post API tại đây
-  //                               _onSave();
-  //                             },
-  //                             child: Text('Đồng ý'),
-  //                           ),
-  //                       ],
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+  void _showConfirmationDialogMaPin(BuildContext context) {
+    Navigator.of(context).pop();
+    _onSave();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -533,6 +493,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                           'Thông tin xe ra cổng',
                                           style: TextStyle(
                                             fontFamily: 'Comfortaa',
+                                            color: Colors.red,
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -550,10 +511,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                       color: AppConfig.primaryColor,
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                      ),
                                       child: Column(
                                         children: [
                                           Item(
@@ -581,6 +538,41 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                           const Divider(
                                               height: 1,
                                               color: Color(0xFFCCCCCC)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: _Iskehoach == true
+                                        ? Colors.red
+                                        : Colors.grey,
+                                    width: _Iskehoach == true ? 5 : 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      'Kế hoạch xuất xe',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        color: Colors.red,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const Divider(
+                                      height: 1,
+                                      color: AppConfig.primaryColor,
+                                    ),
+                                    Container(
+                                      child: Column(
+                                        children: [
                                           Item(
                                             title: 'Phương thức vận chuyển: ',
                                             value:
@@ -598,7 +590,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                               color: Color(0xFFCCCCCC)),
                                           ItemNoiden(
                                             title: 'Nơi đến: ',
-                                            value: _data?.noiden,
+                                            value: _noiden.text,
                                           ),
                                         ],
                                       ),
@@ -610,34 +602,54 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Colors.grey,
-                                    width: 2,
+                                    color: _Isred == true
+                                        ? Colors.red
+                                        : Colors.grey,
+                                    width: _Isred == true ? 5 : 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
                                   children: [
+                                    const Text(
+                                      'Thông tin lái xe ra cổng',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        color: Colors.red,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    const Divider(
+                                      height: 1,
+                                      color: AppConfig.primaryColor,
+                                    ),
                                     Row(
                                       // mainAxisAlignment:
                                       //     MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          width: 120,
-                                          height: 120,
-                                          child: _data?.hinhAnhUrl != null
-                                              ? Image.network(
-                                                  _data?.hinhAnhUrl ?? "",
-                                                  fit: BoxFit.contain,
-                                                )
-                                              : Image.network(
-                                                  AppConfig.defaultImage,
-                                                  fit: BoxFit.contain,
-                                                ),
+                                        Column(
+                                          children: [
+                                            Container(
+                                              width: 120,
+                                              height: 120,
+                                              child: _data?.hinhAnhUrl != null
+                                                  ? Image.network(
+                                                      _data?.hinhAnhUrl ?? "",
+                                                      fit: BoxFit.contain,
+                                                    )
+                                                  : Image.network(
+                                                      AppConfig.defaultImage,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                            ),
+                                            ItemTaiXe(
+                                              title: 'Mã tài xế: ',
+                                              value: _data?.maNhanVien,
+                                            ),
+                                          ],
                                         ),
                                         Container(
-                                          margin: EdgeInsets.only(
-                                            bottom: 10,
-                                          ),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -650,12 +662,16 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                   height: 1,
                                                   color: Color(0xFFCCCCCC)),
                                               ItemTaiXe(
-                                                title: 'Mã tài xế: ',
-                                                value: _data?.maNhanVien,
-                                              ),
-                                              ItemTaiXe(
                                                 title: 'SDT: ',
                                                 value: _data?.sdt,
+                                              ),
+                                              ItemTaiXe(
+                                                title: 'Nơi đi: ',
+                                                value: _data?.noiditaixe,
+                                              ),
+                                              ItemTaiXeNoiDen(
+                                                title: 'Nơi đến: ',
+                                                value: _data?.noiden,
                                               ),
                                             ],
                                           ),
@@ -666,7 +682,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                 ),
                               ),
                               ItemGhiChu(
-                                title: 'Ghi chú: ',
+                                title: 'Ghi chú của bảo vệ: ',
                                 controller: _ghiChu,
                               ),
                               const Divider(
@@ -698,7 +714,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                       minimumSize:
                           Size(200, 50), // Kích thước tối thiểu của button
                     ),
-                    onPressed: _data?.soKhung != null
+                    onPressed: _data?.maNhanVien != null
                         ? () => _showConfirmationDialog(context)
                         : null,
                     child: Text(
@@ -731,7 +747,19 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
               )
             ],
           ),
-        )
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 11,
+          padding: EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+            color: AppConfig.bottom,
+          ),
+          child: customTitle(
+            _data?.tencong?.toUpperCase() ?? "",
+          ),
+        ),
+
         // Container(
         //   padding: const EdgeInsets.all(5),
         //   child: Column(
@@ -833,6 +861,58 @@ class ItemTaiXe extends StatelessWidget {
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppConfig.primaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ItemTaiXeNoiDen extends StatelessWidget {
+  final String title;
+  final String? value;
+  final ValueChanged<String>? onChanged;
+
+  const ItemTaiXeNoiDen({
+    Key? key,
+    required this.title,
+    this.value,
+    this.onChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 7.h,
+      child: Row(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF818180),
+            ),
+          ),
+          Container(
+            width: 37.w,
+            // Hoặc dùng Flexible
+
+            child: TextFormField(
+              initialValue: value,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+              onChanged: onChanged,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 13.2),
+              ),
             ),
           ),
         ],

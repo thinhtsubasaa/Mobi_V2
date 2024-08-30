@@ -25,7 +25,7 @@ class XeRaCongPage extends StatelessWidget {
               child: CustomBodyXeRaCong(),
             ),
           ),
-          BottomContent(),
+          // BottomContent(),
         ],
       ),
     );
