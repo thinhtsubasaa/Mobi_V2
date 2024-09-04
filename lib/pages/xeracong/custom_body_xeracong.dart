@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
+import 'package:Thilogi/models/noiden.dart';
 import 'package:Thilogi/models/xeracong.dart';
-import 'package:Thilogi/pages/baixe/custom_body_baixe.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -51,10 +52,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   XeRaCongModel? _data;
 
   bool _loading = false;
+
   String? barcodeScanResult;
   String? viTri;
 
   late XeRaCongBloc _bl;
+
   late Scan_NhanVienBloc ub;
 
   String? _errorCode;
@@ -62,25 +65,34 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
 
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
-
+  String? id;
   bool _isLoading = true;
   bool get isLoading => _isLoading;
 
   String? _message;
   String? get message => _message;
+  bool _hasError = false;
+  bool get hasError => _hasError;
   final RoundedLoadingButtonController _btnController =
       RoundedLoadingButtonController();
   final TextEditingController _ghiChu = TextEditingController();
   final TextEditingController _noiden = TextEditingController();
   final TextEditingController _lido = TextEditingController();
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
+  final TextEditingController textEditingController = TextEditingController();
+
   bool _Isred = false;
   bool _Iskehoach = false;
+  List<String> noiDenList = [];
+  List<NoiDenModel>? _noidenList;
+  List<NoiDenModel>? get noidenList => _noidenList;
 
   @override
   void initState() {
     super.initState();
+
     _bl = Provider.of<XeRaCongBloc>(context, listen: false);
+    getData();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
@@ -91,13 +103,41 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     });
   }
 
+  Future<void> getData() async {
+    try {
+      final http.Response response =
+          await requestHelper.getData('KhoThanhPham/GetListNoiDen');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _noidenList = (decodedData as List)
+            .map((item) => NoiDenModel.fromJson(item))
+            .toList();
+        _noidenList?.insert(0, NoiDenModel(id: '', noiDen: 'Thêm mới'));
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          _noiden.text = 'Thêm mới';
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
   @override
   void dispose() {
+    _lido.dispose();
+    _textController.dispose();
+    textEditingController.dispose();
+    _noiden.dispose();
     super.dispose();
   }
 
   Future<void> postData(XeRaCongModel scanData, String? nhanvien, String? noiDi,
-      String? noiDen, String? ghiChu, String? maPin) async {
+      String? noiDen, String? ghiChu, String? maPin, String? liDo) async {
     _isLoading = true;
 
     try {
@@ -106,7 +146,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin',
+          'KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo',
           newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
@@ -327,14 +367,21 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data!, _data?.maNhanVien ?? "", _data?.tencong ?? "",
-                _data?.noiden ?? "", _ghiChu.text, _textController.text)
+        postData(
+                _data!,
+                _data?.maNhanVien ?? "",
+                _data?.tencong ?? "",
+                _data?.noiden ?? _noiden.text,
+                _ghiChu.text,
+                _textController.text,
+                _lido.text)
             .then((_) {
           setState(() {
             _data = null;
             barcodeScanResult = null;
             _ghiChu.text = "";
             _textController.text = "";
+            _lido.text = "";
             _qrData = '';
             _qrDataController.text = '';
             _loading = false;
@@ -346,101 +393,112 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     });
   }
 
-  void _showConfirmationDialog(BuildContext context) {
+  void _showConfirmationDialogTuChoi(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Scaffold(
-          resizeToAvoidBottomInset: true,
-          backgroundColor: Colors.transparent,
-          body: Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: _lido,
-                    decoration: InputDecoration(
-                      labelText: 'Nhập lí do từ chối',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            10), // Thay đổi giá trị 10 tùy ý để điều chỉnh độ bo tròn
-                      ),
-                    ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Vui lòng nhập mã pin của bạn?',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      labelText: 'Nhập mã pin',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                            10), // Thay đổi giá trị 10 tùy ý để điều chỉnh độ bo tròn
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                      Text(
+                        'Vui lòng nhập lí do từ chối?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          _btnController.reset();
-                        },
-                        child: Text(
-                          'Không',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 13,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _lido,
+                        decoration: InputDecoration(
+                          labelText: 'Nhập lí do từ chối',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                      SizedBox(height: 10),
+                      Text(
+                        'Vui lòng nhập mã pin của bạn?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        onPressed: _textController.text != ""
-                            ? () {
-                                Navigator.of(context).pop();
-                                _onSave();
-                              }
-                            : null,
-                        child: Text(
-                          'Đồng ý',
-                          style: TextStyle(
-                            fontFamily: 'Comfortaa',
-                            fontSize: 13,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _textController,
+                        onChanged: (text) {
+                          // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Nhập mã pin',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _btnController.reset();
+                            },
+                            child: Text(
+                              'Không',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            onPressed: _textController.text.isNotEmpty
+                                ? () => _showConfirmationDialogMaPin(context)
+                                : null,
+                            child: Text(
+                              'Đồng ý',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -449,6 +507,214 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   void _showConfirmationDialogMaPin(BuildContext context) {
     Navigator.of(context).pop();
     _onSave();
+  }
+
+  void _showInputDialog(BuildContext context) {
+    // setState(() {
+    //   _noiden.text =
+    //       (_noidenList != null ? '' : _noidenList!.first.noiDen) ?? '';
+    // });
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: Colors.transparent,
+                body: Container(
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Vui lòng nhập nơi đến của bạn?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _noiden,
+                        decoration: InputDecoration(
+                          labelText: 'Nhập nơi đến',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _noiden.text = (_noidenList!.isNotEmpty
+                                    ? _noidenList!.first.noiDen
+                                    : '')!; // Đảm bảo giá trị hợp lệ
+                              });
+                              Navigator.of(context).pop();
+                              _btnController.reset();
+                            },
+                            child: Text(
+                              'Hủy',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                String newValue = _noiden.text;
+                                if (_noidenList != null &&
+                                    newValue.isNotEmpty) {
+                                  _noidenList!
+                                      .add(NoiDenModel(noiDen: newValue));
+                                  _noiden.text = newValue;
+                                }
+                              });
+                              Navigator.of(context).pop();
+                            },
+                            child: Text(
+                              'Lưu',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }).then((_) {
+      // Kiểm tra xem _selectedValue có còn hợp lệ không
+      if (_noiden.text != '' &&
+          !_noidenList!.any((item) => item.noiDen == _noiden.text)) {
+        setState(() {
+          _noiden.text = (_noidenList!.isNotEmpty
+              ? _noidenList!.first.noiDen
+              : '')!; // Hoặc đặt về giá trị mặc định
+        });
+      }
+    });
+    ;
+  }
+
+  void _showConfirmationDialogXacNhan(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Vui lòng nhập mã pin của bạn?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _textController,
+                        onChanged: (text) {
+                          // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Nhập mã pin',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _btnController.reset();
+                            },
+                            child: Text(
+                              'Không',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            onPressed: _textController.text.isNotEmpty
+                                ? () => _showConfirmationDialogMaPin(context)
+                                : null,
+                            child: Text(
+                              'Đồng ý',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -471,7 +737,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -588,9 +854,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                           const Divider(
                                               height: 1,
                                               color: Color(0xFFCCCCCC)),
-                                          ItemNoiden(
+                                          Item(
                                             title: 'Nơi đến: ',
-                                            value: _noiden.text,
+                                            value: _data?.noiden,
                                           ),
                                         ],
                                       ),
@@ -669,9 +935,218 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                 title: 'Nơi đi: ',
                                                 value: _data?.noiditaixe,
                                               ),
-                                              ItemTaiXeNoiDen(
-                                                title: 'Nơi đến: ',
-                                                value: _data?.noiden,
+                                              // ItemTaiXeNoiDen(
+                                              //   title: 'Nơi đến: ',
+                                              //   controller: _noiden,
+                                              // ),
+                                              Container(
+                                                width: 58.w,
+                                                height: 7.h,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  border: Border.all(
+                                                    color:
+                                                        const Color(0xFF818180),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 12.w,
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color:
+                                                            Color(0xFFF6C6C7),
+                                                        border: Border(
+                                                          right: BorderSide(
+                                                            color: Color(
+                                                                0xFF818180),
+                                                            width: 1,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "Nơi đến",
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontFamily:
+                                                                'Comfortaa',
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            color: AppConfig
+                                                                .textInput,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Container(
+                                                          padding: EdgeInsets.only(
+                                                              top: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height <
+                                                                      600
+                                                                  ? 0
+                                                                  : 5),
+                                                          child:
+                                                              DropdownButtonHideUnderline(
+                                                            child:
+                                                                DropdownButton2<
+                                                                    String>(
+                                                              isExpanded: true,
+                                                              items: _noidenList
+                                                                  ?.map((item) {
+                                                                return DropdownMenuItem<
+                                                                    String>(
+                                                                  value:
+                                                                      item.noiDen ??
+                                                                          "",
+                                                                  child:
+                                                                      Container(
+                                                                    constraints:
+                                                                        BoxConstraints(
+                                                                            maxWidth:
+                                                                                MediaQuery.of(context).size.width * 0.9),
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      child:
+                                                                          Text(
+                                                                        item.noiDen ??
+                                                                            "",
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontFamily:
+                                                                              'Comfortaa',
+                                                                          fontSize:
+                                                                              12,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          color:
+                                                                              AppConfig.textInput,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }).toList(),
+                                                              value:
+                                                                  _noiden.text,
+                                                              onChanged: (String?
+                                                                  newValue) {
+                                                                if (newValue ==
+                                                                    'Thêm mới') {
+                                                                  _showInputDialog(
+                                                                      context);
+                                                                } else {
+                                                                  setState(() {
+                                                                    _noiden.text =
+                                                                        newValue!;
+                                                                  });
+                                                                }
+                                                              },
+                                                              buttonStyleData:
+                                                                  const ButtonStyleData(
+                                                                padding: EdgeInsets
+                                                                    .symmetric(
+                                                                        horizontal:
+                                                                            16),
+                                                                height: 40,
+                                                                width: 200,
+                                                              ),
+                                                              dropdownStyleData:
+                                                                  const DropdownStyleData(
+                                                                maxHeight: 200,
+                                                              ),
+                                                              menuItemStyleData:
+                                                                  const MenuItemStyleData(
+                                                                height: 40,
+                                                              ),
+                                                              dropdownSearchData:
+                                                                  DropdownSearchData(
+                                                                searchController:
+                                                                    textEditingController,
+                                                                searchInnerWidgetHeight:
+                                                                    50,
+                                                                searchInnerWidget:
+                                                                    Container(
+                                                                  height: 50,
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                    top: 8,
+                                                                    bottom: 4,
+                                                                    right: 8,
+                                                                    left: 8,
+                                                                  ),
+                                                                  child:
+                                                                      TextFormField(
+                                                                    expands:
+                                                                        true,
+                                                                    maxLines:
+                                                                        null,
+                                                                    controller:
+                                                                        textEditingController,
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      isDense:
+                                                                          true,
+                                                                      contentPadding:
+                                                                          const EdgeInsets
+                                                                              .symmetric(
+                                                                        horizontal:
+                                                                            10,
+                                                                        vertical:
+                                                                            8,
+                                                                      ),
+                                                                      hintText:
+                                                                          'Tìm nơi đến',
+                                                                      hintStyle:
+                                                                          const TextStyle(
+                                                                              fontSize: 10),
+                                                                      border:
+                                                                          OutlineInputBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                searchMatchFn:
+                                                                    (item,
+                                                                        searchValue) {
+                                                                  return item
+                                                                      .value
+                                                                      .toString()
+                                                                      .toLowerCase()
+                                                                      .contains(
+                                                                          searchValue
+                                                                              .toLowerCase());
+                                                                },
+                                                              ),
+                                                              onMenuStateChange:
+                                                                  (isOpen) {
+                                                                if (!isOpen) {
+                                                                  textEditingController
+                                                                      .clear();
+                                                                }
+                                                              },
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -715,7 +1190,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                           Size(200, 50), // Kích thước tối thiểu của button
                     ),
                     onPressed: _data?.maNhanVien != null
-                        ? () => _showConfirmationDialog(context)
+                        ? () => _showConfirmationDialogXacNhan(context)
                         : null,
                     child: Text(
                       'Xác nhận',
@@ -741,7 +1216,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                   color: Colors.red,
                   controller: _btnController,
                   onPressed: _data?.soKhung != null
-                      ? () => _showConfirmationDialog(context)
+                      ? () => _showConfirmationDialogTuChoi(context)
                       : null,
                 ),
               )
@@ -871,14 +1346,12 @@ class ItemTaiXe extends StatelessWidget {
 
 class ItemTaiXeNoiDen extends StatelessWidget {
   final String title;
-  final String? value;
-  final ValueChanged<String>? onChanged;
+  final TextEditingController controller;
 
   const ItemTaiXeNoiDen({
     Key? key,
     required this.title,
-    this.value,
-    this.onChanged,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -901,14 +1374,13 @@ class ItemTaiXeNoiDen extends StatelessWidget {
             // Hoặc dùng Flexible
 
             child: TextFormField(
-              initialValue: value,
+              controller: controller,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),
-              onChanged: onChanged,
               decoration: InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 13.2),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/pages/Bms/bms.dart';
 import 'package:Thilogi/pages/Home.dart';
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +115,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   void _goToHomePage() {
-    nextScreenReplace(context, QLKhoXePage());
+    nextScreenReplace(context, BMSPage());
   }
 
   void _goToLoginPage() {

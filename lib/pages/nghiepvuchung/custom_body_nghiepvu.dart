@@ -151,7 +151,7 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen>
                     ),
                   if (userHasPermission(menuRoles, 'thong-tin-xe-ra-cong-mobi'))
                     CustomButton(
-                      'THÔNG TIN XE RA CỔNG',
+                      'KIỂM TRA XE RA CỔNG',
                       Stack(
                         alignment: Alignment.center,
                         children: [

@@ -27,8 +27,8 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
       ),
       body: Container(
         decoration: BoxDecoration(
-          border:
-              Border.all(color: Colors.red, width: 3.0), // Viền đỏ với độ dày 3
+          border: Border.all(
+              color: Colors.red, width: 14.0), // Viền đỏ với độ dày 3
           borderRadius: BorderRadius.circular(8.0),
           // Góc bo tròn (tuỳ chọn)
         ),
@@ -57,7 +57,7 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
               "${ub?.name?.toUpperCase() ?? ""} - ${ub?.maNhanVien ?? ""}",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 20,
+                fontSize: 17,
                 color: Colors.red,
                 fontWeight: FontWeight.w700,
               ),
@@ -66,7 +66,7 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
               ub?.tenPhongBan ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 20,
+                fontSize: 17,
                 color: Colors.red,
                 fontWeight: FontWeight.w700,
               ),
