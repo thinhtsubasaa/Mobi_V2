@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/doitac.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/models/lsx_racong.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -114,24 +112,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
     const String defaultDate = "1970-01-01 ";
 
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    // _dn?.sort((a, b) {
-    //   try {
-    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (a.gioNhan ?? "00:00"));
-    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (b.gioNhan ?? "00:00"));
-    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
-    //   } catch (e) {
-    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-    //     return 0;
-    //   }
-    // });
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 3,
+        width: MediaQuery.of(context).size.width * 3.3,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -147,11 +131,14 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
               border: TableBorder.all(),
               columnWidths: {
                 0: FlexColumnWidth(0.3),
-                1: FlexColumnWidth(0.35),
+                1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
-                4: FlexColumnWidth(0.35),
+                4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
+                6: FlexColumnWidth(0.3),
+                7: FlexColumnWidth(0.3),
+                8: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
@@ -185,6 +172,20 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                       child: _buildTableCell('Tên bảo vệ',
                           textColor: Colors.white),
                     ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Nơi đến', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child:
+                          _buildTableCell('Ghi chú', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Lý do', textColor: Colors.white),
+                    ),
                   ],
                 ),
               ],
@@ -197,11 +198,14 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                   border: TableBorder.all(),
                   columnWidths: {
                     0: FlexColumnWidth(0.3),
-                    1: FlexColumnWidth(0.35),
+                    1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
-                    4: FlexColumnWidth(0.35),
+                    4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
+                    6: FlexColumnWidth(0.3),
+                    7: FlexColumnWidth(0.3),
+                    8: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -216,6 +220,9 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                               _buildTableCell(item.mauXe ?? ""),
                               _buildTableCell(item.tenTaiXe ?? ""),
                               _buildTableCell(item.tenBaoVe ?? ""),
+                              _buildTableCell(item.noiDen ?? ""),
+                              _buildTableCell(item.ghiChu ?? ""),
+                              _buildTableCell(item.lyDo ?? ""),
                             ],
                           );
                         }).toList() ??

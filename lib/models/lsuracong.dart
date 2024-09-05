@@ -8,6 +8,9 @@ class DS_RaCongModel {
   String? tenTaiXe;
   String? gioRa;
   String? ngayRaCong;
+  String? noiDen;
+  String? ghiChu;
+  String? lyDo;
 
   DS_RaCongModel({
     this.id,
@@ -19,19 +22,24 @@ class DS_RaCongModel {
     this.gioRa,
     this.loaiXe,
     this.ngayRaCong,
+    this.noiDen,
+    this.ghiChu,
+    this.lyDo,
   });
 
   factory DS_RaCongModel.fromJson(Map<String, dynamic> json) {
     return DS_RaCongModel(
-      id: json["id"].toString(),
-      soKhung: json["soKhung"],
-      soMay: json["soMay"],
-      mauXe: json["mauXe"],
-      tenBaoVe: json["tenBaoVe"],
-      tenTaiXe: json["tenTaiXe"],
-      loaiXe: json["loaiXe"],
-      gioRa: json["gioRa"],
-      ngayRaCong: json["ngayRaCong"],
-    );
+        id: json["id"].toString(),
+        soKhung: json["soKhung"],
+        soMay: json["soMay"],
+        mauXe: json["mauXe"],
+        tenBaoVe: json["tenBaoVe"],
+        tenTaiXe: json["tenTaiXe"],
+        loaiXe: json["loaiXe"],
+        gioRa: json["gioRa"],
+        ngayRaCong: json["ngayRaCong"],
+        noiDen: json["noiDen"],
+        ghiChu: json["ghiChu"],
+        lyDo: json["lyDo"]);
   }
 }

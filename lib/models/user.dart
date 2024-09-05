@@ -10,6 +10,7 @@ class UserModel {
   final String? qrCode;
   final String? maNhanVien;
   final String? tenPhongBan;
+  final String? congBaoVe;
 
   UserModel({
     this.fullName,
@@ -23,5 +24,6 @@ class UserModel {
     this.qrCode,
     this.maNhanVien,
     this.tenPhongBan,
+    this.congBaoVe,
   });
 }

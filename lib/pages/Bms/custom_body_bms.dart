@@ -139,12 +139,12 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
                 children: [
                   if (userHasPermission(menuRoles, 'kiem-tra-nhan-xe-mobi'))
                     CustomButton(
-                      'QUẢN LÝ KHO THÀNH PHẨM',
+                      'THILOTRANS\nAUTO',
                       Stack(
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_NhanXe_3b.png',
+                            'assets/images/Main_button_THILOTrans.png',
                           ),
                         ],
                       ),
@@ -154,12 +154,12 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
                     ),
                   // if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
                   CustomButton(
-                    'NGHIỆP VỤ CHUNG',
+                    'NGHIỆP VỤ CƠ BẢN',
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/Button_TTTheNhanVien.png',
+                          'assets/images/Main_button_01_QTNVChung.png',
                         ),
                       ],
                     ),

@@ -21,6 +21,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import '../../blocs/scan_nhanvien_bloc.dart';
+import '../../blocs/user_bloc.dart';
 import '../../config/config.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
@@ -58,8 +59,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
 
   late XeRaCongBloc _bl;
 
-  late Scan_NhanVienBloc ub;
-
   String? _errorCode;
   String? get errorCode => _errorCode;
 
@@ -86,12 +85,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   List<String> noiDenList = [];
   List<NoiDenModel>? _noidenList;
   List<NoiDenModel>? get noidenList => _noidenList;
+  late UserBloc? _ub;
 
   @override
   void initState() {
     super.initState();
 
     _bl = Provider.of<XeRaCongBloc>(context, listen: false);
+    _ub = Provider.of<UserBloc>(context, listen: false);
     getData();
     dataWedge = FlutterDataWedge(profileName: "Example Profile");
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
@@ -162,6 +163,18 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           confirmBtnText: 'Đồng ý',
         );
         _btnController.reset();
+        setState(() {
+          _data = null;
+          barcodeScanResult = null;
+          _ghiChu.text = "";
+          _textController.text = "";
+          _lido.text = "";
+          _qrData = '';
+          _qrDataController.text = '';
+          _loading = false;
+          _Isred = false;
+          _Iskehoach = false;
+        });
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
@@ -284,6 +297,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   _onScan(value) {
     setState(() {
       _loading = true;
+      _Iskehoach = false;
+      _Isred = false;
     });
     _bl.getData(context, value).then((_) {
       setState(() {
@@ -300,14 +315,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
         print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
         print("NoiDen: ${_bl.xeracong?.noiden}");
         if (_bl.xeracong?.maNhanVien == null) {
-          // QuickAlert.show(
-          //   // ignore: use_build_context_synchronously
-          //   context: context,
-          //   type: QuickAlertType.info,
-          //   title: '',
-          //   text: 'Không có thông tin tài xế',
-          //   confirmBtnText: 'Đồng ý',
-          // );
           _Isred = true;
         }
         if (_bl.xeracong?.noiden == null) {
@@ -376,17 +383,18 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                 _textController.text,
                 _lido.text)
             .then((_) {
+          print("loading: ${_loading}");
           setState(() {
-            _data = null;
-            barcodeScanResult = null;
-            _ghiChu.text = "";
-            _textController.text = "";
-            _lido.text = "";
-            _qrData = '';
-            _qrDataController.text = '';
+            // _data = null;
+            // barcodeScanResult = null;
+            // _ghiChu.text = "";
+            // _textController.text = "";
+            // _lido.text = "";
+            // _qrData = '';
+            // _qrDataController.text = '';
             _loading = false;
-            _Isred = false;
-            _Iskehoach = false;
+            // _Isred = false;
+            // _Iskehoach = false;
           });
         });
       }
@@ -510,10 +518,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   }
 
   void _showInputDialog(BuildContext context) {
-    // setState(() {
-    //   _noiden.text =
-    //       (_noidenList != null ? '' : _noidenList!.first.noiDen) ?? '';
-    // });
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -751,28 +755,47 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                 ),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Thông tin xe ra cổng',
-                                          style: TextStyle(
-                                            fontFamily: 'Comfortaa',
-                                            color: Colors.red,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
+                                    Container(
+                                      width: 100.w,
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            Color(0xFFE96327),
+                                            Color(0xFFBC2925),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text(
+                                            'Thông tin xe ra cổng',
+                                            style: TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                           ),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.visibility),
-                                          onPressed: () {
-                                            nextScreen(context, LSRaCongPage());
-                                          },
-                                        ),
-                                      ],
+                                          IconButton(
+                                            icon: const Icon(Icons.visibility),
+                                            color: Colors.blue,
+                                            onPressed: () {
+                                              nextScreen(
+                                                  context, LSRaCongPage());
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const Divider(
+                                    Divider(
                                       height: 1,
                                       color: AppConfig.primaryColor,
                                     ),
@@ -822,14 +845,32 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Kế hoạch xuất xe',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        color: Colors.red,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
+                                    Container(
+                                      width: 100.w,
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            Color(0xFFE96327),
+                                            Color(0xFFBC2925),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Kế hoạch xuất xe',
+                                        style: TextStyle(
+                                          fontFamily: 'Comfortaa',
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                     ),
                                     const Divider(
@@ -876,14 +917,32 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Thông tin lái xe ra cổng',
-                                      style: TextStyle(
-                                        fontFamily: 'Comfortaa',
-                                        color: Colors.red,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
+                                    Container(
+                                      width: 100.w,
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            Color(0xFFE96327),
+                                            Color(0xFFBC2925),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(5),
+                                          topRight: Radius.circular(5),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Thông tin lái xe ra cổng',
+                                        style: TextStyle(
+                                          fontFamily: 'Comfortaa',
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                     ),
                                     const Divider(
@@ -1231,7 +1290,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
             color: AppConfig.bottom,
           ),
           child: customTitle(
-            _data?.tencong?.toUpperCase() ?? "",
+            _ub?.congBaoVe?.toUpperCase() ?? "",
           ),
         ),
 

@@ -43,7 +43,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'NGHIỆP VỤ CHUNG',
+          'NGHIỆP VỤ CƠ BẢN',
         ),
       ),
     );

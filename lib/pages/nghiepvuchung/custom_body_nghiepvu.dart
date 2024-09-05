@@ -156,7 +156,7 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
+                            'assets/images/Button_09_KTXeRaCong.png',
                           ),
                         ],
                       ),
@@ -171,7 +171,7 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen>
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
+                            'assets/images/Button_09_Barcode.png',
                           ),
                         ],
                       ),

@@ -44,6 +44,8 @@ class UserBloc extends ChangeNotifier {
   String? get maNhanVien => _maNhanVien;
   String? _tenPhongBan;
   String? get tenPhongBan => _tenPhongBan;
+  String? _congBaoVe;
+  String? get congBaoVe => _congBaoVe;
 
   Future saveUserData(UserModel userModel) async {
     // ignore: unnecessary_null_comparison
@@ -60,6 +62,7 @@ class UserBloc extends ChangeNotifier {
       sp.setString('qrCode', userModel.qrCode ?? '');
       sp.setString('maNhanVien', userModel.maNhanVien ?? '');
       sp.setString('tenPhongBan', userModel.tenPhongBan ?? '');
+      sp.setString('congBaoVe', userModel.congBaoVe ?? '');
 
       _id = userModel.id;
       _fullName = userModel.fullName;
@@ -72,6 +75,7 @@ class UserBloc extends ChangeNotifier {
       _qrCode = userModel.qrCode;
       _maNhanVien = userModel.maNhanVien;
       _tenPhongBan = userModel.tenPhongBan;
+      _congBaoVe = userModel.congBaoVe;
       notifyListeners();
     }
   }
@@ -90,6 +94,7 @@ class UserBloc extends ChangeNotifier {
     _qrCode = sp.getString('qrCode');
     _maNhanVien = sp.getString('maNhanVien');
     _tenPhongBan = sp.getString('tenPhongBan');
+    _congBaoVe = sp.getString('congBaoVe');
     notifyListeners();
   }
 
@@ -126,6 +131,7 @@ class UserBloc extends ChangeNotifier {
       _qrCode = null;
       _maNhanVien = null;
       _tenPhongBan = null;
+      _congBaoVe = null;
       notifyListeners();
     });
   }
