@@ -26,8 +26,7 @@ class BodyLSGiaoXeScreen extends StatefulWidget {
   _BodyLSGiaoXeScreenState createState() => _BodyLSGiaoXeScreenState();
 }
 
-class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -54,21 +53,16 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
     super.initState();
     getDoiTac();
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    selectedToDate =
-        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "",
-        maNhanVienController.text);
+    selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
   }
 
   void getDoiTac() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_DoiTac/GetDoiTacLogistic');
+      final http.Response response = await requestHelper.getData('DM_DoiTac/GetDoiTacLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _doitacList = (decodedData as List)
-            .map((item) => DoiTacModel.fromJson(item))
-            .toList();
+        _doitacList = (decodedData as List).map((item) => DoiTacModel.fromJson(item)).toList();
         _doitacList!.insert(0, DoiTacModel(id: '', tenDoiTac: 'Tất cả'));
 
         // Đặt giá trị mặc định cho DropdownButton là ID của "Tất cả"
@@ -78,8 +72,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
         });
 
         // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
-        getDSXGiaoXe(
-            selectedFromDate, selectedToDate, '', maNhanVienController.text);
+        getDSXGiaoXe(selectedFromDate, selectedToDate, '', maNhanVienController.text);
         // Gọi setState để cập nhật giao diện
         // setState(() {
         //   _loading = false;
@@ -91,19 +84,15 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
     }
   }
 
-  Future<void> getDSXGiaoXe(String? tuNgay, String? denNgay, String? doiTac_Id,
-      String? keyword) async {
+  Future<void> getDSXGiaoXe(String? tuNgay, String? denNgay, String? doiTac_Id, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeGiaoXeAll?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeGiaoXeAll?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => LSX_GiaoXeModel.fromJson(item))
-              .toList();
+          _dn = (decodedData as List).map((item) => LSX_GiaoXeModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -135,8 +124,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "",
-          maNhanVienController.text);
+      await getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
     }
   }
 
@@ -191,23 +179,19 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Ngày nhận', textColor: Colors.white),
+                      child: _buildTableCell('Ngày nhận', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Đơn vị vận chuyển',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Đơn vị vận chuyển', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -215,21 +199,18 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi giao', textColor: Colors.white),
+                      child: _buildTableCell('Nơi giao', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Người phụ trách',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Người phụ trách', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -320,8 +301,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.blue),
                                       borderRadius: BorderRadius.circular(8),
@@ -329,12 +309,10 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.blue),
+                                        Icon(Icons.calendar_today, color: Colors.blue),
                                         SizedBox(width: 8),
                                         Text(
-                                          selectedFromDate != null &&
-                                                  selectedToDate != null
+                                          selectedFromDate != null && selectedToDate != null
                                               ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
                                               : 'Chọn ngày',
                                           style: TextStyle(color: Colors.blue),
@@ -346,16 +324,12 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 SizedBox(
                                   height: 4,
                                 ),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -392,24 +366,14 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: maNhanVienController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập mã nhân viên hoặc tên đầy đủ',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập mã nhân viên hoặc tên đầy đủ',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -430,11 +394,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXGiaoXe(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              doiTac_Id ?? "",
-                                              maNhanVienController.text);
+                                          getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -447,10 +407,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                   height: 4,
                                 ),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -487,44 +444,25 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Container(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                            .size
-                                                            .height <
-                                                        600
-                                                    ? 0
-                                                    : 5),
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                             child: DropdownButtonHideUnderline(
                                               child: DropdownButton2<String>(
                                                 isExpanded: true,
                                                 items: _doitacList?.map((item) {
-                                                  return DropdownMenuItem<
-                                                      String>(
+                                                  return DropdownMenuItem<String>(
                                                     value: item.id,
                                                     child: Container(
-                                                      constraints: BoxConstraints(
-                                                          maxWidth: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.9),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
+                                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.horizontal,
                                                         child: Text(
                                                           item.tenDoiTac ?? "",
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontFamily:
-                                                                'Comfortaa',
+                                                          textAlign: TextAlign.center,
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Comfortaa',
                                                             fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: AppConfig
-                                                                .textInput,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: AppConfig.textInput,
                                                           ),
                                                         ),
                                                       ),
@@ -539,48 +477,30 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
 
                                                   if (newValue != null) {
                                                     if (newValue == '') {
-                                                      getDSXGiaoXe(
-                                                          selectedFromDate,
-                                                          selectedToDate,
-                                                          '',
-                                                          maNhanVienController
-                                                              .text);
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, '', maNhanVienController.text);
                                                     } else {
-                                                      getDSXGiaoXe(
-                                                          selectedFromDate,
-                                                          selectedToDate,
-                                                          newValue,
-                                                          maNhanVienController
-                                                              .text);
-                                                      print(
-                                                          "object : ${doiTac_Id}");
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, newValue, maNhanVienController.text);
+                                                      print("object : ${doiTac_Id}");
                                                     }
                                                   }
                                                 },
-                                                buttonStyleData:
-                                                    const ButtonStyleData(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 16),
+                                                buttonStyleData: const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(horizontal: 16),
                                                   height: 40,
                                                   width: 200,
                                                 ),
-                                                dropdownStyleData:
-                                                    const DropdownStyleData(
+                                                dropdownStyleData: const DropdownStyleData(
                                                   maxHeight: 200,
                                                 ),
-                                                menuItemStyleData:
-                                                    const MenuItemStyleData(
+                                                menuItemStyleData: const MenuItemStyleData(
                                                   height: 40,
                                                 ),
-                                                dropdownSearchData:
-                                                    DropdownSearchData(
-                                                  searchController:
-                                                      textEditingController,
+                                                dropdownSearchData: DropdownSearchData(
+                                                  searchController: textEditingController,
                                                   searchInnerWidgetHeight: 50,
                                                   searchInnerWidget: Container(
                                                     height: 50,
-                                                    padding:
-                                                        const EdgeInsets.only(
+                                                    padding: const EdgeInsets.only(
                                                       top: 8,
                                                       bottom: 4,
                                                       right: 8,
@@ -589,49 +509,27 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                                     child: TextFormField(
                                                       expands: true,
                                                       maxLines: null,
-                                                      controller:
-                                                          textEditingController,
-                                                      decoration:
-                                                          InputDecoration(
+                                                      controller: textEditingController,
+                                                      decoration: InputDecoration(
                                                         isDense: true,
-                                                        contentPadding:
-                                                            const EdgeInsets
-                                                                .symmetric(
+                                                        contentPadding: const EdgeInsets.symmetric(
                                                           horizontal: 10,
                                                           vertical: 8,
                                                         ),
                                                         hintText: 'Tìm đơn vị',
-                                                        hintStyle:
-                                                            const TextStyle(
-                                                                fontSize: 12),
-                                                        border:
-                                                            OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
+                                                        hintStyle: const TextStyle(fontSize: 12),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                  searchMatchFn:
-                                                      (item, searchValue) {
-                                                    if (item
-                                                        is DropdownMenuItem<
-                                                            String>) {
+                                                  searchMatchFn: (item, searchValue) {
+                                                    if (item is DropdownMenuItem<String>) {
                                                       // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                      String itemId =
-                                                          item.value ?? "";
+                                                      String itemId = item.value ?? "";
                                                       // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                      return _doitacList?.any((baiXe) =>
-                                                              baiXe.id ==
-                                                                  itemId &&
-                                                              baiXe.tenDoiTac
-                                                                      ?.toLowerCase()
-                                                                      .contains(
-                                                                          searchValue
-                                                                              .toLowerCase()) ==
-                                                                  true) ??
-                                                          false;
+                                                      return _doitacList?.any((baiXe) => baiXe.id == itemId && baiXe.tenDoiTac?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                     } else {
                                                       return false;
                                                     }
@@ -639,8 +537,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                                 ),
                                                 onMenuStateChange: (isOpen) {
                                                   if (!isOpen) {
-                                                    textEditingController
-                                                        .clear();
+                                                    textEditingController.clear();
                                                   }
                                                 },
                                               ),
@@ -651,8 +548,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen>
                                 ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         height: 4,

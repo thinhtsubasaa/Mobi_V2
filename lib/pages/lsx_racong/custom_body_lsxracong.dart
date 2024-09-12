@@ -6,6 +6,7 @@ import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../widgets/loading.dart';
@@ -25,8 +26,7 @@ class BodyLSRaCongScreen extends StatefulWidget {
   _BodyLSRaCongScreenState createState() => _BodyLSRaCongScreenState();
 }
 
-class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -52,24 +52,19 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     super.initState();
 
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    selectedToDate =
-        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
   }
 
-  Future<void> getDSXRaCong(
-      String? tuNgay, String? denNgay, String? keyword) async {
+  Future<void> getDSXRaCong(String? tuNgay, String? denNgay, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => LSX_RaCongModel.fromJson(item))
-              .toList();
+          _dn = (decodedData as List).map((item) => LSX_RaCongModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -101,8 +96,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXRaCong(
-          selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
     }
   }
 
@@ -115,7 +109,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 3.3,
+        width: MediaQuery.of(context).size.width * 4,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -139,24 +133,23 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                 6: FlexColumnWidth(0.3),
                 7: FlexColumnWidth(0.3),
                 8: FlexColumnWidth(0.3),
+                9: FlexColumnWidth(0.3),
+                10: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
                   children: [
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Ngày ra cổng',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Ngày ra cổng', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -164,35 +157,38 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Tên tài xế',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Tên tài xế', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Tên bảo vệ',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Nơi đi', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Nơi đến', textColor: Colors.white),
+                      child: _buildTableCell('Nơi đến', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Ghi chú', textColor: Colors.white),
+                      child: _buildTableCell('Ghi chú', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
                       child: _buildTableCell('Lý do', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Tên bảo vệ', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Hình ảnh', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -206,23 +202,27 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                     6: FlexColumnWidth(0.3),
                     7: FlexColumnWidth(0.3),
                     8: FlexColumnWidth(0.3),
+                    9: FlexColumnWidth(0.3),
+                    10: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
                           index++; // Tăng số thứ tự sau mỗi lần lặp
-
+                          bool highlightRed = item.tenTaiXe == "-";
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              _buildTableCell(item.ngayRaCong ?? ""),
-                              _buildTableCell(item.soKhung ?? ""),
-                              _buildTableCell(item.loaiXe ?? ""),
-                              _buildTableCell(item.mauXe ?? ""),
-                              _buildTableCell(item.tenTaiXe ?? ""),
-                              _buildTableCell(item.tenBaoVe ?? ""),
-                              _buildTableCell(item.noiDen ?? ""),
-                              _buildTableCell(item.ghiChu ?? ""),
+                              _buildTableCell(item.ngayRaCong ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.soKhung ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.loaiXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.mauXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.tenTaiXe ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.noiDi ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.noiDen ?? "", highlightRed: highlightRed),
+                              _buildTableCell(item.ghiChu ?? "", highlightRed: highlightRed),
                               _buildTableCell(item.lyDo ?? ""),
+                              _buildTableCell(item.tenBaoVe ?? "", highlightRed: highlightRed),
+                              _buildTableHinhAnh(item.hinhAnh ?? ""),
                             ],
                           );
                         }).toList() ??
@@ -237,7 +237,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
     );
   }
 
-  Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
+  Widget _buildTableCell(String content, {Color textColor = Colors.black, bool highlightRed = false}) {
+    if (highlightRed) {
+      textColor = Colors.red;
+    }
     return Container(
       padding: const EdgeInsets.all(8),
       child: Text(
@@ -248,6 +251,80 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: textColor,
+        ),
+      ),
+    );
+  }
+
+  // Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       _showFullImageDialog(content);
+  //     },
+  //     child: Container(
+  //       width: 120,
+  //       height: 120,
+  //       child: Image.network(
+  //         content,
+  //         fit: BoxFit.contain,
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // void _showFullImageDialog(String imageUrl) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => Dialog(
+  //       child: Container(
+  //         width: double.infinity,
+  //         height: double.infinity,
+  //         child: PhotoView(
+  //           imageProvider: NetworkImage(imageUrl),
+  //           backgroundDecoration: BoxDecoration(color: Colors.black),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
+    // Tách chuỗi URL thành danh sách các link ảnh
+    List<String> imageUrls = content.split(',');
+
+    return Container(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal, // Cho phép cuộn ngang nếu có nhiều ảnh
+        itemCount: imageUrls.length,
+        itemBuilder: (context, index) {
+          String imageUrl = imageUrls[index];
+          return GestureDetector(
+            onTap: () {
+              _showFullImageDialog(imageUrl); // Hiển thị ảnh đầy đủ khi bấm vào
+            },
+            child: Container(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showFullImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: PhotoView(
+            imageProvider: NetworkImage(imageUrl),
+            backgroundDecoration: BoxDecoration(color: Colors.black),
+          ),
         ),
       ),
     );
@@ -287,8 +364,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.blue),
                                       borderRadius: BorderRadius.circular(8),
@@ -296,12 +372,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.blue),
+                                        Icon(Icons.calendar_today, color: Colors.blue),
                                         SizedBox(width: 8),
                                         Text(
-                                          selectedFromDate != null &&
-                                                  selectedToDate != null
+                                          selectedFromDate != null && selectedToDate != null
                                               ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
                                               : 'Chọn ngày',
                                           style: TextStyle(color: Colors.blue),
@@ -313,16 +387,12 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 SizedBox(
                                   height: 4,
                                 ),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -359,24 +429,14 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: maNhanVienController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập số khung, người lái xe',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập số khung, người lái xe',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -397,10 +457,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXRaCong(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              maNhanVienController.text);
+                                          getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -411,8 +468,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen>
                                 ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         height: 4,

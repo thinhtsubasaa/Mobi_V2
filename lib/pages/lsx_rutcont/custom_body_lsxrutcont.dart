@@ -1,12 +1,7 @@
 import 'dart:convert';
-
 import 'package:Thilogi/config/config.dart';
-import 'package:Thilogi/models/doitac.dart';
-import 'package:Thilogi/models/lsu_giaoxe.dart';
-import 'package:Thilogi/models/lsx_racong.dart';
 import 'package:Thilogi/models/lsx_rutcont.dart';
 import 'package:Thilogi/services/request_helper.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -28,8 +23,7 @@ class BodyLSRutContScreen extends StatefulWidget {
   _BodyLSRutContScreenState createState() => _BodyLSRutContScreenState();
 }
 
-class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyLSRutContScreenState extends State<BodyLSRutContScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   bool _loading = false;
@@ -53,24 +47,19 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
     super.initState();
 
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
-    selectedToDate =
-        DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
+    selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     getDSXRutCont(selectedFromDate, selectedToDate, maNhanVienController.text);
   }
 
-  Future<void> getDSXRutCont(
-      String? tuNgay, String? denNgay, String? keyword) async {
+  Future<void> getDSXRutCont(String? tuNgay, String? denNgay, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'DSX_DongCont/GetDanhSachContDaRut?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('DSX_DongCont/GetDanhSachContDaRut?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
         if (decodedData != null) {
-          _dn = (decodedData as List)
-              .map((item) => LSX_RutContModel.fromJson(item))
-              .toList();
+          _dn = (decodedData as List).map((item) => LSX_RutContModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -102,8 +91,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXRutCont(
-          selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXRutCont(selectedFromDate, selectedToDate, maNhanVienController.text);
     }
   }
 
@@ -158,28 +146,23 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                   children: [
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Ngày rút cont',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Ngày rút cont', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số khung', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số cont', textColor: Colors.white),
+                      child: _buildTableCell('Số cont', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số seal', textColor: Colors.white),
+                      child: _buildTableCell('Số seal', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -187,16 +170,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Người rút cont',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Người rút cont', textColor: Colors.white),
                     ),
                   ],
                 ),
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
@@ -286,8 +267,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                     decoration: BoxDecoration(
                                       border: Border.all(color: Colors.blue),
                                       borderRadius: BorderRadius.circular(8),
@@ -295,12 +275,10 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.calendar_today,
-                                            color: Colors.blue),
+                                        Icon(Icons.calendar_today, color: Colors.blue),
                                         SizedBox(width: 8),
                                         Text(
-                                          selectedFromDate != null &&
-                                                  selectedToDate != null
+                                          selectedFromDate != null && selectedToDate != null
                                               ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
                                               : 'Chọn ngày',
                                           style: TextStyle(color: Colors.blue),
@@ -312,16 +290,12 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                 SizedBox(
                                   height: 4,
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 SizedBox(
                                   height: 4,
                                 ),
                                 Container(
-                                  height:
-                                      MediaQuery.of(context).size.height < 600
-                                          ? 10.h
-                                          : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -358,24 +332,14 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                       Expanded(
                                         flex: 1,
                                         child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: MediaQuery.of(context)
-                                                          .size
-                                                          .height <
-                                                      600
-                                                  ? 0
-                                                  : 5),
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                           child: TextField(
                                             controller: maNhanVienController,
                                             decoration: const InputDecoration(
                                               border: InputBorder.none,
                                               isDense: true,
-                                              hintText:
-                                                  'Nhập số cont, số khung',
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 15),
+                                              hintText: 'Nhập số cont, số khung',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
@@ -396,10 +360,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXRutCont(
-                                              selectedFromDate,
-                                              selectedToDate,
-                                              maNhanVienController.text);
+                                          getDSXRutCont(selectedFromDate, selectedToDate, maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -410,8 +371,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen>
                                 ),
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         height: 4,

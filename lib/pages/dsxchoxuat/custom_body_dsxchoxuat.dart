@@ -28,8 +28,7 @@ class BodyDSXScreenChoXuat extends StatefulWidget {
   _BodyDSXScreenChoXuatState createState() => _BodyDSXScreenChoXuatState();
 }
 
-class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   bool _loading = false;
   List<BaiXeModel>? _baixeList;
@@ -66,14 +65,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   void getDoiTac() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_DoiTac/GetDoiTacLogistic');
+      final http.Response response = await requestHelper.getData('DM_DoiTac/GetDoiTacLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _doitacList = (decodedData as List)
-            .map((item) => DoiTacModel.fromJson(item))
-            .toList();
+        _doitacList = (decodedData as List).map((item) => DoiTacModel.fromJson(item)).toList();
         _doitacList!.insert(0, DoiTacModel(id: '', tenDoiTac: 'Tất cả'));
 
         // Gọi setState để cập nhật giao diện
@@ -90,17 +86,13 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   void getPTVC() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('TMS_PhuongThucVanChuyen/PTVC');
+      final http.Response response = await requestHelper.getData('TMS_PhuongThucVanChuyen/PTVC');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         // print("PTVC: " + decodedData);
 
-        _ptvcList = (decodedData as List)
-            .map((item) => PhuongThucVanChuyenModel.fromJson(item))
-            .toList();
-        _ptvcList!.insert(0,
-            PhuongThucVanChuyenModel(id: '', tenPhuongThucVanChuyen: 'Tất cả'));
+        _ptvcList = (decodedData as List).map((item) => PhuongThucVanChuyenModel.fromJson(item)).toList();
+        _ptvcList!.insert(0, PhuongThucVanChuyenModel(id: '', tenPhuongThucVanChuyen: 'Tất cả'));
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -116,14 +108,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   void getData() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
+      final http.Response response = await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _khoxeList = (decodedData as List)
-            .map((item) => KhoXeModel.fromJson(item))
-            .toList();
+        _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -138,13 +127,10 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
 
   void getBaiXeList(String KhoXeId) async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
+      final http.Response response = await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _baixeList = (decodedData as List)
-            .map((item) => BaiXeModel.fromJson(item))
-            .toList();
+        _baixeList = (decodedData as List).map((item) => BaiXeModel.fromJson(item)).toList();
         _baixeList!.insert(0, BaiXeModel(id: '', tenBaiXe: 'Tất cả'));
         setState(() {
           id = '';
@@ -158,24 +144,19 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
     }
   }
 
-  void getDSXChoXuat(
-      String? id, String? doiTac_Id, String? phuongThuc_Id) async {
+  void getDSXChoXuat(String? id, String? doiTac_Id, String? phuongThuc_Id) async {
     _cx = [];
     try {
-      final http.Response response = await requestHelper.getData(
-          'KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
           // Lọc dữ liệu chỉ bao gồm các mục có 'isKeHoach' là true
-          var filteredData =
-              decodedData.where((item) => item['isKeHoach'] == true).toList();
+          var filteredData = decodedData.where((item) => item['isKeHoach'] == true).toList();
           print("dayaaaa:$filteredData");
 
           if (filteredData.isNotEmpty) {
-            _cx = (filteredData as List)
-                .map((item) => DS_ChoXuatModel.fromJson(item))
-                .toList();
+            _cx = (filteredData as List).map((item) => DS_ChoXuatModel.fromJson(item)).toList();
             print("Updated _cx: $_cx");
 
             setState(() {
@@ -210,7 +191,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
             ),
             Table(
               border: TableBorder.all(),
-              columnWidths: {
+              columnWidths: const {
                 0: FlexColumnWidth(0.3),
                 1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
@@ -224,24 +205,20 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                   children: [
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Đơn vị vận chuyển',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Đơn vị vận chuyển', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Phương thức',
-                          textColor: Colors.white),
+                      child: _buildTableCell('Phương thức', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Số Khung', textColor: Colors.white),
+                      child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child:
-                          _buildTableCell('Loại Xe', textColor: Colors.white),
+                      child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -260,12 +237,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
               ],
             ),
             Container(
-              height:
-                  MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
+              height: MediaQuery.of(context).size.height * 0.7, // Chiều cao cố định
               child: SingleChildScrollView(
                 child: Table(
                   border: TableBorder.all(),
-                  columnWidths: {
+                  columnWidths: const {
                     0: FlexColumnWidth(0.3),
                     1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
@@ -367,21 +343,15 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const Divider(
-                                    height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
                                   margin: EdgeInsets.all(10),
                                   child: Column(
                                     children: [
                                       Container(
-                                        height:
-                                            MediaQuery.of(context).size.height <
-                                                    600
-                                                ? 10.h
-                                                : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                          borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
                                             color: const Color(0xFF818180),
                                             width: 1,
@@ -400,11 +370,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                   ),
                                                 ),
                                               ),
-                                              child: Center(
+                                              child: const Center(
                                                 child: Text(
                                                   "Bãi Xe",
                                                   textAlign: TextAlign.left,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
@@ -416,51 +386,25 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                             Expanded(
                                               flex: 1,
                                               child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      top:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .height <
-                                                                  600
-                                                              ? 0
-                                                              : 5),
-                                                  child:
-                                                      DropdownButtonHideUnderline(
-                                                    child:
-                                                        DropdownButton2<String>(
+                                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
                                                       isExpanded: true,
-                                                      items: _baixeList
-                                                          ?.map((item) {
-                                                        return DropdownMenuItem<
-                                                            String>(
+                                                      items: _baixeList?.map((item) {
+                                                        return DropdownMenuItem<String>(
                                                           value: item.id,
                                                           child: Container(
-                                                            constraints: BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.9),
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              scrollDirection:
-                                                                  Axis.horizontal,
+                                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                            child: SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
                                                               child: Text(
-                                                                item.tenBaiXe ??
-                                                                    "",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontFamily:
-                                                                      'Comfortaa',
+                                                                item.tenBaiXe ?? "",
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontFamily: 'Comfortaa',
                                                                   fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: AppConfig
-                                                                      .textInput,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppConfig.textInput,
                                                                 ),
                                                               ),
                                                             ),
@@ -475,50 +419,30 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat(
-                                                                '',
-                                                                doiTac_Id ?? "",
-                                                                phuongThuc_Id ??
-                                                                    "");
+                                                            getDSXChoXuat('', doiTac_Id ?? "", phuongThuc_Id ?? "");
                                                           } else {
-                                                            getDSXChoXuat(
-                                                                newValue,
-                                                                doiTac_Id ?? "",
-                                                                phuongThuc_Id ??
-                                                                    "");
-                                                            print(
-                                                                "object : ${id}");
+                                                            getDSXChoXuat(newValue, doiTac_Id ?? "", phuongThuc_Id ?? "");
+                                                            print("object : ${id}");
                                                           }
                                                         }
                                                       },
-                                                      buttonStyleData:
-                                                          const ButtonStyleData(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
+                                                      buttonStyleData: const ButtonStyleData(
+                                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                                         height: 40,
                                                         width: 200,
                                                       ),
-                                                      dropdownStyleData:
-                                                          const DropdownStyleData(
+                                                      dropdownStyleData: const DropdownStyleData(
                                                         maxHeight: 200,
                                                       ),
-                                                      menuItemStyleData:
-                                                          const MenuItemStyleData(
+                                                      menuItemStyleData: const MenuItemStyleData(
                                                         height: 40,
                                                       ),
-                                                      dropdownSearchData:
-                                                          DropdownSearchData(
-                                                        searchController:
-                                                            textEditingController,
-                                                        searchInnerWidgetHeight:
-                                                            50,
-                                                        searchInnerWidget:
-                                                            Container(
+                                                      dropdownSearchData: DropdownSearchData(
+                                                        searchController: textEditingController,
+                                                        searchInnerWidgetHeight: 50,
+                                                        searchInnerWidget: Container(
                                                           height: 50,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
+                                                          padding: const EdgeInsets.only(
                                                             top: 8,
                                                             bottom: 4,
                                                             right: 8,
@@ -527,61 +451,35 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                           child: TextFormField(
                                                             expands: true,
                                                             maxLines: null,
-                                                            controller:
-                                                                textEditingController,
-                                                            decoration:
-                                                                InputDecoration(
+                                                            controller: textEditingController,
+                                                            decoration: InputDecoration(
                                                               isDense: true,
-                                                              contentPadding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
+                                                              contentPadding: const EdgeInsets.symmetric(
                                                                 horizontal: 10,
                                                                 vertical: 8,
                                                               ),
-                                                              hintText:
-                                                                  'Tìm bãi xe',
-                                                              hintStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          12),
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                              hintText: 'Tìm bãi xe',
+                                                              hintStyle: const TextStyle(fontSize: 12),
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(8),
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-                                                        searchMatchFn: (item,
-                                                            searchValue) {
-                                                          if (item
-                                                              is DropdownMenuItem<
-                                                                  String>) {
+                                                        searchMatchFn: (item, searchValue) {
+                                                          if (item is DropdownMenuItem<String>) {
                                                             // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                            String itemId =
-                                                                item.value ??
-                                                                    "";
+                                                            String itemId = item.value ?? "";
                                                             // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                            return _baixeList?.any((baiXe) =>
-                                                                    baiXe.id ==
-                                                                        itemId &&
-                                                                    baiXe.tenBaiXe
-                                                                            ?.toLowerCase()
-                                                                            .contains(searchValue.toLowerCase()) ==
-                                                                        true) ??
-                                                                false;
+                                                            return _baixeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenBaiXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                           } else {
                                                             return false;
                                                           }
                                                         },
                                                       ),
-                                                      onMenuStateChange:
-                                                          (isOpen) {
+                                                      onMenuStateChange: (isOpen) {
                                                         if (!isOpen) {
-                                                          textEditingController
-                                                              .clear();
+                                                          textEditingController.clear();
                                                         }
                                                       },
                                                     ),
@@ -594,14 +492,9 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                         height: 5,
                                       ),
                                       Container(
-                                        height:
-                                            MediaQuery.of(context).size.height <
-                                                    600
-                                                ? 10.h
-                                                : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                          borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
                                             color: const Color(0xFF818180),
                                             width: 1,
@@ -620,11 +513,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                   ),
                                                 ),
                                               ),
-                                              child: Center(
+                                              child: const Center(
                                                 child: Text(
                                                   "Đơn vị vận chuyển ",
                                                   textAlign: TextAlign.left,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
@@ -636,51 +529,25 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                             Expanded(
                                               flex: 1,
                                               child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      top:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .height <
-                                                                  600
-                                                              ? 0
-                                                              : 5),
-                                                  child:
-                                                      DropdownButtonHideUnderline(
-                                                    child:
-                                                        DropdownButton2<String>(
+                                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
                                                       isExpanded: true,
-                                                      items: _doitacList
-                                                          ?.map((item) {
-                                                        return DropdownMenuItem<
-                                                            String>(
+                                                      items: _doitacList?.map((item) {
+                                                        return DropdownMenuItem<String>(
                                                           value: item.id,
                                                           child: Container(
-                                                            constraints: BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.9),
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              scrollDirection:
-                                                                  Axis.horizontal,
+                                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                            child: SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
                                                               child: Text(
-                                                                item.tenDoiTac ??
-                                                                    "",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontFamily:
-                                                                      'Comfortaa',
+                                                                item.tenDoiTac ?? "",
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontFamily: 'Comfortaa',
                                                                   fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: AppConfig
-                                                                      .textInput,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppConfig.textInput,
                                                                 ),
                                                               ),
                                                             ),
@@ -694,50 +561,30 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat(
-                                                                id ?? "",
-                                                                '',
-                                                                phuongThuc_Id ??
-                                                                    "");
+                                                            getDSXChoXuat(id ?? "", '', phuongThuc_Id ?? "");
                                                           } else {
-                                                            getDSXChoXuat(
-                                                                id ?? "",
-                                                                newValue,
-                                                                phuongThuc_Id ??
-                                                                    "");
-                                                            print(
-                                                                "object : ${doiTac_Id}");
+                                                            getDSXChoXuat(id ?? "", newValue, phuongThuc_Id ?? "");
+                                                            print("object : ${doiTac_Id}");
                                                           }
                                                         }
                                                       },
-                                                      buttonStyleData:
-                                                          const ButtonStyleData(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
+                                                      buttonStyleData: const ButtonStyleData(
+                                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                                         height: 40,
                                                         width: 200,
                                                       ),
-                                                      dropdownStyleData:
-                                                          const DropdownStyleData(
+                                                      dropdownStyleData: const DropdownStyleData(
                                                         maxHeight: 200,
                                                       ),
-                                                      menuItemStyleData:
-                                                          const MenuItemStyleData(
+                                                      menuItemStyleData: const MenuItemStyleData(
                                                         height: 40,
                                                       ),
-                                                      dropdownSearchData:
-                                                          DropdownSearchData(
-                                                        searchController:
-                                                            textEditingController,
-                                                        searchInnerWidgetHeight:
-                                                            50,
-                                                        searchInnerWidget:
-                                                            Container(
+                                                      dropdownSearchData: DropdownSearchData(
+                                                        searchController: textEditingController,
+                                                        searchInnerWidgetHeight: 50,
+                                                        searchInnerWidget: Container(
                                                           height: 50,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
+                                                          padding: const EdgeInsets.only(
                                                             top: 8,
                                                             bottom: 4,
                                                             right: 8,
@@ -746,61 +593,35 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                           child: TextFormField(
                                                             expands: true,
                                                             maxLines: null,
-                                                            controller:
-                                                                textEditingController,
-                                                            decoration:
-                                                                InputDecoration(
+                                                            controller: textEditingController,
+                                                            decoration: InputDecoration(
                                                               isDense: true,
-                                                              contentPadding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
+                                                              contentPadding: const EdgeInsets.symmetric(
                                                                 horizontal: 10,
                                                                 vertical: 8,
                                                               ),
-                                                              hintText:
-                                                                  'Tìm đơn vị',
-                                                              hintStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          12),
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                              hintText: 'Tìm đơn vị',
+                                                              hintStyle: const TextStyle(fontSize: 12),
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(8),
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-                                                        searchMatchFn: (item,
-                                                            searchValue) {
-                                                          if (item
-                                                              is DropdownMenuItem<
-                                                                  String>) {
+                                                        searchMatchFn: (item, searchValue) {
+                                                          if (item is DropdownMenuItem<String>) {
                                                             // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                            String itemId =
-                                                                item.value ??
-                                                                    "";
+                                                            String itemId = item.value ?? "";
                                                             // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                            return _doitacList?.any((baiXe) =>
-                                                                    baiXe.id ==
-                                                                        itemId &&
-                                                                    baiXe.tenDoiTac
-                                                                            ?.toLowerCase()
-                                                                            .contains(searchValue.toLowerCase()) ==
-                                                                        true) ??
-                                                                false;
+                                                            return _doitacList?.any((baiXe) => baiXe.id == itemId && baiXe.tenDoiTac?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                           } else {
                                                             return false;
                                                           }
                                                         },
                                                       ),
-                                                      onMenuStateChange:
-                                                          (isOpen) {
+                                                      onMenuStateChange: (isOpen) {
                                                         if (!isOpen) {
-                                                          textEditingController
-                                                              .clear();
+                                                          textEditingController.clear();
                                                         }
                                                       },
                                                     ),
@@ -813,14 +634,9 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                         height: 5,
                                       ),
                                       Container(
-                                        height:
-                                            MediaQuery.of(context).size.height <
-                                                    600
-                                                ? 10.h
-                                                : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
+                                          borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
                                             color: const Color(0xFF818180),
                                             width: 1,
@@ -839,11 +655,11 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                   ),
                                                 ),
                                               ),
-                                              child: Center(
+                                              child: const Center(
                                                 child: Text(
                                                   "Phương thức ",
                                                   textAlign: TextAlign.left,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily: 'Comfortaa',
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w400,
@@ -855,51 +671,25 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                             Expanded(
                                               flex: 1,
                                               child: Container(
-                                                  padding: EdgeInsets.only(
-                                                      top:
-                                                          MediaQuery.of(context)
-                                                                      .size
-                                                                      .height <
-                                                                  600
-                                                              ? 0
-                                                              : 5),
-                                                  child:
-                                                      DropdownButtonHideUnderline(
-                                                    child:
-                                                        DropdownButton2<String>(
+                                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
                                                       isExpanded: true,
-                                                      items: _ptvcList
-                                                          ?.map((item) {
-                                                        return DropdownMenuItem<
-                                                            String>(
+                                                      items: _ptvcList?.map((item) {
+                                                        return DropdownMenuItem<String>(
                                                           value: item.id,
                                                           child: Container(
-                                                            constraints: BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.9),
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              scrollDirection:
-                                                                  Axis.horizontal,
+                                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                            child: SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
                                                               child: Text(
-                                                                item.tenPhuongThucVanChuyen ??
-                                                                    "",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontFamily:
-                                                                      'Comfortaa',
+                                                                item.tenPhuongThucVanChuyen ?? "",
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontFamily: 'Comfortaa',
                                                                   fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  color: AppConfig
-                                                                      .textInput,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppConfig.textInput,
                                                                 ),
                                                               ),
                                                             ),
@@ -909,53 +699,34 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                       value: phuongThuc_Id,
                                                       onChanged: (newValue) {
                                                         setState(() {
-                                                          phuongThuc_Id =
-                                                              newValue;
+                                                          phuongThuc_Id = newValue;
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat(
-                                                                id ?? "",
-                                                                doiTac_Id ?? "",
-                                                                '');
+                                                            getDSXChoXuat(id ?? "", doiTac_Id ?? "", '');
                                                           } else {
-                                                            getDSXChoXuat(
-                                                                id ?? "",
-                                                                doiTac_Id ?? "",
-                                                                newValue);
-                                                            print(
-                                                                "object : ${phuongThuc_Id}");
+                                                            getDSXChoXuat(id ?? "", doiTac_Id ?? "", newValue);
+                                                            print("object : ${phuongThuc_Id}");
                                                           }
                                                         }
                                                       },
-                                                      buttonStyleData:
-                                                          const ButtonStyleData(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 16),
+                                                      buttonStyleData: const ButtonStyleData(
+                                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                                         height: 40,
                                                         width: 200,
                                                       ),
-                                                      dropdownStyleData:
-                                                          const DropdownStyleData(
+                                                      dropdownStyleData: const DropdownStyleData(
                                                         maxHeight: 200,
                                                       ),
-                                                      menuItemStyleData:
-                                                          const MenuItemStyleData(
+                                                      menuItemStyleData: const MenuItemStyleData(
                                                         height: 40,
                                                       ),
-                                                      dropdownSearchData:
-                                                          DropdownSearchData(
-                                                        searchController:
-                                                            textEditingController,
-                                                        searchInnerWidgetHeight:
-                                                            50,
-                                                        searchInnerWidget:
-                                                            Container(
+                                                      dropdownSearchData: DropdownSearchData(
+                                                        searchController: textEditingController,
+                                                        searchInnerWidgetHeight: 50,
+                                                        searchInnerWidget: Container(
                                                           height: 50,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
+                                                          padding: const EdgeInsets.only(
                                                             top: 8,
                                                             bottom: 4,
                                                             right: 8,
@@ -964,61 +735,35 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                                           child: TextFormField(
                                                             expands: true,
                                                             maxLines: null,
-                                                            controller:
-                                                                textEditingController,
-                                                            decoration:
-                                                                InputDecoration(
+                                                            controller: textEditingController,
+                                                            decoration: InputDecoration(
                                                               isDense: true,
-                                                              contentPadding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
+                                                              contentPadding: const EdgeInsets.symmetric(
                                                                 horizontal: 10,
                                                                 vertical: 8,
                                                               ),
-                                                              hintText:
-                                                                  'Tìm đơn vị',
-                                                              hintStyle:
-                                                                  const TextStyle(
-                                                                      fontSize:
-                                                                          12),
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
+                                                              hintText: 'Tìm đơn vị',
+                                                              hintStyle: const TextStyle(fontSize: 12),
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(8),
                                                               ),
                                                             ),
                                                           ),
                                                         ),
-                                                        searchMatchFn: (item,
-                                                            searchValue) {
-                                                          if (item
-                                                              is DropdownMenuItem<
-                                                                  String>) {
+                                                        searchMatchFn: (item, searchValue) {
+                                                          if (item is DropdownMenuItem<String>) {
                                                             // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                            String itemId =
-                                                                item.value ??
-                                                                    "";
+                                                            String itemId = item.value ?? "";
                                                             // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                            return _ptvcList?.any((baiXe) =>
-                                                                    baiXe.id ==
-                                                                        itemId &&
-                                                                    baiXe.tenPhuongThucVanChuyen
-                                                                            ?.toLowerCase()
-                                                                            .contains(searchValue.toLowerCase()) ==
-                                                                        true) ??
-                                                                false;
+                                                            return _ptvcList?.any((baiXe) => baiXe.id == itemId && baiXe.tenPhuongThucVanChuyen?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                           } else {
                                                             return false;
                                                           }
                                                         },
                                                       ),
-                                                      onMenuStateChange:
-                                                          (isOpen) {
+                                                      onMenuStateChange: (isOpen) {
                                                         if (!isOpen) {
-                                                          textEditingController
-                                                              .clear();
+                                                          textEditingController.clear();
                                                         }
                                                       },
                                                     ),
@@ -1027,19 +772,17 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat>
                                           ],
                                         ),
                                       ),
-                                      const Divider(
-                                          height: 1, color: Color(0xFFCCCCCC)),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       Container(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(
                                               height: 4,
                                             ),
                                             Text(
                                               'Tổng số xe: ${_cx?.length.toString() ?? ''}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,

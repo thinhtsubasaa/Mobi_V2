@@ -43,8 +43,7 @@ class BodyQLKhoXeScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -223,8 +222,7 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen>
                         _handleButtonTap(QLDongContPage());
                       },
                     ),
-                  if (userHasPermission(
-                      menuRoles, 'tracking-xe-thanh-pham-mobi'))
+                  if (userHasPermission(menuRoles, 'tracking-xe-thanh-pham-mobi'))
                     CustomButton(
                       'TRACKING XE THÀNH PHẨM',
                       Stack(

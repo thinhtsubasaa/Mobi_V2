@@ -12,8 +12,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 
 import '../../blocs/dongseal_bloc.dart';
 import '../../config/config.dart';
@@ -39,8 +38,7 @@ class BodyBaiXeScreen extends StatefulWidget {
   _BodyBaiXeScreenState createState() => _BodyBaiXeScreenState();
 }
 
-class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
   String _qrData = '';
   String? SoContId;
@@ -56,8 +54,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   List<DS_DongContModel>? get dsdongcont => _dsdongcontList;
 
   List<DanhSachPhuongTienModel>? _danhsachphuongtientauList;
-  List<DanhSachPhuongTienModel>? get danhsachphuongtientauList =>
-      _danhsachphuongtientauList;
+  List<DanhSachPhuongTienModel>? get danhsachphuongtientauList => _danhsachphuongtientauList;
 
   DongSealModel? _data;
   bool _loading = false;
@@ -77,8 +74,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
   late DongSealBloc _bl;
   Map<String, String> _soContIdMap = {};
 
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final TextEditingController textEditingController = TextEditingController();
 
   @override
@@ -99,8 +95,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     // Kiểm tra quyền truy cập vị trí
     LocationPermission permission = await Geolocator.checkPermission();
     // Nếu chưa có quyền, yêu cầu quyền truy cập vị trí
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       // Yêu cầu quyền truy cập vị trí
       await Geolocator.requestPermission();
     }
@@ -108,14 +103,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   void getSoCont() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DM_DongCont/GetListContMobi');
+      final http.Response response = await requestHelper.getData('DM_DongCont/GetListContMobi');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _dsxdongcontList = (decodedData as List)
-            .map((item) => DSX_DongContModel.fromJson(item))
-            .toList();
+        _dsxdongcontList = (decodedData as List).map((item) => DSX_DongContModel.fromJson(item)).toList();
 
         setState(() {
           _loading = false;
@@ -129,13 +121,10 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   void getDongCont(String SoContId) async {
     try {
-      final http.Response response =
-          await requestHelper.getData('DSX_DongCont/Mobi?SoCont_Id=$SoContId');
+      final http.Response response = await requestHelper.getData('DSX_DongCont/Mobi?SoCont_Id=$SoContId');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
-        _dsdongcontList = (decodedData as List)
-            .map((item) => DS_DongContModel.fromJson(item))
-            .toList();
+        _dsdongcontList = (decodedData as List).map((item) => DS_DongContModel.fromJson(item)).toList();
 
         setState(() {
           _loading = false;
@@ -149,14 +138,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
 
   void getDanhSachPhuongTienTauList() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('TMS_DanhSachPhuongTien/Tau');
+      final http.Response response = await requestHelper.getData('TMS_DanhSachPhuongTien/Tau');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _danhsachphuongtientauList = (decodedData as List)
-            .map((item) => DanhSachPhuongTienModel.fromJson(item))
-            .toList();
+        _danhsachphuongtientauList = (decodedData as List).map((item) => DanhSachPhuongTienModel.fromJson(item)).toList();
 
         setState(() {
           _loading = false;
@@ -168,14 +154,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     }
   }
 
-  Future<void> postData(
-      String soSeal, String viTri, String soCont, String TauId) async {
+  Future<void> postData(String soSeal, String viTri, String soCont, String TauId) async {
     _isLoading = true;
 
     try {
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/DongSeal?SoSeal=$soSeal&ViTri=$viTri&SoCont=$soCont&TauId=$TauId',
-          _data?.toJson());
+      final http.Response response = await requestHelper.postData('KhoThanhPham/DongSeal?SoSeal=$soSeal&ViTri=$viTri&SoCont=$soCont&TauId=$TauId', _data?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -244,8 +227,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(_soSeal.text, viTri ?? "", soCont ?? "", TauId ?? "")
-              .then((_) {
+          postData(_soSeal.text, viTri ?? "", soCont ?? "", TauId ?? "").then((_) {
             setState(() {
               soCont = null;
               _soSeal.text = '';
@@ -385,8 +367,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
     getSoCont();
     getDanhSachPhuongTienTauList();
     _dsxdongcontList?.forEach((item) {
-      _soContIdMap[item.soCont ?? ""] =
-          item.id ?? ""; // Thêm cặp giá trị vào Map
+      _soContIdMap[item.soCont ?? ""] = item.id ?? ""; // Thêm cặp giá trị vào Map
     });
 
     return Container(
@@ -411,8 +392,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     'Thông Tin Xác Nhận',
@@ -437,10 +417,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    height:
-                                        MediaQuery.of(context).size.height < 600
-                                            ? 10.h
-                                            : 7.h,
+                                    height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
@@ -461,11 +438,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                               ),
                                             ),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               "Số Cont",
                                               textAlign: TextAlign.left,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w400,
@@ -477,52 +454,28 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         Expanded(
                                             flex: 1,
                                             child: Container(
-                                                padding: EdgeInsets.only(
-                                                    top: MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            600
-                                                        ? 0
-                                                        : 5),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child:
-                                                      DropdownButton2<String>(
+                                                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2<String>(
                                                     isExpanded: true,
                                                     // items: _dsxdongcontList
                                                     //     ?.map((item) {
 
-                                                    items: _soContIdMap.keys
-                                                        .map((String soCont) {
-                                                      return DropdownMenuItem<
-                                                          String>(
+                                                    items: _soContIdMap.keys.map((String soCont) {
+                                                      return DropdownMenuItem<String>(
                                                         value: soCont,
                                                         child: Container(
-                                                          constraints: BoxConstraints(
-                                                              maxWidth: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.9),
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
+                                                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                          child: SingleChildScrollView(
+                                                            scrollDirection: Axis.horizontal,
                                                             child: Text(
                                                               soCont ?? "",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontFamily:
-                                                                    'Comfortaa',
+                                                              textAlign: TextAlign.center,
+                                                              style: const TextStyle(
+                                                                fontFamily: 'Comfortaa',
                                                                 fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: AppConfig
-                                                                    .textInput,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: AppConfig.textInput,
                                                               ),
                                                             ),
                                                           ),
@@ -533,44 +486,30 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                     onChanged: (newValue) {
                                                       setState(() {
                                                         soCont = newValue;
-                                                        SoContId = _soContIdMap[
-                                                            newValue];
+                                                        SoContId = _soContIdMap[newValue];
                                                       });
                                                       if (newValue != null) {
-                                                        getDongCont(
-                                                            SoContId ?? "");
-                                                        print(
-                                                            "object : ${SoContId}");
+                                                        getDongCont(SoContId ?? "");
+                                                        print("object : ${SoContId}");
                                                       }
                                                     },
-                                                    buttonStyleData:
-                                                        const ButtonStyleData(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
+                                                    buttonStyleData: const ButtonStyleData(
+                                                      padding: EdgeInsets.symmetric(horizontal: 16),
                                                       height: 40,
                                                       width: 200,
                                                     ),
-                                                    dropdownStyleData:
-                                                        const DropdownStyleData(
+                                                    dropdownStyleData: const DropdownStyleData(
                                                       maxHeight: 200,
                                                     ),
-                                                    menuItemStyleData:
-                                                        const MenuItemStyleData(
+                                                    menuItemStyleData: const MenuItemStyleData(
                                                       height: 40,
                                                     ),
-                                                    dropdownSearchData:
-                                                        DropdownSearchData(
-                                                      searchController:
-                                                          textEditingController,
-                                                      searchInnerWidgetHeight:
-                                                          50,
-                                                      searchInnerWidget:
-                                                          Container(
+                                                    dropdownSearchData: DropdownSearchData(
+                                                      searchController: textEditingController,
+                                                      searchInnerWidgetHeight: 50,
+                                                      searchInnerWidget: Container(
                                                         height: 50,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
+                                                        padding: const EdgeInsets.only(
                                                           top: 8,
                                                           bottom: 4,
                                                           right: 8,
@@ -579,47 +518,28 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                         child: TextFormField(
                                                           expands: true,
                                                           maxLines: null,
-                                                          controller:
-                                                              textEditingController,
-                                                          decoration:
-                                                              InputDecoration(
+                                                          controller: textEditingController,
+                                                          decoration: InputDecoration(
                                                             isDense: true,
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
+                                                            contentPadding: const EdgeInsets.symmetric(
                                                               horizontal: 10,
                                                               vertical: 8,
                                                             ),
-                                                            hintText:
-                                                                'Tìm số cont',
-                                                            hintStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                            hintText: 'Tìm số cont',
+                                                            hintStyle: const TextStyle(fontSize: 12),
+                                                            border: OutlineInputBorder(
+                                                              borderRadius: BorderRadius.circular(8),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      searchMatchFn:
-                                                          (item, searchValue) {
-                                                        return item.value
-                                                            .toString()
-                                                            .toLowerCase()
-                                                            .contains(searchValue
-                                                                .toLowerCase());
+                                                      searchMatchFn: (item, searchValue) {
+                                                        return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
                                                       },
                                                     ),
-                                                    onMenuStateChange:
-                                                        (isOpen) {
+                                                    onMenuStateChange: (isOpen) {
                                                       if (!isOpen) {
-                                                        textEditingController
-                                                            .clear();
+                                                        textEditingController.clear();
                                                       }
                                                     },
                                                   ),
@@ -631,7 +551,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   MyInputWidget(
                                     title: 'Số Seal',
                                     controller: _soSeal,
-                                    textStyle: TextStyle(
+                                    textStyle: const TextStyle(
                                       fontFamily: 'Comfortaa',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w400,
@@ -640,10 +560,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                   ),
                                   SizedBox(height: 10),
                                   Container(
-                                    height:
-                                        MediaQuery.of(context).size.height < 600
-                                            ? 10.h
-                                            : 7.h,
+                                    height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
@@ -664,11 +581,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                               ),
                                             ),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               "Tàu",
                                               textAlign: TextAlign.left,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w400,
@@ -680,51 +597,25 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                         Expanded(
                                             flex: 1,
                                             child: Container(
-                                                padding: EdgeInsets.only(
-                                                    top: MediaQuery.of(context)
-                                                                .size
-                                                                .height <
-                                                            600
-                                                        ? 0
-                                                        : 5),
-                                                child:
-                                                    DropdownButtonHideUnderline(
-                                                  child:
-                                                      DropdownButton2<String>(
+                                                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                child: DropdownButtonHideUnderline(
+                                                  child: DropdownButton2<String>(
                                                     isExpanded: true,
-                                                    items:
-                                                        _danhsachphuongtientauList
-                                                            ?.map((item) {
-                                                      return DropdownMenuItem<
-                                                          String>(
+                                                    items: _danhsachphuongtientauList?.map((item) {
+                                                      return DropdownMenuItem<String>(
                                                         value: item.id,
                                                         child: Container(
-                                                          constraints: BoxConstraints(
-                                                              maxWidth: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.9),
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
+                                                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                          child: SingleChildScrollView(
+                                                            scrollDirection: Axis.horizontal,
                                                             child: Text(
-                                                              item.tenPhuongTien ??
-                                                                  "",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontFamily:
-                                                                    'Comfortaa',
+                                                              item.tenPhuongTien ?? "",
+                                                              textAlign: TextAlign.center,
+                                                              style: const TextStyle(
+                                                                fontFamily: 'Comfortaa',
                                                                 fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: AppConfig
-                                                                    .textInput,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: AppConfig.textInput,
                                                               ),
                                                             ),
                                                           ),
@@ -737,34 +628,23 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                         TauId = newValue;
                                                       });
                                                     },
-                                                    buttonStyleData:
-                                                        const ButtonStyleData(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 16),
+                                                    buttonStyleData: const ButtonStyleData(
+                                                      padding: EdgeInsets.symmetric(horizontal: 16),
                                                       height: 40,
                                                       width: 200,
                                                     ),
-                                                    dropdownStyleData:
-                                                        const DropdownStyleData(
+                                                    dropdownStyleData: const DropdownStyleData(
                                                       maxHeight: 200,
                                                     ),
-                                                    menuItemStyleData:
-                                                        const MenuItemStyleData(
+                                                    menuItemStyleData: const MenuItemStyleData(
                                                       height: 40,
                                                     ),
-                                                    dropdownSearchData:
-                                                        DropdownSearchData(
-                                                      searchController:
-                                                          textEditingController,
-                                                      searchInnerWidgetHeight:
-                                                          50,
-                                                      searchInnerWidget:
-                                                          Container(
+                                                    dropdownSearchData: DropdownSearchData(
+                                                      searchController: textEditingController,
+                                                      searchInnerWidgetHeight: 50,
+                                                      searchInnerWidget: Container(
                                                         height: 50,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
+                                                        padding: const EdgeInsets.only(
                                                           top: 8,
                                                           bottom: 4,
                                                           right: 8,
@@ -773,61 +653,35 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                                                         child: TextFormField(
                                                           expands: true,
                                                           maxLines: null,
-                                                          controller:
-                                                              textEditingController,
-                                                          decoration:
-                                                              InputDecoration(
+                                                          controller: textEditingController,
+                                                          decoration: InputDecoration(
                                                             isDense: true,
-                                                            contentPadding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
+                                                            contentPadding: const EdgeInsets.symmetric(
                                                               horizontal: 10,
                                                               vertical: 8,
                                                             ),
-                                                            hintText:
-                                                                'Tìm tên phương tiện',
-                                                            hintStyle:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
+                                                            hintText: 'Tìm tên phương tiện',
+                                                            hintStyle: const TextStyle(fontSize: 12),
+                                                            border: OutlineInputBorder(
+                                                              borderRadius: BorderRadius.circular(8),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      searchMatchFn:
-                                                          (item, searchValue) {
-                                                        if (item
-                                                            is DropdownMenuItem<
-                                                                String>) {
+                                                      searchMatchFn: (item, searchValue) {
+                                                        if (item is DropdownMenuItem<String>) {
                                                           // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                                          String itemId =
-                                                              item.value ?? "";
+                                                          String itemId = item.value ?? "";
                                                           // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                                          return _danhsachphuongtientauList?.any((ds) =>
-                                                                  ds.id ==
-                                                                      itemId &&
-                                                                  ds.tenPhuongTien
-                                                                          ?.toLowerCase()
-                                                                          .contains(
-                                                                              searchValue.toLowerCase()) ==
-                                                                      true) ??
-                                                              false;
+                                                          return _danhsachphuongtientauList?.any((ds) => ds.id == itemId && ds.tenPhuongTien?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
                                                         } else {
                                                           return false;
                                                         }
                                                       },
                                                     ),
-                                                    onMenuStateChange:
-                                                        (isOpen) {
+                                                    onMenuStateChange: (isOpen) {
                                                       if (!isOpen) {
-                                                        textEditingController
-                                                            .clear();
+                                                        textEditingController.clear();
                                                       }
                                                     },
                                                   ),
@@ -864,9 +718,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen>
                       fontSize: 16,
                     )),
                 controller: _btnController,
-                onPressed: soCont != null
-                    ? () => _showConfirmationDialog(context)
-                    : null,
+                onPressed: soCont != null ? () => _showConfirmationDialog(context) : null,
               ),
             ],
           ),

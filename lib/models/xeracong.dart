@@ -34,7 +34,9 @@ class XeRaCongModel {
   String? maPin;
   String? sdt;
   String? tencong;
+  String? lyDo;
   String? noiditaixe;
+  String? hinhAnh;
 
   XeRaCongModel(
       {this.key,
@@ -70,6 +72,8 @@ class XeRaCongModel {
       this.tenNhanVien,
       this.sdt,
       this.maPin,
+      this.lyDo,
+      this.hinhAnh,
       this.tencong,
       this.hinhAnhUrl,
       this.noiditaixe});
@@ -111,6 +115,8 @@ class XeRaCongModel {
         sdt: json["sdt"],
         maPin: json["maPin"],
         noiditaixe: json["noiditaixe"],
+        lyDo: json["lyDo"],
+        hinhAnh: json["hinhAnh"],
         tencong: json["tencong"]);
   }
   Map<String, dynamic> toJson() => {
@@ -146,7 +152,9 @@ class XeRaCongModel {
         "tenNhanVien": tenNhanVien,
         "sdt": sdt,
         "maPin": maPin,
+        "lyDo": lyDo,
         "tencong": tencong,
         "noiditaixe": noiditaixe,
+        "hinhAnh": hinhAnh,
       };
 }

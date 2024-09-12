@@ -66,10 +66,7 @@ class _SplashPageState extends State<SplashPage> {
           versionStatus: status,
           dialogTitle: "CẬP NHẬT",
           dismissButtonText: "Bỏ qua",
-          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
-              "${status.localVersion}" +
-              " lên " +
-              "${status.storeVersion}",
+          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
           dismissAction: () {
             SystemNavigator.pop();
           },

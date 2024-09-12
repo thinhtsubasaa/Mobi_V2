@@ -32,7 +32,7 @@ class XeRaCongBloc extends ChangeNotifier {
     _xeracong = null;
     try {
       final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetThongTinXeRaCong_Test?SoKhung=$qrcode');
+          .getData('KhoThanhPham/GetThongTinXeRaCong?SoKhung=$qrcode');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -75,6 +75,8 @@ class XeRaCongBloc extends ChangeNotifier {
             maPin: decodedData['maPin'],
             tencong: decodedData['tencong'],
             noiditaixe: decodedData['noiditaixe'],
+            lyDo: decodedData['lyDo'],
+            hinhAnh: decodedData['hinhAnh'],
           );
         }
       } else {

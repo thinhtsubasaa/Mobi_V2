@@ -30,13 +30,11 @@ class BodyNghiepVuChungScreen extends StatefulWidget {
   const BodyNghiepVuChungScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyNghiepVuChungScreenState createState() =>
-      _BodyNghiepVuChungScreenState();
+  _BodyNghiepVuChungScreenState createState() => _BodyNghiepVuChungScreenState();
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;

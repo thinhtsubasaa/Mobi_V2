@@ -35,8 +35,7 @@ class BodyQLDongContScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyQLDongContScreenState extends State<BodyQLDongContScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLDongContScreenState extends State<BodyQLDongContScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;

@@ -27,8 +27,7 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
       ),
       body: Container(
         decoration: BoxDecoration(
-          border: Border.all(
-              color: Colors.red, width: 14.0), // Viền đỏ với độ dày 3
+          border: Border.all(color: Colors.red, width: 14.0), // Viền đỏ với độ dày 3
           borderRadius: BorderRadius.circular(8.0),
           // Góc bo tròn (tuỳ chọn)
         ),
@@ -47,8 +46,7 @@ class _qrCodeState extends State<qrCode> with SingleTickerProviderStateMixin {
                   color: Color(0xFFA71C20), // Đổi màu của "mắt" QR code
                 ),
                 dataModuleStyle: const QrDataModuleStyle(
-                  dataModuleShape:
-                      QrDataModuleShape.square, // Hoặc QrDataModuleShape.circle
+                  dataModuleShape: QrDataModuleShape.square, // Hoặc QrDataModuleShape.circle
                   color: Color(0xFFA71C20), // Đổi màu của các ô dữ liệu nhỏ
                 ),
               ),

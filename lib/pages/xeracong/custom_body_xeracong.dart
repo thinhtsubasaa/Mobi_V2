@@ -18,8 +18,7 @@ import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart'
-    as GeoLocationAccuracy;
+import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -51,8 +50,7 @@ class BodyXeRaCongScreen extends StatefulWidget {
   _BodyXeRaCongScreenState createState() => _BodyXeRaCongScreenState();
 }
 
-class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
-    with SingleTickerProviderStateMixin, ChangeNotifier {
+class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTickerProviderStateMixin, ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   String? lat;
@@ -81,8 +79,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
   String? get message => _message;
   bool _hasError = false;
   bool get hasError => _hasError;
-  final RoundedLoadingButtonController _btnController =
-      RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final TextEditingController _ghiChu = TextEditingController();
   final TextEditingController _noiden = TextEditingController();
   final TextEditingController _lido = TextEditingController();
@@ -215,8 +212,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
       isRemoved = true;
     } else {
       // find in list don't have isRemoved = false and have isRemoved = true
-      var tmp = _lstFiles.firstWhere((file) => file!.isRemoved == false,
-          orElse: () => null);
+      var tmp = _lstFiles.firstWhere((file) => file!.isRemoved == false, orElse: () => null);
       if (tmp == null) {
         isRemoved = true;
       }
@@ -226,14 +222,11 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
 
   Future<void> getData() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('KhoThanhPham/GetListNoiDen');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetListNoiDen');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _noidenList = (decodedData as List)
-            .map((item) => NoiDenModel.fromJson(item))
-            .toList();
+        _noidenList = (decodedData as List).map((item) => NoiDenModel.fromJson(item)).toList();
         _noidenList?.insert(0, NoiDenModel(id: '', noiDen: 'Thêm mới'));
 
         // Gọi setState để cập nhật giao diện
@@ -250,15 +243,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
 
   Future<void> getDataLyDo() async {
     try {
-      final http.Response response =
-          await requestHelper.getData('KhoThanhPham/GetListLyDo');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetListLyDo');
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _lydoList = (decodedData as List)
-            .map((item) => LyDoModel.fromJson(item))
-            .toList();
+        _lydoList = (decodedData as List).map((item) => LyDoModel.fromJson(item)).toList();
         _lydoList?.insert(0, LyDoModel(id: '', lyDo: 'Nhập lý do'));
 
         // Gọi setState để cập nhật giao diện
@@ -282,26 +272,15 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     super.dispose();
   }
 
-  Future<void> postData(
-      XeRaCongModel scanData,
-      String? nhanvien,
-      String? noiDi,
-      String? noiDen,
-      String? ghiChu,
-      String? maPin,
-      String? liDo,
-      String? file,
-      String? hinhAnh) async {
+  Future<void> postData(XeRaCongModel scanData, String? nhanvien, String? noiDi, String? noiDen, String? ghiChu, String? maPin, String? liDo, String? file, String? hinhAnh) async {
     _isLoading = true;
 
     try {
       var newScanData = scanData;
-      newScanData.soKhung =
-          newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      newScanData.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh',
-          newScanData.toJson());
+      final http.Response response =
+          await requestHelper.postData('KhoThanhPham/XeRaCong?MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -333,7 +312,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           barcodeScanResult = null;
           _ghiChu.text = "";
           _textController.text = "";
-
+          _noiden.text = 'Thêm mới';
+          _lido.text = 'Nhập lý do';
           _qrData = '';
           _qrDataController.text = '';
           _lstFiles.clear();
@@ -525,9 +505,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           path: response["path"],
         ));
         fileItem.uploaded = true;
-        setState(() {
-          _loading = false;
-        });
+        // setState(() {
+        //   _loading = false;
+        // });
 
         fileItem.uploaded = true; // Đánh dấu file đã được upload
 
@@ -569,11 +549,17 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
     _data?.maPin = _textController.text;
     _data?.tencong = _bl.xeracong?.tencong;
     _data?.noiditaixe = _bl.xeracong?.noiditaixe;
+    if (_noiden.text == 'Thêm mới') {
+      _noiden.text = '';
+    }
 
+    if (_lido.text == 'Nhập lý do') {
+      _lido.text = '';
+    }
     _data?.hinhAnh = imageUrlsString;
 
     print("MaNhanVien: ${_data?.maNhanVien}");
-    print("url: ${_data?.hinhAnh}");
+    print("noiden: ${_noiden.text}");
 
     AppService().checkInternet().then((hasInternet) {
       if (!hasInternet!) {
@@ -587,17 +573,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(
-                _data!,
-                _data?.maNhanVien ?? "",
-                _data?.tencong ?? "",
-                _data?.noiden ?? _noiden.text,
-                _ghiChu.text,
-                _textController.text,
-                _lido.text ?? "",
-                _data?.hinhAnh ?? "",
-                _data?.hinhAnhUrl ?? "")
-            .then((_) {
+        postData(_data!, _data?.maNhanVien ?? "", _data?.tencong ?? "", _data?.noiden ?? _noiden.text, _ghiChu.text, _textController.text, _lido.text, _data?.hinhAnh ?? "", _data?.hinhAnhUrl ?? "").then((_) {
           print("loading: ${_loading}");
           setState(() {
             // _data = null;
@@ -608,6 +584,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
             // _qrData = '';
             // _qrDataController.text = '';
             _loading = false;
+            _noiden.text = 'Thêm mới';
+            _lido.text = 'Nhập lý do';
             // _Isred = false;
             // _Iskehoach = false;
           });
@@ -646,7 +624,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                       SizedBox(height: 10),
                       Container(
                         width: 100.w,
-                        height: 7.h,
+                        height: 8.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
@@ -673,7 +651,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                   textAlign: TextAlign.left,
                                   style: const TextStyle(
                                     fontFamily: 'Comfortaa',
-                                    fontSize: 10,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                     color: AppConfig.textInput,
                                   ),
@@ -683,11 +661,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             Expanded(
                               flex: 1,
                               child: Container(
-                                  padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height <
-                                              600
-                                          ? 0
-                                          : 5),
+                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
@@ -695,11 +669,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                         return DropdownMenuItem<String>(
                                           value: item.lyDo ?? "",
                                           child: Container(
-                                            constraints: BoxConstraints(
-                                                maxWidth: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.9),
+                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
                                             child: SingleChildScrollView(
                                               scrollDirection: Axis.horizontal,
                                               child: Text(
@@ -727,17 +697,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                         }
                                       },
                                       buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 16),
+                                        padding: EdgeInsets.symmetric(horizontal: 16),
                                         height: 40,
                                         width: 200,
                                       ),
-                                      dropdownStyleData:
-                                          const DropdownStyleData(
+                                      dropdownStyleData: const DropdownStyleData(
                                         maxHeight: 200,
                                       ),
-                                      menuItemStyleData:
-                                          const MenuItemStyleData(
+                                      menuItemStyleData: const MenuItemStyleData(
                                         height: 40,
                                       ),
                                       dropdownSearchData: DropdownSearchData(
@@ -757,27 +724,20 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                             controller: textEditingController,
                                             decoration: InputDecoration(
                                               isDense: true,
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
+                                              contentPadding: const EdgeInsets.symmetric(
                                                 horizontal: 10,
                                                 vertical: 8,
                                               ),
                                               hintText: 'Tìm lý do',
-                                              hintStyle:
-                                                  const TextStyle(fontSize: 10),
+                                              hintStyle: const TextStyle(fontSize: 10),
                                               border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                                borderRadius: BorderRadius.circular(8),
                                               ),
                                             ),
                                           ),
                                         ),
                                         searchMatchFn: (item, searchValue) {
-                                          return item.value
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains(
-                                                  searchValue.toLowerCase());
+                                          return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
                                         },
                                       ),
                                       onMenuStateChange: (isOpen) {
@@ -856,9 +816,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            onPressed: _textController.text.isNotEmpty
-                                ? () => _showConfirmationDialogMaPin(context)
-                                : null,
+                            onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
                             child: Text(
                               'Đồng ý',
                               style: TextStyle(
@@ -933,9 +891,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             ),
                             onPressed: () {
                               setState(() {
-                                _noiden.text = (_noidenList!.isNotEmpty
-                                    ? _noidenList!.first.noiDen
-                                    : '')!; // Đảm bảo giá trị hợp lệ
+                                _noiden.text = (_noidenList!.isNotEmpty ? _noidenList!.first.noiDen : '')!; // Đảm bảo giá trị hợp lệ
                               });
                               Navigator.of(context).pop();
                               _btnController.reset();
@@ -957,10 +913,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             onPressed: () {
                               setState(() {
                                 String newValue = _noiden.text;
-                                if (_noidenList != null &&
-                                    newValue.isNotEmpty) {
-                                  _noidenList!
-                                      .add(NoiDenModel(noiDen: newValue));
+                                if (_noidenList != null && newValue.isNotEmpty) {
+                                  _noidenList!.add(NoiDenModel(noiDen: newValue));
                                   _noiden.text = newValue;
                                 }
                               });
@@ -986,12 +940,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           );
         }).then((_) {
       // Kiểm tra xem _selectedValue có còn hợp lệ không
-      if (_noiden.text != '' &&
-          !_noidenList!.any((item) => item.noiDen == _noiden.text)) {
+      if (_noiden.text != '' && !_noidenList!.any((item) => item.noiDen == _noiden.text)) {
         setState(() {
-          _noiden.text = (_noidenList!.isNotEmpty
-              ? _noidenList!.first.noiDen
-              : '')!; // Hoặc đặt về giá trị mặc định
+          _noiden.text = (_noidenList!.isNotEmpty ? _noidenList!.first.noiDen : '')!; // Hoặc đặt về giá trị mặc định
         });
       }
     });
@@ -1044,9 +995,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             ),
                             onPressed: () {
                               setState(() {
-                                _lido.text = (_lydoList!.isNotEmpty
-                                    ? _lydoList!.first.lyDo
-                                    : '')!; // Đảm bảo giá trị hợp lệ
+                                _lido.text = (_lydoList!.isNotEmpty ? _lydoList!.first.lyDo : '')!; // Đảm bảo giá trị hợp lệ
                               });
                               Navigator.of(context).pop();
                               _btnController.reset();
@@ -1095,12 +1044,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
           );
         }).then((_) {
       // Kiểm tra xem _selectedValue có còn hợp lệ không
-      if (_lido.text != '' &&
-          !_lydoList!.any((item) => item.lyDo == _lido.text)) {
+      if (_lido.text != '' && !_lydoList!.any((item) => item.lyDo == _lido.text)) {
         setState(() {
-          _lido.text = (_lydoList!.isNotEmpty
-              ? _lydoList!.first.lyDo
-              : '')!; // Hoặc đặt về giá trị mặc định
+          _lido.text = (_lydoList!.isNotEmpty ? _lydoList!.first.lyDo : '')!; // Hoặc đặt về giá trị mặc định
         });
       }
     });
@@ -1127,7 +1073,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Vui lòng nhập mã pin của bạn?',
                         style: TextStyle(
                           fontSize: 16,
@@ -1160,7 +1106,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                               Navigator.of(context).pop();
                               _btnController.reset();
                             },
-                            child: Text(
+                            child: const Text(
                               'Không',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -1174,10 +1120,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            onPressed: _textController.text.isNotEmpty
-                                ? () => _showConfirmationDialogMaPin(context)
-                                : null,
-                            child: Text(
+                            onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                            child: const Text(
                               'Đồng ý',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -1252,8 +1196,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                         ),
                                       ),
                                       child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           const Text(
                                             'Thông tin xe ra cổng',
@@ -1268,8 +1211,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                             icon: const Icon(Icons.visibility),
                                             color: Colors.blue,
                                             onPressed: () {
-                                              nextScreen(
-                                                  context, LSRaCongPage());
+                                              nextScreen(context, LSRaCongPage());
                                             },
                                           ),
                                         ],
@@ -1286,27 +1228,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                             title: 'Loại xe: ',
                                             value: _data?.tenSanPham,
                                           ),
-                                          const Divider(
-                                              height: 1,
-                                              color: Color(0xFFCCCCCC)),
+                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           Item(
                                             title: 'Số khung: ',
                                             value: _data?.soKhung,
                                           ),
-                                          const Divider(
-                                              height: 1,
-                                              color: Color(0xFFCCCCCC)),
-                                          Item(
-                                              title: 'Màu: ',
-                                              value: _data != null
-                                                  ? (_data?.tenMau != null &&
-                                                          _data?.maMau != null
-                                                      ? "${_data?.tenMau} (${_data?.maMau})"
-                                                      : "")
-                                                  : ""),
-                                          const Divider(
-                                              height: 1,
-                                              color: Color(0xFFCCCCCC)),
+                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                          Item(title: 'Màu: ', value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
+                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                         ],
                                       ),
                                     ),
@@ -1317,9 +1246,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: _Iskehoach == true
-                                        ? Colors.red
-                                        : Colors.grey,
+                                    color: _Iskehoach == true ? Colors.red : Colors.grey,
                                     width: _Iskehoach == true ? 5 : 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
@@ -1362,19 +1289,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                         children: [
                                           Item(
                                             title: 'Phương thức vận chuyển: ',
-                                            value:
-                                                _data?.tenPhuongThucVanChuyen,
+                                            value: _data?.tenPhuongThucVanChuyen,
                                           ),
-                                          const Divider(
-                                              height: 1,
-                                              color: Color(0xFFCCCCCC)),
+                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           Item(
                                             title: 'Nơi đi: ',
                                             value: _data?.noidi,
                                           ),
-                                          const Divider(
-                                              height: 1,
-                                              color: Color(0xFFCCCCCC)),
+                                          const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           Item(
                                             title: 'Nơi đến: ',
                                             value: _data?.noiden,
@@ -1389,9 +1311,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: _Isred == true
-                                        ? Colors.red
-                                        : Colors.grey,
+                                    color: _Isred == true ? Colors.red : Colors.grey,
                                     width: _Isred == true ? 5 : 2,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
@@ -1456,16 +1376,13 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                         ),
                                         Container(
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               ItemTaiXe(
                                                 title: 'Tên tài xế: ',
                                                 value: _data?.tenNhanVien,
                                               ),
-                                              const Divider(
-                                                  height: 1,
-                                                  color: Color(0xFFCCCCCC)),
+                                              const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                               ItemTaiXe(
                                                 title: 'SDT: ',
                                                 value: _data?.sdt,
@@ -1482,40 +1399,25 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                       child: Text(
                                                         'Nơi đi: ',
                                                         style: TextStyle(
-                                                          fontFamily:
-                                                              'Comfortaa',
+                                                          fontFamily: 'Comfortaa',
                                                           fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color:
-                                                              Color(0xFF818180),
+                                                          fontWeight: FontWeight.w700,
+                                                          color: Color(0xFF818180),
                                                         ),
                                                       ),
                                                     ),
                                                     Container(
-                                                      constraints: BoxConstraints(
-                                                          maxWidth: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.55),
-                                                      child:
-                                                          SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
+                                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.43),
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.horizontal,
                                                         child: Text(
-                                                          _data?.noiditaixe ??
-                                                              '',
-                                                          textAlign:
-                                                              TextAlign.left,
+                                                          _data?.noiditaixe ?? '',
+                                                          textAlign: TextAlign.left,
                                                           style: TextStyle(
-                                                            fontFamily:
-                                                                'Comfortaa',
+                                                            fontFamily: 'Comfortaa',
                                                             fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            color: AppConfig
-                                                                .primaryColor,
+                                                            fontWeight: FontWeight.w700,
+                                                            color: AppConfig.primaryColor,
                                                           ),
                                                         ),
                                                       ),
@@ -1529,15 +1431,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                       value: _data?.noiden,
                                                     )
                                                   : Container(
-                                                      width: 58.w,
+                                                      width: 56.w,
                                                       height: 7.h,
                                                       decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
+                                                        borderRadius: BorderRadius.circular(5),
                                                         border: Border.all(
-                                                          color: const Color(
-                                                              0xFF818180),
+                                                          color: const Color(0xFF818180),
                                                           width: 1,
                                                         ),
                                                       ),
@@ -1545,35 +1444,24 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                         children: [
                                                           Container(
                                                             width: 12.w,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color: Color(
-                                                                  0xFFF6C6C7),
+                                                            decoration: const BoxDecoration(
+                                                              color: Color(0xFFF6C6C7),
                                                               border: Border(
-                                                                right:
-                                                                    BorderSide(
-                                                                  color: Color(
-                                                                      0xFF818180),
+                                                                right: BorderSide(
+                                                                  color: Color(0xFF818180),
                                                                   width: 1,
                                                                 ),
                                                               ),
                                                             ),
-                                                            child: Center(
+                                                            child: const Center(
                                                               child: Text(
                                                                 "Nơi đến",
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .left,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontFamily:
-                                                                      'Comfortaa',
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'Comfortaa',
                                                                   fontSize: 10,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: AppConfig
-                                                                      .textInput,
+                                                                  fontWeight: FontWeight.w400,
+                                                                  color: AppConfig.textInput,
                                                                 ),
                                                               ),
                                                             ),
@@ -1581,35 +1469,18 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                           Expanded(
                                                             flex: 1,
                                                             child: Container(
-                                                                padding: EdgeInsets.only(
-                                                                    top: MediaQuery.of(context).size.height <
-                                                                            600
-                                                                        ? 0
-                                                                        : 5),
-                                                                child:
-                                                                    DropdownButtonHideUnderline(
-                                                                  child:
-                                                                      DropdownButton2<
-                                                                          String>(
-                                                                    isExpanded:
-                                                                        true,
-                                                                    items: _noidenList
-                                                                        ?.map(
-                                                                            (item) {
-                                                                      return DropdownMenuItem<
-                                                                          String>(
-                                                                        value: item.noiDen ??
-                                                                            "",
-                                                                        child:
-                                                                            Container(
-                                                                          constraints:
-                                                                              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Text(
+                                                                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                                child: DropdownButtonHideUnderline(
+                                                                  child: DropdownButton2<String>(
+                                                                    isExpanded: true,
+                                                                    items: _noidenList?.map((item) {
+                                                                      return DropdownMenuItem<String>(
+                                                                        value: item.noiDen ?? "",
+                                                                        child: Container(
+                                                                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                                          child: SingleChildScrollView(
+                                                                            scrollDirection: Axis.horizontal,
+                                                                            child: Text(
                                                                               item.noiDen ?? "",
                                                                               textAlign: TextAlign.center,
                                                                               style: const TextStyle(
@@ -1623,107 +1494,63 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                                         ),
                                                                       );
                                                                     }).toList(),
-                                                                    value: _noiden
-                                                                        .text,
-                                                                    onChanged:
-                                                                        (String?
-                                                                            newValue) {
-                                                                      if (newValue ==
-                                                                          'Thêm mới') {
-                                                                        _showInputDialog(
-                                                                            context);
+                                                                    value: _noiden.text,
+                                                                    onChanged: (String? newValue) {
+                                                                      if (newValue == 'Thêm mới') {
+                                                                        _showInputDialog(context);
                                                                       } else {
-                                                                        setState(
-                                                                            () {
-                                                                          _noiden.text =
-                                                                              newValue!;
+                                                                        setState(() {
+                                                                          _noiden.text = newValue ?? "";
                                                                         });
                                                                       }
                                                                     },
-                                                                    buttonStyleData:
-                                                                        const ButtonStyleData(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              16),
-                                                                      height:
-                                                                          40,
-                                                                      width:
-                                                                          200,
+                                                                    buttonStyleData: const ButtonStyleData(
+                                                                      padding: EdgeInsets.symmetric(horizontal: 16),
+                                                                      height: 40,
+                                                                      width: 200,
                                                                     ),
-                                                                    dropdownStyleData:
-                                                                        const DropdownStyleData(
-                                                                      maxHeight:
-                                                                          200,
+                                                                    dropdownStyleData: const DropdownStyleData(
+                                                                      maxHeight: 200,
                                                                     ),
-                                                                    menuItemStyleData:
-                                                                        const MenuItemStyleData(
-                                                                      height:
-                                                                          40,
+                                                                    menuItemStyleData: const MenuItemStyleData(
+                                                                      height: 40,
                                                                     ),
-                                                                    dropdownSearchData:
-                                                                        DropdownSearchData(
-                                                                      searchController:
-                                                                          textEditingController,
-                                                                      searchInnerWidgetHeight:
-                                                                          50,
-                                                                      searchInnerWidget:
-                                                                          Container(
-                                                                        height:
-                                                                            50,
-                                                                        padding:
-                                                                            const EdgeInsets.only(
-                                                                          top:
-                                                                              8,
-                                                                          bottom:
-                                                                              4,
-                                                                          right:
-                                                                              8,
-                                                                          left:
-                                                                              8,
+                                                                    dropdownSearchData: DropdownSearchData(
+                                                                      searchController: textEditingController,
+                                                                      searchInnerWidgetHeight: 50,
+                                                                      searchInnerWidget: Container(
+                                                                        height: 50,
+                                                                        padding: const EdgeInsets.only(
+                                                                          top: 8,
+                                                                          bottom: 4,
+                                                                          right: 8,
+                                                                          left: 8,
                                                                         ),
-                                                                        child:
-                                                                            TextFormField(
-                                                                          expands:
-                                                                              true,
-                                                                          maxLines:
-                                                                              null,
-                                                                          controller:
-                                                                              textEditingController,
-                                                                          decoration:
-                                                                              InputDecoration(
-                                                                            isDense:
-                                                                                true,
-                                                                            contentPadding:
-                                                                                const EdgeInsets.symmetric(
+                                                                        child: TextFormField(
+                                                                          expands: true,
+                                                                          maxLines: null,
+                                                                          controller: textEditingController,
+                                                                          decoration: InputDecoration(
+                                                                            isDense: true,
+                                                                            contentPadding: const EdgeInsets.symmetric(
                                                                               horizontal: 10,
                                                                               vertical: 8,
                                                                             ),
-                                                                            hintText:
-                                                                                'Tìm nơi đến',
-                                                                            hintStyle:
-                                                                                const TextStyle(fontSize: 10),
-                                                                            border:
-                                                                                OutlineInputBorder(
+                                                                            hintText: 'Tìm nơi đến',
+                                                                            hintStyle: const TextStyle(fontSize: 10),
+                                                                            border: OutlineInputBorder(
                                                                               borderRadius: BorderRadius.circular(8),
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      searchMatchFn:
-                                                                          (item,
-                                                                              searchValue) {
-                                                                        return item
-                                                                            .value
-                                                                            .toString()
-                                                                            .toLowerCase()
-                                                                            .contains(searchValue.toLowerCase());
+                                                                      searchMatchFn: (item, searchValue) {
+                                                                        return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
                                                                       },
                                                                     ),
-                                                                    onMenuStateChange:
-                                                                        (isOpen) {
+                                                                    onMenuStateChange: (isOpen) {
                                                                       if (!isOpen) {
-                                                                        textEditingController
-                                                                            .clear();
+                                                                        textEditingController.clear();
                                                                       }
                                                                     },
                                                                   ),
@@ -1744,37 +1571,28 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                 title: 'Ghi chú của bảo vệ: ',
                                 controller: _ghiChu,
                               ),
-                              const Divider(
-                                  height: 1, color: Color(0xFFCCCCCC)),
+                              const Divider(height: 1, color: Color(0xFFCCCCCC)),
                               Container(
                                 margin: const EdgeInsets.only(right: 5),
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      constraints: BoxConstraints(
-                                          maxWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.87),
+                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
                                       child: SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           children: [
                                             ElevatedButton.icon(
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.orangeAccent,
+                                                backgroundColor: Colors.orangeAccent,
                                               ),
-                                              onPressed: () => imageSelector(
-                                                  context, 'gallery'),
-                                              icon: const Icon(
-                                                  Icons.photo_library),
+                                              onPressed: () => imageSelector(context, 'gallery'),
+                                              icon: const Icon(Icons.photo_library),
                                               label: const Text(""),
                                             ),
                                             const SizedBox(width: 10),
@@ -1782,10 +1600,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                               style: ElevatedButton.styleFrom(
                                                   // backgroundColor: Theme.of(context).primaryColor,
                                                   ),
-                                              onPressed: () => imageSelector(
-                                                  context, 'camera'),
-                                              icon:
-                                                  const Icon(Icons.camera_alt),
+                                              onPressed: () => imageSelector(context, 'camera'),
+                                              icon: const Icon(Icons.camera_alt),
                                               label: const Text(""),
                                             ),
                                             const SizedBox(width: 10),
@@ -1839,29 +1655,21 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                                                 );
                                               },
                                               child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    left: 5),
+                                                margin: const EdgeInsets.only(left: 5),
                                                 child: image.local == true
-                                                    ? Image.file(
-                                                        File(image.file!))
+                                                    ? Image.file(File(image.file!))
                                                     : Image.network(
                                                         '${ab.apiUrl}/${image.file}',
-                                                        errorBuilder: ((context,
-                                                            error, stackTrace) {
+                                                        errorBuilder: ((context, error, stackTrace) {
                                                           return Container(
                                                             height: 100,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border: Border.all(
-                                                                  color: Colors
-                                                                      .redAccent),
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(color: Colors.redAccent),
                                                             ),
                                                             child: const Center(
                                                                 child: Text(
                                                               "Error Image (404)",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent),
+                                                              style: TextStyle(color: Colors.redAccent),
                                                             )),
                                                           );
                                                         }),
@@ -1902,8 +1710,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(35.0),
                       ),
-                      minimumSize:
-                          Size(200, 50), // Kích thước tối thiểu của button
+                      minimumSize: Size(200, 50), // Kích thước tối thiểu của button
                     ),
                     // onPressed: _data?.maNhanVien != null
                     //     ? () async {
@@ -1913,10 +1720,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                     //         _showConfirmationDialogXacNhan(context);
                     //       }
                     //     : null,
-                    onPressed: _data?.maNhanVien != null
-                        ? () => _showConfirmationDialogXacNhan(context)
-                        : null,
-                    child: Text(
+                    onPressed: _data?.maNhanVien != null ? () => _showConfirmationDialogXacNhan(context) : null,
+                    child: const Text(
                       'Xác nhận',
                       style: TextStyle(
                         fontFamily: 'Comfortaa',
@@ -1939,18 +1744,16 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen>
                   ),
                   color: Colors.red,
                   controller: _btnController,
-                  onPressed: _data?.soKhung != null
-                      ? () async {
-                          if (!_loading && _allowUploadFile()) {
-                            await _uploadAnh(); // Thực hiện hành động upload ảnh
-                          }
-                          _showConfirmationDialogTuChoi(
-                              context); // Thực hiện hành động xác nhận
-                        }
-                      : null,
                   // onPressed: _data?.soKhung != null
-                  //     ? () => _showConfirmationDialogTuChoi(context)
+                  //     ? () async {
+                  //         if (!_loading && _allowUploadFile()) {
+                  //           await _uploadAnh();
+                  //         }
+                  //         _showConfirmationDialogTuChoi(
+                  //             context);
+                  //       }
                   //     : null,
+                  onPressed: _data?.soKhung != null ? () => _showConfirmationDialogTuChoi(context) : null,
                 ),
               )
             ],
