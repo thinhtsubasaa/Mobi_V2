@@ -367,7 +367,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
     return Container(
       child: Column(
         children: [
-          const SizedBox(height: 5),
+          // const SizedBox(height: 5),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
@@ -381,7 +381,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -393,9 +393,9 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 0, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                                   child: Column(
                                     children: [
                                       Container(
