@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:Thilogi/models/dsxdanhan.dart';
 import 'package:Thilogi/pages/lsnhanxe/ls_danhan.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -160,7 +158,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
   }
 
   void _handleBarcodeScanResult(String barcodeScanResult) {
-    print("Sokhungg:${barcodeScanResult}");
     setState(() {
       _qrData = '';
       _qrDataController.text = '';

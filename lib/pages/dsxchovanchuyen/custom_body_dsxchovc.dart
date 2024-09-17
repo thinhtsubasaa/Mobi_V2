@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/baixe.dart';
+import 'package:Thilogi/models/dialy_vungmien.dart';
 import 'package:Thilogi/models/doitac.dart';
 import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/phuongthucvanchuyen.dart';
@@ -36,6 +37,8 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
   String? KhoXeId;
   String? doiTac_Id;
   String? phuongThuc_Id;
+  String? vungMien_Id;
+
   List<KhoXeModel>? _khoxeList;
   List<KhoXeModel>? get khoxeList => _khoxeList;
   List<DoiTacModel>? _doitacList;
@@ -46,7 +49,8 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
   List<DS_ChoXuatModel>? get cx => _cx;
   bool _hasError = false;
   bool get hasError => _hasError;
-
+  List<VungMienModel>? _vm;
+  List<VungMienModel>? get vm => _vm;
   String? _errorCode;
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
@@ -54,10 +58,38 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
   @override
   void initState() {
     super.initState();
+    setState(() {
+      KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+      getBaiXeList(KhoXeId ?? "");
+      _loading = false;
+    });
     getData();
-    getBaiXeList(KhoXeId ?? "");
     getDoiTac();
     getPTVC();
+    // getData();
+    // getBaiXeList(KhoXeId ?? "");
+  }
+
+  Future<void> getVungMien() async {
+    _vm = [];
+    try {
+      final http.Response response = await requestHelper.getData('DM_DiaLy_VungMien');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " + decodedData.toString());
+        if (decodedData != null) {
+          _vm = (decodedData as List).map((item) => VungMienModel.fromJson(item)).where((item) => item.parent_Id == null).toList();
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            _loading = false;
+          });
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
   }
 
   void getDoiTac() async {
@@ -103,16 +135,36 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
     }
   }
 
+  // Future<void> getData(String? VungMien_Id) async {
+  //   try {
+  //     final http.Response response = await requestHelper.getData('DM_WMS_Kho_KhoXe?VungMien_Id=$VungMien_Id');
+  //     if (response.statusCode == 200) {
+  //       var decodedData = jsonDecode(response.body);
+
+  //       _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).toList();
+
+  //       // Gọi setState để cập nhật giao diện
+  //       setState(() {
+  //         _loading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     _hasError = true;
+  //     _errorCode = e.toString();
+  //   }
+  // }
   void getData() async {
     try {
       final http.Response response = await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).toList();
+        _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).where((item) => item.maKhoXe == "MT_CLA" || item.maKhoXe == "MN_NAMBO" || item.maKhoXe == "MB_BACBO").toList();
 
         // Gọi setState để cập nhật giao diện
         setState(() {
+          KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+          getBaiXeList(KhoXeId ?? "");
           _loading = false;
         });
       }
@@ -122,7 +174,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
     }
   }
 
-  void getBaiXeList(String KhoXeId) async {
+  Future<void> getBaiXeList(String? KhoXeId) async {
     try {
       final http.Response response = await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
       if (response.statusCode == 200) {
@@ -133,13 +185,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
           id = '';
           _loading = false;
         });
-        getDSXChoXuat('', doiTac_Id ?? "", phuongThuc_Id ?? "");
-        // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
-
-        // Gọi setState để cập nhật giao diện
-        // setState(() {
-        //   _loading = false;
-        // });
+        getDSXChoXuat(KhoXeId ?? "", '', doiTac_Id ?? "", phuongThuc_Id ?? "");
       }
     } catch (e) {
       _hasError = true;
@@ -147,10 +193,10 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
     }
   }
 
-  void getDSXChoXuat(String? id, String? doiTac_Id, String? phuongThuc_Id) async {
+  Future<void> getDSXChoXuat(String? KhoXe_Id, String? id, String? doiTac_Id, String? phuongThuc_Id) async {
     _cx = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeChoXuat?KhoXe_Id=$KhoXe_Id&id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
@@ -176,6 +222,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
 
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
@@ -313,6 +360,9 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
 
   @override
   Widget build(BuildContext context) {
+    // getData();
+    // getBaiXeList(KhoXeId ?? "");
+
     return Container(
       child: Column(
         children: [
@@ -330,7 +380,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -342,11 +392,151 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const Divider(height: 1, color: Color(0xFFA71C20)),
+                                const Divider(height: 0, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                                   child: Column(
                                     children: [
+                                      Container(
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: const Color(0xFF818180),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 20.w,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFF6C6C7),
+                                                border: Border(
+                                                  right: BorderSide(
+                                                    color: Color(0xFF818180),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Center(
+                                                child: Text(
+                                                  "Kho Xe",
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppConfig.textInput,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Container(
+                                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                                  child: DropdownButtonHideUnderline(
+                                                    child: DropdownButton2<String>(
+                                                      isExpanded: true,
+                                                      items: _khoxeList?.map((item) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: item.id,
+                                                          child: Container(
+                                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                            child: SingleChildScrollView(
+                                                              scrollDirection: Axis.horizontal,
+                                                              child: Text(
+                                                                item.tenKhoXe ?? "",
+                                                                textAlign: TextAlign.center,
+                                                                style: const TextStyle(
+                                                                  fontFamily: 'Comfortaa',
+                                                                  fontSize: 13,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppConfig.textInput,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      value: KhoXeId,
+                                                      onChanged: (newValue) {
+                                                        setState(() {
+                                                          KhoXeId = newValue;
+                                                          // doiTac_Id = null;
+                                                        });
+                                                        if (newValue != null) {
+                                                          getBaiXeList(newValue);
+                                                          getDSXChoXuat(newValue, id ?? "", doiTac_Id ?? "", phuongThuc_Id ?? "");
+                                                          print("objectcong : ${newValue}");
+                                                        }
+                                                      },
+                                                      buttonStyleData: const ButtonStyleData(
+                                                        padding: EdgeInsets.symmetric(horizontal: 16),
+                                                        height: 40,
+                                                        width: 200,
+                                                      ),
+                                                      dropdownStyleData: const DropdownStyleData(
+                                                        maxHeight: 200,
+                                                      ),
+                                                      menuItemStyleData: const MenuItemStyleData(
+                                                        height: 40,
+                                                      ),
+                                                      dropdownSearchData: DropdownSearchData(
+                                                        searchController: textEditingController,
+                                                        searchInnerWidgetHeight: 50,
+                                                        searchInnerWidget: Container(
+                                                          height: 50,
+                                                          padding: const EdgeInsets.only(
+                                                            top: 8,
+                                                            bottom: 4,
+                                                            right: 8,
+                                                            left: 8,
+                                                          ),
+                                                          child: TextFormField(
+                                                            expands: true,
+                                                            maxLines: null,
+                                                            controller: textEditingController,
+                                                            decoration: InputDecoration(
+                                                              isDense: true,
+                                                              contentPadding: const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 8,
+                                                              ),
+                                                              hintText: 'Tìm kho',
+                                                              hintStyle: const TextStyle(fontSize: 12),
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(8),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        searchMatchFn: (item, searchValue) {
+                                                          if (item is DropdownMenuItem<String>) {
+                                                            // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                            String itemId = item.value ?? "";
+                                                            // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                            return _khoxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenKhoXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                          } else {
+                                                            return false;
+                                                          }
+                                                        },
+                                                      ),
+                                                      onMenuStateChange: (isOpen) {
+                                                        if (!isOpen) {
+                                                          textEditingController.clear();
+                                                        }
+                                                      },
+                                                    ),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
                                       Container(
                                         height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                         decoration: BoxDecoration(
@@ -418,9 +608,9 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat('', doiTac_Id ?? "", phuongThuc_Id ?? "");
+                                                            getDSXChoXuat(KhoXeId ?? "", '', doiTac_Id ?? "", phuongThuc_Id ?? "");
                                                           } else {
-                                                            getDSXChoXuat(newValue, doiTac_Id ?? "", phuongThuc_Id ?? "");
+                                                            getDSXChoXuat(KhoXeId ?? "", newValue, doiTac_Id ?? "", phuongThuc_Id ?? "");
                                                             print("object : ${id}");
                                                           }
                                                         }
@@ -560,9 +750,9 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat(id ?? "", '', phuongThuc_Id ?? "");
+                                                            getDSXChoXuat(KhoXeId ?? "", id ?? "", '', phuongThuc_Id ?? "");
                                                           } else {
-                                                            getDSXChoXuat(id ?? "", newValue, phuongThuc_Id ?? "");
+                                                            getDSXChoXuat(KhoXeId ?? "", id ?? "", newValue, phuongThuc_Id ?? "");
                                                             print("object : ${doiTac_Id}");
                                                           }
                                                         }
@@ -702,9 +892,9 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                         });
                                                         if (newValue != null) {
                                                           if (newValue == '') {
-                                                            getDSXChoXuat(id ?? "", doiTac_Id ?? "", '');
+                                                            getDSXChoXuat(KhoXeId ?? "", id ?? "", doiTac_Id ?? "", '');
                                                           } else {
-                                                            getDSXChoXuat(id ?? "", doiTac_Id ?? "", newValue);
+                                                            getDSXChoXuat(KhoXeId ?? "", id ?? "", doiTac_Id ?? "", newValue);
                                                             print("object : ${phuongThuc_Id}");
                                                           }
                                                         }

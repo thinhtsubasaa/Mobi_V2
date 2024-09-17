@@ -228,6 +228,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
 
         _noidenList = (decodedData as List).map((item) => NoiDenModel.fromJson(item)).toList();
         _noidenList?.insert(0, NoiDenModel(id: '', noiDen: 'Thêm mới'));
+        _noidenList?.insert(1, NoiDenModel(id: '1', noiDen: ''));
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -250,6 +251,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
 
         _lydoList = (decodedData as List).map((item) => LyDoModel.fromJson(item)).toList();
         _lydoList?.insert(0, LyDoModel(id: '', lyDo: 'Nhập lý do'));
+        _lydoList?.insert(1, LyDoModel(id: '1', lyDo: ''));
 
         // Gọi setState để cập nhật giao diện
         setState(() {
@@ -286,7 +288,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");
         notifyListeners();
-        if (_data?.maNhanVien == null) {
+        if (_data?.maNhanVien == null || _lido.text != '') {
           _btnController.success();
           QuickAlert.show(
             context: context,
@@ -665,30 +667,37 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton2<String>(
                                       isExpanded: true,
-                                      items: _lydoList?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.lyDo ?? "",
-                                          child: Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                item.lyDo ?? "",
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Comfortaa',
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppConfig.textInput,
+                                      items: _lydoList
+                                          ?.map((item) {
+                                            if (item.lyDo != null && item.lyDo!.isNotEmpty) {
+                                              return DropdownMenuItem<String>(
+                                                value: item.lyDo ?? "",
+                                                child: Container(
+                                                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                  child: SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: Text(
+                                                      item.lyDo ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Comfortaa',
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppConfig.textInput,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }).toList(),
-                                      value: _lido.text,
+                                              );
+                                            }
+                                            return null; // Ẩn giá trị rỗng khỏi danh sách hiển thị
+                                          })
+                                          .whereType<DropdownMenuItem<String>>()
+                                          .toList(),
+                                      value: _lido.text.isNotEmpty ? _lido.text : null,
                                       onChanged: (String? newValue) {
                                         if (newValue == 'Nhập lý do') {
+                                          _lido.text = "";
                                           _showInputDialogLiDo(context);
                                         } else {
                                           setState(() {
@@ -751,23 +760,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                           ],
                         ),
                       ),
-                      // Text(
-                      //   'Vui lòng nhập lí do từ chối?',
-                      //   style: TextStyle(
-                      //     fontSize: 16,
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-                      // SizedBox(height: 10),
-                      // TextField(
-                      //   controller: _lido,
-                      //   decoration: InputDecoration(
-                      //     labelText: 'Nhập lí do từ chối',
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      // ),
                       SizedBox(height: 10),
                       Text(
                         'Vui lòng nhập mã pin của bạn?',
@@ -1473,30 +1465,37 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with SingleTick
                                                                 child: DropdownButtonHideUnderline(
                                                                   child: DropdownButton2<String>(
                                                                     isExpanded: true,
-                                                                    items: _noidenList?.map((item) {
-                                                                      return DropdownMenuItem<String>(
-                                                                        value: item.noiDen ?? "",
-                                                                        child: Container(
-                                                                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                                                          child: SingleChildScrollView(
-                                                                            scrollDirection: Axis.horizontal,
-                                                                            child: Text(
-                                                                              item.noiDen ?? "",
-                                                                              textAlign: TextAlign.center,
-                                                                              style: const TextStyle(
-                                                                                fontFamily: 'Comfortaa',
-                                                                                fontSize: 12,
-                                                                                fontWeight: FontWeight.w600,
-                                                                                color: AppConfig.textInput,
+                                                                    items: _noidenList
+                                                                        ?.map((item) {
+                                                                          if (item.noiDen != null && item.noiDen!.isNotEmpty) {
+                                                                            return DropdownMenuItem<String>(
+                                                                              value: item.noiDen ?? "",
+                                                                              child: Container(
+                                                                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                                                child: SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Text(
+                                                                                    item.noiDen ?? "",
+                                                                                    textAlign: TextAlign.center,
+                                                                                    style: const TextStyle(
+                                                                                      fontFamily: 'Comfortaa',
+                                                                                      fontSize: 12,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: AppConfig.textInput,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    }).toList(),
-                                                                    value: _noiden.text,
+                                                                            );
+                                                                          }
+                                                                          return null; // Ẩn giá trị rỗng khỏi danh sách hiển thị
+                                                                        })
+                                                                        .whereType<DropdownMenuItem<String>>()
+                                                                        .toList(),
+                                                                    value: _noiden.text.isNotEmpty ? _noiden.text : null,
                                                                     onChanged: (String? newValue) {
                                                                       if (newValue == 'Thêm mới') {
+                                                                        _noiden.text = "";
                                                                         _showInputDialog(context);
                                                                       } else {
                                                                         setState(() {

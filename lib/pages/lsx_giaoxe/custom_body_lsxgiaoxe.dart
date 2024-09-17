@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/baixe.dart';
 import 'package:Thilogi/models/doitac.dart';
+import 'package:Thilogi/models/dongxe.dart';
+import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -32,7 +35,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
   bool _loading = false;
 
   String? id;
-  String? KhoXeId;
+
   String? doiTac_Id;
   List<DoiTacModel>? _doitacList;
   List<DoiTacModel>? get doitacList => _doitacList;
@@ -47,14 +50,30 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController maNhanVienController = TextEditingController();
+  String? BaiXeId;
+  String? KhoXeId;
+  String? DongXeId;
+  List<KhoXeModel>? _khoxeList;
+  List<KhoXeModel>? get khoxeList => _khoxeList;
+  List<DongXeModel>? _dongxeList;
+  List<DongXeModel>? get dongxeList => _dongxeList;
+  List<BaiXeModel>? _baixeList;
+  List<BaiXeModel>? get baixeList => _baixeList;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+      getBaiXeList(KhoXeId ?? "");
+      _loading = false;
+    });
+    getDataKho();
+    getDataDongXe();
     getDoiTac();
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
     selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
+    // getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
   }
 
   void getDoiTac() async {
@@ -72,7 +91,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
         });
 
         // Gọi hàm để lấy dữ liệu với giá trị mặc định "Tất cả"
-        getDSXGiaoXe(selectedFromDate, selectedToDate, '', maNhanVienController.text);
+        getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
         // Gọi setState để cập nhật giao diện
         // setState(() {
         //   _loading = false;
@@ -84,10 +103,11 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
     }
   }
 
-  Future<void> getDSXGiaoXe(String? tuNgay, String? denNgay, String? doiTac_Id, String? keyword) async {
+  Future<void> getDSXGiaoXe(String? tuNgay, String? denNgay, String? doiTac_Id, String? KhoXe_Id, String? BaiXe_Id, String? DongXe_Id, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeGiaoXeAll?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&keyword=$keyword');
+      final http.Response response =
+          await requestHelper.getData('KhoThanhPham/GetDanhSachXeGiaoXeAll?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&KhoXe_Id=$KhoXe_Id&BaiXe_Id=$BaiXe_Id&DongXe_Id=$DongXe_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
@@ -99,6 +119,68 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
             _loading = false;
           });
         }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDataKho() async {
+    try {
+      final http.Response response = await requestHelper.getData('DM_WMS_Kho_KhoXe/GetKhoLogistic');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _khoxeList = (decodedData as List).map((item) => KhoXeModel.fromJson(item)).where((item) => item.maKhoXe == "MT_CLA" || item.maKhoXe == "MN_NAMBO" || item.maKhoXe == "MB_BACBO").toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+          _loading = false;
+        });
+        getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDataDongXe() async {
+    try {
+      final http.Response response = await requestHelper.getData('Xe_DongXe');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _dongxeList = (decodedData["datalist"] as List).map((item) => DongXeModel.fromJson(item)).toList();
+        _dongxeList!.insert(0, DongXeModel(id: '', tenDongXe: 'Tất cả'));
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          DongXeId = '';
+          _loading = false;
+        });
+        getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getBaiXeList(String? KhoXeId) async {
+    try {
+      final http.Response response = await requestHelper.getData('DM_WMS_Kho_BaiXe?khoXe_Id=$KhoXeId');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        _baixeList = (decodedData as List).map((item) => BaiXeModel.fromJson(item)).toList();
+        _baixeList!.insert(0, BaiXeModel(id: '', tenBaiXe: 'Tất cả'));
+        setState(() {
+          BaiXeId = '';
+          _loading = false;
+        });
+        getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
       }
     } catch (e) {
       _hasError = true;
@@ -124,29 +206,12 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
+      await getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
     }
   }
 
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
-    // _dn?.sort((a, b) => DateTime.parse(b.gioNhan ?? "")
-    //     .compareTo(DateTime.parse(a.gioNhan ?? "")));
-    const String defaultDate = "1970-01-01 ";
-
-    // Sắp xếp danh sách _dn theo giờ nhận mới nhất
-    // _dn?.sort((a, b) {
-    //   try {
-    //     DateTime aTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (a.gioNhan ?? "00:00"));
-    //     DateTime bTime = DateFormat("yyyy-MM-dd HH:mm")
-    //         .parse(defaultDate + (b.gioNhan ?? "00:00"));
-    //     return bTime.compareTo(aTime); // Sắp xếp giảm dần
-    //   } catch (e) {
-    //     // Xử lý lỗi khi không thể phân tích cú pháp chuỗi thời gian
-    //     return 0;
-    //   }
-    // });
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -286,18 +351,10 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đã giao',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
@@ -328,6 +385,367 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
                                 SizedBox(
                                   height: 4,
                                 ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _khoxeList?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.horizontal,
+                                                      child: Text(
+                                                        item.tenKhoXe ?? "",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Comfortaa',
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppConfig.textInput,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: KhoXeId,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  KhoXeId = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  getBaiXeList(newValue);
+                                                  getDataDongXe();
+                                                  getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", newValue, BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+                                                  print("object : ${newValue}");
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm kho xe',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _khoxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenKhoXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _dongxeList?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    child: Text(
+                                                      item.tenDongXe ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Comfortaa',
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppConfig.textInput,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: DongXeId,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  DongXeId = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  if (newValue == '') {
+                                                    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", '', maNhanVienController.text);
+                                                  } else {
+                                                    getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", newValue, maNhanVienController.text);
+                                                    print("objectcong : ${newValue}");
+                                                  }
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm bãi xe',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _dongxeList?.any((viTri) => viTri.id == itemId && viTri.tenDongXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFFBC2925),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "Bãi xe",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                items: _baixeList?.map((item) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: item.id,
+                                                    child: Container(
+                                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.horizontal,
+                                                        child: Text(
+                                                          item.tenBaiXe ?? "",
+                                                          textAlign: TextAlign.center,
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Comfortaa',
+                                                            fontSize: 13,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: AppConfig.textInput,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: BaiXeId,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    BaiXeId = newValue;
+                                                    // doiTac_Id = null;
+                                                  });
+
+                                                  if (newValue != null) {
+                                                    if (newValue == '') {
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", '', DongXeId ?? "", maNhanVienController.text);
+                                                    } else {
+                                                      getDataDongXe();
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", newValue, DongXeId ?? "", maNhanVienController.text);
+                                                      print("objectcong : ${newValue}");
+                                                    }
+                                                  }
+                                                },
+                                                buttonStyleData: const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                                  height: 40,
+                                                  width: 200,
+                                                ),
+                                                dropdownStyleData: const DropdownStyleData(
+                                                  maxHeight: 200,
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                ),
+                                                dropdownSearchData: DropdownSearchData(
+                                                  searchController: textEditingController,
+                                                  searchInnerWidgetHeight: 50,
+                                                  searchInnerWidget: Container(
+                                                    height: 50,
+                                                    padding: const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 4,
+                                                      right: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: TextFormField(
+                                                      expands: true,
+                                                      maxLines: null,
+                                                      controller: textEditingController,
+                                                      decoration: InputDecoration(
+                                                        isDense: true,
+                                                        contentPadding: const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 8,
+                                                        ),
+                                                        hintText: 'Tìm dòng xe',
+                                                        hintStyle: const TextStyle(fontSize: 12),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  searchMatchFn: (item, searchValue) {
+                                                    if (item is DropdownMenuItem<String>) {
+                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                      String itemId = item.value ?? "";
+                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                      return _baixeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenBaiXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                    } else {
+                                                      return false;
+                                                    }
+                                                  },
+                                                ),
+                                                onMenuStateChange: (isOpen) {
+                                                  if (!isOpen) {
+                                                    textEditingController.clear();
+                                                  }
+                                                },
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 5),
                                 Container(
                                   height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
                                   decoration: BoxDecoration(
@@ -394,7 +812,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
+                                          getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -477,9 +895,9 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
 
                                                   if (newValue != null) {
                                                     if (newValue == '') {
-                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, '', maNhanVienController.text);
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, '', KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
                                                     } else {
-                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, newValue, maNhanVienController.text);
+                                                      getDSXGiaoXe(selectedFromDate, selectedToDate, newValue, KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
                                                       print("object : ${doiTac_Id}");
                                                     }
                                                   }

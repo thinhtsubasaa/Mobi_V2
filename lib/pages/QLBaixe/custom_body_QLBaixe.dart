@@ -203,19 +203,19 @@ class _BodyQLBaiXeScreenState extends State<BodyQLBaiXeScreen> with TickerProvid
                   //       ), () {
                   //     _handleButtonTap(LSNhapBaiPage());
                   //   }),
-                  // if (userHasPermission(menuRoles, 'layout-bai-xe-mobi'))
-                  CustomButton(
-                      'LAYOUT BÃI XE',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                          ),
-                        ],
-                      ), () {
-                    _handleButtonTap(MyApp());
-                  }),
+                  if (userHasPermission(menuRoles, 'layout-bai-xe-mobi'))
+                    CustomButton(
+                        'LAYOUT BÃI XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(MyApp());
+                    }),
                 ],
               ),
 

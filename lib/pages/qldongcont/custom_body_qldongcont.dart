@@ -1,5 +1,6 @@
 import 'package:Thilogi/pages/ds_dongcont/ds_dongcont.dart';
 import 'package:Thilogi/pages/huydongcont/huydongcont.dart';
+import 'package:Thilogi/pages/huydongseal/huydongseal.dart';
 import 'package:Thilogi/pages/rutcont/rutcont.dart';
 import 'package:Thilogi/pages/themdongcont/themdongcont.dart';
 import 'package:Thilogi/services/app_service.dart';

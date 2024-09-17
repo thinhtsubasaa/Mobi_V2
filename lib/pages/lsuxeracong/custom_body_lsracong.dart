@@ -207,7 +207,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                   children: [
                     ..._dn?.map((item) {
                           index++; // Tăng số thứ tự sau mỗi lần lặp
-                          bool highlightRed = item.tenTaiXe == "-";
+                          bool highlightRed = item.tenTaiXe == "-" || item.lyDo != null;
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự

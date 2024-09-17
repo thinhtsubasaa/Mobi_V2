@@ -1,7 +1,6 @@
 import 'dart:convert';
-
-import 'package:Thilogi/pages/QL_xeracong/qlxeracong.dart';
 import 'package:Thilogi/pages/login/Login.dart';
+import 'package:Thilogi/pages/lsx_racong/lsx_racong.dart';
 import 'package:Thilogi/pages/qrcode.dart';
 import 'package:Thilogi/pages/tracuu/tracuu.dart';
 import 'package:Thilogi/pages/xeracong/xeracong.dart';
@@ -20,22 +19,22 @@ import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
 
 // ignore: use_key_in_widget_constructors
-class CustomBodyNghiepVuChung extends StatelessWidget {
+class CustomBodyQLXeRaCong extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(width: 100.w, child: BodyNghiepVuChungScreen());
+    return Container(width: 100.w, child: BodyQLXeRaCongScreen());
   }
 }
 
-class BodyNghiepVuChungScreen extends StatefulWidget {
-  const BodyNghiepVuChungScreen({Key? key}) : super(key: key);
+class BodyQLXeRaCongScreen extends StatefulWidget {
+  const BodyQLXeRaCongScreen({Key? key}) : super(key: key);
 
   @override
-  _BodyNghiepVuChungScreenState createState() => _BodyNghiepVuChungScreenState();
+  _BodyQLXeRaCongScreenState createState() => _BodyQLXeRaCongScreenState();
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with TickerProviderStateMixin, ChangeNotifier {
+class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -133,49 +132,34 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with 
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  // if (userHasPermission(menuRoles, 'quan-ly-xe-ra-cong-mobi'))
+                  // if (userHasPermission(menuRoles, 'kiem-tra-xe-ra-cong-mobi'))
                   CustomButton(
-                    'QUẢN LÝ XE RA CỔNG',
+                    'KIỂM TRA XE RA CỔNG',
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/Button_09_KTXeRaCong.png',
+                          'assets/images/Button_09_KTXeRaCong_BVQuet.png',
                         ),
                       ],
                     ),
                     () {
-                      _handleButtonTap(QLXeRaCongPage());
+                      _handleButtonTap(XeRaCongPage());
                     },
                   ),
-                  if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
-                    CustomButton(
-                      'TRA CỨU THÔNG TIN NHÂN VIÊN',
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/images/Button_TTTheNhanVien.png',
-                          ),
-                        ],
-                      ),
-                      () {
-                        _handleButtonTap(TraCuuPage());
-                      },
-                    ),
-                  // if (userHasPermission(menuRoles, 'qrcode-mobi'))
+                  // if (userHasPermission(menuRoles, 'lich-su-xe-ra-cong-mobi'))
                   CustomButton(
-                    'QR CODE',
+                    'LỊCH SỬ XE RA CỔNG',
                     Stack(
                       alignment: Alignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/Button_09_Barcode.png',
+                          'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
                         ),
                       ],
                     ),
                     () {
-                      _handleButtonTap(qrCode());
+                      _handleButtonTap(LSXeRaCongPage());
                     },
                   ),
                 ],

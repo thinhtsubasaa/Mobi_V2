@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/congbaove.dart';
+import 'package:Thilogi/models/dialy_vungmien.dart';
 import 'package:Thilogi/models/lsx_racong.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -34,9 +36,15 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
   String? id;
   String? KhoXeId;
   String? doiTac_Id;
+  String? vungMien_Id;
+  String? congBaoVe_Id;
 
   List<LSX_RaCongModel>? _dn;
   List<LSX_RaCongModel>? get dn => _dn;
+  List<VungMienModel>? _vm;
+  List<VungMienModel>? get vm => _vm;
+  List<CongBaoVeModel>? _baove;
+  List<CongBaoVeModel>? get baove => _baove;
   bool _hasError = false;
   bool get hasError => _hasError;
   String? selectedDate;
@@ -50,16 +58,68 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
   @override
   void initState() {
     super.initState();
-
+    setState(() {
+      vungMien_Id = "646c0969-773d-448f-8df1-6d7c8044613f";
+      _loading = false;
+    });
+    getVungMien();
+    getRaCong(vungMien_Id ?? "");
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
     selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
+    // getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
   }
 
-  Future<void> getDSXRaCong(String? tuNgay, String? denNgay, String? keyword) async {
+  Future<void> getVungMien() async {
+    _vm = [];
+    try {
+      final http.Response response = await requestHelper.getData('DM_DiaLy_VungMien');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " + decodedData.toString());
+        if (decodedData != null) {
+          _vm = (decodedData as List).map((item) => VungMienModel.fromJson(item)).where((item) => item.parent_Id == null).toList();
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            vungMien_Id = "646c0969-773d-448f-8df1-6d7c8044613f";
+            _loading = false;
+          });
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getRaCong(String? VungMien_Id) async {
+    _baove = [];
+    try {
+      final http.Response response = await requestHelper.getData('BaoVe/GetAllTable?VungMien_Id=$VungMien_Id');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data: " + decodedData.toString());
+        if (decodedData != null) {
+          _baove = (decodedData as List).map((item) => CongBaoVeModel.fromJson(item)).toList();
+          _baove!.insert(0, CongBaoVeModel(id: '', tenCong: 'Tất cả'));
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            congBaoVe_Id = '';
+            _loading = false;
+          });
+        }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getDSXRaCong(String? tuNgay, String? denNgay, String? VungMien_Id, String? CongBaoVe_Id, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCongAll?TuNgay=$tuNgay&DenNgay=$denNgay&VungMien_Id=$VungMien_Id&CongBaoVe_Id=$CongBaoVe_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
@@ -96,7 +156,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
     }
   }
 
@@ -208,7 +268,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                   children: [
                     ..._dn?.map((item) {
                           index++; // Tăng số thứ tự sau mỗi lần lặp
-                          bool highlightRed = item.tenTaiXe == "-";
+                          bool highlightRed = item.tenTaiXe == "-" || item.lyDo != null;
                           return TableRow(
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
@@ -220,7 +280,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                               _buildTableCell(item.noiDi ?? "", highlightRed: highlightRed),
                               _buildTableCell(item.noiDen ?? "", highlightRed: highlightRed),
                               _buildTableCell(item.ghiChu ?? "", highlightRed: highlightRed),
-                              _buildTableCell(item.lyDo ?? ""),
+                              _buildTableCell(item.lyDo ?? "", highlightRed: highlightRed),
                               _buildTableCell(item.tenBaoVe ?? "", highlightRed: highlightRed),
                               _buildTableHinhAnh(item.hinhAnh ?? ""),
                             ],
@@ -256,37 +316,6 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     );
   }
 
-  // Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       _showFullImageDialog(content);
-  //     },
-  //     child: Container(
-  //       width: 120,
-  //       height: 120,
-  //       child: Image.network(
-  //         content,
-  //         fit: BoxFit.contain,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void _showFullImageDialog(String imageUrl) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => Dialog(
-  //       child: Container(
-  //         width: double.infinity,
-  //         height: double.infinity,
-  //         child: PhotoView(
-  //           imageProvider: NetworkImage(imageUrl),
-  //           backgroundDecoration: BoxDecoration(color: Colors.black),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildTableHinhAnh(String content, {Color textColor = Colors.black}) {
     // Tách chuỗi URL thành danh sách các link ảnh
     List<String> imageUrls = content.split(',');
@@ -349,7 +378,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -457,7 +486,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXRaCong(selectedFromDate, selectedToDate, maNhanVienController.text);
+                                          getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
@@ -465,6 +494,223 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                                       ),
                                     ],
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _vm?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                    child: SingleChildScrollView(
+                                                      scrollDirection: Axis.horizontal,
+                                                      child: Text(
+                                                        item.tenVungMien ?? "",
+                                                        textAlign: TextAlign.center,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Comfortaa',
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppConfig.textInput,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: vungMien_Id,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  vungMien_Id = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  getRaCong(newValue);
+                                                  getDSXRaCong(selectedFromDate, selectedToDate, newValue, congBaoVe_Id, maNhanVienController.text);
+                                                  print("object : ${vungMien_Id}");
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm vùng miền',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _vm?.any((baiXe) => baiXe.id == itemId && baiXe.tenVungMien?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color(0xFFBC2925),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton2<String>(
+                                              isExpanded: true,
+                                              items: _baove?.map((item) {
+                                                return DropdownMenuItem<String>(
+                                                  value: item.id,
+                                                  child: Container(
+                                                    child: Text(
+                                                      item.tenCong ?? "",
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Comfortaa',
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: AppConfig.textInput,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              value: congBaoVe_Id,
+                                              onChanged: (newValue) {
+                                                setState(() {
+                                                  congBaoVe_Id = newValue;
+                                                });
+                                                if (newValue != null) {
+                                                  if (newValue == '') {
+                                                    getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", '', maNhanVienController.text);
+                                                  } else {
+                                                    getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", newValue, maNhanVienController.text);
+                                                    print("objectcong : ${newValue}");
+                                                  }
+                                                }
+                                              },
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                                height: 40,
+                                                width: 200,
+                                              ),
+                                              dropdownStyleData: const DropdownStyleData(
+                                                maxHeight: 200,
+                                              ),
+                                              menuItemStyleData: const MenuItemStyleData(
+                                                height: 40,
+                                              ),
+                                              dropdownSearchData: DropdownSearchData(
+                                                searchController: textEditingController,
+                                                searchInnerWidgetHeight: 50,
+                                                searchInnerWidget: Container(
+                                                  height: 50,
+                                                  padding: const EdgeInsets.only(
+                                                    top: 8,
+                                                    bottom: 4,
+                                                    right: 8,
+                                                    left: 8,
+                                                  ),
+                                                  child: TextFormField(
+                                                    expands: true,
+                                                    maxLines: null,
+                                                    controller: textEditingController,
+                                                    decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 8,
+                                                      ),
+                                                      hintText: 'Tìm cổng',
+                                                      hintStyle: const TextStyle(fontSize: 12),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                searchMatchFn: (item, searchValue) {
+                                                  if (item is DropdownMenuItem<String>) {
+                                                    // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                    String itemId = item.value ?? "";
+                                                    // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                    return _baove?.any((viTri) => viTri.id == itemId && viTri.tenCong?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                  } else {
+                                                    return false;
+                                                  }
+                                                },
+                                              ),
+                                              onMenuStateChange: (isOpen) {
+                                                if (!isOpen) {
+                                                  textEditingController.clear();
+                                                }
+                                              },
+                                            ),
+                                          )),
+                                    ),
+                                  ],
                                 ),
                                 Container(
                                   child: Column(

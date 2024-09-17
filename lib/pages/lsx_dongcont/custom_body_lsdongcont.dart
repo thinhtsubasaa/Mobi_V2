@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/dongxe.dart';
+import 'package:Thilogi/models/khoxe.dart';
 import 'package:Thilogi/models/lsxdongcont.dart';
 
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -31,7 +34,6 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
   bool _loading = false;
 
   String? id;
-  String? KhoXeId;
 
   List<LSDongContModel>? _dn;
   List<LSDongContModel>? get dn => _dn;
@@ -46,18 +48,25 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController maNhanVienController = TextEditingController();
 
+  String? DongXeId;
+
+  List<DongXeModel>? _dongxeList;
+  List<DongXeModel>? get dongxeList => _dongxeList;
+
   @override
   void initState() {
     super.initState();
+
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
     selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
-    getDSXDongCont(selectedFromDate, selectedToDate, maNhanVienController.text);
+    getDataDongXe();
+    // getDSXDongCont(selectedFromDate, selectedToDate, maNhanVienController.text);
   }
 
-  Future<void> getDSXDongCont(String? tuNgay, String? denNgay, String? keyword) async {
+  Future<void> getDSXDongCont(String? tuNgay, String? denNgay, String? DongXe_Id, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDongContAll?TuNgay=$tuNgay&DenNgay=$denNgay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeDongContAll?TuNgay=$tuNgay&DenNgay=$denNgay&DongXe_Id=$DongXe_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: " + decodedData.toString());
@@ -69,6 +78,28 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
             _loading = false;
           });
         }
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  void getDataDongXe() async {
+    try {
+      final http.Response response = await requestHelper.getData('Xe_DongXe');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _dongxeList = (decodedData["datalist"] as List).map((item) => DongXeModel.fromJson(item)).toList();
+        _dongxeList!.insert(0, DongXeModel(id: '', tenDongXe: 'Tất cả'));
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          DongXeId = '';
+          _loading = false;
+        });
+        getDSXDongCont(selectedFromDate, selectedToDate, DongXeId ?? "", maNhanVienController.text);
       }
     } catch (e) {
       _hasError = true;
@@ -94,7 +125,7 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
       });
       print("TuNgay: $selectedFromDate");
       print("DenNgay: $selectedToDate");
-      await getDSXDongCont(selectedFromDate, selectedToDate, maNhanVienController.text);
+      await getDSXDongCont(selectedFromDate, selectedToDate, DongXeId ?? "", maNhanVienController.text);
     }
   }
 
@@ -241,18 +272,10 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
                     _loading
                         ? LoadingWidget(context)
                         : Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe đóng cont',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
                                 GestureDetector(
                                   onTap: () => _selectDate(context),
                                   child: Container(
@@ -282,6 +305,150 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
                                 const Divider(height: 1, color: Color(0xFFA71C20)),
                                 const SizedBox(
                                   height: 4,
+                                ),
+                                Container(
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFFBC2925),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 20.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Center(
+                                          child: Text(
+                                            "Dòng xe",
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                            padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton2<String>(
+                                                isExpanded: true,
+                                                items: _dongxeList?.map((item) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: item.id,
+                                                    child: Container(
+                                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.horizontal,
+                                                        child: Text(
+                                                          item.tenDongXe ?? "",
+                                                          textAlign: TextAlign.center,
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Comfortaa',
+                                                            fontSize: 13,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: AppConfig.textInput,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                value: DongXeId,
+                                                onChanged: (newValue) {
+                                                  setState(() {
+                                                    DongXeId = newValue;
+                                                    // doiTac_Id = null;
+                                                  });
+
+                                                  if (newValue != null) {
+                                                    if (newValue == '') {
+                                                      getDSXDongCont(selectedFromDate, selectedToDate, '', maNhanVienController.text);
+                                                    } else {
+                                                      getDSXDongCont(selectedFromDate, selectedToDate, newValue, maNhanVienController.text);
+                                                      print("objectcong : ${newValue}");
+                                                    }
+                                                  }
+                                                },
+                                                buttonStyleData: const ButtonStyleData(
+                                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                                  height: 40,
+                                                  width: 200,
+                                                ),
+                                                dropdownStyleData: const DropdownStyleData(
+                                                  maxHeight: 200,
+                                                ),
+                                                menuItemStyleData: const MenuItemStyleData(
+                                                  height: 40,
+                                                ),
+                                                dropdownSearchData: DropdownSearchData(
+                                                  searchController: textEditingController,
+                                                  searchInnerWidgetHeight: 50,
+                                                  searchInnerWidget: Container(
+                                                    height: 50,
+                                                    padding: const EdgeInsets.only(
+                                                      top: 8,
+                                                      bottom: 4,
+                                                      right: 8,
+                                                      left: 8,
+                                                    ),
+                                                    child: TextFormField(
+                                                      expands: true,
+                                                      maxLines: null,
+                                                      controller: textEditingController,
+                                                      decoration: InputDecoration(
+                                                        isDense: true,
+                                                        contentPadding: const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 8,
+                                                        ),
+                                                        hintText: 'Tìm dòng xe',
+                                                        hintStyle: const TextStyle(fontSize: 12),
+                                                        border: OutlineInputBorder(
+                                                          borderRadius: BorderRadius.circular(8),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  searchMatchFn: (item, searchValue) {
+                                                    if (item is DropdownMenuItem<String>) {
+                                                      // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                                      String itemId = item.value ?? "";
+                                                      // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                                      return _dongxeList?.any((baiXe) => baiXe.id == itemId && baiXe.tenDongXe?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                                    } else {
+                                                      return false;
+                                                    }
+                                                  },
+                                                ),
+                                                onMenuStateChange: (isOpen) {
+                                                  if (!isOpen) {
+                                                    textEditingController.clear();
+                                                  }
+                                                },
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
                                 ),
                                 Container(
                                   height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
@@ -349,7 +516,7 @@ class _BodyLSDongContScreenState extends State<BodyLSDongContScreen> with Ticker
                                             _loading = true;
                                           });
                                           // Gọi API với từ khóa tìm kiếm
-                                          getDSXDongCont(selectedFromDate, selectedToDate, maNhanVienController.text);
+                                          getDSXDongCont(selectedFromDate, selectedToDate, DongXeId ?? "", maNhanVienController.text);
                                           setState(() {
                                             _loading = false;
                                           });
