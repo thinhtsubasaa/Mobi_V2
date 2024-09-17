@@ -367,7 +367,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
     return Container(
       child: Column(
         children: [
-          // const SizedBox(height: 5),
+          const SizedBox(height: 5),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
@@ -399,12 +399,12 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                   child: Column(
                                     children: [
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -426,7 +426,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),
@@ -539,12 +539,12 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -592,7 +592,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontFamily: 'Comfortaa',
-                                                                  fontSize: 13,
+                                                                  fontSize: 12,
                                                                   fontWeight: FontWeight.w600,
                                                                   color: AppConfig.textInput,
                                                                 ),
@@ -682,12 +682,12 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -735,7 +735,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontFamily: 'Comfortaa',
-                                                                  fontSize: 14,
+                                                                  fontSize: 12,
                                                                   fontWeight: FontWeight.w600,
                                                                   color: AppConfig.textInput,
                                                                 ),
@@ -824,12 +824,12 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -877,7 +877,7 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontFamily: 'Comfortaa',
-                                                                  fontSize: 14,
+                                                                  fontSize: 12,
                                                                   fontWeight: FontWeight.w600,
                                                                   color: AppConfig.textInput,
                                                                 ),

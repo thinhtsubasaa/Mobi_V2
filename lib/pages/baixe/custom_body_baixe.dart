@@ -589,7 +589,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(ViTriId!, _data?.toaDo ?? "", _data?.soKhung ?? "", _ghiChu.text, _data?.hinhAnh ?? "").then((_) {
+          postData(ViTriId ?? "", _data?.toaDo ?? "", _data?.soKhung ?? "", _ghiChu.text, _data?.hinhAnh ?? "").then((_) {
             setState(() {
               _data = null;
               barcodeScanResult = null;

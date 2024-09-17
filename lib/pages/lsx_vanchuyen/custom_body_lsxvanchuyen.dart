@@ -366,7 +366,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
     return Container(
       child: Column(
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
@@ -633,7 +633,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                   height: 5,
                                 ),
                                 Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -660,7 +660,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontFamily: 'Comfortaa',
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: AppConfig.textInput,
                                             ),
@@ -778,85 +778,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                   height: 5,
                                 ),
                                 Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: const Color(0xFFBC2925),
-                                      width: 1.5,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 30.w,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF6C6C7),
-                                          border: Border(
-                                            right: BorderSide(
-                                              color: Color(0xFF818180),
-                                              width: 1,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Tìm kiếm",
-                                            textAlign: TextAlign.left,
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppConfig.textInput,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                          child: TextField(
-                                            controller: maNhanVienController,
-                                            decoration: const InputDecoration(
-                                              border: InputBorder.none,
-                                              isDense: true,
-                                              hintText: 'Nhập mã nhân viên hoặc tên đầy đủ',
-                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                                            ),
-                                            style: const TextStyle(
-                                              fontFamily: 'Comfortaa',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 8,
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.search),
-                                        onPressed: () {
-                                          setState(() {
-                                            _loading = true;
-                                          });
-                                          // Gọi API với từ khóa tìm kiếm
-                                          getDSXVanChuyen(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
-                                          setState(() {
-                                            _loading = false;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -883,7 +805,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                             textAlign: TextAlign.left,
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: AppConfig.textInput,
                                             ),
@@ -909,7 +831,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                                           textAlign: TextAlign.center,
                                                           style: const TextStyle(
                                                             fontFamily: 'Comfortaa',
-                                                            fontSize: 14,
+                                                            fontSize: 13,
                                                             fontWeight: FontWeight.w600,
                                                             color: AppConfig.textInput,
                                                           ),
@@ -994,6 +916,87 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                                       ),
                                     ],
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: const Color(0xFFBC2925),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 30.w,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFF6C6C7),
+                                          border: Border(
+                                            right: BorderSide(
+                                              color: Color(0xFF818180),
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            "Tìm kiếm",
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppConfig.textInput,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                          child: TextField(
+                                            controller: maNhanVienController,
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              isDense: true,
+                                              hintText: 'Nhập mã nhân viên hoặc tên đầy đủ',
+                                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                                            ),
+                                            style: const TextStyle(
+                                              fontFamily: 'Comfortaa',
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.search),
+                                        onPressed: () {
+                                          setState(() {
+                                            _loading = true;
+                                          });
+                                          // Gọi API với từ khóa tìm kiếm
+                                          getDSXVanChuyen(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+                                          setState(() {
+                                            _loading = false;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4,
                                 ),
                                 Container(
                                   child: Column(

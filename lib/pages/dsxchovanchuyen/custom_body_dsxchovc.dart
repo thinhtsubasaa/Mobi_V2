@@ -394,16 +394,16 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                 ),
                                 const Divider(height: 0, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
+                                  margin: EdgeInsets.all(10),
                                   child: Column(
                                     children: [
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -425,7 +425,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),
@@ -538,12 +538,12 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -565,7 +565,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),
@@ -681,12 +681,12 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -708,7 +708,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),
@@ -734,7 +734,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontFamily: 'Comfortaa',
-                                                                  fontSize: 14,
+                                                                  fontSize: 13,
                                                                   fontWeight: FontWeight.w600,
                                                                   color: AppConfig.textInput,
                                                                 ),
@@ -823,12 +823,12 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                         height: 5,
                                       ),
                                       Container(
-                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(5),
                                           border: Border.all(
-                                            color: const Color(0xFF818180),
-                                            width: 1,
+                                            color: const Color(0xFFBC2925),
+                                            width: 1.5,
                                           ),
                                         ),
                                         child: Row(
@@ -850,7 +850,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 16,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.w400,
                                                     color: AppConfig.textInput,
                                                   ),
@@ -876,7 +876,7 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                                                                 textAlign: TextAlign.center,
                                                                 style: const TextStyle(
                                                                   fontFamily: 'Comfortaa',
-                                                                  fontSize: 14,
+                                                                  fontSize: 13,
                                                                   fontWeight: FontWeight.w600,
                                                                   color: AppConfig.textInput,
                                                                 ),

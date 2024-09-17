@@ -293,7 +293,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
     return Container(
       child: Column(
         children: [
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
@@ -560,7 +560,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                   height: 5,
                                 ),
                                 Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -587,7 +587,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontFamily: 'Comfortaa',
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: AppConfig.textInput,
                                             ),
@@ -705,7 +705,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                   height: 5,
                                 ),
                                 Container(
-                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 7.h,
+                                  height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
@@ -732,7 +732,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
                                               fontFamily: 'Comfortaa',
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w400,
                                               color: AppConfig.textInput,
                                             ),
@@ -753,7 +753,7 @@ class _BodyLSNhapChuyenScreenState extends State<BodyLSNhapChuyenScreen> with Ti
                                             ),
                                             style: const TextStyle(
                                               fontFamily: 'Comfortaa',
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
                                             ),
