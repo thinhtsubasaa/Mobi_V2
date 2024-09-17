@@ -60,10 +60,10 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     super.initState();
     setState(() {
       vungMien_Id = "646c0969-773d-448f-8df1-6d7c8044613f";
+      getRaCong(vungMien_Id ?? "");
       _loading = false;
     });
     getVungMien();
-    getRaCong(vungMien_Id ?? "");
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
     selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     // getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
@@ -108,6 +108,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
             congBaoVe_Id = '';
             _loading = false;
           });
+          getDSXRaCong(selectedFromDate, selectedToDate, vungMien_Id ?? "", congBaoVe_Id ?? "", maNhanVienController.text);
         }
       }
     } catch (e) {
@@ -541,7 +542,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                                                 });
                                                 if (newValue != null) {
                                                   getRaCong(newValue);
-                                                  getDSXRaCong(selectedFromDate, selectedToDate, newValue, congBaoVe_Id, maNhanVienController.text);
+                                                  getDSXRaCong(selectedFromDate, selectedToDate, newValue, congBaoVe_Id ?? "", maNhanVienController.text);
                                                   print("object : ${vungMien_Id}");
                                                 }
                                               },

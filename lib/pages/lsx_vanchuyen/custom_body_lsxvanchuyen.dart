@@ -73,7 +73,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
     selectedToDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: 1)));
     // getDSXVanChuyen(selectedFromDate, selectedToDate, doiTac_Id ?? "", maNhanVienController.text);
-    getDSXChoXuat('', "", "");
+    getDSXChoXuat('', '', "", "");
   }
 
   void getDoiTac() async {
@@ -103,10 +103,10 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
     }
   }
 
-  void getDSXChoXuat(String? id, String? doiTac_Id, String? phuongThuc_Id) async {
+  void getDSXChoXuat(String? KhoXe_Id, String? id, String? doiTac_Id, String? phuongThuc_Id) async {
     _cx = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeChoXuat?id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeChoXuat?KhoXe_Id=$KhoXe_Id&id=$id&DoiTac_Id=$doiTac_Id&PhuongThuc_Id=$phuongThuc_Id');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
