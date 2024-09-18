@@ -384,15 +384,6 @@ class _BodyDSXScreenChoVanChuyenState extends State<BodyDSXScreenChoVanChuyen> w
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe chờ xuất',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const Divider(height: 0, color: Color(0xFFA71C20)),
                                 Container(
                                   margin: EdgeInsets.all(10),
                                   child: Column(

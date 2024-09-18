@@ -133,21 +133,21 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with 
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  // if (userHasPermission(menuRoles, 'quan-ly-xe-ra-cong-mobi'))
-                  CustomButton(
-                    'QUẢN LÝ XE RA CỔNG',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_KTXeRaCong.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'quan-ly-xe-ra-cong-mobi'))
+                    CustomButton(
+                      'QUẢN LÝ XE RA CỔNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_KTXeRaCong.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(QLXeRaCongPage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(QLXeRaCongPage());
-                    },
-                  ),
                   if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
                     CustomButton(
                       'TRA CỨU THÔNG TIN NHÂN VIÊN',
@@ -163,21 +163,21 @@ class _BodyNghiepVuChungScreenState extends State<BodyNghiepVuChungScreen> with 
                         _handleButtonTap(TraCuuPage());
                       },
                     ),
-                  // if (userHasPermission(menuRoles, 'qrcode-mobi'))
-                  CustomButton(
-                    'QR CODE',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_Barcode.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'qrcode-mobi'))
+                    CustomButton(
+                      'QR CODE',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_Barcode.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(qrCode());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(qrCode());
-                    },
-                  ),
                 ],
               ),
             ),

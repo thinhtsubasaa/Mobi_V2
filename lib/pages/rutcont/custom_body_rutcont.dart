@@ -535,7 +535,6 @@ class _BodyRutContScreenState extends State<BodyRutContScreen> with TickerProvid
                       ? LoadingWidget(context)
                       : Container(
                           padding: const EdgeInsets.all(10),
-                          margin: EdgeInsets.only(top: 20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

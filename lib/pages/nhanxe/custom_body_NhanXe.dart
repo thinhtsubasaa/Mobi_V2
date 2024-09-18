@@ -210,7 +210,6 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
     return Container(
         child: Column(
       children: [
-        const SizedBox(height: 5),
         CardVin(),
         const SizedBox(height: 5),
         _loading

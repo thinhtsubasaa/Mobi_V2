@@ -512,7 +512,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
                                 // ),
                                 const Divider(height: 1, color: Color(0xFFA71C20)),
                                 Container(
-                                  margin: EdgeInsets.only(right: 10, top: 10, bottom: 10),
+                                  margin: EdgeInsets.only(right: 10),
                                   child: Column(
                                     children: [
                                       CustomItem(

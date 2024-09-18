@@ -565,7 +565,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

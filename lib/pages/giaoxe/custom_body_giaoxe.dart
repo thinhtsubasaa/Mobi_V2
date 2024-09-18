@@ -538,7 +538,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -566,10 +566,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
                                 color: AppConfig.primaryColor,
                               ),
                               Container(
-                                margin: const EdgeInsets.only(
-                                  top: 10,
-                                  bottom: 10,
-                                ),
                                 child: Column(
                                   children: [
                                     ItemGiaoXe(

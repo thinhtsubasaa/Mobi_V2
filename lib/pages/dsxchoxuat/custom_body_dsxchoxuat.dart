@@ -385,15 +385,6 @@ class _BodyDSXScreenChoXuatState extends State<BodyDSXScreenChoXuat> with Ticker
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Danh sách xe chờ xuất',
-                                  style: TextStyle(
-                                    fontFamily: 'Comfortaa',
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const Divider(height: 0, color: Color(0xFFA71C20)),
                                 Container(
                                   margin: EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                                   child: Column(

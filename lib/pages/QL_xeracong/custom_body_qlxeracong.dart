@@ -132,36 +132,36 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  // if (userHasPermission(menuRoles, 'kiem-tra-xe-ra-cong-mobi'))
-                  CustomButton(
-                    'KIỂM TRA XE RA CỔNG',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_KTXeRaCong_BVQuet.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'kiem-tra-xe-ra-cong-mobi'))
+                    CustomButton(
+                      'KIỂM TRA XE RA CỔNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_KTXeRaCong_BVQuet.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(XeRaCongPage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(XeRaCongPage());
-                    },
-                  ),
-                  // if (userHasPermission(menuRoles, 'lich-su-xe-ra-cong-mobi'))
-                  CustomButton(
-                    'LỊCH SỬ XE RA CỔNG',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'lich-su-xe-ra-cong-mobi'))
+                    CustomButton(
+                      'LỊCH SỬ XE RA CỔNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(LSXeRaCongPage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(LSXeRaCongPage());
-                    },
-                  ),
                 ],
               ),
             ),

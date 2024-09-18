@@ -558,7 +558,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -588,7 +588,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                 color: AppConfig.primaryColor,
                               ),
                               Container(
-                                margin: EdgeInsets.only(top: 10, bottom: 10),
                                 child: Column(
                                   children: [
                                     Container(

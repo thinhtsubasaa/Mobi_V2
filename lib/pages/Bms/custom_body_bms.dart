@@ -136,36 +136,36 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  // if (userHasPermission(menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
-                  CustomButton(
-                    'THILOTRANS\nAUTO',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Main_button_THILOTrans.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
+                    CustomButton(
+                      'THILOTRANS\nAUTO',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Main_button_THILOTrans.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(QLKhoXePage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(QLKhoXePage());
-                    },
-                  ),
-                  // if (userHasPermission(menuRoles, 'nghiep-vu-co-ban-mobi'))
-                  CustomButton(
-                    'NGHIỆP VỤ CƠ BẢN',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Main_button_01_QTNVChung.png',
-                        ),
-                      ],
+                  if (userHasPermission(menuRoles, 'nghiep-vu-co-ban-mobi'))
+                    CustomButton(
+                      'NGHIỆP VỤ CƠ BẢN',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Main_button_01_QTNVChung.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(NghiepVuChungPage());
+                      },
                     ),
-                    () {
-                      _handleButtonTap(NghiepVuChungPage());
-                    },
-                  ),
                 ],
               ),
             ),
