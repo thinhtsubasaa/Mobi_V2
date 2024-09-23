@@ -1,4 +1,4 @@
-class XeRaCongModel {
+class XeRaCongListModel {
   String? key;
   String? id;
   String? soKhung;
@@ -42,7 +42,7 @@ class XeRaCongModel {
   String? tenNhanVienKH;
   String? sdtKH;
 
-  XeRaCongModel(
+  XeRaCongListModel(
       {this.key,
       this.id,
       this.maMau,
@@ -79,15 +79,15 @@ class XeRaCongModel {
       this.lyDo,
       this.hinhAnh,
       this.tencong,
-      this.hinhAnhKH,
       this.hinhAnhUrl,
+      this.hinhAnhKH,
       this.maNhanVienKH,
       this.tenNhanVienKH,
       this.sdtKH,
       this.noiditaixe});
 
-  factory XeRaCongModel.fromJson(Map<String, dynamic> json) {
-    return XeRaCongModel(
+  factory XeRaCongListModel.fromJson(Map<String, dynamic> json) {
+    return XeRaCongListModel(
         key: json["key"],
         id: json["id"],
         soKhung: json["soKhung"],
@@ -168,7 +168,7 @@ class XeRaCongModel {
         "tencong": tencong,
         "noiditaixe": noiditaixe,
         "hinhAnh": hinhAnh,
-        "hinhAnhKH": hinhAnhKH,
+        "hinhAnhKh": hinhAnhKH,
         "maNhanVienKH": maNhanVienKH,
         "tenNhanVienKH": tenNhanVienKH,
         "sdtKH": sdtKH,

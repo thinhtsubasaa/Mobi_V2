@@ -52,7 +52,7 @@ class _CustomCardState extends State<CustomCard>
               'A-WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 23.sp,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),

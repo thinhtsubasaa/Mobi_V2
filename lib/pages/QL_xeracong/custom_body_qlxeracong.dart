@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:Thilogi/pages/checkxeracong/check_racong.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 import 'package:Thilogi/pages/lsx_racong/lsx_racong.dart';
 import 'package:Thilogi/pages/qrcode.dart';
@@ -162,6 +163,21 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                         _handleButtonTap(LSXeRaCongPage());
                       },
                     ),
+                  // if (userHasPermission(menuRoles, 'check-xe-ra-cong-mobi'))
+                  CustomButton(
+                    'CHECK XE RA CỔNG',
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
+                        ),
+                      ],
+                    ),
+                    () {
+                      _handleButtonTap(CheckXeRaCongPage());
+                    },
+                  ),
                 ],
               ),
             ),
