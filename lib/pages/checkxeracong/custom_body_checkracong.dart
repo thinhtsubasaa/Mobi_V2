@@ -270,8 +270,6 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
   Widget _buildTableOptions(BuildContext context) {
     int index = 0; // Biến đếm số thứ tự
 
-    const String defaultDate = "1970-01-01 ";
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
@@ -357,7 +355,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                     5: FlexColumnWidth(0.3),
                     6: FlexColumnWidth(0.3),
                     7: FlexColumnWidth(0.3),
-                    8: FlexColumnWidth(0.3), // Cột cho checkbox
+                    8: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn

@@ -138,51 +138,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     });
   }
 
-  // Future<void> _loadSavedValues() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? savedKhoXeId = prefs.getString('B1');
-
-  //   String? savedBaiXeId = prefs.getString('B2');
-
-  //   await getData();
-  //   if (savedKhoXeId != null) {
-  //     setState(() {
-  //       KhoXeId = savedKhoXeId;
-  //     });
-  //     await getBaiXeList(savedKhoXeId);
-  //   }
-
-  //   if (savedBaiXeId != null) {
-  //     setState(() {
-  //       BaiXeId = savedBaiXeId;
-  //     });
-  //     await getViTriList(savedBaiXeId);
-  //   }
-  //   // if (savedViTriId != null) {
-  //   //   if (_vitriList != null &&
-  //   //       _vitriList!.any((item) => item.id == savedViTriId)) {
-  //   //     setState(() {
-  //   //       ViTriId = savedViTriId;
-  //   //     });
-  //   //   } else {
-  //   //     setState(() {
-  //   //       ViTriId = null;
-  //   //     });
-  //   //   }
-  //   // }
-  //   // if (savedViTriId != null) {
-  //   //   setState(() {
-  //   //     ViTriId = savedViTriId;
-  //   //   });
-  //   // }
-  // }
-
-  // Future<void> _saveValues() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('B1', KhoXeId ?? '');
-  //   await prefs.setString('B2', BaiXeId ?? '');
-  // }
-
   void onKhoXeChanged(String? newValue) {
     setState(() {
       KhoXeId = newValue;
@@ -507,8 +462,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -522,7 +477,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
+            height: 10.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -557,7 +512,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -963,7 +918,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                                 ),
                                               ),
                                             ),
-                                            child: Center(
+                                            child: const Center(
                                               child: Text(
                                                 "Kho đến",
                                                 textAlign: TextAlign.left,
@@ -1353,8 +1308,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                               Column(
                                 children: [
                                   Container(
-                                    // margin:
-                                    //     EdgeInsets.only(top: 10, bottom: 10),
                                     child: Column(
                                       children: [
                                         Container(

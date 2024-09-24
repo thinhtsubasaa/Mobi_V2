@@ -362,8 +362,8 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 885 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 885 ? 10.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -377,7 +377,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
+            height: 10.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -412,7 +412,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -672,7 +672,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -690,9 +690,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                                   IconButton(
                                     icon: const Icon(Icons.visibility),
                                     onPressed: () {
-                                      // Hành động khi nhấn vào icon
                                       nextScreen(context, LSNhapBaiPage());
-                                      // Điều hướng đến trang lịch sử hoặc thực hiện hành động khác
                                     },
                                   ),
                                 ],
@@ -724,7 +722,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                                               ),
                                             ),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               "Bãi Xe",
                                               textAlign: TextAlign.left,
@@ -862,11 +860,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                                               ),
                                             ),
                                           ),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               "Vị trí",
                                               textAlign: TextAlign.left,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w400,
@@ -976,7 +974,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                           ),
                         ),
                   Container(
-                    margin: EdgeInsets.all(10),
+                    margin: EdgeInsets.only(left: 10, right: 10),
                     child: Column(
                       children: [
                         Container(
@@ -985,7 +983,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                             children: [
                               Container(
                                 padding: EdgeInsets.only(left: 10),
-                                child: Text(
+                                child: const Text(
                                   'Loại xe: ',
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
@@ -1039,7 +1037,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                         Container(
                           margin: const EdgeInsets.only(right: 5),
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
@@ -1137,9 +1135,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                             ],
                           ),
                         ),
-                        // CheckSheetUploadAnh(
-                        //   lstFiles: [],
-                        // )
                       ],
                     ),
                   ),
@@ -1195,7 +1190,7 @@ class Item extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -1204,7 +1199,7 @@ class Item extends StatelessWidget {
             ),
             Text(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -1238,7 +1233,7 @@ class ItemGhiChu extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,

@@ -205,10 +205,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
   }
 
   void _handleTabChange() {
-    if (_tabController!.indexIsChanging) {
-      // Call the action when the tab changes
-      // print('Tab changed to: ${_tabController!.index}');
-    }
+    if (_tabController!.indexIsChanging) {}
   }
 
   @override
@@ -220,8 +217,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 885 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -235,7 +232,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
+            height: 10.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -270,7 +267,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),

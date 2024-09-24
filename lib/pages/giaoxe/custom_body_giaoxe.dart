@@ -266,9 +266,8 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      // height: 11.h,
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
-      margin: const EdgeInsets.only(top: 10),
+      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -282,7 +281,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
         children: [
           Container(
             width: 20.w,
-            height: 11.h,
+            height: 10.h,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
@@ -317,7 +316,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -633,7 +632,6 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
                                     const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Container(
                                       margin: const EdgeInsets.only(right: 5),
-                                      padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         color: Theme.of(context).colorScheme.onPrimary,
                                       ),
