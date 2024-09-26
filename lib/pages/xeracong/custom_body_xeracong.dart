@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/models/checksheet.dart';
@@ -11,8 +13,12 @@ import 'package:Thilogi/models/xeraconglist.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
+import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+import 'package:image/image.dart' as img;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -22,6 +28,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -32,6 +40,7 @@ import '../../config/config.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
 import '../../widgets/loading.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class CustomBodyXeRaCong extends StatelessWidget {
   @override
@@ -146,29 +155,63 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   }
 
   Future imageSelector(BuildContext context, String pickerType) async {
-    switch (pickerType) {
-      case "gallery":
+    if (pickerType == "gallery") {
+      // Chọn nhiều ảnh từ thư viện
+      List<Asset> resultList = <Asset>[];
 
-        /// GALLERY IMAGE PICKER
-        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-        break;
+      try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 300, // Số lượng ảnh tối đa bạn có thể chọn
+          enableCamera: false, // Bật tính năng chụp ảnh nếu cần
+          selectedAssets: [], // Các ảnh đã chọn (nếu có)
+          materialOptions: const MaterialOptions(
+            actionBarTitle: "Chọn ảnh",
+            allViewTitle: "Tất cả ảnh",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
 
-      case "camera":
+        if (resultList.isNotEmpty) {
+          // Thêm các ảnh đã chọn vào danh sách _lstFiles
 
-        /// CAMERA CAPTURE CODE
-        _pickedFile = await _picker.getImage(source: ImageSource.camera);
-        break;
-    }
+          for (var asset in resultList) {
+            ByteData byteData = await asset.getByteData();
+            List<int> imageData = byteData.buffer.asUint8List();
 
-    if (_pickedFile != null) {
-      setState(() {
-        _lstFiles.add(FileItem(
-          uploaded: false,
-          file: _pickedFile!.path,
-          local: true,
-          isRemoved: false,
-        ));
-      });
+            // Lưu ảnh vào thư mục tạm
+            final tempDir = await getTemporaryDirectory();
+            final file = await File('${tempDir.path}/${asset.name}').create();
+            file.writeAsBytesSync(imageData);
+
+            print('file: ${file.path}');
+            setState(() {
+              _lstFiles.add(FileItem(
+                uploaded: false,
+                file: file.path, // Đường dẫn file tạm
+                local: true,
+                isRemoved: false,
+              ));
+            });
+          }
+        }
+      } on Exception catch (e) {
+        print(e);
+      }
+    } else if (pickerType == "camera") {
+      // Sử dụng image_picker để chụp ảnh từ camera
+      _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      if (_pickedFile != null) {
+        setState(() {
+          _lstFiles.add(FileItem(
+            uploaded: false,
+            file: _pickedFile!.path,
+            local: true,
+            isRemoved: false,
+          ));
+        });
+      }
     }
   }
 
@@ -521,6 +564,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
               _qrData = value;
               _listData = _xeracongList;
               if (_listData == null || _listData!.isEmpty) {
+                _loading = false;
                 if (value != null && value?.length >= 3 && RegExp(r'[a-zA-Z]').hasMatch(value?[2])) {
                   QuickAlert.show(
                     context: context,
@@ -543,7 +587,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                 _qrDataController.text = '';
                 _Iskehoach = false;
                 _Isred = false;
-                _loading = false;
               } else {
                 var xeracong = _listData?.first;
 
@@ -558,7 +601,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                 _datalist?.sdt = xeracong?.sdt;
                 _datalist?.hinhAnhUrl = xeracong?.hinhAnhUrl;
                 _datalist?.maNhanVien = xeracong?.maNhanVien;
-
                 _datalist?.soXe = xeracong?.soXe;
                 _datalist?.tencong = xeracong?.tencong;
                 _datalist?.hinhAnhKH = xeracong?.hinhAnhKH;
@@ -575,6 +617,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                 print("NoiDenList: ${_datalist?.noiden}");
                 print("PTVC: ${_datalist?.tenPhuongThucVanChuyen}");
                 print("NV: ${_datalist?.tenNhanVien}");
+                print("Hình ảnh KH: ${_datalist?.hinhAnhKH}");
 
                 if (xeracong?.maNhanVien == null) {
                   _Isred = true;
@@ -633,35 +676,93 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   //   });
   // }
 
+// Hàm chạy trong background isolate
+  // Future<File> compressImage(File file) async {
+  //   setState(() {
+  //     _loading = true;
+  //   });
+  //   final image = img.decodeImage(file.readAsBytesSync());
+  //   final compressedImage = img.encodeJpg(image!, quality: 80);
+  //   final newFile = File(file.path)..writeAsBytesSync(compressedImage);
+
+  //   return newFile;
+  // }
+  Future<File> compressImage(File file) async {
+    setState(() {
+      _loading = true;
+    });
+
+    final bytes = await file.readAsBytes();
+    final String extension = file.path.split('.').last.toLowerCase();
+    CompressFormat format;
+
+    // Xác định định dạng dựa trên phần mở rộng của tệp
+    switch (extension) {
+      case 'png':
+        format = CompressFormat.png; // Định dạng PNG
+        break;
+
+      case 'jpeg':
+        format = CompressFormat.jpeg; // Định dạng JPEG
+        break;
+
+      case 'jpg':
+        format = CompressFormat.jpeg; // Định dạng JPG cũng coi như JPEG
+        break;
+
+      default:
+        throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+    }
+
+    try {
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        bytes,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 90,
+        format: format, // Sử dụng định dạng đã xác định
+      );
+
+      final newFile = File(file.path)..writeAsBytesSync(compressedBytes);
+      return newFile;
+    } catch (e) {
+      print("Error compressing image: $e"); // Ghi log lỗi
+      return file; // Trả về tệp gốc nếu gặp lỗi
+    }
+  }
+
   _onSave() async {
     setState(() {
       _loading = true;
     });
 
     List<String> imageUrls = [];
-
+    // int countNotUploaded = _lstFiles.where((fileItem) => fileItem?.uploaded == false && fileItem?.isRemoved == false).length;
+    // print("Tổng số: ${countNotUploaded}");
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
-        var response = await RequestHelper().uploadFile(file);
-        widget.lstFiles.add(CheckSheetFileModel(
-          isRemoved: response["isRemoved"],
-          id: response["id"],
-          fileName: response["fileName"],
-          path: response["path"],
-        ));
-        fileItem.uploaded = true;
-        // setState(() {
-        //   _loading = false;
-        // });
 
-        fileItem.uploaded = true; // Đánh dấu file đã được upload
-
-        if (response["path"] != null) {
-          imageUrls.add(response["path"]);
+        if (file.existsSync()) {
+          file = await compressImage(file);
         }
-        // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
-        //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+
+        var response = await RequestHelper().uploadFile(file);
+        print("Response: $response");
+        if (response != null) {
+          widget.lstFiles.add(CheckSheetFileModel(
+            isRemoved: response["isRemoved"],
+            id: response["id"],
+            fileName: response["fileName"],
+            path: response["path"],
+          ));
+          fileItem.uploaded = true; // Đánh dấu file đã được upload
+          if (response["path"] != null) {
+            imageUrls.add(response["path"]);
+          }
+          // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+          //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        }
       }
     }
 
@@ -1254,6 +1355,23 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                               ),
                             ),
                           ),
+
+                          // RoundedLoadingButton(
+                          //   child: Text(
+                          //     'Đồng ý',
+                          //     style: TextStyle(
+                          //       fontFamily: 'Comfortaa',
+                          //       fontSize: 13,
+                          //       color: Colors.white,
+                          //       fontWeight: FontWeight.w700,
+                          //     ),
+                          //   ),
+                          //   width: 40.w,
+                          //   controller: _btnController, // Controller cho nút
+                          //   color: Colors.green,
+                          //   onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                          // ),
+
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -1369,16 +1487,45 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                             Container(
                                               width: 120,
                                               height: 120,
-                                              child: (_data?.hinhAnhUrl != null || _datalist?.hinhAnhUrl != null)
-                                                  ? Image.network(
-                                                      _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "",
-                                                      fit: BoxFit.contain,
-                                                    )
-                                                  : Image.network(
-                                                      AppConfig.defaultImage,
-                                                      fit: BoxFit.contain,
-                                                    ),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  // Hiển thị hộp thoại để phóng to ảnh
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        child: InteractiveViewer(
+                                                          panEnabled: true, // Cho phép kéo ảnh
+                                                          minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                                          maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                                          child: Image.network(
+                                                            _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Image.network(
+                                                  _data?.hinhAnhKH ?? _datalist?.hinhAnhUrl ?? AppConfig.defaultImage,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
                                             ),
+                                            // Container(
+                                            //   width: 120,
+                                            //   height: 120,
+                                            //   child: (_data?.hinhAnhUrl != null || _datalist?.hinhAnhUrl != null)
+                                            //       ? Image.network(
+                                            //           _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "",
+                                            //           fit: BoxFit.contain,
+                                            //         )
+                                            //       : Image.network(
+                                            //           AppConfig.defaultImage,
+                                            //           fit: BoxFit.contain,
+                                            //         ),
+                                            // ),
                                             ItemTaiXe(
                                               title: 'Mã tài xế: ',
                                               value: _data?.maNhanVien ?? _datalist?.maNhanVien,
@@ -1741,7 +1888,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                               builder: (context, child) {
                                                                 return Opacity(
                                                                   opacity: _opacityAnimation.value, // Điều chỉnh độ mờ (nhấp nháy ẩn/hiện)
-                                                                  child: Text(
+                                                                  child: const Text(
                                                                     'Xe này không có kế hoạch xuất kho',
                                                                     style: TextStyle(
                                                                       fontFamily: 'Comfortaa',
@@ -2062,7 +2209,7 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
             : xe.isCheck == true
                 ? Colors.green // Nếu isCheck == true thì xanh lá
                 : Colors.red, // Nếu isCheck == false thì màu đỏ
-        width: xe != null ? 5 : 2,
+        width: xe != null ? 10 : 2,
       ),
       borderRadius: BorderRadius.circular(8),
     ),
@@ -2138,11 +2285,60 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
                     Item(
                       value: xe?.noiden ?? "",
                     ),
-                    Item(
-                      value: xe?.tenNhanVienKH ?? "",
-                    ),
-                    Item(
-                      value: xe?.maNhanVienKH ?? "",
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Container(
+                        //   width: 11.h,
+                        //   height: 13.h,
+                        //   child: (xe?.hinhAnhKH != null)
+                        //       ? Image.network(
+                        //           xe?.hinhAnhKH ?? "",
+                        //           fit: BoxFit.contain,
+                        //         )
+                        //       : Image.network(
+                        //           AppConfig.defaultImage,
+                        //           fit: BoxFit.contain,
+                        //         ),
+                        // ),
+                        Container(
+                          width: 11.h,
+                          height: 13.h,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Hiển thị hộp thoại để phóng to ảnh
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                    child: InteractiveViewer(
+                                      panEnabled: true, // Cho phép kéo ảnh
+                                      minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                      maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                      child: Image.network(
+                                        xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Image.network(
+                              xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          ItemLXKH(
+                            value: xe?.tenNhanVienKH ?? "",
+                          ),
+                          ItemLXKH(
+                            value: xe?.maNhanVienKH ?? "",
+                          ),
+                        ]),
+                      ],
                     ),
                   ],
                 ),
@@ -2197,23 +2393,72 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 6.h,
-      child: Center(
-        child: Row(
-          children: [
-            Text(
-              value ?? "",
-              style: const TextStyle(
-                fontFamily: 'Comfortaa',
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppConfig.primaryColor,
-              ),
+      height: 5.h,
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Center(
+          child: Text(
+            value ?? "",
+            style: const TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+}
+
+class ItemLXKH extends StatelessWidget {
+  final String? value;
+
+  const ItemLXKH({
+    Key? key,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 5.h,
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.30),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Center(
+          child: Text(
+            value ?? "",
+            style: const TextStyle(
+              fontFamily: 'Comfortaa',
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: AppConfig.primaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+    // Container(
+    //   height: 5.h,
+    //   child: Center(
+    //     child: Row(
+    //       children: [
+    //         Text(
+    //           value ?? "",
+    //           style: const TextStyle(
+    //             fontFamily: 'Comfortaa',
+    //             fontSize: 12,
+    //             fontWeight: FontWeight.w700,
+    //             color: AppConfig.primaryColor,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
 

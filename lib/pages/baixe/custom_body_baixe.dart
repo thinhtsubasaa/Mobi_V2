@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
@@ -18,8 +19,11 @@ import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -190,30 +194,91 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
     });
   }
 
+  // Future imageSelector(BuildContext context, String pickerType) async {
+  //   switch (pickerType) {
+  //     case "gallery":
+
+  //       /// GALLERY IMAGE PICKER
+  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+  //       break;
+
+  //     case "camera":
+
+  //       /// CAMERA CAPTURE CODE
+  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
+  //       break;
+  //   }
+
+  //   if (_pickedFile != null) {
+  //     setState(() {
+  //       _lstFiles.add(FileItem(
+  //         uploaded: false,
+  //         file: _pickedFile!.path,
+  //         local: true,
+  //         isRemoved: false,
+  //       ));
+  //     });
+  //   }
+  // }
+
   Future imageSelector(BuildContext context, String pickerType) async {
-    switch (pickerType) {
-      case "gallery":
+    if (pickerType == "gallery") {
+      // Chọn nhiều ảnh từ thư viện
+      List<Asset> resultList = <Asset>[];
 
-        /// GALLERY IMAGE PICKER
-        _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-        break;
+      try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 100, // Số lượng ảnh tối đa bạn có thể chọn
+          enableCamera: false, // Bật tính năng chụp ảnh nếu cần
+          selectedAssets: [], // Các ảnh đã chọn (nếu có)
+          materialOptions: const MaterialOptions(
+            actionBarTitle: "Chọn ảnh",
+            allViewTitle: "Tất cả ảnh",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
 
-      case "camera":
+        if (resultList.isNotEmpty) {
+          // Thêm các ảnh đã chọn vào danh sách _lstFiles
 
-        /// CAMERA CAPTURE CODE
-        _pickedFile = await _picker.getImage(source: ImageSource.camera);
-        break;
-    }
+          for (var asset in resultList) {
+            ByteData byteData = await asset.getByteData();
+            List<int> imageData = byteData.buffer.asUint8List();
 
-    if (_pickedFile != null) {
-      setState(() {
-        _lstFiles.add(FileItem(
-          uploaded: false,
-          file: _pickedFile!.path,
-          local: true,
-          isRemoved: false,
-        ));
-      });
+            // Lưu ảnh vào thư mục tạm
+            final tempDir = await getTemporaryDirectory();
+            final file = await File('${tempDir.path}/${asset.name}').create();
+            file.writeAsBytesSync(imageData);
+
+            print('file: ${file.path}');
+            setState(() {
+              _lstFiles.add(FileItem(
+                uploaded: false,
+                file: file.path, // Đường dẫn file tạm
+                local: true,
+                isRemoved: false,
+              ));
+            });
+          }
+        }
+      } on Exception catch (e) {
+        print(e);
+      }
+    } else if (pickerType == "camera") {
+      // Sử dụng image_picker để chụp ảnh từ camera
+      _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+      if (_pickedFile != null) {
+        setState(() {
+          _lstFiles.add(FileItem(
+            uploaded: false,
+            file: _pickedFile!.path,
+            local: true,
+            isRemoved: false,
+          ));
+        });
+      }
     }
   }
 
@@ -523,6 +588,50 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
     return (_data != null) ? '/' : '';
   }
 
+  Future<File> compressImage(File file) async {
+    setState(() {
+      _loading = true;
+    });
+
+    final bytes = await file.readAsBytes();
+    final String extension = file.path.split('.').last.toLowerCase();
+    CompressFormat format;
+
+    // Xác định định dạng dựa trên phần mở rộng của tệp
+    switch (extension) {
+      case 'png':
+        format = CompressFormat.png; // Định dạng PNG
+        break;
+
+      case 'jpeg':
+        format = CompressFormat.jpeg; // Định dạng JPEG
+        break;
+
+      case 'jpg':
+        format = CompressFormat.jpeg; // Định dạng JPG cũng coi như JPEG
+        break;
+
+      default:
+        throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+    }
+
+    try {
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        bytes,
+        minWidth: 800,
+        minHeight: 800,
+        quality: 90,
+        format: format, // Sử dụng định dạng đã xác định
+      );
+
+      final newFile = File(file.path)..writeAsBytesSync(compressedBytes);
+      return newFile;
+    } catch (e) {
+      print("Error compressing image: $e"); // Ghi log lỗi
+      return file; // Trả về tệp gốc nếu gặp lỗi
+    }
+  }
+
   _onSave() async {
     setState(() {
       _loading = true;
@@ -532,25 +641,33 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
-        var response = await RequestHelper().uploadFile(file);
-        widget.lstFiles.add(CheckSheetFileModel(
-          isRemoved: response["isRemoved"],
-          id: response["id"],
-          fileName: response["fileName"],
-          path: response["path"],
-        ));
-        fileItem.uploaded = true;
-        setState(() {
-          _loading = false;
-        });
 
-        fileItem.uploaded = true;
-
-        if (response["path"] != null) {
-          imageUrls.add(response["path"]);
+        if (file.existsSync()) {
+          file = await compressImage(file);
         }
-        // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
-        //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+
+        var response = await RequestHelper().uploadFile(file);
+        print("Response: $response");
+        if (response != null) {
+          widget.lstFiles.add(CheckSheetFileModel(
+            isRemoved: response["isRemoved"],
+            id: response["id"],
+            fileName: response["fileName"],
+            path: response["path"],
+          ));
+          fileItem.uploaded = true;
+          setState(() {
+            _loading = false;
+          });
+
+          fileItem.uploaded = true;
+
+          if (response["path"] != null) {
+            imageUrls.add(response["path"]);
+          }
+          // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+          //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        }
       }
     }
 
