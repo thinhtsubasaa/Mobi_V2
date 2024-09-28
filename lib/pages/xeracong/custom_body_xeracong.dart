@@ -385,7 +385,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
       newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData?.soKhung}");
       final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XeRaCong_Test?SoKhung=$SoKhung&BienSo=$BienSo&MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData?.toJson());
+          'KhoThanhPham/XeRaCong?SoKhung=$SoKhung&BienSo=$BienSo&MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);

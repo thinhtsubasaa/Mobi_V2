@@ -548,7 +548,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             bool isNewKho = item.kho != previousKho;
                                             previousKho = item.kho;
                                             return buildRowItem(
-                                                customImage: isNewKho ? CustomImage5() : SizedBox(width: 120),
+                                                customImage: isNewKho ? CustomImage3() : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
                                                 textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
                                                     '\n' +
@@ -595,7 +595,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             bool isNewKho = item.kho != previousKho;
                                             previousKho = item.kho;
                                             return buildRowItem(
-                                                customImage: isNewKho ? CustomImage3() : SizedBox(width: 120),
+                                                customImage: isNewKho ? CustomImage5() : SizedBox(width: 100),
                                                 // customImage: CustomImage3(),
                                                 textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
                                                     '\n' +
