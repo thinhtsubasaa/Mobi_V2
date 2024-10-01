@@ -267,7 +267,7 @@ class _BodyNhanxeScreenState extends State<BodyNhanxeScreen> with TickerProvider
                                     constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      child: Text(
+                                      child: SelectableText(
                                         _model?.tenSanPham ?? '',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
@@ -382,7 +382,7 @@ Widget showInfoXe(String title, String value) {
               color: Color(0xFF818180),
             ),
           ),
-          Text(
+          SelectableText(
             value,
             style: TextStyle(
               fontFamily: 'Comfortaa',

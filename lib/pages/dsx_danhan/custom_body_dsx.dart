@@ -283,7 +283,7 @@ class _BodyDSXScreenState extends State<BodyDSXScreen> with TickerProviderStateM
   Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(

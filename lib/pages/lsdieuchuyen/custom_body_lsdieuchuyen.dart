@@ -221,7 +221,7 @@ class _BodyLSDieuChuyenScreenState extends State<BodyLSDieuChuyenScreen> with Ti
     }
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(

@@ -644,38 +644,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
     });
   }
 
-  //  _onScan(value) {
-  //   setState(() {
-  //     _loading = true;
-  //     _Iskehoach = false;
-  //     _Isred = false;
-  //   });
-  //   _bl.getData(context, value).then((_) {
-  //     setState(() {
-  //       _qrData = value;
-  //       if (_bl.xeracong == null) {
-  //         barcodeScanResult = null;
-  //         _qrData = '';
-  //         _qrDataController.text = '';
-  //         _Iskehoach = false;
-  //         _Isred = false;
-  //       }
-  //       _loading = false;
-  //       _data = _bl.xeracong;
-  //       print("MaNhanVien: ${_bl.xeracong?.maNhanVien}");
-  //       print("NoiDen: ${_bl.xeracong?.noiden}");
-  //       if (_bl.xeracong?.maNhanVien == null) {
-  //         _Isred = true;
-  //       }
-  //       if (_bl.xeracong?.noiden == null) {
-  //         _Iskehoach = true;
-  //       }
-  //       print("isred: ${_Isred}");
-  //       print("iskehoach: ${_Iskehoach}");
-  //     });
-  //   });
-  // }
-
 // Hàm chạy trong background isolate
   // Future<File> compressImage(File file) async {
   //   setState(() {
@@ -1513,19 +1481,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                 ),
                                               ),
                                             ),
-                                            // Container(
-                                            //   width: 120,
-                                            //   height: 120,
-                                            //   child: (_data?.hinhAnhUrl != null || _datalist?.hinhAnhUrl != null)
-                                            //       ? Image.network(
-                                            //           _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "",
-                                            //           fit: BoxFit.contain,
-                                            //         )
-                                            //       : Image.network(
-                                            //           AppConfig.defaultImage,
-                                            //           fit: BoxFit.contain,
-                                            //         ),
-                                            // ),
                                             ItemTaiXe(
                                               title: 'Mã tài xế: ',
                                               value: _data?.maNhanVien ?? _datalist?.maNhanVien,
@@ -1553,10 +1508,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                 title: 'SDT: ',
                                                 value: _data?.sdt ?? _datalist?.sdt,
                                               ),
-                                              // ItemTaiXe(
-                                              //   title: 'Nơi đi: ',
-                                              //   value: _data?.noiditaixe,
-                                              // ),
                                               Container(
                                                 height: 7.h,
                                                 child: Row(
@@ -1904,123 +1855,12 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                         ),
                                             ],
                                           ),
-                                          // Container(
-                                          //   child: Column(
-                                          //     children: [
-                                          //       Item(
-                                          //         value: _data?.tenSanPham,
-                                          //       ),
-                                          //       const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          //       Item(
-                                          //         value: _data?.soKhung,
-                                          //       ),
-                                          //       const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          //       Item(value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
-                                          //       const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          //     ],
-                                          //   ),
-                                          // ),
                                         ],
                                       ),
                                     ),
 
                               const SizedBox(height: 5),
-                              // Container(
-                              //   decoration: BoxDecoration(
-                              //     border: Border.all(
-                              //       color: _Iskehoach == true ? Colors.red : Colors.grey,
-                              //       width: _Iskehoach == true ? 5 : 2,
-                              //     ),
-                              //     borderRadius: BorderRadius.circular(8),
-                              //   ),
-                              //   child: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.start,
-                              //     children: [
-                              //       Container(
-                              //         width: 100.w,
-                              //         decoration: const BoxDecoration(
-                              //           gradient: LinearGradient(
-                              //             begin: Alignment.centerLeft,
-                              //             end: Alignment.centerRight,
-                              //             colors: [
-                              //               Color(0xFFE96327),
-                              //               Color(0xFFBC2925),
-                              //             ],
-                              //           ),
-                              //           borderRadius: BorderRadius.only(
-                              //             topLeft: Radius.circular(5),
-                              //             topRight: Radius.circular(5),
-                              //           ),
-                              //         ),
-                              //         child: const Text(
-                              //           'Kế hoạch xuất xe',
-                              //           style: TextStyle(
-                              //             fontFamily: 'Comfortaa',
-                              //             color: Colors.white,
-                              //             fontSize: 20,
-                              //             fontWeight: FontWeight.w700,
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       const Divider(
-                              //         height: 1,
-                              //         color: AppConfig.primaryColor,
-                              //       ),
-                              //       Container(
-                              //         child: Column(
-                              //           children: [
-                              //             Item(
-                              //               value: _data?.tenPhuongThucVanChuyen ?? _datalist?.tenPhuongThucVanChuyen,
-                              //             ),
-                              //             const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                              //             Item(
-                              //               value: _data?.noidi ?? _datalist?.noidi,
-                              //             ),
-                              //             const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                              //             Item(
-                              //               value: _data?.noiden ?? _datalist?.noiden,
-                              //             ),
-                              //             Row(
-                              //               crossAxisAlignment: CrossAxisAlignment.start,
-                              //               children: [
-                              //                 Container(
-                              //                   width: 120,
-                              //                   height: 120,
-                              //                   child: (_datalist?.hinhAnhKH != null)
-                              //                       ? Image.network(
-                              //                           _datalist?.hinhAnhKH ?? "",
-                              //                           fit: BoxFit.contain,
-                              //                         )
-                              //                       : Image.network(
-                              //                           AppConfig.defaultImage,
-                              //                           fit: BoxFit.contain,
-                              //                         ),
-                              //                 ),
-                              //                 Column(
-                              //                   crossAxisAlignment: CrossAxisAlignment.start,
-                              //                   children: [
-                              //                     ItemTaiXe(
-                              //                       title: 'Tên tài xế: ',
-                              //                       value: _datalist?.tenNhanVienKH ?? "",
-                              //                     ),
-                              //                     ItemTaiXe(
-                              //                       title: 'Mã tài xế: ',
-                              //                       value: _datalist?.maNhanVienKH ?? "",
-                              //                     ),
-                              //                     ItemTaiXe(
-                              //                       title: 'SDT: ',
-                              //                       value: _datalist?.sdtKH ?? "",
-                              //                     ),
-                              //                   ],
-                              //                 ),
-                              //               ],
-                              //             ),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
+
                               ItemGhiChu(
                                 title: 'Ghi chú của bảo vệ: ',
                                 controller: _ghiChu,
@@ -2285,61 +2125,72 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context) {
                     Item(
                       value: xe?.noiden ?? "",
                     ),
-                    Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Container(
-                        //   width: 11.h,
-                        //   height: 13.h,
-                        //   child: (xe?.hinhAnhKH != null)
-                        //       ? Image.network(
-                        //           xe?.hinhAnhKH ?? "",
-                        //           fit: BoxFit.contain,
-                        //         )
-                        //       : Image.network(
-                        //           AppConfig.defaultImage,
-                        //           fit: BoxFit.contain,
-                        //         ),
-                        // ),
-                        Container(
-                          width: 11.h,
-                          height: 13.h,
-                          child: GestureDetector(
-                            onTap: () {
-                              // Hiển thị hộp thoại để phóng to ảnh
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Dialog(
-                                    child: InteractiveViewer(
-                                      panEnabled: true, // Cho phép kéo ảnh
-                                      minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
-                                      maxScale: 4.0, // Tỉ lệ phóng to tối đa
-                                      child: Image.network(
-                                        xe?.hinhAnhKH ?? AppConfig.defaultImage,
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            child: Image.network(
-                              xe?.hinhAnhKH ?? AppConfig.defaultImage,
-                              fit: BoxFit.contain,
-                            ),
+                    xe?.maNhanVienKH != null
+                        ? Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Container(
+                              //   width: 11.h,
+                              //   height: 13.h,
+                              //   child: (xe?.hinhAnhKH != null)
+                              //       ? Image.network(
+                              //           xe?.hinhAnhKH ?? "",
+                              //           fit: BoxFit.contain,
+                              //         )
+                              //       : Image.network(
+                              //           AppConfig.defaultImage,
+                              //           fit: BoxFit.contain,
+                              //         ),
+                              // ),
+                              Container(
+                                width: 11.h,
+                                height: 13.h,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Hiển thị hộp thoại để phóng to ảnh
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: InteractiveViewer(
+                                            panEnabled: true, // Cho phép kéo ảnh
+                                            minScale: 1.0, // Tỉ lệ thu nhỏ tối thiểu
+                                            maxScale: 4.0, // Tỉ lệ phóng to tối đa
+                                            child: Image.network(
+                                              xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                              fit: BoxFit.contain,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Image.network(
+                                    xe?.hinhAnhKH ?? AppConfig.defaultImage,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                ItemLXKH(
+                                  value: xe?.tenNhanVienKH ?? "",
+                                ),
+                                ItemLXKH(
+                                  value: xe?.maNhanVienKH ?? "",
+                                ),
+                              ]),
+                            ],
+                          )
+                        : Icon(
+                            Icons.close,
+                            color: Colors.red, // Bạn có thể đổi thành màu cảnh báo khác như Colors.yellow
+                            size: 13.h, // Kích thước biểu tượng
                           ),
-                        ),
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          ItemLXKH(
-                            value: xe?.tenNhanVienKH ?? "",
-                          ),
-                          ItemLXKH(
-                            value: xe?.maNhanVienKH ?? "",
-                          ),
-                        ]),
-                      ],
-                    ),
+                    // Icon(
+                    //       Icons.warning,
+                    //       color: Colors.orange,
+                    //       size: 30.0,
+                    //     ),
                   ],
                 ),
               ),
@@ -2367,7 +2218,7 @@ class ItemLX extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Center(
-          child: Text(
+          child: SelectableText(
             value ?? "",
             style: const TextStyle(
               fontFamily: 'Comfortaa',
@@ -2398,7 +2249,7 @@ class Item extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Center(
-          child: Text(
+          child: SelectableText(
             value ?? "",
             style: const TextStyle(
               fontFamily: 'Comfortaa',
@@ -2429,7 +2280,7 @@ class ItemLXKH extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Center(
-          child: Text(
+          child: SelectableText(
             value ?? "",
             style: const TextStyle(
               fontFamily: 'Comfortaa',
@@ -2478,7 +2329,7 @@ class ItemTaiXe extends StatelessWidget {
       height: 6.h,
       child: Row(
         children: [
-          Text(
+          SelectableText(
             title,
             style: const TextStyle(
               fontFamily: 'Comfortaa',
@@ -2518,7 +2369,7 @@ class ItemTaiXeNoiDen extends StatelessWidget {
       height: 7.h,
       child: Row(
         children: [
-          Text(
+          SelectableText(
             title,
             style: TextStyle(
               fontFamily: 'Comfortaa',
@@ -2571,7 +2422,7 @@ class ItemNoiden extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Text(
+            SelectableText(
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
@@ -2621,7 +2472,7 @@ class ItemGhiChu extends StatelessWidget {
       child: Center(
         child: Row(
           children: [
-            Text(
+            SelectableText(
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',

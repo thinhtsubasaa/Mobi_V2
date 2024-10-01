@@ -263,7 +263,7 @@ class _BodyLSRutContScreenState extends State<BodyLSRutContScreen> with TickerPr
   Widget _buildTableCell(String content, {Color textColor = Colors.black}) {
     return Container(
       padding: const EdgeInsets.all(8),
-      child: Text(
+      child: SelectableText(
         content,
         textAlign: TextAlign.center,
         style: TextStyle(

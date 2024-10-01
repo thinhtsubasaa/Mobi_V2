@@ -163,9 +163,9 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                         _handleButtonTap(LSXeRaCongPage());
                       },
                     ),
-                  // if (userHasPermission(menuRoles, 'check-xe-ra-cong-mobi'))
+                  // if (userHasPermission(menuRoles, 'kiem-ta-xe-len-long-mobi'))
                   CustomButton(
-                    'CHECK XE RA CỔNG',
+                    'KIỂM TRA XE LÊN LỒNG',
                     Stack(
                       alignment: Alignment.center,
                       children: [

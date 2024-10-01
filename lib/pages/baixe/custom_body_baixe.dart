@@ -194,33 +194,6 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
     });
   }
 
-  // Future imageSelector(BuildContext context, String pickerType) async {
-  //   switch (pickerType) {
-  //     case "gallery":
-
-  //       /// GALLERY IMAGE PICKER
-  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-  //       break;
-
-  //     case "camera":
-
-  //       /// CAMERA CAPTURE CODE
-  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
-  //       break;
-  //   }
-
-  //   if (_pickedFile != null) {
-  //     setState(() {
-  //       _lstFiles.add(FileItem(
-  //         uploaded: false,
-  //         file: _pickedFile!.path,
-  //         local: true,
-  //         isRemoved: false,
-  //       ));
-  //     });
-  //   }
-  // }
-
   Future imageSelector(BuildContext context, String pickerType) async {
     if (pickerType == "gallery") {
       // Chọn nhiều ảnh từ thư viện
@@ -1314,7 +1287,7 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            Text(
+            SelectableText(
               value ?? "",
               style: const TextStyle(
                 fontFamily: 'Comfortaa',

@@ -1099,7 +1099,7 @@ class MyInputWidget extends StatelessWidget {
             flex: 1,
             child: Container(
               padding: EdgeInsets.only(top: 5, left: 15.sp),
-              child: Text(
+              child: SelectableText(
                 text,
                 style: textStyle,
               ),
@@ -1138,7 +1138,7 @@ class Item extends StatelessWidget {
                 color: Color(0xFF818180),
               ),
             ),
-            Text(
+            SelectableText(
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
