@@ -358,7 +358,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,

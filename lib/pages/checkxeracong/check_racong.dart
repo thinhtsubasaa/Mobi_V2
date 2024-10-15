@@ -11,10 +11,23 @@ class CheckXeRaCongPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: customAppBar(context),
+      // appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCard(),
+          // CustomCard(),
+          SizedBox(
+            height: 20,
+          ),
+          // Container(
+          //   padding: EdgeInsets.only(left: 8, top: 10),
+          //   alignment: Alignment.topLeft,
+          //   child: BackButton(
+          //     color: Colors.black,
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //   ),
+          // ),
           Expanded(
             child: Container(
               width: 100.w,
@@ -24,7 +37,7 @@ class CheckXeRaCongPage extends StatelessWidget {
               child: CustomBodyCheckRaCong(),
             ),
           ),
-          BottomContent(),
+          // BottomContent(),
         ],
       ),
     );

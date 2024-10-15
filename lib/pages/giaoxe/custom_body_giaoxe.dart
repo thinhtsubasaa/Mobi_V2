@@ -330,7 +330,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -944,7 +944,7 @@ class ItemGhiChu extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -955,13 +955,13 @@ class ItemGhiChu extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: controller,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: InputBorder.none, // Loại bỏ đường viền mặc định
                   hintText: '',
                   contentPadding: EdgeInsets.symmetric(vertical: 9),
@@ -1003,7 +1003,7 @@ class ItemGiaoXe extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -1012,7 +1012,7 @@ class ItemGiaoXe extends StatelessWidget {
             ),
             SelectableText(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 16,
                 fontWeight: FontWeight.w700,

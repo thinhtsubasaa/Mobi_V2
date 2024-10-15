@@ -8,12 +8,10 @@ import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:Thilogi/models/vitri.dart';
 import 'package:Thilogi/pages/lsnhapbai/ls_nhapbai.dart';
-import 'package:Thilogi/pages/nhanxe/NhanXe2.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/models/khothanhpham.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -400,7 +398,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 885 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 885 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,

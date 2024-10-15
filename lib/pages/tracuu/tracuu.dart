@@ -94,7 +94,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with SingleTicker
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -144,7 +144,7 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with SingleTicker
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -218,9 +218,9 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with SingleTicker
       });
     }).then((_) {
       setState(() {
-        barcodeScanResult = null;
-        _qrData = '';
-        _qrDataController.text = '';
+        // barcodeScanResult = null;
+        // _qrData = '';
+        // _qrDataController.text = '';
         _loading = false;
       });
     });

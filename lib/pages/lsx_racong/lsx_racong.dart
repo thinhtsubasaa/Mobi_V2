@@ -11,10 +11,13 @@ class LSXeRaCongPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: customAppBar(context),
+      // appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCard(),
+          // CustomCard(),
+          SizedBox(
+            height: 30,
+          ),
           Expanded(
             child: Container(
               width: 100.w,

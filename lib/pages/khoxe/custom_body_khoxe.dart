@@ -352,7 +352,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -368,14 +368,14 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
           Container(
             width: 20.w,
             height: 10.h,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
               ),
               color: AppConfig.primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
@@ -703,6 +703,21 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                               Container(
                                 child: Column(
                                   children: [
+                                    Item(
+                                      title: 'Số khung: ',
+                                      value: _data?.soKhung,
+                                    ),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                    Item(
+                                      title: 'Nơi đi: ',
+                                      value: _data?.noidi,
+                                    ),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                    ItemGiaoXe(
+                                      title: 'Nơi đến: ',
+                                      value: _data?.noiden,
+                                    ),
+                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Container(
                                       height: 7.h,
                                       child: Row(
@@ -738,11 +753,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                         ],
                                       ),
                                     ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Số khung: ',
-                                      value: _data?.soKhung,
-                                    ),
+
                                     const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Item(
                                         title: 'Màu: ',
@@ -770,16 +781,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                       title: 'Biển số: ',
                                       value: _data?.soXe,
                                     ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Nơi đi: ',
-                                      value: _data?.noidi,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Nơi đến: ',
-                                      value: _data?.noiden,
-                                    ),
+
                                     const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     ItemGhiChu(
                                       title: 'Ghi chú: ',
@@ -923,6 +925,57 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
   }
 }
 
+class ItemGiaoXe extends StatelessWidget {
+  final String title;
+  final String? value;
+
+  const ItemGiaoXe({
+    Key? key,
+    required this.title,
+    this.value,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: value != null ? Colors.red : Theme.of(context).colorScheme.onPrimary,
+          width: 2,
+        ),
+        borderRadius: BorderRadius.circular(8),
+        // color: AppConfig.titleColor,
+      ),
+      height: 7.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            SelectableText(
+              value ?? "",
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class Item extends StatelessWidget {
   final String title;
   final String? value;
@@ -943,7 +996,7 @@ class Item extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -952,7 +1005,7 @@ class Item extends StatelessWidget {
             ),
             SelectableText(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -986,24 +1039,24 @@ class ItemGhiChu extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
             ),
-            SizedBox(width: 10), // Khoảng cách giữa title và text field
+            const SizedBox(width: 10), // Khoảng cách giữa title và text field
             Expanded(
               child: TextField(
                 controller: controller,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: InputBorder.none, // Loại bỏ đường viền mặc định
                   hintText: '',
                   contentPadding: EdgeInsets.symmetric(vertical: 9),

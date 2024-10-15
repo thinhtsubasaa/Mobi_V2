@@ -383,28 +383,42 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  GestureDetector(
-                                    onTap: () => _selectDate(context),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.blue),
-                                        borderRadius: BorderRadius.circular(8),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(left: 4),
+                                        alignment: Alignment.topLeft,
+                                        child: BackButton(
+                                          color: Colors.black,
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
                                       ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.calendar_today, color: Colors.blue),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            selectedFromDate != null && selectedToDate != null
-                                                ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
-                                                : 'Chọn ngày',
-                                            style: TextStyle(color: Colors.blue),
+                                      GestureDetector(
+                                        onTap: () => _selectDate(context),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.blue),
+                                            borderRadius: BorderRadius.circular(8),
                                           ),
-                                        ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.calendar_today, color: Colors.blue),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                selectedFromDate != null && selectedToDate != null
+                                                    ? '${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedFromDate!))} - ${DateFormat('dd/MM/yyyy').format(DateFormat('MM/dd/yyyy').parse(selectedToDate!))}'
+                                                    : 'Chọn ngày',
+                                                style: TextStyle(color: Colors.blue),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                   SizedBox(
                                     height: 4,

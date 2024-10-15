@@ -210,7 +210,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
       // height: 11.h,
 
-      height: MediaQuery.of(context).size.height < 880 ? 11.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -260,7 +260,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
                 },
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: AppConfig.primaryColor,
                 ),
@@ -526,6 +526,11 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
                                       ),
                                       const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
+                                        title: 'Phương thức: ',
+                                        value: _data?.phuongThuc,
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      CustomItem(
                                         title: 'Màu xe: ',
                                         value: _data?.tenMau,
                                       ),
@@ -596,7 +601,7 @@ class CustomItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       child: Row(
         children: [
           Container(
@@ -605,7 +610,7 @@ class CustomItem extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -620,7 +625,7 @@ class CustomItem extends StatelessWidget {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontFamily: 'Coda Caption',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),
@@ -646,7 +651,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -655,7 +660,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -664,7 +669,7 @@ class Item extends StatelessWidget {
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),

@@ -526,7 +526,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 3),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
@@ -721,6 +721,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     _data?.ngayNhapKhoView = _bl.dieuchuyen?.ngayNhapKhoView;
     _data?.tenTaiXe = _bl.dieuchuyen?.tenTaiXe;
     _data?.ghiChu = _ghiChu.text;
+    _data?.donVi = _bl.dieuchuyen?.donVi;
 
     _data?.thoiGianKetThuc = _bl.dieuchuyen?.thoiGianKetThuc;
 
@@ -844,6 +845,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     _data?.ghiChu = _ghiChu.text;
     _data?.thoiGianBatDau = _bl.dieuchuyen?.thoiGianBatDau;
     _data?.hinhAnh == imageUrlsString;
+    _data?.donVi = _bl.dieuchuyen?.donVi;
 
     // Get location here
     Geolocator.getCurrentPosition(
@@ -1424,17 +1426,32 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                   Container(
                                     child: Column(
                                       children: [
+                                        Item(
+                                          title: 'Số khung: ',
+                                          value: _data?.soKhung,
+                                        ),
+                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                        Item(
+                                          title: 'Đơn vị vận chuyển: ',
+                                          value: _data?.donVi,
+                                        ),
+                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                        Item(
+                                          title: 'Phương thức: ',
+                                          value: _data?.phuongThuc,
+                                        ),
+                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                         Container(
                                           height: 7.h,
                                           child: Row(
                                             children: [
                                               Container(
                                                 padding: EdgeInsets.only(left: 10),
-                                                child: Text(
+                                                child: const Text(
                                                   'Loại xe: ',
                                                   style: TextStyle(
                                                     fontFamily: 'Comfortaa',
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color: Color(0xFF818180),
                                                   ),
@@ -1449,8 +1466,8 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                                     textAlign: TextAlign.left,
                                                     style: TextStyle(
                                                       fontFamily: 'Comfortaa',
-                                                      fontSize: 16,
-                                                      fontWeight: FontWeight.w700,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w600,
                                                       color: AppConfig.primaryColor,
                                                     ),
                                                   ),
@@ -1458,11 +1475,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                        Item(
-                                          title: 'Số khung: ',
-                                          value: _data?.soKhung,
                                         ),
                                         const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                         Item(
@@ -1724,7 +1736,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -1733,7 +1745,7 @@ class Item extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -1742,7 +1754,7 @@ class Item extends StatelessWidget {
               value ?? "",
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppConfig.primaryColor,
               ),
@@ -1767,7 +1779,7 @@ class ItemGhiChu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -1776,7 +1788,7 @@ class ItemGhiChu extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -1787,7 +1799,7 @@ class ItemGhiChu extends StatelessWidget {
                 controller: controller,
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),

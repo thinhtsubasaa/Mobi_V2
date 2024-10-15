@@ -133,6 +133,21 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
+                  if (userHasPermission(menuRoles, 'kiem-tra-xe-len-long-mobi'))
+                    CustomButton(
+                      'KIỂM TRA XE LÊN LỒNG',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_09_KTXeRaCong_KTXeLenLong.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(CheckXeRaCongPage());
+                      },
+                    ),
                   if (userHasPermission(menuRoles, 'kiem-tra-xe-ra-cong-mobi'))
                     CustomButton(
                       'KIỂM TRA XE RA CỔNG',
@@ -163,21 +178,6 @@ class _BodyQLXeRaCongScreenState extends State<BodyQLXeRaCongScreen> with Ticker
                         _handleButtonTap(LSXeRaCongPage());
                       },
                     ),
-                  // if (userHasPermission(menuRoles, 'kiem-ta-xe-len-long-mobi'))
-                  CustomButton(
-                    'KIỂM TRA XE LÊN LỒNG',
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/Button_09_KTXeRaCong_LichSuRaCong.png',
-                        ),
-                      ],
-                    ),
-                    () {
-                      _handleButtonTap(CheckXeRaCongPage());
-                    },
-                  ),
                 ],
               ),
             ),
@@ -201,7 +201,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 40.w,
+      width: 32.w,
       // height: 35.h,
       child: Column(
         children: [

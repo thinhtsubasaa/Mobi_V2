@@ -256,7 +256,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 35.w,
+      width: 32.w,
       child: Column(
         children: [
           Container(
