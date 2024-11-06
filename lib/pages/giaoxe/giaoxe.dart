@@ -8,6 +8,9 @@ import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 class GiaoXePage extends StatelessWidget {
+  final String? soKhung;
+
+  GiaoXePage({this.soKhung});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +25,7 @@ class GiaoXePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyGiaoXe(),
+              child: CustomBodyGiaoXe(soKhung: soKhung),
             ),
           ),
           BottomContent(),

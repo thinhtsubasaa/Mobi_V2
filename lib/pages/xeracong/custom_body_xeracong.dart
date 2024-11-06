@@ -452,7 +452,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      height: MediaQuery.of(context).size.height < 880 ? 10.h : 8.h,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.onPrimary,
         borderRadius: BorderRadius.circular(10),
@@ -835,7 +835,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Vui lòng nhập lí do từ chối?',
                         style: TextStyle(
                           fontSize: 16,
@@ -866,11 +866,11 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                   ),
                                 ),
                               ),
-                              child: Center(
+                              child: const Center(
                                 child: Text(
                                   "Lý do",
                                   textAlign: TextAlign.left,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'Comfortaa',
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
@@ -1075,7 +1075,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Vui lòng nhập nơi đến của bạn?',
                         style: TextStyle(
                           fontSize: 16,
@@ -1107,7 +1107,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                               Navigator.of(context).pop();
                               _btnController.reset();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -1131,7 +1131,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                               });
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Lưu',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -1179,7 +1179,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      const Text(
                         'Vui lòng nhập lý do của bạn?',
                         style: TextStyle(
                           fontSize: 16,
@@ -1211,7 +1211,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                               Navigator.of(context).pop();
                               _btnController.reset();
                             },
-                            child: Text(
+                            child: const Text(
                               'Hủy',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -1235,7 +1235,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                               });
                               Navigator.of(context).pop();
                             },
-                            child: Text(
+                            child: const Text(
                               'Lưu',
                               style: TextStyle(
                                 fontFamily: 'Comfortaa',
@@ -2038,7 +2038,7 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context, int index) {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Thông tin xe ra cổng',
                 style: TextStyle(
                   fontFamily: 'Comfortaa',
@@ -2049,7 +2049,7 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context, int index) {
               ),
               Text(
                 '$index',
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   color: Colors.white,
                   fontSize: 20,
@@ -2111,7 +2111,7 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context, int index) {
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              width: 11.h,
+                              width: 10.h,
                               height: 13.h,
                               child: GestureDetector(
                                 onTap: () {
@@ -2139,16 +2139,48 @@ Widget buildXeCard(XeRaCongModel? xe, BuildContext context, int index) {
                                 ),
                               ),
                             ),
-                            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              ItemLXKH(
-                                title: 'Tên tài xế: ',
-                                value: xe?.tenNhanVienKH ?? "",
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: (xe?.maNhanVienKH != null && xe?.maNhanVienKH != xe?.maNhanVien) ? Colors.red : Colors.transparent, // Viền đỏ nếu không khớp, trong suốt nếu khớp
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              ItemLXKH(
-                                title: 'MSNV: ',
-                                value: xe?.maNhanVienKH ?? "",
-                              ),
-                            ]),
+                              padding: EdgeInsets.all(8), // Khoảng cách giữa viền và nội dung
+                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                ItemLXKH(
+                                  title: 'Tên tài xế: ',
+                                  value: xe?.tenNhanVienKH ?? "",
+                                ),
+                                ItemLXKH(
+                                  title: 'MSNV: ',
+                                  value: xe?.maNhanVienKH ?? "",
+                                ),
+                                if (xe?.maNhanVienKH != null && xe?.maNhanVienKH != xe?.maNhanVien) // Kiểm tra khác nhau
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 0.0), // Khoảng cách giữa thông báo và mã nhân viên
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.warning, // Icon cảnh báo
+                                          color: Colors.red,
+                                          size: 18, // Kích thước của icon
+                                        ),
+                                        Text(
+                                          'Tài xế khác với người vận chuyển',
+                                          style: TextStyle(
+                                            fontFamily: 'Comfortaa',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ]),
+                            ),
                           ],
                         )
                       : Icon(
@@ -2187,7 +2219,7 @@ class ItemLX extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -2229,19 +2261,20 @@ class Item extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
             ),
             SelectableText(
-              value ?? "",
+              value != null && value!.length > 23 ? value!.substring(0, 23) + "..." : value ?? "",
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),
+              maxLines: 1, // Giới hạn số dòng là 1
             ),
           ],
         ),

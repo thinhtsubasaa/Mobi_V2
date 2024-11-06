@@ -14,6 +14,7 @@ import 'package:Thilogi/models/xuatkho.dart';
 import 'package:Thilogi/pages/ds_vanchuyen/ds_vanchuyen.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/utils/next_screen.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
@@ -33,6 +34,8 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 
 import '../../config/config.dart';
+import '../../models/bienso.dart';
+import '../../models/noiden.dart';
 import '../../services/app_service.dart';
 import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
@@ -80,24 +83,38 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
   List<DanhSachPhuongTienModel>? get danhsachphuongtienList => _danhsachphuongtienList;
   List<LoaiPhuongTienModel>? _loaiphuongtienList;
   List<LoaiPhuongTienModel>? get loaiphuongtienList => _loaiphuongtienList;
-
+  List<NoiDenModel>? _noidenList;
+  List<NoiDenModel>? get noidenList => _noidenList;
+  List<BienSoModel>? _biensoList;
+  List<BienSoModel>? get biensoList => _biensoList;
+  bool _hasError = false;
+  bool get hasError => _hasError;
   bool _isLoading = true;
   bool get isLoading => _isLoading;
-
+  String? _errorCode;
+  String? get errorCode => _errorCode;
   String? _message;
   String? get message => _message;
   late FlutterDataWedge dataWedge;
   late StreamSubscription<ScanResult> scanSubscription;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final TextEditingController textEditingController = TextEditingController();
   final TextEditingController _ghiChu = TextEditingController();
   PickedFile? _pickedFile;
   List<FileItem?> _lstFiles = [];
   final _picker = ImagePicker();
+  bool _option1 = false;
+  bool _option2 = false;
+
+  String? BienSo;
+  String? BienSoTam;
 
   @override
   void initState() {
     super.initState();
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
+    getBienSo();
+    getBienSoTam();
     for (var file in widget.lstFiles) {
       _lstFiles.add(FileItem(
         uploaded: true,
@@ -120,35 +137,9 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
 
   @override
   void dispose() {
+    textEditingController.dispose();
     super.dispose();
   }
-
-  // Future imageSelector(BuildContext context, String pickerType) async {
-  //   switch (pickerType) {
-  //     case "gallery":
-
-  //       /// GALLERY IMAGE PICKER
-  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-  //       break;
-
-  //     case "camera":
-
-  //       /// CAMERA CAPTURE CODE
-  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
-  //       break;
-  //   }
-
-  //   if (_pickedFile != null) {
-  //     setState(() {
-  //       _lstFiles.add(FileItem(
-  //         uploaded: false,
-  //         file: _pickedFile!.path,
-  //         local: true,
-  //         isRemoved: false,
-  //       ));
-  //     });
-  //   }
-  // }
 
   Future imageSelector(BuildContext context, String pickerType) async {
     if (pickerType == "gallery") {
@@ -305,14 +296,14 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     }
   }
 
-  Future<void> postData(XuatKhoModel scanData, String viTri, String? ghiChu, String? file) async {
+  Future<void> postData(XuatKhoModel scanData, String viTri, String? ghiChu, String? file, String? bienSo, String? bienSoTam) async {
     _isLoading = true;
 
     try {
       var newScanData = scanData;
       newScanData.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData.soKhung}");
-      final http.Response response = await requestHelper.postData('KhoThanhPham/XuatKho?ToaDo=$viTri&GhiChu=$ghiChu&File=$file', newScanData.toJson());
+      final http.Response response = await requestHelper.postData('KhoThanhPham/XuatKho?ToaDo=$viTri&GhiChu=$ghiChu&File=$file&BienSo=$bienSo&BienSoTam=$bienSoTam', newScanData.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -394,13 +385,13 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: TextField(
                 controller: _qrDataController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Nhập hoặc quét mã VIN',
                 ),
                 onSubmitted: (value) {
                   _handleBarcodeScanResult(value);
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Comfortaa',
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -594,7 +585,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          postData(_data!, viTri ?? "", _ghiChu.text, _data?.hinhAnh ?? "").then((_) {
+          postData(_data!, viTri ?? "", _ghiChu.text, _data?.hinhAnh ?? "", BienSo ?? "", BienSoTam ?? "").then((_) {
             setState(() {
               _data = null;
               _ghiChu.text = '';
@@ -652,14 +643,351 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
         });
   }
 
+  Future<void> getBienSo() async {
+    try {
+      final http.Response response = await requestHelper.getData('TMS_DanhSachPhuongTien/DuongBo');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _noidenList = (decodedData as List).map((item) => NoiDenModel.fromJson(item)).toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          BienSo = null;
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  Future<void> getBienSoTam() async {
+    try {
+      final http.Response response = await requestHelper.getData('BienSoTam');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _biensoList = (decodedData as List).map((item) => BienSoModel.fromJson(item)).toList();
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          BienSoTam = null;
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppBloc ab = context.watch<AppBloc>();
     return Container(
         child: Column(
       children: [
-        CardVin(),
-        const SizedBox(height: 5),
+        if (_option1 && BienSo != null || _option2 && BienSoTam != null) CardVin(),
+        Row(
+          children: [
+            Checkbox(
+              value: _option1,
+              onChanged: (bool? value) {
+                setState(() {
+                  _option1 = value ?? false;
+                  if (_option1) {
+                    _option2 = false; // Bỏ chọn _option2 khi _option1 được tick
+                  }
+                });
+              },
+            ),
+            const Text(
+              "Xe lồng",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+            Checkbox(
+              value: _option2,
+              onChanged: (bool? value) {
+                setState(() {
+                  _option2 = value ?? false;
+                  if (_option2) {
+                    _option1 = false; // Bỏ chọn _option1 khi _option2 được tick
+                  }
+                });
+              },
+            ),
+            const Text(
+              "Trung chuyển",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF818180),
+              ),
+            ),
+          ],
+        ),
+        if (_option1)
+          Container(
+            height: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: const Color(0xFFBC2925),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 20.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF6C6C7),
+                    border: Border(
+                      right: BorderSide(
+                        color: Color(0xFF818180),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Biển số",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppConfig.textInput,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          items: _noidenList?.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item.bienSo,
+                              child: Container(
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    item.bienSo ?? "",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppConfig.textInput,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          value: BienSo,
+                          onChanged: (newValue) {
+                            setState(() {
+                              BienSo = newValue;
+                            });
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            height: 40,
+                            width: 200,
+                          ),
+                          dropdownStyleData: const DropdownStyleData(
+                            maxHeight: 200,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownSearchData: DropdownSearchData(
+                            searchController: textEditingController,
+                            searchInnerWidgetHeight: 50,
+                            searchInnerWidget: Container(
+                              height: 50,
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                bottom: 4,
+                                right: 8,
+                                left: 8,
+                              ),
+                              child: TextFormField(
+                                expands: true,
+                                maxLines: null,
+                                controller: textEditingController,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  hintText: 'Tìm biển số',
+                                  hintStyle: const TextStyle(fontSize: 12),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            searchMatchFn: (item, searchValue) {
+                              final itemValue = item.value?.toLowerCase().toString() ?? ''; // Kiểm tra null
+                              return itemValue.contains(searchValue.toLowerCase());
+                            },
+                          ),
+                          onMenuStateChange: (isOpen) {
+                            if (!isOpen) {
+                              textEditingController.clear();
+                            }
+                          },
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          ),
+        if (_option2)
+          Container(
+            height: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: const Color(0xFFBC2925),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 20.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF6C6C7),
+                    border: Border(
+                      right: BorderSide(
+                        color: Color(0xFF818180),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Biển số tạm",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppConfig.textInput,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          isExpanded: true,
+                          items: _biensoList?.map((item) {
+                            return DropdownMenuItem<String>(
+                              value: item.bienSo,
+                              child: Container(
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    item.bienSo ?? "",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppConfig.textInput,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          value: BienSoTam,
+                          onChanged: (newValue) {
+                            setState(() {
+                              BienSoTam = newValue;
+                            });
+                          },
+                          buttonStyleData: const ButtonStyleData(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            height: 40,
+                            width: 200,
+                          ),
+                          dropdownStyleData: const DropdownStyleData(
+                            maxHeight: 200,
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                          ),
+                          dropdownSearchData: DropdownSearchData(
+                            searchController: textEditingController,
+                            searchInnerWidgetHeight: 50,
+                            searchInnerWidget: Container(
+                              height: 50,
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                bottom: 4,
+                                right: 8,
+                                left: 8,
+                              ),
+                              child: TextFormField(
+                                expands: true,
+                                maxLines: null,
+                                controller: textEditingController,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  hintText: 'Tìm biển số tạm',
+                                  hintStyle: const TextStyle(fontSize: 12),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            searchMatchFn: (item, searchValue) {
+                              final itemValue = item.value?.toLowerCase().toString() ?? ''; // Kiểm tra null
+                              return itemValue.contains(searchValue.toLowerCase());
+                            },
+                          ),
+                          onMenuStateChange: (isOpen) {
+                            if (!isOpen) {
+                              textEditingController.clear();
+                            }
+                          },
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          ),
         Expanded(
           child: SingleChildScrollView(
             child: Container(
@@ -673,7 +1001,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                   _loading
                       ? LoadingWidget(context)
                       : Container(
-                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 5),
+                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -719,7 +1047,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                     ),
                                     const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                     Container(
-                                      height: 7.h,
+                                      height: 6.h,
                                       child: Row(
                                         children: [
                                           Container(
@@ -728,7 +1056,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                               'Loại xe: ',
                                               style: TextStyle(
                                                 fontFamily: 'Comfortaa',
-                                                fontSize: 15,
+                                                fontSize: 13,
                                                 fontWeight: FontWeight.w700,
                                                 color: Color(0xFF818180),
                                               ),
@@ -743,7 +1071,7 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                                                 textAlign: TextAlign.left,
                                                 style: const TextStyle(
                                                   fontFamily: 'Coda Caption',
-                                                  fontSize: 16,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w700,
                                                   color: AppConfig.primaryColor,
                                                 ),
@@ -946,7 +1274,7 @@ class ItemGiaoXe extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         // color: AppConfig.titleColor,
       ),
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -955,7 +1283,7 @@ class ItemGiaoXe extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -964,7 +1292,7 @@ class ItemGiaoXe extends StatelessWidget {
               value ?? "",
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),
@@ -989,7 +1317,7 @@ class Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -998,7 +1326,7 @@ class Item extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -1007,7 +1335,7 @@ class Item extends StatelessWidget {
               value ?? "",
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppConfig.primaryColor,
               ),
@@ -1032,7 +1360,7 @@ class ItemGhiChu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 7.h,
+      height: 6.h,
       padding: const EdgeInsets.only(left: 10, right: 10),
       child: Center(
         child: Row(
@@ -1041,7 +1369,7 @@ class ItemGhiChu extends StatelessWidget {
               title,
               style: const TextStyle(
                 fontFamily: 'Comfortaa',
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
               ),
@@ -1052,14 +1380,14 @@ class ItemGhiChu extends StatelessWidget {
                 controller: controller,
                 style: const TextStyle(
                   fontFamily: 'Comfortaa',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: AppConfig.primaryColor,
                 ),
                 decoration: const InputDecoration(
                   border: InputBorder.none, // Loại bỏ đường viền mặc định
                   hintText: '',
-                  contentPadding: EdgeInsets.symmetric(vertical: 9),
+                  // contentPadding: EdgeInsets.symmetric(vertical: 9),
                 ),
               ),
             ),

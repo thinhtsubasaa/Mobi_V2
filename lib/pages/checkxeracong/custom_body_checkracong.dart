@@ -117,9 +117,10 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
 
   Future<void> getBienSo(String? tuNgay, String? denNgay, String? doiTac_Id, String? KhoXe_Id, String? BaiXe_Id, String? keyword) async {
     try {
-      final http.Response response = await requestHelper.getData('Kho/GetListBienSo?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&KhoXe_Id=$KhoXe_Id&BaiXe_Id=$BaiXe_Id&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('Kho/GetListBienSo_New?TuNgay=$tuNgay&DenNgay=$denNgay&DoiTac_Id=$doiTac_Id&KhoXe_Id=$KhoXe_Id&BaiXe_Id=$BaiXe_Id&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
+        print("BienSo: ${decodedData}");
 
         _noidenList = (decodedData as List).map((item) => NoiDenModel.fromJson(item)).toList();
 
@@ -505,6 +506,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
   void _showConfirmationDialogXacNhan(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -1108,7 +1110,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                                             child: Text(
                                               "Biển số",
                                               textAlign: TextAlign.left,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400,

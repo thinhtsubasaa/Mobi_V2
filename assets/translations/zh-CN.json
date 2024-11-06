@@ -55,5 +55,11 @@
   "VẬN CHUYỂN XE": "车辆运输",
   "VẬN CHUYỂN / GIAO XE": "运输 / 交付车辆",
   "LỊCH SỬ XE NHẬP CHUYỂN BÃI": "车辆入库历史",
-  "Đăng nhập": "登录"
+  "Đăng nhập": "登录",
+  "NGHIỆP VỤ CƠ BẢN": "基本业务",
+  "KIỂM SOÁT XE RA CỔNG": "二维码",
+  "QR CODE": "QR CODE",
+  "KIỂM TRA XE LÊN LỒNG": "检查车辆进入货舱",
+  "KIỂM TRA XE RA CỔNG": "检查车辆离开大门",
+  "LỊCH SỬ XE RA CỔNG": "车辆离开历史记录"
 }

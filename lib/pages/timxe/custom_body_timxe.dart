@@ -208,8 +208,6 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
-      // height: 11.h,
-
       height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -233,7 +231,7 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
               ),
               color: AppConfig.primaryColor,
             ),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Số khung\n(VIN)',
                 textAlign: TextAlign.center,
@@ -521,13 +519,13 @@ class _BodyTimXeScreenState extends State<BodyTimXeScreen> with TickerProviderSt
                                       ),
                                       const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
-                                        title: 'Đơn vị vận chuyển: ',
-                                        value: _data?.donVi,
+                                        title: 'Phương thức: ',
+                                        value: _data?.phuongThuc,
                                       ),
                                       const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
-                                        title: 'Phương thức: ',
-                                        value: _data?.phuongThuc,
+                                        title: 'Đơn vị vận chuyển: ',
+                                        value: _data?.donVi,
                                       ),
                                       const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                       CustomItem(
@@ -608,7 +606,7 @@ class CustomItem extends StatelessWidget {
             padding: EdgeInsets.only(left: 10),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -623,7 +621,7 @@ class CustomItem extends StatelessWidget {
               child: Text(
                 value ?? "",
                 textAlign: TextAlign.left,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Coda Caption',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -658,7 +656,7 @@ class Item extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -667,7 +665,7 @@ class Item extends StatelessWidget {
             ),
             SelectableText(
               value ?? "",
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Comfortaa',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
