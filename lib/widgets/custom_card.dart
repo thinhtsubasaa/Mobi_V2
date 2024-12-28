@@ -17,8 +17,7 @@ class CustomCard extends StatefulWidget {
   State<CustomCard> createState() => _CustomCardState();
 }
 
-class _CustomCardState extends State<CustomCard>
-    with SingleTickerProviderStateMixin {
+class _CustomCardState extends State<CustomCard> with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
 
   @override
@@ -52,7 +51,7 @@ class _CustomCardState extends State<CustomCard>
               'A-WMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 22.sp,
+                fontSize: 21.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -77,7 +76,7 @@ class _CustomCardState extends State<CustomCard>
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Comfortaa',
-                      fontSize: 15.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -154,8 +153,7 @@ class CustomCardBms extends StatefulWidget {
   State<CustomCardBms> createState() => _CustomCardBmsState();
 }
 
-class _CustomCardBmsState extends State<CustomCardBms>
-    with SingleTickerProviderStateMixin {
+class _CustomCardBmsState extends State<CustomCardBms> with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
 
   @override
@@ -189,7 +187,7 @@ class _CustomCardBmsState extends State<CustomCardBms>
               'BMS',
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 23.sp,
+                fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -214,7 +212,7 @@ class _CustomCardBmsState extends State<CustomCardBms>
                     style: TextStyle(
                       color: Colors.white,
                       fontFamily: 'Comfortaa',
-                      fontSize: 15.sp,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -272,6 +270,7 @@ class _CustomCardBmsState extends State<CustomCardBms>
                     icon: Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
+                      
                     ),
                   ),
                 ),

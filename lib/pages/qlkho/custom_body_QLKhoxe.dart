@@ -15,6 +15,7 @@ import 'package:Thilogi/pages/QLBaixe/QLBaixe.dart';
 import 'package:Thilogi/pages/nhanxe/NhanXe.dart';
 import 'package:Thilogi/pages/tracking/TrackingXe_Vitri.dart';
 import 'package:Thilogi/utils/next_screen.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
@@ -26,6 +27,8 @@ import '../../widgets/loading.dart';
 import '../congviecchuyenbai/cv_chuyenbai.dart';
 import '../congviecvanchuyen/cv_vanchuyen.dart';
 import '../qlkehoach/themkehoach.dart';
+import '../qlthaydoikh/thaydoikh.dart';
+import '../thaydoikehoach/thaydoikh.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyQLKhoXe extends StatelessWidget {
@@ -79,6 +82,12 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
     getListXeRaCong();
+    FlutterAppBadger.isAppBadgeSupported().then((isSupported) {
+      print("Badge supported: $isSupported");
+      if (!isSupported) {
+        print("Badge is not supported on this device or launcher.");
+      }
+    });
   }
 
   Future<void> getListXeRaCong() async {
@@ -94,6 +103,9 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
         if (decodedData != null) {
           _chuyenbaiList = (decodedData['data'] as List).map((item) => CongViecModel.fromJson(item)).toList();
           _vanchuyenList = (decodedData['dulieu'] as List).map((item) => CongViecModel.fromJson(item)).toList();
+          int badgeCount = (_vanchuyenList?.length ?? 0) + (_chuyenbaiList?.length ?? 0);
+          print("Badge count to be updated: $badgeCount"); // Thêm dòng này
+          FlutterAppBadger.updateBadgeCount(badgeCount);
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -104,11 +116,13 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
         _chuyenbaiList = [];
         _vanchuyenList = []; // Làm sạch danh sách cũ trước khi tải mới
         _isLoading = false;
+        FlutterAppBadger.removeBadge();
         notifyListeners();
       }
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+      FlutterAppBadger.removeBadge();
       notifyListeners();
     }
   }
@@ -290,6 +304,21 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
                             _handleButtonTap(QLBaiXePage());
                           },
                         ),
+                      if (userHasPermission(menuRoles, 'quan-ly-thay-doi-ke-hoach-mobi'))
+                        CustomButton(
+                          'QUẢN LÝ THAY ĐỔI KẾ HOẠCH',
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/Button_01_DieuPhoi.png',
+                              ),
+                            ],
+                          ),
+                          () {
+                            _handleButtonTap(QLThayDoiKHPage());
+                          },
+                        ),
                       if (userHasPermission(menuRoles, 'van-chuyen-giao-xe-mobi'))
                         CustomButton(
                           'VẬN CHUYỂN GIAO XE',
@@ -365,36 +394,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
                             _handleButtonTap(ThemKeHoachPage());
                           },
                         ),
-                      // if (userHasPermission(menuRoles, 'thong-tin-nhan-vien-mobi'))
-                      //   CustomButton(
-                      //     'TRA CỨU THÔNG TIN NHÂN VIÊN',
-                      //     Stack(
-                      //       alignment: Alignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           'assets/images/Button_TTTheNhanVien.png',
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     () {
-                      //       _handleButtonTap(TraCuuPage());
-                      //     },
-                      //   ),
-                      // if (userHasPermission(menuRoles, 'thong-tin-xe-ra-cong-mobi'))
-                      //   CustomButton(
-                      //     'THÔNG TIN XE RA CỔNG',
-                      //     Stack(
-                      //       alignment: Alignment.center,
-                      //       children: [
-                      //         Image.asset(
-                      //           'assets/images/Button_TTTheNhanVien.png',
-                      //         ),
-                      //       ],
-                      //     ),
-                      //     () {
-                      //       _handleButtonTap(XeRaCongPage());
-                      //     },
-                      //   ),
                     ],
                   ),
                 ),

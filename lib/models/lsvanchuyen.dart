@@ -1,5 +1,6 @@
 class LSVanChuyenModel {
   String? id;
+  String? bienSo;
   String? ngay;
   String? loaiXe;
   String? soKhung;
@@ -11,10 +12,11 @@ class LSVanChuyenModel {
   String? mauXe;
   bool? isCheck;
 
-  LSVanChuyenModel({this.id, this.ngay, this.loaiXe, this.soKhung, this.thongTinVanChuyen, this.mauXe, this.thongTinChiTiet, this.nguoiVanChuyen, this.donVi, this.gioNhan, this.isCheck});
+  LSVanChuyenModel({this.id, this.bienSo, this.ngay, this.loaiXe, this.soKhung, this.thongTinVanChuyen, this.mauXe, this.thongTinChiTiet, this.nguoiVanChuyen, this.donVi, this.gioNhan, this.isCheck});
   factory LSVanChuyenModel.fromJson(Map<String, dynamic> json) {
     return LSVanChuyenModel(
       id: json["id"].toString(),
+      bienSo: json["bienSo"],
       ngay: json["ngay"],
       loaiXe: json["loaiXe"],
       soKhung: json["soKhung"],

@@ -25,8 +25,14 @@ class GiaoXeModel {
   String? tenDiaDiem;
   String? tenPhuongThucVanChuyen;
   String? noigiao;
+  String? nguoiPhuTrach;
+  String? benVanChuyen;
+  String? phuongThuc;
   bool? dangDiChuyen;
   String? hinhAnh;
+  String? keHoachGiaoXe_Id;
+  bool? isTrue;
+  double? khoangCach;
   List<FileDinhKems>? fileDinhKems;
 
   GiaoXeModel(
@@ -52,12 +58,18 @@ class GiaoXeModel {
       this.kho_Id,
       this.taiXe_Id,
       this.nguoiNhan,
+      this.benVanChuyen,
+      this.phuongThuc,
       this.fileDinhKems,
       this.tenDiaDiem,
       this.hinhAnh,
       this.tenPhuongThucVanChuyen,
       this.toaDo,
       this.noigiao,
+      this.isTrue,
+      this.khoangCach,
+      this.nguoiPhuTrach,
+      this.keHoachGiaoXe_Id,
       this.dangDiChuyen});
 
   factory GiaoXeModel.fromJson(Map<String, dynamic> json) {
@@ -85,13 +97,17 @@ class GiaoXeModel {
       nguoiNhan: json["nguoiNhan"],
       tenDiaDiem: json["tenDiaDiem"],
       toaDo: json["toaDo"],
+      phuongThuc: json["phuongThuc"],
+      benVanChuyen: json["benVanChuyen"],
       tenPhuongThucVanChuyen: json["tenPhuongThucVanChuyen"],
       noigiao: json["noigiao"],
       dangDiChuyen: json["dangDiChuyen"],
       hinhAnh: json["hinhAnh"],
-      fileDinhKems: (json['phuKien'] as List)
-          .map((e) => FileDinhKems.fromJson(e))
-          .toList(),
+      isTrue: json["isTrue"],
+      khoangCach: json["khoangCach"],
+      nguoiPhuTrach: json["nguoiPhuTrach"],
+      keHoachGiaoXe_Id: json["keHoachGiaoXe_Id"],
+      fileDinhKems: (json['phuKien'] as List).map((e) => FileDinhKems.fromJson(e)).toList(),
     );
   }
   Map<String, dynamic> toJson() => {
@@ -112,14 +128,13 @@ class GiaoXeModel {
         "kho_Id": kho_Id,
         "bienSo_Id": bienSo_Id,
         "taiXe_Id": taiXe_Id,
-        "lat": lat,
-        "long": long,
         "nguoiNhan": nguoiNhan,
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "tenDiaDiem": tenDiaDiem,
         "toaDo": toaDo,
         "noigiao": noigiao,
         "hinhAnh": hinhAnh,
+        "keHoachGiaoXe_Id": keHoachGiaoXe_Id,
       };
 }
 
@@ -130,8 +145,7 @@ class FileDinhKems {
   String? name;
   String? url;
 
-  FileDinhKems(
-      {this.fileName, this.fileLink, this.fileData, this.name, this.url});
+  FileDinhKems({this.fileName, this.fileLink, this.fileData, this.name, this.url});
 
   @override
   String toString() {
@@ -139,11 +153,6 @@ class FileDinhKems {
   }
 
   factory FileDinhKems.fromJson(Map<String, dynamic> json) {
-    return FileDinhKems(
-        fileName: json['fileName'],
-        fileLink: json['fileLink'],
-        fileData: json['fileData'],
-        name: json['name'],
-        url: json['url']);
+    return FileDinhKems(fileName: json['fileName'], fileLink: json['fileLink'], fileData: json['fileData'], name: json['name'], url: json['url']);
   }
 }

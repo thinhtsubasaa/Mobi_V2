@@ -106,7 +106,37 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
         print("data: ${decodedData}");
 
         notifyListeners();
-      } else {}
+        _btnController.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Thành công",
+            text: "Hủy giao xe thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+            });
+
+        _btnController.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXGiaoXe(selectedFromDate, selectedToDate, doiTac_Id ?? "", KhoXeId ?? "", BaiXeId ?? "", DongXeId ?? "", maNhanVienController.text);
+            });
+        _btnController.reset();
+      }
     } catch (e) {
       _message = e.toString();
       _isLoading = false;
@@ -129,6 +159,9 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
       } else {
         postData(soKhung ?? "", _textController.text).then((_) {
           print("loading: ${_loading}");
+          setState(() {
+            _loading = false;
+          });
         });
       }
     });

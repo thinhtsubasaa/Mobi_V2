@@ -1,3 +1,5 @@
+import 'package:Thilogi/models/chuyenxe.dart';
+
 class LSX_RaCongModel {
   String? id;
   String? soKhung;
@@ -15,8 +17,12 @@ class LSX_RaCongModel {
   String? noiDi;
   String? bienSo;
   String? trangThaiChuyenXe;
+  String? tongXeDaCheck_TongXe;
+  String? hinhAnhTaiXe;
   bool? isOke;
   bool? isKiemTra;
+
+  List<ChuyenXeModel>? chuyenXe;
 
   LSX_RaCongModel(
       {this.id,
@@ -36,7 +42,10 @@ class LSX_RaCongModel {
       this.bienSo,
       this.isOke,
       this.isKiemTra,
-      this.trangThaiChuyenXe});
+      this.chuyenXe,
+      this.trangThaiChuyenXe,
+      this.hinhAnhTaiXe,
+      this.tongXeDaCheck_TongXe});
   factory LSX_RaCongModel.fromJson(Map<String, dynamic> json) {
     return LSX_RaCongModel(
         id: json["id"].toString(),
@@ -56,6 +65,9 @@ class LSX_RaCongModel {
         trangThaiChuyenXe: json["trangThaiChuyenXe"],
         isOke: json["isOke"],
         isKiemTra: json["isKiemTra"],
+        hinhAnhTaiXe: json["hinhAnhTaiXe"],
+        tongXeDaCheck_TongXe: json["tongXeDaCheck_TongXe"],
+        chuyenXe: (json['chuyenXe'] as List<dynamic>?)?.map((e) => ChuyenXeModel.fromJson(e as Map<String, dynamic>)).toList(),
         noiDi: json["noiDi"]);
   }
 }

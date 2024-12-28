@@ -26,11 +26,11 @@ class DieuChuyenBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(BuildContext context, String qrcode) async {
+  Future<void> getData(BuildContext context, String qrcode,String? toaDo) async {
     _isLoading = true;
     _dieuchuyen = null;
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetSoKhungDieuchuyenmobi?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetSoKhungDieuchuyenmobi?SoKhung=$qrcode&ToaDo=$toaDo');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         print("data: ${decodedData}");

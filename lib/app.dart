@@ -5,12 +5,14 @@ import 'package:Thilogi/blocs/dongseal_bloc.dart';
 import 'package:Thilogi/blocs/giaoxe_bloc.dart';
 import 'package:Thilogi/blocs/huydongcont_bloc.dart';
 import 'package:Thilogi/blocs/huydongseal_bloc.dart';
+import 'package:Thilogi/blocs/huygiaoxe_bloc.dart';
 import 'package:Thilogi/blocs/huyxuatkho_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/scan_nhanvien_bloc.dart';
+import 'package:Thilogi/blocs/thaydoikehoach_bloc.dart';
 import 'package:Thilogi/blocs/theme_bloc.dart';
 import 'package:Thilogi/blocs/timxe.dart';
 import 'package:Thilogi/blocs/user_bloc.dart';
@@ -97,6 +99,12 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<HuyDongSealBloc>(
                   create: (context) => HuyDongSealBloc(),
+                ),
+                ChangeNotifierProvider<ThayDoiKeHoachBloc>(
+                  create: (context) => ThayDoiKeHoachBloc(),
+                ),
+                ChangeNotifierProvider<HuyGiaoXeBloc>(
+                  create: (context) => HuyGiaoXeBloc(),
                 ),
               ],
               child: MaterialApp(

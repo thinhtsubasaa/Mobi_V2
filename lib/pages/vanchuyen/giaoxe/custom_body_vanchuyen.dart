@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Thilogi/pages/dsxchovanchuyen/dsx_chovc.dart';
 import 'package:Thilogi/pages/huyxuatkho/huyxuatkho.dart';
+import 'package:Thilogi/pages/lichsuyeucaumoinhatgiaoho/yeucaumoinhatgiaoho.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -17,7 +18,10 @@ import '../../../config/config.dart';
 import '../../../models/menurole.dart';
 import '../../../widgets/loading.dart';
 
+import '../../dschogiaoxeho/dsxacnhangiaoxeho.dart';
+import '../../huygiaoxe/huygiaoxe.dart';
 import '../../khoxe/khoxe.dart';
+import '../../lichsugiaohocanhan/dsx_yeucaucanhangiaoho.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyVanChuyen extends StatelessWidget {
@@ -175,37 +179,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
                         _handleButtonTap(GiaoXePage());
                       },
                     ),
-                  // if (userHasPermission(
-                  //     menuRoles, 'danh-sach-xe-van-chuyen-mobi'))
-                  //   CustomButton(
-                  //     'DANH SÁCH XE ĐANG VẬN CHUYỂN',
-                  //     Stack(
-                  //       alignment: Alignment.center,
-                  //       children: [
-                  //         Image.asset(
-                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     () {
-                  //       _handleButtonTap(DSVanChuyenPage());
-                  //     },
-                  //   ),
-                  // if (userHasPermission(menuRoles, 'danh-sach-xe-da-giao-mobi'))
-                  //   CustomButton(
-                  //     'DANH SÁCH XE ĐÃ GIAO',
-                  //     Stack(
-                  //       alignment: Alignment.center,
-                  //       children: [
-                  //         Image.asset(
-                  //           'assets/images/Button_09_LichSuCongViec_TheoCaNhan.png',
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     () {
-                  //       _handleButtonTap(LSDaGiaoPage());
-                  //     },
-                  //   ),
                   if (userHasPermission(menuRoles, 'danh-sach-xe-cho-van-chuyen-mobi'))
                     CustomButton(
                         'DANH SÁCH XE CHỜ VẬN CHUYỂN',
@@ -231,6 +204,45 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
                           ],
                         ), () {
                       _handleButtonTap(HuyXuatKhoPage());
+                    }),
+                  if (userHasPermission(menuRoles, 'huy-giao-xe-mobi'))
+                    CustomButton(
+                        'HỦY GIAO XE',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(HuyGiaoXePage());
+                    }),
+                  if (userHasPermission(menuRoles, 'danh-sach-xac-nhan-giao-xe-ho-mobi'))
+                    CustomButton(
+                        'DANH SÁCH XÁC NHẬN GIAO XE HỘ',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(DSXacNhanGiaoXeHoPage());
+                    }),
+                  if (userHasPermission(menuRoles, 'lich-su-yeu-cau-giao-xe-ho-mobi'))
+                    CustomButton(
+                        'LỊCH SỬ YÊU CẦU GIAO XE HỘ',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(DSYCCaNhanGiaoHoPage());
                     }),
                 ],
                 // PageIndicator(currentPage: currentPage, pageCount: pageCount),

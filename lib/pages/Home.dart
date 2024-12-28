@@ -43,7 +43,7 @@ class BottomContent extends StatelessWidget {
           CustomButton(onPressed: () {
             nextScreen(context, LoginPage());
           }),
-          const SizedBox(height: 10),
+          const SizedBox(height: 17),
         ],
       ),
     );

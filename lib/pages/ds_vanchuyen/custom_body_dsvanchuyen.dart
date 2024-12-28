@@ -126,6 +126,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
+                5: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
@@ -136,10 +137,13 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                     ),
                     Container(
                       color: Colors.red,
+                      child: _buildTableCell('Biển số', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
                       child: _buildTableCell('Số Khung', textColor: Colors.white),
                     ),
                     Container(
-                      width: double.infinity,
                       color: Colors.red,
                       child: _buildTableCell('Loại Xe', textColor: Colors.white),
                     ),
@@ -166,6 +170,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
                     4: FlexColumnWidth(0.3),
+                    5: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -175,6 +180,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
                               _buildTableCell(item.gioNhan ?? ""),
+                              _buildTableCell(item.bienSo ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),
                               _buildTableCell(item.thongTinVanChuyen ?? ""),

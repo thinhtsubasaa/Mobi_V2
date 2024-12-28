@@ -6,11 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:quickalert/quickalert.dart';
 
+import '../models/biensotam.dart';
+
 class XuatKhoBloc extends ChangeNotifier {
   static RequestHelper requestHelper = RequestHelper();
 
   XuatKhoModel? _xuatkho;
   XuatKhoModel? get xuatkho => _xuatkho;
+  BienSoTamModel? _biensotam;
+  BienSoTamModel? get biensotam => _biensotam;
 
   bool _hasError = false;
   bool get hasError => _hasError;
@@ -30,8 +34,7 @@ class XuatKhoBloc extends ChangeNotifier {
     _isLoading = true;
     _xuatkho = null;
     try {
-      final http.Response response = await requestHelper
-          .getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -69,6 +72,11 @@ class XuatKhoBloc extends ChangeNotifier {
             maSoNhanVien: decodedData['maSoNhanVien'],
             dangDiChuyen: decodedData['dangDiChuyen'],
             nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+            bienSoTam: decodedData['bienSoTam'],
+            isDiGap: decodedData['isDiGap'],
+            bienSoTamAo: decodedData['bienSoTamAo'],
+            xeCong: decodedData['xeCong'],
+            phuongThuc_Id: decodedData['phuongThuc_Id'],
           );
         }
       } else {
@@ -84,6 +92,76 @@ class XuatKhoBloc extends ChangeNotifier {
           confirmBtnText: 'Đồng ý',
         );
         _xuatkho = null;
+        _isLoading = false;
+      }
+
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> getDataCong(BuildContext context, String qrcode) async {
+    _isLoading = true;
+    _biensotam = null;
+    try {
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode');
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        if (decodedData != null) {
+          _biensotam = BienSoTamModel(
+            key: decodedData["key"],
+            id: decodedData['id'],
+            soKhung: decodedData['soKhung'],
+            maSanPham: decodedData['maSanPham'],
+            tenSanPham: decodedData['tenSanPham'],
+            soMay: decodedData['soMay'],
+            maMau: decodedData['maMau'],
+            tenMau: decodedData['tenMau'],
+            tenKho: decodedData['tenKho'],
+            maViTri: decodedData['maViTri'],
+            tenViTri: decodedData['tenViTri'],
+            mauSon: decodedData['mauSon'],
+            ngayNhapKhoView: decodedData['ngayNhapKhoView'],
+            tenTaiXe: decodedData['tenTaiXe'],
+            ghiChu: decodedData['ghiChu'],
+            maKho: decodedData['maKho'],
+            kho_Id: decodedData['kho_Id'],
+            bienSo_Id: decodedData['bienSo_Id'],
+            taiXe_Id: decodedData['taiXe_Id'],
+            tenDiaDiem: decodedData['tenDiaDiem'],
+            tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
+            tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
+            tenPhuongTien: decodedData['tenPhuongTien'],
+            toaDo: decodedData['toaDo'],
+            noidi: decodedData['noidi'],
+            noiden: decodedData['noiden'],
+            benVanChuyen: decodedData['benVanChuyen'],
+            soXe: decodedData['soXe'],
+            maSoNhanVien: decodedData['maSoNhanVien'],
+            dangDiChuyen: decodedData['dangDiChuyen'],
+            nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+            bienSoTam: decodedData['bienSoTam'],
+            xeCong: decodedData['xeCong'],
+          );
+        }
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        // openSnackBar(context, errorMessage);
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
+        _biensotam = null;
         _isLoading = false;
       }
 

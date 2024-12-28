@@ -245,7 +245,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 3.5,
+        width: MediaQuery.of(context).size.width * 3.8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -267,6 +267,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                 4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
                 6: FlexColumnWidth(0.3),
+                7: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
@@ -274,6 +275,10 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                     Container(
                       color: Colors.red,
                       child: _buildTableCell('Ngày nhận', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Biển số', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -316,6 +321,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                     4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
                     6: FlexColumnWidth(0.3),
+                    7: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -325,6 +331,7 @@ class _BodyLSVanChuyenScreenState extends State<BodyLSVanChuyenScreen> with Tick
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
                               _buildTableCell(item.ngay ?? ""),
+                              _buildTableCell(item.bienSo ?? ""),
                               _buildTableCell(item.donVi ?? ""),
                               _buildTableCell(item.soKhung ?? ""),
                               _buildTableCell(item.loaiXe ?? ""),

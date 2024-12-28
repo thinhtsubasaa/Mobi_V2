@@ -96,12 +96,13 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showConfirmationDialogXacNhan(context);
     });
-    setState(() {
-      KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
-      // getBaiXeList(KhoXeId ?? "");
-      _loading = false;
-    });
     getDataKho();
+    // setState(() {
+    //   KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+    //   // getBaiXeList(KhoXeId ?? "");
+    //   _loading = false;
+    // });
+
     // getDataDongXe();
     getDoiTac();
     selectedFromDate = DateFormat('MM/dd/yyyy').format(DateTime.now().add(Duration(days: -30)));
@@ -265,7 +266,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
 
         // Gọi setState để cập nhật giao diện
         setState(() {
-          // KhoXeId = "9001663f-0164-477d-b576-09c7541f4cce";
+          KhoXeId = _khoxeList![0].id;
           _noidenList = [];
           _loading = false;
         });
@@ -347,7 +348,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 4,
+        width: MediaQuery.of(context).size.width * 4.2,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -368,7 +369,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
-                6: FlexColumnWidth(0.3),
+                6: FlexColumnWidth(0.4),
                 7: FlexColumnWidth(0.3),
                 8: FlexColumnWidth(0.3),
               },
@@ -401,7 +402,7 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Thông tin vận chuyển', textColor: Colors.white),
+                      child: _buildTableCell('Thông tin VC theo Kế Hoạch', textColor: Colors.white),
                     ),
                     Container(
                       color: Colors.red,
@@ -413,65 +414,44 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
                     ),
                   ],
                 ),
-              ],
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.6, // Chiều cao cố định
-              child: SingleChildScrollView(
-                child: Table(
-                  border: TableBorder.all(),
-                  columnWidths: const {
-                    0: FlexColumnWidth(0.2),
-                    1: FlexColumnWidth(0.3),
-                    2: FlexColumnWidth(0.3),
-                    3: FlexColumnWidth(0.3),
-                    4: FlexColumnWidth(0.3),
-                    5: FlexColumnWidth(0.3),
-                    6: FlexColumnWidth(0.3),
-                    7: FlexColumnWidth(0.3),
-                    8: FlexColumnWidth(0.3),
-                  },
-                  children: [
-                    ..._dn
-                            ?.asMap()
-                            .map((i, item) {
-                              index++; // Tăng số thứ tự sau mỗi lần lặp
-                              return MapEntry(
-                                  i,
-                                  TableRow(
-                                    decoration: BoxDecoration(
-                                      color: item.isCheck == true ? Colors.green.withOpacity(0.3) : Colors.white, // Màu nền thay đổi theo giá trị isCheck
-                                    ),
-                                    children: [
-                                      Checkbox(
-                                        value: item.isCheck ?? false,
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            _checkedItems[i] = value ?? false;
-                                            item.isCheck = _checkedItems[i];
-                                            _onSave(item.soKhung, item.isCheck ?? false, _model?.maPin ?? ""); // Gọi hàm lưu dữ liệu
-                                          });
-                                        },
-                                      ),
+                ..._dn
+                        ?.asMap()
+                        .map((i, item) {
+                          index++; // Tăng số thứ tự sau mỗi lần lặp
+                          return MapEntry(
+                              i,
+                              TableRow(
+                                decoration: BoxDecoration(
+                                  color: item.isCheck == true ? Colors.green.withOpacity(0.3) : Colors.white, // Màu nền thay đổi theo giá trị isCheck
+                                ),
+                                children: [
+                                  Checkbox(
+                                    value: item.isCheck ?? false,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        _checkedItems[i] = value ?? false;
+                                        item.isCheck = _checkedItems[i];
+                                        _onSave(item.soKhung, item.isCheck ?? false, _model?.maPin ?? ""); // Gọi hàm lưu dữ liệu
+                                      });
+                                    },
+                                  ),
 
-                                      _buildTableCell(item.soKhung ?? ""),
-                                      _buildTableCell(item.loaiXe ?? ""),
-                                      _buildTableCell(item.mauXe ?? ""),
-                                      _buildTableCell(item.donVi ?? ""),
-                                      _buildTableCell(item.thongTinChiTiet ?? ""),
-                                      _buildTableCell(item.thongTinVanChuyen ?? ""),
-                                      _buildTableCell(item.nguoiVanChuyen ?? ""),
-                                      _buildTableCell(item.ngay ?? ""),
-                                      // Cột checkbox
-                                    ],
-                                  ));
-                            })
-                            .values
-                            .toList() ??
-                        [],
-                  ],
-                ),
-              ),
+                                  _buildTableCell(item.soKhung ?? ""),
+                                  _buildTableCell(item.loaiXe ?? ""),
+                                  _buildTableCell(item.mauXe ?? ""),
+                                  _buildTableCell(item.donVi ?? ""),
+                                  _buildTableCell(item.thongTinChiTiet ?? ""),
+                                  _buildTableCell(item.thongTinVanChuyen ?? ""),
+                                  _buildTableCell(item.nguoiVanChuyen ?? ""),
+                                  _buildTableCell(item.ngay ?? ""),
+                                  // Cột checkbox
+                                ],
+                              ));
+                        })
+                        .values
+                        .toList() ??
+                    [],
+              ],
             ),
           ],
         ),
@@ -508,106 +488,112 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.transparent,
-              body: Center(
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Vui lòng nhập mã pin của bạn?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _textController,
-                        onChanged: (text) {
-                          // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
-                          setState(() {});
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Nhập mã pin',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+        return WillPopScope(
+          onWillPop: () async {
+            // Ngăn đóng hộp thoại khi nhấn nút quay lại trên Android
+            return false;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: Colors.transparent,
+                body: Center(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Vui lòng nhập mã pin của bạn?',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              _btnController.reset();
-                            },
-                            child: const Text(
-                              'Không',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: _textController,
+                          onChanged: (text) {
+                            // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                            setState(() {});
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Nhập mã pin',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-
-                          // RoundedLoadingButton(
-                          //   child: Text(
-                          //     'Đồng ý',
-                          //     style: TextStyle(
-                          //       fontFamily: 'Comfortaa',
-                          //       fontSize: 13,
-                          //       color: Colors.white,
-                          //       fontWeight: FontWeight.w700,
-                          //     ),
-                          //   ),
-                          //   width: 40.w,
-                          //   controller: _btnController, // Controller cho nút
-                          //   color: Colors.green,
-                          //   onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
-                          // ),
-
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
-                            child: const Text(
-                              'Đồng ý',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                _btnController.reset();
+                              },
+                              child: const Text(
+                                'Không',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+
+                            // RoundedLoadingButton(
+                            //   child: Text(
+                            //     'Đồng ý',
+                            //     style: TextStyle(
+                            //       fontFamily: 'Comfortaa',
+                            //       fontSize: 13,
+                            //       color: Colors.white,
+                            //       fontWeight: FontWeight.w700,
+                            //     ),
+                            //   ),
+                            //   width: 40.w,
+                            //   controller: _btnController, // Controller cho nút
+                            //   color: Colors.green,
+                            //   onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                            // ),
+
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                              ),
+                              onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                              child: const Text(
+                                'Đồng ý',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -1251,8 +1237,10 @@ class _BodyCheckRaCongScreenState extends State<BodyCheckRaCongScreen> with Tick
               decoration: const BoxDecoration(
                 color: AppConfig.bottom,
               ),
-              child: customTitle(
-                "KIỂM TRA XE LÊN LỒNG: ${_ub?.congBaoVe?.toUpperCase() ?? ""}",
+              child: Center(
+                child: customTitle(
+                  "KIỂM TRA XE LÊN LỒNG: ${_ub?.congBaoVe?.toUpperCase() ?? ""}",
+                ),
               ),
             ),
           ],

@@ -21,6 +21,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 import 'package:image/image.dart' as img;
 import 'package:flutter/widgets.dart';
@@ -147,7 +148,7 @@ class _BodyCVVanChuyenScreenState extends State<BodyCVVanChuyenScreen> with Tick
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
           _vanchuyenList = (decodedData['dulieu'] as List).map((item) => CongViecModel.fromJson(item)).toList();
-
+          FlutterAppBadger.updateBadgeCount(_vanchuyenList?.length ?? 0);
           // Gọi setState để cập nhật giao diện
           setState(() {
             _loading = false;
@@ -157,11 +158,13 @@ class _BodyCVVanChuyenScreenState extends State<BodyCVVanChuyenScreen> with Tick
         _vanchuyenList = [];
         // Làm sạch danh sách cũ trước khi tải mới
         _isLoading = false;
+        FlutterAppBadger.removeBadge();
         notifyListeners();
       }
     } catch (e) {
       _hasError = true;
       _errorCode = e.toString();
+      FlutterAppBadger.removeBadge();
       notifyListeners();
     }
   }

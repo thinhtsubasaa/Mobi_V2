@@ -76,19 +76,21 @@ class XeRaCongBloc extends ChangeNotifier {
             noiditaixe: decodedData['noiditaixe'],
             lyDo: decodedData['lyDo'],
             hinhAnh: decodedData['hinhAnh'],
+            ngayDuyet: decodedData['ngayDuyet'],
+            nguoiDuyet: decodedData['nguoiDuyet'],
           );
         }
       } else {
-        // String errorMessage = response.body.replaceAll('"', '');
-        // notifyListeners();
-        // QuickAlert.show(
-        //   // ignore: use_build_context_synchronously
-        //   context: context,
-        //   type: QuickAlertType.info,
-        //   title: '',
-        //   text: errorMessage,
-        //   confirmBtnText: 'Đồng ý',
-        // );
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.info,
+          title: '',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
         _xeracong = null;
         _isLoading = false;
       }

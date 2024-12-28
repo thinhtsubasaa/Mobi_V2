@@ -49,7 +49,30 @@ class _BodyChuaDongContScreenState extends State<BodyChuaDongContScreen> with Ti
   void initState() {
     super.initState();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXChuaDongCont(DongXeId ?? "");
+    getDataDongXe();
+    // getDSXChuaDongCont(DongXeId ?? "");
+  }
+
+  void getDataDongXe() async {
+    try {
+      final http.Response response = await requestHelper.getData('Xe_DongXe');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        _dongxeList = (decodedData["datalist"] as List).map((item) => DongXeModel.fromJson(item)).toList();
+        _dongxeList!.insert(0, DongXeModel(id: '', tenDongXe: 'Tất cả'));
+
+        // Gọi setState để cập nhật giao diện
+        setState(() {
+          DongXeId = '';
+          _loading = false;
+        });
+        getDSXChuaDongCont(DongXeId ?? "");
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
   }
 
   Future<void> getDSXChuaDongCont(String? DongXe_Id) async {

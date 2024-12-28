@@ -488,30 +488,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             );
                                           }).toList(),
                                         ),
-                                      // if (_xuatxe != null)
-                                      //   Column(
-                                      //     children: _xuatxe!.map((item) {
-                                      //       return buildRowItem(
-                                      //         customImage: CustomImage2(),
-                                      //         textLine: (item.ngay != null
-                                      //                 ? formatDateTime(
-                                      //                     item.ngay ?? "")
-                                      //                 : "") +
-                                      //             '\n' +
-                                      //             (item.thongTinChiTiet !=
-                                      //                     null
-                                      //                 ? ('${(item.thongTinChiTiet ?? "")}')
-                                      //                 : "") +
-                                      //             '\n' +
-                                      //             (item.thongtinvanchuyen !=
-                                      //                     null
-                                      //                 ? ('${(item.thongtinvanchuyen ?? "")}')
-                                      //                 : "") +
-                                      //             '\n' +
-                                      //             (item.nguoiPhuTrach ?? ""),
-                                      //       );
-                                      //     }).toList(),
-                                      //   ),
+
                                       if (_trackingxuatxe != null)
                                         Column(
                                           children: _trackingxuatxe!.map((item) {
@@ -582,7 +559,8 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             String textLine = textLines.join('\n');
 
                                             return buildRowItem(
-                                              customImage: !item.thongtinvanchuyen!.contains("Cont") ? CustomImage2() : CustomImage6(),
+                                              //  customImage: !item.thongtinvanchuyen!.contains("Cont") ? CustomImage2() : CustomImage6(), //old
+                                              customImage: (item.thongtinvanchuyen?.contains("Cont") ?? false) ? CustomImage6() : CustomImage2(), // new
                                               textLine: textLine,
                                             );
                                           }).toList(),

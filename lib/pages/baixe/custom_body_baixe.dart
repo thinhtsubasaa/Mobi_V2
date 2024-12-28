@@ -720,11 +720,11 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
         title: '',
         confirmBtnText: 'Đồng ý',
         cancelBtnText: 'Không',
-        confirmBtnTextStyle: TextStyle(
+        confirmBtnTextStyle: const TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.bold,
         ),
-        cancelBtnTextStyle: TextStyle(
+        cancelBtnTextStyle: const TextStyle(
           color: Colors.red,
           fontSize: 19.0,
           fontWeight: FontWeight.bold,
@@ -814,7 +814,7 @@ class _BodyBaiXeScreenState extends State<BodyBaiXeScreen> with TickerProviderSt
                                             child: Text(
                                               "Bãi Xe",
                                               textAlign: TextAlign.left,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: 'Comfortaa',
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w400,

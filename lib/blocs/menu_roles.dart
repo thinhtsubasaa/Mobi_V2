@@ -28,20 +28,18 @@ class MenuRoleBloc extends ChangeNotifier {
   String? rule;
   String? url;
 
-  Future<void> getData(
-      BuildContext context, DonVi_Id, String PhanMem_Id) async {
+  Future<void> getData(BuildContext context, DonVi_Id, String PhanMem_Id) async {
     _isLoading = true;
 
     _menurole = null;
 
     try {
-      final http.Response response = await requestHelper
-          .getData('Menu/By_User1?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
+      final http.Response response = await requestHelper.getData('Menu/By_User1?DonVi_Id=$DonVi_Id&PhanMem_Id=$PhanMem_Id');
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
-        print("dataRole:${decodedData}");
+        // print("dataRole:${decodedData}");
 
         if (decodedData != null) {
           _menurole = (decodedData as List).map((p) {

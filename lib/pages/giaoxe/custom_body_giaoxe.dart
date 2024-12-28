@@ -8,6 +8,7 @@ import 'package:Thilogi/models/checksheet.dart';
 import 'package:Thilogi/models/giaoxe.dart';
 import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -31,6 +32,8 @@ import 'package:sizer/sizer.dart';
 import '../../blocs/giaoxe_bloc.dart';
 import '../../config/config.dart';
 import '../../models/diadiem.dart';
+import '../../models/giaoxeho.dart';
+import '../../models/kehoach.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
@@ -90,11 +93,19 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
   String? get message => _message;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   final TextEditingController _ghiChu = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   PickedFile? _pickedFile;
   List<FileItem?> _lstFiles = [];
-
+  String? selectedDate;
   final _picker = ImagePicker();
-
+  KeHoachModel? _thongbao;
+  List<GiaoXeHoModel>? _kehoachList;
+  List<GiaoXeHoModel>? get kehoachList => _kehoachList;
+  String? body;
+  bool _hasError = false;
+  bool get hasError => _hasError;
+  String? _errorCode;
+  String? get errorCode => _errorCode;
   @override
   void initState() {
     super.initState();
@@ -107,6 +118,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
         isRemoved: file.isRemoved,
       ));
     }
+    selectedDate = DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now());
     requestLocationPermission();
     _qrDataController = TextEditingController(text: widget.soKhung ?? '');
     if (widget.soKhung != null && widget.soKhung!.isNotEmpty) {
@@ -125,35 +137,10 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
   @override
   void dispose() {
     _qrDataController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
-  // Future imageSelector(BuildContext context, String pickerType) async {
-  //   switch (pickerType) {
-  //     case "gallery":
-
-  //       /// GALLERY IMAGE PICKER
-  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-  //       break;
-
-  //     case "camera":
-
-  //       /// CAMERA CAPTURE CODE
-  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
-  //       break;
-  //   }
-
-  //   if (_pickedFile != null) {
-  //     setState(() {
-  //       _lstFiles.add(FileItem(
-  //         uploaded: false,
-  //         file: _pickedFile!.path,
-  //         local: true,
-  //         isRemoved: false,
-  //       ));
-  //     });
-  //   }
-  // }
   Future imageSelector(BuildContext context, String pickerType) async {
     if (pickerType == "gallery") {
       // Chọn nhiều ảnh từ thư viện
@@ -338,6 +325,90 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
     }
   }
 
+  Future<void> getListThayDoiKH() async {
+    setState(() {
+      _isLoading = true;
+      _kehoachList = [];
+      // Làm sạch danh sách cũ trước khi tải mới
+    });
+    try {
+      final http.Response response = await requestHelper.getData('LichSuYeuCauGiaoXeHo/GetThongTinYeuCauGiaoXeHo');
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        if (decodedData != null) {
+          _kehoachList = (decodedData as List).map((item) => GiaoXeHoModel.fromJson(item)).toList();
+
+          // Gọi setState để cập nhật giao diện
+          setState(() {
+            _loading = false;
+          });
+        }
+      } else {
+        _kehoachList = [];
+        // Làm sạch danh sách cũ trước khi tải mới
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> postDataYC(GiaoXeModel? scanData, String? soKhung, String? keHoach_Id, String? Ngay, String? lyDo) async {
+    _isLoading = true;
+
+    try {
+      var newScanData = scanData;
+      newScanData?.soKhung = newScanData?.soKhung == 'null' ? null : newScanData?.soKhung;
+      print("print data: ${newScanData?.soKhung}");
+      final http.Response response = await requestHelper.postData('LichSuYeuCauGiaoXeHo/YeuCauGiaoXeHo?SoKhung=$soKhung&KeHoach_Id=$keHoach_Id&NgayDaGiao=$Ngay&LyDo=$lyDo', newScanData?.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+
+        notifyListeners();
+        _btnController.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: 'Thành công',
+            text: "Yêu cầu thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            });
+        _btnController.reset();
+        await getListThayDoiKH();
+        body = "Bạn đang có ${_kehoachList?.length.toString() ?? ""} yêu cầu giao xe hộ cần xác nhận ";
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            });
+
+        _btnController.reset();
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
@@ -440,17 +511,41 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
     setState(() {
       _loading = true;
     });
-    _bl.getData(context, value).then((_) {
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
       setState(() {
-        _qrData = value;
-        if (_bl.giaoxe == null) {
-          barcodeScanResult = null;
-          _qrData = '';
-          _qrDataController.text = '';
-        }
-        _loading = false;
-        _data = _bl.giaoxe;
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
       });
+      String toado = "$lat,$long";
+      _bl.getData(context, value, toado).then((_) {
+        setState(() {
+          _qrData = value;
+          if (_bl.giaoxe == null) {
+            barcodeScanResult = null;
+            _qrData = '';
+            _qrDataController.text = '';
+          }
+          _loading = false;
+          _data = _bl.giaoxe;
+        });
+      });
+    }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      print("Error getting location: $error");
     });
   }
 
@@ -614,6 +709,154 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
     });
   }
 
+  _onSaveYC() async {
+    setState(() {
+      _loading = true;
+    });
+
+// Chuyển đổi danh sách URL thành chuỗi cách nhau bởi dấu phẩy
+
+    _data?.key = _bl.giaoxe?.key;
+    _data?.id = _bl.giaoxe?.id;
+    _data?.soKhung = _bl.giaoxe?.soKhung;
+    _data?.tenSanPham = _bl.giaoxe?.tenSanPham;
+    _data?.maSanPham = _bl.giaoxe?.maSanPham;
+    _data?.soMay = _bl.giaoxe?.soMay;
+    _data?.maMau = _bl.giaoxe?.maMau;
+    _data?.tenMau = _bl.giaoxe?.tenMau;
+    _data?.tenKho = _bl.giaoxe?.tenKho;
+    _data?.maViTri = _bl.giaoxe?.maViTri;
+    _data?.tenViTri = _bl.giaoxe?.tenViTri;
+    _data?.mauSon = _bl.giaoxe?.mauSon;
+    _data?.ngayNhapKhoView = _bl.giaoxe?.ngayNhapKhoView;
+    _data?.maKho = _bl.giaoxe?.maKho;
+    _data?.kho_Id = _bl.giaoxe?.kho_Id;
+    _data?.noigiao = _bl.giaoxe?.noigiao;
+    _data?.tenDiaDiem = _bl.giaoxe?.tenDiaDiem;
+    _data?.tenPhuongThucVanChuyen = _bl.giaoxe?.tenPhuongThucVanChuyen;
+    _data?.bienSo_Id = _bl.giaoxe?.bienSo_Id;
+    _data?.taiXe_Id = _bl.giaoxe?.taiXe_Id;
+    _data?.keHoachGiaoXe_Id = _bl.giaoxe?.keHoachGiaoXe_Id;
+    print("NgayGiao: $selectedDate");
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
+      setState(() {
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
+      });
+
+      _data?.toaDo = "${lat},${long}";
+      print("Vi tri: ${_data?.toaDo}");
+      print("vi Tri: ${_data?.kho_Id}");
+
+      AppService().checkInternet().then((hasInternet) {
+        if (!hasInternet!) {
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
+        } else {
+          postDataYC(_data!, _data?.soKhung ?? "", _data?.keHoachGiaoXe_Id ?? "", selectedDate, _textController.text).then((_) {
+            setState(() {
+              postDataFireBase(_thongbao, body ?? "", _data?.keHoachGiaoXe_Id ?? "");
+              _data = null;
+              _ghiChu.text = '';
+              _textController.text = '';
+              barcodeScanResult = null;
+              _qrData = '';
+              _lstFiles.clear();
+              _qrDataController.text = '';
+              _loading = false;
+            });
+          });
+        }
+      });
+    }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      print("Error getting location: $error");
+    });
+  }
+
+  Future<void> postDataFireBase(KeHoachModel? scanData, String? body, String? keHoach_Id) async {
+    _isLoading = true;
+    try {
+      var newScanData = scanData;
+      newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+
+      final http.Response response = await requestHelper.postData('FireBase/GiaoHo?body=$body&Kehoach_Id=$keHoach_Id', newScanData?.toJson());
+      print("statusCodefirebase: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("datafirebase: ${decodedData}");
+        setState(() async {
+          _loading = false;
+        });
+
+        notifyListeners();
+      } else {}
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      // Hiển thị TimePicker để chọn giờ
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(), // Thời gian mặc định là hiện tại
+      );
+
+      if (pickedTime != null) {
+        // Kết hợp ngày và giờ được chọn
+        DateTime selectedDateTime = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+
+        // Cập nhật trạng thái với ngày giờ đã chọn
+        setState(() {
+          selectedDate = DateFormat('dd/MM/yyyy HH:mm').format(selectedDateTime);
+          print("Ngày và giờ được chọn: $selectedDate");
+          _loading = false; // Dừng loading nếu cần
+        });
+
+        // Thực hiện các hành động khác nếu cần (ví dụ: gọi API)
+        _showConfirmationDialogYeuCau(context);
+      }
+    }
+  }
+
   void _showConfirmationDialog(BuildContext context) {
     QuickAlert.show(
         context: context,
@@ -639,6 +882,145 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
           Navigator.of(context).pop();
           _onSave();
         });
+  }
+
+  void _showConfirmationDialogYeuCau(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bạn sẽ yêu cầu điều phối giao xe hộ với số khung ${_data?.soKhung}?',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Chọn ngày giao xe',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 16,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          GestureDetector(
+                            onTap: () => _selectDate(context),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.blue),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.calendar_today, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    selectedDate ?? 'Chọn ngày',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      const Text(
+                        'Vui lòng nhập lí do hủy của bạn?',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: _textController,
+                        onChanged: (text) {
+                          // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Nhập lí do',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              _btnController.reset();
+                            },
+                            child: const Text(
+                              'Không',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                            ),
+                            onPressed: (selectedDate != null && _textController.text.isNotEmpty) ? () => _onSaveYC() : null,
+                            child: const Text(
+                              'Đồng ý',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -868,25 +1250,82 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
             ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.all(5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RoundedLoadingButton(
-                child: Text('Giao Xe',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      color: AppConfig.textButton,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    )),
-                controller: _btnController,
-                onPressed: _data?.soKhung != null ? () => _showConfirmationDialog(context) : null,
-              ),
-            ],
+        if (_data?.isTrue == false)
+          Container(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RoundedLoadingButton(
+                  child: Text('Giao Xe',
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        color: AppConfig.textButton,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      )),
+                  controller: _btnController,
+                  onPressed: _data?.soKhung != null ? () => _showConfirmationDialog(context) : null,
+                ),
+              ],
+            ),
           ),
-        ),
+        if (_data?.isTrue == true)
+          Container(
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text('Phạm vi giao xe : 10km đến nơi giao\n Khoảng cách hiện tại là ${_data?.khoangCach ?? ""} km đến  ${_data?.noigiao ?? ""} ',
+                //     style: const TextStyle(
+                //       fontFamily: 'Comfortaa',
+                //       color: AppConfig.primaryColor,
+                //       fontWeight: FontWeight.w700,
+                //       fontSize: 16,
+                //     )),
+                Container(
+                  color: Colors.red, // Nền màu đỏ
+                  padding: const EdgeInsets.all(8), // Thêm padding cho văn bản
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(
+                        fontFamily: 'Comfortaa',
+                        color: Colors.yellow, // Màu chữ vàng
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'Phạm vi giao xe: 10km đến nơi giao.\nKhoảng cách hiện tại là ',
+                        ),
+                        TextSpan(
+                          text: '${_data?.khoangCach ?? ""} km đến ',
+                        ),
+                        TextSpan(
+                          text: '${_data?.noigiao ?? ""}', // Làm đậm chữ này
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                RoundedLoadingButton(
+                  child: Text('Yêu cầu xác nhận giao xe hộ',
+                      style: TextStyle(
+                        fontFamily: 'Comfortaa',
+                        color: AppConfig.textButton,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      )),
+                  controller: _btnController,
+                  onPressed: _data?.soKhung != null ? () => _showConfirmationDialogYeuCau(context) : null,
+                ),
+              ],
+            ),
+          )
       ],
     ));
   }

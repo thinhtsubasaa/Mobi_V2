@@ -74,7 +74,33 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
         print("data: ${decodedData}");
 
         notifyListeners();
-      } else {}
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Thành công",
+            text: "Hủy giao xe thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXGiaoXe(selectedDate);
+            });
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXGiaoXe(selectedDate);
+            });
+      }
     } catch (e) {
       _message = e.toString();
       _isLoading = false;
@@ -162,7 +188,7 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 2.5,
+        width: MediaQuery.of(context).size.width * 1.8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -178,19 +204,14 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
               border: TableBorder.all(),
               columnWidths: const {
                 0: FlexColumnWidth(0.15),
-                1: FlexColumnWidth(0.15),
+                1: FlexColumnWidth(0.3),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
-                4: FlexColumnWidth(0.3),
-                5: FlexColumnWidth(0.3),
+                4: FlexColumnWidth(0.2),
               },
               children: [
                 TableRow(
                   children: [
-                    Container(
-                      color: Colors.red,
-                      child: _buildTableCell('Hủy', textColor: Colors.white),
-                    ),
                     Container(
                       color: Colors.red,
                       child: _buildTableCell('Giờ nhận', textColor: Colors.white),
@@ -223,11 +244,10 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
                   border: TableBorder.all(),
                   columnWidths: const {
                     0: FlexColumnWidth(0.15),
-                    1: FlexColumnWidth(0.15),
+                    1: FlexColumnWidth(0.3),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
-                    4: FlexColumnWidth(0.3),
-                    5: FlexColumnWidth(0.3),
+                    4: FlexColumnWidth(0.2),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -239,99 +259,99 @@ class _BodyLSGiaoXeScreenState extends State<BodyLSGiaoXeScreen> with TickerProv
                             ),
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
-                              IconButton(
-                                icon: Icon(Icons.delete, color: item.isNew == true ? Colors.red : Colors.grey), // Icon thùng rác
-                                onPressed: (item.isNew == true)
-                                    ? () => showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return StatefulBuilder(
-                                              builder: (BuildContext context, StateSetter setState) {
-                                                return Scaffold(
-                                                  resizeToAvoidBottomInset: false,
-                                                  backgroundColor: Colors.transparent,
-                                                  body: Center(
-                                                    child: Container(
-                                                      padding: EdgeInsets.all(20),
-                                                      margin: EdgeInsets.symmetric(horizontal: 20),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(15),
-                                                      ),
-                                                      child: Column(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          const Text(
-                                                            'Vui lòng nhập lí do hủy của bạn?',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 10),
-                                                          TextField(
-                                                            controller: _textController,
-                                                            onChanged: (text) {
-                                                              // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
-                                                              setState(() {});
-                                                            },
-                                                            decoration: InputDecoration(
-                                                              labelText: 'Nhập lí do',
-                                                              border: OutlineInputBorder(
-                                                                borderRadius: BorderRadius.circular(10),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(height: 20),
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                            children: [
-                                                              ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  backgroundColor: Colors.red,
-                                                                ),
-                                                                onPressed: () {
-                                                                  Navigator.of(context).pop();
-                                                                  _btnController.reset();
-                                                                },
-                                                                child: const Text(
-                                                                  'Không',
-                                                                  style: TextStyle(
-                                                                    fontFamily: 'Comfortaa',
-                                                                    fontSize: 13,
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.w700,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              ElevatedButton(
-                                                                style: ElevatedButton.styleFrom(
-                                                                  backgroundColor: Colors.green,
-                                                                ),
-                                                                onPressed: _textController.text.isNotEmpty ? () => _onSave(item.soKhung, _textController.text) : null,
-                                                                child: const Text(
-                                                                  'Đồng ý',
-                                                                  style: TextStyle(
-                                                                    fontFamily: 'Comfortaa',
-                                                                    fontSize: 13,
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.w700,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                        )
-                                    : null,
-                              ),
+                              // IconButton(
+                              //   icon: Icon(Icons.delete, color: item.isNew == true ? Colors.red : Colors.grey), // Icon thùng rác
+                              //   onPressed: (item.isNew == true)
+                              //       ? () => showDialog(
+                              //             context: context,
+                              //             builder: (BuildContext context) {
+                              //               return StatefulBuilder(
+                              //                 builder: (BuildContext context, StateSetter setState) {
+                              //                   return Scaffold(
+                              //                     resizeToAvoidBottomInset: false,
+                              //                     backgroundColor: Colors.transparent,
+                              //                     body: Center(
+                              //                       child: Container(
+                              //                         padding: EdgeInsets.all(20),
+                              //                         margin: EdgeInsets.symmetric(horizontal: 20),
+                              //                         decoration: BoxDecoration(
+                              //                           color: Colors.white,
+                              //                           borderRadius: BorderRadius.circular(15),
+                              //                         ),
+                              //                         child: Column(
+                              //                           mainAxisSize: MainAxisSize.min,
+                              //                           children: [
+                              //                             const Text(
+                              //                               'Vui lòng nhập lí do hủy của bạn?',
+                              //                               style: TextStyle(
+                              //                                 fontSize: 16,
+                              //                                 fontWeight: FontWeight.bold,
+                              //                               ),
+                              //                             ),
+                              //                             SizedBox(height: 10),
+                              //                             TextField(
+                              //                               controller: _textController,
+                              //                               onChanged: (text) {
+                              //                                 // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                              //                                 setState(() {});
+                              //                               },
+                              //                               decoration: InputDecoration(
+                              //                                 labelText: 'Nhập lí do',
+                              //                                 border: OutlineInputBorder(
+                              //                                   borderRadius: BorderRadius.circular(10),
+                              //                                 ),
+                              //                               ),
+                              //                             ),
+                              //                             SizedBox(height: 20),
+                              //                             Row(
+                              //                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //                               children: [
+                              //                                 ElevatedButton(
+                              //                                   style: ElevatedButton.styleFrom(
+                              //                                     backgroundColor: Colors.red,
+                              //                                   ),
+                              //                                   onPressed: () {
+                              //                                     Navigator.of(context).pop();
+                              //                                     _btnController.reset();
+                              //                                   },
+                              //                                   child: const Text(
+                              //                                     'Không',
+                              //                                     style: TextStyle(
+                              //                                       fontFamily: 'Comfortaa',
+                              //                                       fontSize: 13,
+                              //                                       color: Colors.white,
+                              //                                       fontWeight: FontWeight.w700,
+                              //                                     ),
+                              //                                   ),
+                              //                                 ),
+                              //                                 ElevatedButton(
+                              //                                   style: ElevatedButton.styleFrom(
+                              //                                     backgroundColor: Colors.green,
+                              //                                   ),
+                              //                                   onPressed: _textController.text.isNotEmpty ? () => _onSave(item.soKhung, _textController.text) : null,
+                              //                                   child: const Text(
+                              //                                     'Đồng ý',
+                              //                                     style: TextStyle(
+                              //                                       fontFamily: 'Comfortaa',
+                              //                                       fontSize: 13,
+                              //                                       color: Colors.white,
+                              //                                       fontWeight: FontWeight.w700,
+                              //                                     ),
+                              //                                   ),
+                              //                                 ),
+                              //                               ],
+                              //                             ),
+                              //                           ],
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                   );
+                              //                 },
+                              //               );
+                              //             },
+                              //           )
+                              //       : null,
+                              // ),
                               _buildTableCell(
                                 item.gioNhan ?? "",
                                 isCancelled: isCancelled,

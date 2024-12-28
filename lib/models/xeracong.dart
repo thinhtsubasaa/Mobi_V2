@@ -42,7 +42,9 @@ class XeRaCongModel {
   String? tenNhanVienKH;
   String? sdtKH;
   String? ptvc;
+  String? ngayDuyet;
   bool? isCheck;
+  String? nguoiDuyet;
 
   XeRaCongModel(
       {this.key,
@@ -88,6 +90,8 @@ class XeRaCongModel {
       this.sdtKH,
       this.isCheck,
       this.ptvc,
+      this.ngayDuyet,
+      this.nguoiDuyet,
       this.noiditaixe});
 
   factory XeRaCongModel.fromJson(Map<String, dynamic> json) {
@@ -135,6 +139,8 @@ class XeRaCongModel {
         tenNhanVienKH: json["tenNhanVienKH"],
         sdtKH: json["sdtKH"],
         ptvc: json["ptvc"],
+        ngayDuyet: json["ngayDuyet"],
+        nguoiDuyet: json["nguoiDuyet"],
         tencong: json["tencong"]);
   }
   Map<String, dynamic> toJson() => {

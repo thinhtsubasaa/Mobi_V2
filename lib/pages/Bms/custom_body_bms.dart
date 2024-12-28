@@ -1,4 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+import 'package:Thilogi/models/lsu_giaoxe.dart';
+import 'package:Thilogi/pages/dschoxacnhan/dsxacnhan.dart';
+import 'package:Thilogi/pages/lichsuyeucaumoinhat/yeucaumoinhat.dart';
 import 'package:Thilogi/pages/login/Login.dart';
 
 import 'package:Thilogi/pages/nghiepvuchung/nghiepvuchung.dart';
@@ -8,10 +13,12 @@ import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 
 import 'package:quickalert/quickalert.dart';
@@ -23,6 +30,11 @@ import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
 import 'package:new_version/new_version.dart';
+
+import '../dschogiaoxeho/dsxacnhangiaoxeho.dart';
+import '../lichsuyeucaumoinhatdigap/yeucaumoinhatdigap.dart';
+import '../lichsuyeucaumoinhatgiaoho/yeucaumoinhatgiaoho.dart';
+import '../thaydoixedigap/dsxacnhandigap.dart';
 
 // ignore: use_key_in_widget_constructors
 class CustomBodyBms extends StatelessWidget {
@@ -40,7 +52,8 @@ class BodyBmsScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateMixin, ChangeNotifier {
+class _BodyBmsScreenState extends State<BodyBmsScreen>
+    with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -61,9 +74,13 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
 
   String? _message;
   String? get message => _message;
+  LSX_GiaoXeModel? _data;
 
   String? url;
   late Future<List<MenuRoleModel>> _menuRoleFuture;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -72,6 +89,191 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
     _checkInternetAndShowAlert();
     _mb = Provider.of<MenuRoleBloc>(context, listen: false);
     _menuRoleFuture = _fetchMenuRoles();
+    _firebaseMessaging.requestPermission();
+
+    // Lấy FCM Token
+    _firebaseMessaging.getToken().then((String? token) {
+      postData(token);
+      print("FCM Token: $token");
+    }).catchError((e) {
+      print("Error fetching FCM token: $e");
+    });
+    initializeNotifications();
+    if (Platform.isIOS) {
+      foround();
+    }
+
+    // Lắng nghe thông báo khi ứng dụng ở nền hoặc mở ứng dụng
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Nhận thông báo khi app đang mở: ${message.notification?.title}');
+      // Hiển thị thông báo cục bộ khi nhận được tin nhắn
+// showNotification(message);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Mở app từ thông báo: ${message.notification?.title}');
+      String? body = message.notification?.body?.toLowerCase();
+        if (body != null) {
+        if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanPage());
+        } else if (body.contains('đã có')) {
+          nextScreen(context, DSXacNhanDiGapPage());
+        } else if (body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanGiaoXeHoPage());
+        } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
+          nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
+        } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
+          // nextScreen(context, LichSuYCMoiNhatPage());
+          nextScreen(context, LichSuYCMoiNhatDiGapPage());
+        } else {
+          nextScreen(context, LichSuYCMoiNhatPage());
+        }
+      } else {
+        // Trường hợp không có body trong thông báo
+        print("Không có thông tin body trong thông báo.");
+      }
+      // Xử lý sự kiện khi người dùng mở ứng dụng từ thông báo
+    //  if (message.notification?.body?.toLowerCase().contains('đang có') ?? false) {
+    //       nextScreen(context, DSXacNhanPage());
+    //     } else {
+    //       nextScreen(context, LichSuYCMoiNhatPage());
+    //     }
+        // nextScreen(context, DSXacNhanPage());
+      
+    });
+    FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (message != null) {
+        print(
+            'Người dùng click vào thông báo khi ứng dụng được khởi động từ trạng thái tắt hoàn toàn: ${message.notification?.title}');
+            String? body = message.notification?.body?.toLowerCase();
+        if (body != null) {
+           if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanPage());
+        } else if (body.contains('đã có')) {
+          nextScreen(context, DSXacNhanDiGapPage());
+        } else if (body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanGiaoXeHoPage());
+        } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
+          nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
+        } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
+          // nextScreen(context, LichSuYCMoiNhatPage());
+          nextScreen(context, LichSuYCMoiNhatDiGapPage());
+        } else {
+          nextScreen(context, LichSuYCMoiNhatPage());
+        }
+      } else {
+        // Trường hợp không có body trong thông báo
+        print("Không có thông tin body trong thông báo.");
+      }
+      //  if (message.notification?.body?.toLowerCase().contains('đang có') ?? false) {
+      //     nextScreen(context, DSXacNhanPage());
+      //   } else {
+      //     nextScreen(context, LichSuYCMoiNhatPage());
+      //   }
+        // nextScreen(context, DSXacNhanPage());
+      
+      }
+    });
+  }
+
+  void initializeNotifications() {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings(
+            'app_icon'); // Tên biểu tượng đúng cho Android.
+
+    // Cấu hình cho iOS mà không có 'onDidReceiveLocalNotification'
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onNotificationResponse,
+    );
+
+    print("Initialized notifications for iOS and Android.");
+  }
+
+  Future<void> postData(String? token) async {
+    try {
+      final http.Response response = await requestHelper.postData(
+          'FireBase/FCMToken?token=$token', _data?.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("Truyền token successfully");
+        notifyListeners();
+      } else {}
+    } catch (e) {
+      _message = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> onNotificationResponse(NotificationResponse response) async {
+    print('Callback được gọi: onNotificationResponse');
+    String? body = response.payload?.toLowerCase();
+        if (body != null) {
+           if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanPage());
+        } else if (body.contains('đã có')) {
+          nextScreen(context, DSXacNhanDiGapPage());
+        } else if (body.contains('giao xe hộ cần')) {
+          nextScreen(context, DSXacNhanGiaoXeHoPage());
+        } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
+          nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
+        } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
+          // nextScreen(context, LichSuYCMoiNhatPage());
+          nextScreen(context, LichSuYCMoiNhatDiGapPage());
+        } else {
+          nextScreen(context, LichSuYCMoiNhatPage());
+        }
+      } else {
+        // Trường hợp không có body trong thông báo
+        print("Không có thông tin body trong thông báo.");
+      }
+    // if (response.payload?.toLowerCase().contains('đang có') ?? false) {
+    //   nextScreen(context, DSXacNhanPage());
+    //     } else {
+    //       nextScreen(context, LichSuYCMoiNhatPage());
+    //     }
+  }
+
+  Future foround() async {
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+            alert: true, badge: true, sound: true);
+  }
+
+  Future showNotification(RemoteMessage message) async {
+    print("Đã thực hiện hành động mo poup");
+
+    const DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails(
+            // presentAlert: true, // Hiển thị thông báo dạng banner
+            // presentBadge: true, // Hiển thị badge trên biểu tượng ứng dụng
+            // presentSound: true, // Phát âm thanh thông báo
+            );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      iOS: iosPlatformChannelSpecifics,
+    );
+int uniqueId = DateTime.now().second + Random().nextInt(1000);
+    await flutterLocalNotificationsPlugin.show(
+    //  uniqueId,
+    0,
+      message.notification?.title, // Tiêu đề thông báo
+      message.notification?.body, // Nội dung thông báo
+      platformChannelSpecifics,
+      payload: message.notification?.body, // Dữ liệu đính kèm (nếu cần)
+    );
   }
 
   void _checkVersion() async {
@@ -87,7 +289,10 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
           versionStatus: status,
           dialogTitle: "CẬP NHẬT",
           dismissButtonText: "Bỏ qua",
-          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
+          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
+              "${status.localVersion}" +
+              " lên " +
+              "${status.storeVersion}",
           dismissAction: () {
             SystemNavigator.pop();
           },
@@ -177,7 +382,8 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  if (userHasPermission(menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
+                  if (userHasPermission(
+                      menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
                     CustomButton(
                       'THILOTRANS\nAUTO',
                       Stack(

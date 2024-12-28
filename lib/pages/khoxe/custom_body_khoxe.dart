@@ -35,6 +35,7 @@ import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' 
 
 import '../../config/config.dart';
 import '../../models/bienso.dart';
+import '../../models/biensotam.dart';
 import '../../models/noiden.dart';
 import '../../services/app_service.dart';
 import '../../widgets/checksheet_upload_anh.dart';
@@ -66,10 +67,14 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
   String? lat;
   String? long;
   String _qrData = '';
+  String _qrDataCong = '';
   final _qrDataController = TextEditingController();
+  final _qrDataControllerCong = TextEditingController();
   XuatKhoModel? _data;
+  BienSoTamModel? _bienso;
   bool _loading = false;
   String? barcodeScanResult;
+  String? barcodeScanResultCong;
   String? viTri;
 
   late XuatKhoBloc _bl;
@@ -105,16 +110,20 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
   final _picker = ImagePicker();
   bool _option1 = false;
   bool _option2 = false;
+  bool _option3 = false;
+  bool _isXuatCong = false;
 
   String? BienSo;
   String? BienSoTam;
 
+  late AppBloc _ab;
   @override
   void initState() {
     super.initState();
     _bl = Provider.of<XuatKhoBloc>(context, listen: false);
-    getBienSo();
-    getBienSoTam();
+    _ab = Provider.of<AppBloc>(context, listen: false);
+    // getBienSo();
+    // getBienSoTam();
     for (var file in widget.lstFiles) {
       _lstFiles.add(FileItem(
         uploaded: true,
@@ -129,9 +138,11 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     scanSubscription = dataWedge.onScanResult.listen((ScanResult result) {
       setState(() {
         barcodeScanResult = result.data;
+        barcodeScanResultCong = result.data;
       });
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult ?? "");
+      _handleBarcodeScanResultCong(barcodeScanResultCong ?? "");
     });
   }
 
@@ -340,6 +351,56 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     }
   }
 
+  Future<void> postDataCong(BienSoTamModel scanData, String viTri, String? ghiChu, String? file, String? bienSo, String? bienSoTam) async {
+    _isLoading = true;
+
+    try {
+      var newScanData = scanData;
+      newScanData.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
+      print("print data: ${newScanData.soKhung}");
+      final http.Response response = await requestHelper.postData('KhoThanhPham/XuatKho?ToaDo=$viTri&GhiChu=$ghiChu&File=$file&BienSo=$bienSo&BienSoTam=$bienSoTam', newScanData.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+
+        notifyListeners();
+        _btnController.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: 'Thành công',
+            text: "Xuất kho thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context); // Đóng dialog cũ (nếu cần)
+                _showDetailsDialog(context, _bienso?.bienSoTam); // Mở dialog với dữ liệu mới
+              }
+            });
+        _btnController.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Thất bại',
+          text: errorMessage,
+          confirmBtnText: 'Đồng ý',
+        );
+        _btnController.reset();
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Widget CardVin() {
     return Container(
       width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
@@ -423,16 +484,141 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     );
   }
 
+  Widget CardVinCong() {
+    return Container(
+      width: MediaQuery.of(context).size.width < 330 ? 100.w : 90.w,
+      height: MediaQuery.of(context).size.height < 880 ? 8.h : 8.h,
+      margin: const EdgeInsets.only(top: 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: const Color(0xFF818180),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 20.w,
+            height: 10.h,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5),
+                bottomLeft: Radius.circular(5),
+              ),
+              color: AppConfig.appThemeColor,
+            ),
+            child: const Center(
+              child: Text(
+                'Số khung\n(VIN)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: TextField(
+                controller: _qrDataControllerCong,
+                decoration: const InputDecoration(
+                  hintText: 'Nhập hoặc quét mã VIN',
+                ),
+                onSubmitted: (value) {
+                  _handleBarcodeScanResultCong(value);
+                },
+                style: const TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppConfig.primaryColor,
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.qr_code_scanner),
+            color: Colors.black,
+            onPressed: () async {
+              String result = await FlutterBarcodeScanner.scanBarcode(
+                '#A71C20',
+                'Cancel',
+                false,
+                ScanMode.QR,
+              );
+              setState(() {
+                barcodeScanResultCong = result;
+                _qrDataControllerCong.text = result;
+              });
+              print(barcodeScanResultCong);
+              _handleBarcodeScanResultCong(barcodeScanResultCong ?? "");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void _handleBarcodeScanResult(String barcodeScanResult) {
     print(barcodeScanResult);
     setState(() {
       _qrData = '';
       _qrDataController.text = barcodeScanResult;
+      // _data = null;
       _data = null;
+
       Future.delayed(const Duration(seconds: 0), () {
         _qrData = barcodeScanResult;
         _qrDataController.text = barcodeScanResult;
         _onScan(barcodeScanResult);
+      });
+    });
+  }
+
+  void _handleBarcodeScanResultCong(String barcodeScanResultCong) {
+    print(barcodeScanResultCong);
+    setState(() {
+      _qrDataCong = '';
+      _qrDataControllerCong.text = barcodeScanResultCong;
+      // _data = null;
+      _bienso = null;
+
+      Future.delayed(const Duration(seconds: 0), () {
+        _qrDataCong = barcodeScanResultCong;
+        _qrDataControllerCong.text = barcodeScanResultCong;
+        _onScanCong(barcodeScanResultCong);
+      });
+    });
+  }
+
+  _onScanCong(value) {
+    setState(() {
+      _loading = true;
+    });
+    _bl.getDataCong(context, value).then((_) {
+      setState(() {
+        _qrDataCong = value;
+        if (_bl.biensotam == null) {
+          barcodeScanResultCong = null;
+          _qrDataCong = '';
+          _qrDataControllerCong.text = '';
+        } else {
+          _bienso = _bl.biensotam;
+
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context); // Đóng dialog cũ (nếu cần)
+            _showDetailsDialog(context, _data?.bienSoTam); // Mở dialog với dữ liệu mới
+          }
+        }
+        _loading = false;
       });
     });
   }
@@ -561,7 +747,19 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     _data?.taiXe_Id = _bl.xuatkho?.taiXe_Id;
     _data?.tenDiaDiem = _bl.xuatkho?.tenDiaDiem;
     _data?.tenPhuongThucVanChuyen = _bl.xuatkho?.tenPhuongThucVanChuyen;
+    _data?.isDiGap = _bl.xuatkho?.isDiGap;
+    _data?.bienSoTamAo = _bl.xuatkho?.bienSoTamAo;
     _data?.hinhAnh = imageUrlsString;
+    if (_option1) {
+      BienSo = _bl.xuatkho?.soXe;
+    }
+    if (_option2 && _bl.xuatkho?.isDiGap == false) {
+      BienSoTam = _bl.xuatkho?.bienSoTam;
+    }
+    if (_option2 && _bl.xuatkho?.isDiGap == true) {
+      BienSoTam = _bl.xuatkho?.bienSoTamAo;
+    }
+
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
@@ -571,7 +769,6 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
       });
 
       viTri = "${lat},${long}";
-      print("viTri: ${_data?.toaDo}");
 
       AppService().checkInternet().then((hasInternet) {
         if (!hasInternet!) {
@@ -588,11 +785,135 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
           postData(_data!, viTri ?? "", _ghiChu.text, _data?.hinhAnh ?? "", BienSo ?? "", BienSoTam ?? "").then((_) {
             setState(() {
               _data = null;
+              _bienso = null;
               _ghiChu.text = '';
               barcodeScanResult = null;
               _qrData = '';
               _qrDataController.text = '';
               _lstFiles.clear();
+              _isXuatCong = false;
+              _loading = false;
+            });
+          });
+        }
+      });
+    }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      print("Error getting location: $error");
+    });
+  }
+
+  _onSaveCong() async {
+    setState(() {
+      _loading = true;
+    });
+    List<String> imageUrls = [];
+
+    for (var fileItem in _lstFiles) {
+      if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
+        File file = File(fileItem!.file!);
+        if (file.existsSync()) {
+          file = await compressImage(file);
+        }
+
+        var response = await RequestHelper().uploadFile(file);
+        print("Response: $response");
+        if (response != null) {
+          widget.lstFiles.add(CheckSheetFileModel(
+            isRemoved: response["isRemoved"],
+            id: response["id"],
+            fileName: response["fileName"],
+            path: response["path"],
+          ));
+          fileItem.uploaded = true;
+          setState(() {
+            _loading = false;
+          });
+
+          fileItem.uploaded = true;
+
+          if (response["path"] != null) {
+            imageUrls.add(response["path"]);
+          }
+          // } else if (fileItem?.uploaded == true && fileItem?.file != null) {
+          //   imageUrls.add(fileItem.path!); // Nếu đã upload trước đó, chỉ thêm URL
+        }
+      }
+    }
+
+// Chuyển đổi danh sách URL thành chuỗi cách nhau bởi dấu phẩy
+    String? imageUrlsString = imageUrls.join(',');
+    _bienso?.key = _bl.biensotam?.key;
+    _bienso?.id = _bl.biensotam?.id;
+    _bienso?.soKhung = _bl.biensotam?.soKhung;
+    _bienso?.tenSanPham = _bl.biensotam?.tenSanPham;
+    _bienso?.maSanPham = _bl.biensotam?.maSanPham;
+    _bienso?.soMay = _bl.biensotam?.soMay;
+    _bienso?.maMau = _bl.biensotam?.maMau;
+    _bienso?.tenMau = _bl.biensotam?.tenMau;
+    _bienso?.tenKho = _bl.biensotam?.tenKho;
+    _bienso?.maViTri = _bl.biensotam?.maViTri;
+    _bienso?.tenViTri = _bl.biensotam?.tenViTri;
+    _bienso?.mauSon = _bl.biensotam?.mauSon;
+    _bienso?.ngayNhapKhoView = _bl.biensotam?.ngayNhapKhoView;
+    _bienso?.maKho = _bl.biensotam?.maKho;
+    _bienso?.kho_Id = _bl.biensotam?.kho_Id;
+    _bienso?.noidi = _bl.biensotam?.noidi;
+    _bienso?.noiden = _bl.biensotam?.noiden;
+    _bienso?.ghiChu = _ghiChu.text;
+    _bienso?.bienSo_Id = _bl.biensotam?.bienSo_Id;
+    _bienso?.taiXe_Id = _bl.biensotam?.taiXe_Id;
+    _bienso?.tenDiaDiem = _bl.biensotam?.tenDiaDiem;
+    _bienso?.tenPhuongThucVanChuyen = _bl.biensotam?.tenPhuongThucVanChuyen;
+    _bienso?.bienSoTam = _bl.biensotam?.bienSoTam;
+    _bienso?.hinhAnh = imageUrlsString;
+
+    BienSoTam = _bienso?.bienSoTam ?? '${_bl.xuatkho?.bienSoTam}(C)';
+
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
+      setState(() {
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
+      });
+
+      viTri = "${lat},${long}";
+
+      AppService().checkInternet().then((hasInternet) {
+        if (!hasInternet!) {
+          // openSnackBar(context, 'no internet'.tr());
+          QuickAlert.show(
+            // ignore: use_build_context_synchronously
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+            confirmBtnText: 'Đồng ý',
+          );
+        } else {
+          postDataCong(_bienso!, viTri ?? "", _ghiChu.text, _bienso?.hinhAnh ?? "", BienSo ?? "", BienSoTam ?? "").then((_) {
+            setState(() {
+              _bienso = null;
+              _ghiChu.text = '';
+              barcodeScanResultCong = null;
+              _qrDataCong = '';
+              _qrDataControllerCong.text = '';
+              _lstFiles.clear();
+              _isXuatCong = true;
+
               _loading = false;
             });
           });
@@ -643,6 +964,33 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
         });
   }
 
+  void _showConfirmationDialogCong(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn vận chuyển không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: const TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: const TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSaveCong();
+        });
+  }
+
   Future<void> getBienSo() async {
     try {
       final http.Response response = await requestHelper.getData('TMS_DanhSachPhuongTien/DuongBo');
@@ -683,14 +1031,305 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
     }
   }
 
+  void _showDetailsDialog(BuildContext context, String? bienso) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              insetPadding: EdgeInsets.zero, // Loại bỏ khoảng cách viền
+              child: Container(
+                width: MediaQuery.of(context).size.width, // Full chiều rộng màn hình
+                height: MediaQuery.of(context).size.height, // Full chiều cao màn hình
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'XE ĐƯỢC CÕNG',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.red,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Center(child: CardVinCong()),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Container(
+                          alignment: Alignment.bottomCenter,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _loading
+                                  ? LoadingWidget(context)
+                                  : Container(
+                                      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            child: Column(
+                                              children: [
+                                                ItemGiaoXe(
+                                                  title: 'Biển số tạm: ',
+                                                  value: _bienso?.bienSoTam ?? "",
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                  title: 'Số khung: ',
+                                                  value: _bienso?.soKhung,
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                  title: 'Nơi đi: ',
+                                                  value: _bienso?.noidi,
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                ItemGiaoXe(
+                                                  title: 'Nơi đến: ',
+                                                  value: _bienso?.noiden,
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Container(
+                                                  height: 6.h,
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        padding: const EdgeInsets.only(left: 10),
+                                                        child: const Text(
+                                                          'Loại xe: ',
+                                                          style: TextStyle(
+                                                            fontFamily: 'Comfortaa',
+                                                            fontSize: 13,
+                                                            fontWeight: FontWeight.w700,
+                                                            color: Color(0xFF818180),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
+                                                        child: SingleChildScrollView(
+                                                          scrollDirection: Axis.horizontal,
+                                                          child: Text(
+                                                            _bienso?.tenSanPham ?? '',
+                                                            textAlign: TextAlign.left,
+                                                            style: const TextStyle(
+                                                              fontFamily: 'Coda Caption',
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: AppConfig.primaryColor,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                    title: 'Màu: ',
+                                                    // value: _bienso != null
+                                                    //     ? "${_bienso?.tenMau} (${_bienso?.maMau})"
+                                                    //     : "",
+                                                    value: _bienso != null ? (_bienso?.tenMau != null && _bienso?.maMau != null ? "${_bienso?.tenMau} (${_bienso?.maMau})" : "") : ""),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                  title: 'Số máy: ',
+                                                  value: _bienso?.soMay ?? "",
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                  title: 'Phương thức vận chuyển: ',
+                                                  value: _bienso?.tenPhuongThucVanChuyen ?? "",
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Item(
+                                                  title: 'Bên vận chuyển: ',
+                                                  value: _bienso?.benVanChuyen ?? "",
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+
+                                                ItemGhiChu(
+                                                  title: 'Ghi chú: ',
+                                                  controller: _ghiChu,
+                                                ),
+                                                const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                                Container(
+                                                  margin: const EdgeInsets.only(right: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).colorScheme.onPrimary,
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
+                                                        child: SingleChildScrollView(
+                                                          scrollDirection: Axis.horizontal,
+                                                          child: Row(
+                                                            children: [
+                                                              ElevatedButton.icon(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: Colors.orangeAccent,
+                                                                ),
+                                                                onPressed: () => imageSelector(context, 'gallery'),
+                                                                icon: const Icon(Icons.photo_library),
+                                                                label: const Text(""),
+                                                              ),
+                                                              const SizedBox(width: 10),
+                                                              ElevatedButton.icon(
+                                                                style: ElevatedButton.styleFrom(
+                                                                    // backgroundColor: Theme.of(context).primaryColor,
+                                                                    ),
+                                                                onPressed: () => imageSelector(context, 'camera'),
+                                                                icon: const Icon(Icons.camera_alt),
+                                                                label: const Text(""),
+                                                              ),
+                                                              const SizedBox(width: 10),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      Text(
+                                                        "Ảnh đã chọn",
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Theme.of(context).primaryColor,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 10),
+                                                      if (_isEmptyLstFile())
+                                                        const SizedBox(
+                                                          height: 100,
+                                                          // child: Center(child: Text("Chưa có ảnh nào")),
+                                                        ),
+                                                      // Display list image
+                                                      ResponsiveGridRow(
+                                                        children: _lstFiles.map((image) {
+                                                          if (image!.isRemoved == false) {
+                                                            return ResponsiveGridCol(
+                                                              xs: 6,
+                                                              md: 3,
+                                                              child: InkWell(
+                                                                onLongPress: () {
+                                                                  deleteDialog(
+                                                                    context,
+                                                                    "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                                    "Xoá ảnh",
+                                                                    () => _removeImage(image),
+                                                                  );
+                                                                },
+                                                                child: Container(
+                                                                  margin: const EdgeInsets.only(left: 5),
+                                                                  child: image.local == true
+                                                                      ? Image.file(File(image.file!))
+                                                                      : Image.network(
+                                                                          '${_ab.apiUrl}/${image.file}',
+                                                                          errorBuilder: ((context, error, stackTrace) {
+                                                                            return Container(
+                                                                              height: 100,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(color: Colors.redAccent),
+                                                                              ),
+                                                                              child: const Center(
+                                                                                  child: Text(
+                                                                                "Error Image (404)",
+                                                                                style: TextStyle(color: Colors.redAccent),
+                                                                              )),
+                                                                            );
+                                                                          }),
+                                                                        ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                          return ResponsiveGridCol(
+                                                            child: const SizedBox.shrink(),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                // CheckSheetUploadAnh(
+                                                //   lstFiles: [],
+                                                // )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 100.w,
+                      padding: const EdgeInsets.all(5),
+                      child: Column(
+                        children: [
+                          RoundedLoadingButton(
+                            child: Text('Xuất kho xe được cõng',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  color: AppConfig.textButton,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                )),
+                            controller: _btnController,
+                            onPressed: _bienso?.soKhung != null ? () => _showConfirmationDialogCong(context) : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppBloc ab = context.watch<AppBloc>();
     return Container(
         child: Column(
       children: [
-        if (_option1 && BienSo != null || _option2 && BienSoTam != null) CardVin(),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Checkbox(
               value: _option1,
@@ -699,12 +1338,17 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                   _option1 = value ?? false;
                   if (_option1) {
                     _option2 = false; // Bỏ chọn _option2 khi _option1 được tick
+
+                    BienSoTam = null;
+                    _bienso = null;
+                    _data = null;
+                    print("option, option : $_option2, $_option3, $BienSoTam");
                   }
                 });
               },
             ),
             const Text(
-              "Xe lồng",
+              "Xe lồng/đầu kéo",
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontFamily: 'Comfortaa',
@@ -720,6 +1364,11 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                   _option2 = value ?? false;
                   if (_option2) {
                     _option1 = false; // Bỏ chọn _option1 khi _option2 được tick
+
+                    BienSo = null;
+                    _bienso = null;
+                    _data = null;
+                    print("option, option : $_option1, $_option3, $BienSo");
                   }
                 });
               },
@@ -734,520 +1383,337 @@ class _BodyKhoXeScreenState extends State<BodyKhoXeScreen> with TickerProviderSt
                 color: Color(0xFF818180),
               ),
             ),
+            // Checkbox(
+            //   value: _option3,
+            //   onChanged: (bool? value) {
+            //     setState(() {
+            //       _option3 = value ?? false;
+            //       if (_option3) {
+            //         _option1 = false;
+            //         _option2 = false; // Bỏ chọn _option2 khi _option1 được tick
+            //         BienSo = null;
+            //         _bienso = null;
+            //         _data = null;
+            //         print("option, option : $_option1, $_option2, $BienSo");
+            //       }
+            //     });
+            //   },
+            // ),
+            // const Text(
+            //   "Xe được\ncõng",
+            //   textAlign: TextAlign.left,
+            //   style: TextStyle(
+            //     fontFamily: 'Comfortaa',
+            //     fontSize: 14,
+            //     fontWeight: FontWeight.w700,
+            //     color: Color(0xFF818180),
+            //   ),
+            // ),
           ],
         ),
-        if (_option1)
-          Container(
-            height: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                color: const Color(0xFFBC2925),
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 20.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6C6C7),
-                    border: Border(
-                      right: BorderSide(
-                        color: Color(0xFF818180),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Biển số",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppConfig.textInput,
-                      ),
-                    ),
-                  ),
+
+        // if (_option1 && BienSo != null || _option2 && BienSoTam != null) CardVin(),
+        // SizedBox(height: 3),
+        if (_option1 || _option2) CardVin(),
+        if (_option1 || _option2)
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          items: _noidenList?.map((item) {
-                            return DropdownMenuItem<String>(
-                              value: item.bienSo,
-                              child: Container(
-                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                    item.bienSo ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontFamily: 'Comfortaa',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppConfig.textInput,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          value: BienSo,
-                          onChanged: (newValue) {
-                            setState(() {
-                              BienSo = newValue;
-                            });
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 40,
-                            width: 200,
-                          ),
-                          dropdownStyleData: const DropdownStyleData(
-                            maxHeight: 200,
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                          ),
-                          dropdownSearchData: DropdownSearchData(
-                            searchController: textEditingController,
-                            searchInnerWidgetHeight: 50,
-                            searchInnerWidget: Container(
-                              height: 50,
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 4,
-                                right: 8,
-                                left: 8,
-                              ),
-                              child: TextFormField(
-                                expands: true,
-                                maxLines: null,
-                                controller: textEditingController,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 8,
-                                  ),
-                                  hintText: 'Tìm biển số',
-                                  hintStyle: const TextStyle(fontSize: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            searchMatchFn: (item, searchValue) {
-                              final itemValue = item.value?.toLowerCase().toString() ?? ''; // Kiểm tra null
-                              return itemValue.contains(searchValue.toLowerCase());
-                            },
-                          ),
-                          onMenuStateChange: (isOpen) {
-                            if (!isOpen) {
-                              textEditingController.clear();
-                            }
-                          },
-                        ),
-                      )),
-                ),
-              ],
-            ),
-          ),
-        if (_option2)
-          Container(
-            height: MediaQuery.of(context).size.height < 600 ? 10.h : 5.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                color: const Color(0xFFBC2925),
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 20.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6C6C7),
-                    border: Border(
-                      right: BorderSide(
-                        color: Color(0xFF818180),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Biển số tạm",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontFamily: 'Comfortaa',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppConfig.textInput,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton2<String>(
-                          isExpanded: true,
-                          items: _biensoList?.map((item) {
-                            return DropdownMenuItem<String>(
-                              value: item.bienSo,
-                              child: Container(
-                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Text(
-                                    item.bienSo ?? "",
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontFamily: 'Comfortaa',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppConfig.textInput,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          value: BienSoTam,
-                          onChanged: (newValue) {
-                            setState(() {
-                              BienSoTam = newValue;
-                            });
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 40,
-                            width: 200,
-                          ),
-                          dropdownStyleData: const DropdownStyleData(
-                            maxHeight: 200,
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                          ),
-                          dropdownSearchData: DropdownSearchData(
-                            searchController: textEditingController,
-                            searchInnerWidgetHeight: 50,
-                            searchInnerWidget: Container(
-                              height: 50,
-                              padding: const EdgeInsets.only(
-                                top: 8,
-                                bottom: 4,
-                                right: 8,
-                                left: 8,
-                              ),
-                              child: TextFormField(
-                                expands: true,
-                                maxLines: null,
-                                controller: textEditingController,
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 8,
-                                  ),
-                                  hintText: 'Tìm biển số tạm',
-                                  hintStyle: const TextStyle(fontSize: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            searchMatchFn: (item, searchValue) {
-                              final itemValue = item.value?.toLowerCase().toString() ?? ''; // Kiểm tra null
-                              return itemValue.contains(searchValue.toLowerCase());
-                            },
-                          ),
-                          onMenuStateChange: (isOpen) {
-                            if (!isOpen) {
-                              textEditingController.clear();
-                            }
-                          },
-                        ),
-                      )),
-                ),
-              ],
-            ),
-          ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _loading
-                      ? LoadingWidget(context)
-                      : Container(
-                          padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Thông Tin Xác Nhận',
-                                    style: TextStyle(
-                                      fontFamily: 'Comfortaa',
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.visibility),
-                                    onPressed: () {
-                                      nextScreen(context, DSVanChuyenPage());
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const Divider(
-                                height: 1,
-                                color: AppConfig.primaryColor,
-                              ),
-                              Container(
-                                child: Column(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _loading
+                        ? LoadingWidget(context)
+                        : Container(
+                            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Item(
-                                      title: 'Số khung: ',
-                                      value: _data?.soKhung,
+                                    const Text(
+                                      'Thông Tin Xác Nhận',
+                                      style: TextStyle(
+                                        fontFamily: 'Comfortaa',
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Nơi đi: ',
-                                      value: _data?.noidi,
+                                    IconButton(
+                                      icon: const Icon(Icons.visibility),
+                                      onPressed: () {
+                                        nextScreen(context, DSVanChuyenPage());
+                                      },
                                     ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    ItemGiaoXe(
-                                      title: 'Nơi đến: ',
-                                      value: _data?.noiden,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Container(
-                                      height: 6.h,
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.only(left: 10),
-                                            child: const Text(
-                                              'Loại xe: ',
-                                              style: TextStyle(
-                                                fontFamily: 'Comfortaa',
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w700,
-                                                color: Color(0xFF818180),
-                                              ),
-                                            ),
+                                  ],
+                                ),
+                                const Divider(
+                                  height: 1,
+                                  color: AppConfig.primaryColor,
+                                ),
+                                Row(
+                                  children: [
+                                    if (_option2 && _data?.bienSoTam != null)
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.add, // Biểu tượng dấu chấm than
+                                            color: Colors.blue,
+                                            size: 30, // Kích thước biểu tượng
                                           ),
-                                          Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                _data?.tenSanPham ?? '',
-                                                textAlign: TextAlign.left,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Coda Caption',
-                                                  fontSize: 14,
+                                          onPressed: () {
+                                            _showDetailsDialog(context, _data?.bienSoTam ?? "");
+                                          },
+                                        ),
+                                      ),
+                                    if (_option2 && _data?.bienSoTam != null)
+                                      const Text(
+                                        'Thêm xe được cõng',
+                                        style: TextStyle(
+                                          fontFamily: 'Comfortaa',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      ItemGiaoXe(
+                                        title: _option1 ? 'Biển số: ' : 'Biển số tạm: ',
+                                        // value: _option1 ? _data?.soXe : _data?.bienSoTam,
+                                        value: _option1 ? _data?.soXe : (_option2 && _data?.isDiGap == false ? _data?.bienSoTam : (_option2 && _data?.isDiGap == true ? _data?.bienSoTamAo : null)),
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Số khung: ',
+                                        value: _data?.soKhung,
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Nơi đi: ',
+                                        value: _data?.noidi,
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      ItemGiaoXe(
+                                        title: 'Nơi đến: ',
+                                        value: _data?.noiden,
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Container(
+                                        height: 6.h,
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.only(left: 10),
+                                              child: const Text(
+                                                'Loại xe: ',
+                                                style: TextStyle(
+                                                  fontFamily: 'Comfortaa',
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.w700,
-                                                  color: AppConfig.primaryColor,
+                                                  color: Color(0xFF818180),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                        title: 'Màu: ',
-                                        // value: _data != null
-                                        //     ? "${_data?.tenMau} (${_data?.maMau})"
-                                        //     : "",
-                                        value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Số máy: ',
-                                      value: _data?.soMay,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Phương thức vận chuyển: ',
-                                      value: _data?.tenPhuongThucVanChuyen,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Bên vận chuyển: ',
-                                      value: _data?.benVanChuyen,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Item(
-                                      title: 'Biển số: ',
-                                      value: _data?.soXe,
-                                    ),
-
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    ItemGhiChu(
-                                      title: 'Ghi chú: ',
-                                      controller: _ghiChu,
-                                    ),
-                                    const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 5),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children: [
-                                                  ElevatedButton.icon(
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Colors.orangeAccent,
-                                                    ),
-                                                    onPressed: () => imageSelector(context, 'gallery'),
-                                                    icon: const Icon(Icons.photo_library),
-                                                    label: const Text(""),
+                                            Container(
+                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.70),
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Text(
+                                                  _data?.tenSanPham ?? '',
+                                                  textAlign: TextAlign.left,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Coda Caption',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppConfig.primaryColor,
                                                   ),
-                                                  const SizedBox(width: 10),
-                                                  ElevatedButton.icon(
-                                                    style: ElevatedButton.styleFrom(
-                                                        // backgroundColor: Theme.of(context).primaryColor,
-                                                        ),
-                                                    onPressed: () => imageSelector(context, 'camera'),
-                                                    icon: const Icon(Icons.camera_alt),
-                                                    label: const Text(""),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            "Ảnh đã chọn",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).primaryColor,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          if (_isEmptyLstFile())
-                                            const SizedBox(
-                                              height: 100,
-                                              // child: Center(child: Text("Chưa có ảnh nào")),
-                                            ),
-                                          // Display list image
-                                          ResponsiveGridRow(
-                                            children: _lstFiles.map((image) {
-                                              if (image!.isRemoved == false) {
-                                                return ResponsiveGridCol(
-                                                  xs: 6,
-                                                  md: 3,
-                                                  child: InkWell(
-                                                    onLongPress: () {
-                                                      deleteDialog(
-                                                        context,
-                                                        "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
-                                                        "Xoá ảnh",
-                                                        () => _removeImage(image),
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      margin: const EdgeInsets.only(left: 5),
-                                                      child: image.local == true
-                                                          ? Image.file(File(image.file!))
-                                                          : Image.network(
-                                                              '${ab.apiUrl}/${image.file}',
-                                                              errorBuilder: ((context, error, stackTrace) {
-                                                                return Container(
-                                                                  height: 100,
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border.all(color: Colors.redAccent),
-                                                                  ),
-                                                                  child: const Center(
-                                                                      child: Text(
-                                                                    "Error Image (404)",
-                                                                    style: TextStyle(color: Colors.redAccent),
-                                                                  )),
-                                                                );
-                                                              }),
-                                                            ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                              return ResponsiveGridCol(
-                                                child: const SizedBox.shrink(),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    // CheckSheetUploadAnh(
-                                    //   lstFiles: [],
-                                    // )
-                                  ],
+
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                          title: 'Màu: ',
+                                          // value: _data != null
+                                          //     ? "${_data?.tenMau} (${_data?.maMau})"
+                                          //     : "",
+                                          value: _data != null ? (_data?.tenMau != null && _data?.maMau != null ? "${_data?.tenMau} (${_data?.maMau})" : "") : ""),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Số máy: ',
+                                        value: _data?.soMay ?? "",
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Phương thức vận chuyển: ',
+                                        value: _data?.tenPhuongThucVanChuyen ?? "",
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Item(
+                                        title: 'Bên vận chuyển: ',
+                                        value: _data?.benVanChuyen ?? "",
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+
+                                      ItemGhiChu(
+                                        title: 'Ghi chú: ',
+                                        controller: _ghiChu,
+                                      ),
+                                      const Divider(height: 1, color: Color(0xFFCCCCCC)),
+                                      Container(
+                                        margin: const EdgeInsets.only(right: 5),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Row(
+                                                  children: [
+                                                    ElevatedButton.icon(
+                                                      style: ElevatedButton.styleFrom(
+                                                        backgroundColor: Colors.orangeAccent,
+                                                      ),
+                                                      onPressed: () => imageSelector(context, 'gallery'),
+                                                      icon: const Icon(Icons.photo_library),
+                                                      label: const Text(""),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                    ElevatedButton.icon(
+                                                      style: ElevatedButton.styleFrom(
+                                                          // backgroundColor: Theme.of(context).primaryColor,
+                                                          ),
+                                                      onPressed: () => imageSelector(context, 'camera'),
+                                                      icon: const Icon(Icons.camera_alt),
+                                                      label: const Text(""),
+                                                    ),
+                                                    const SizedBox(width: 10),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              "Ảnh đã chọn",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context).primaryColor,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            if (_isEmptyLstFile())
+                                              const SizedBox(
+                                                height: 100,
+                                                // child: Center(child: Text("Chưa có ảnh nào")),
+                                              ),
+                                            // Display list image
+                                            ResponsiveGridRow(
+                                              children: _lstFiles.map((image) {
+                                                if (image!.isRemoved == false) {
+                                                  return ResponsiveGridCol(
+                                                    xs: 6,
+                                                    md: 3,
+                                                    child: InkWell(
+                                                      onLongPress: () {
+                                                        deleteDialog(
+                                                          context,
+                                                          "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                          "Xoá ảnh",
+                                                          () => _removeImage(image),
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        margin: const EdgeInsets.only(left: 5),
+                                                        child: image.local == true
+                                                            ? Image.file(File(image.file!))
+                                                            : Image.network(
+                                                                '${ab.apiUrl}/${image.file}',
+                                                                errorBuilder: ((context, error, stackTrace) {
+                                                                  return Container(
+                                                                    height: 100,
+                                                                    decoration: BoxDecoration(
+                                                                      border: Border.all(color: Colors.redAccent),
+                                                                    ),
+                                                                    child: const Center(
+                                                                        child: Text(
+                                                                      "Error Image (404)",
+                                                                      style: TextStyle(color: Colors.redAccent),
+                                                                    )),
+                                                                  );
+                                                                }),
+                                                              ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+                                                return ResponsiveGridCol(
+                                                  child: const SizedBox.shrink(),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // CheckSheetUploadAnh(
+                                      //   lstFiles: [],
+                                      // )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        Container(
-          width: 100.w,
-          padding: const EdgeInsets.all(5),
-          child: Column(
-            children: [
-              RoundedLoadingButton(
-                child: Text('Xuất kho',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      color: AppConfig.textButton,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    )),
-                controller: _btnController,
-                onPressed: _data?.soKhung != null ? () => _showConfirmationDialog(context) : null,
-              ),
-            ],
+        // if (_option1 && BienSo != null || _option2 && BienSoTam != null)
+        if (_option1 || _option2)
+          Container(
+            width: 100.w,
+            padding: const EdgeInsets.all(5),
+            child: Column(
+              children: [
+                (_option2 && _data?.phuongThuc_Id == "97cfbb3f-2d12-43d0-8468-efe772a81e54")
+                    ? const Text('Bạn đang quét xe với phương thức kết hợp (xe được cõng), vui lòng quét xe trung chuyển',
+                        style: TextStyle(
+                          fontFamily: 'Comfortaa',
+                          color: AppConfig.primaryColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ))
+                    : RoundedLoadingButton(
+                        child: Text('Xuất kho',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              color: AppConfig.textButton,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            )),
+                        controller: _btnController,
+                        onPressed: _data?.soKhung != null ? () => _showConfirmationDialog(context) : null,
+                      ),
+              ],
+            ),
           ),
-        ),
       ],
     ));
   }

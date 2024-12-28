@@ -631,33 +631,56 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     });
   }
 
-  _onScan(value) {
+_onScan(value) {
     setState(() {
       _loading = true;
     });
-
-    _bl.getData(context, value).then((_) {
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
+    ).then((position) {
       setState(() {
-        _qrData = value;
-
-        if (_bl.dieuchuyen == null) {
-          _loading = false;
-          _qrData = '';
-          _qrDataController.text = '';
-          barcodeScanResult = null;
-        } else {
-          _loading = false;
-          _data = _bl.dieuchuyen;
-          print("Thoi gian bat dau: ${_data?.thoiGianBatDau}");
-          print("Thoi gian ket thuc: ${_data?.thoiGianKetThuc}");
-          print("Dang Di chuyen: ${_data?.dangDiChuyen}");
-          if (_data?.dangDiChuyen == true) {
-            _isMovingStarted = true;
-          } else if (_data?.dangDiChuyen == false) {
-            _isMovingStarted = false;
-          }
-        }
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
       });
+      String toado = "$lat,$long";
+      _bl.getData(context, value, toado).then((_) {
+        setState(() {
+          _qrData = value;
+
+          if (_bl.dieuchuyen == null) {
+            _loading = false;
+            _qrData = '';
+            _qrDataController.text = '';
+            barcodeScanResult = null;
+          } else {
+            _loading = false;
+            _data = _bl.dieuchuyen;
+            print("Thoi gian bat dau: ${_data?.thoiGianBatDau}");
+            print("Thoi gian ket thuc: ${_data?.thoiGianKetThuc}");
+            print("Dang Di chuyen: ${_data?.dangDiChuyen}");
+            if (_data?.dangDiChuyen == true) {
+              _isMovingStarted = true;
+            } else if (_data?.dangDiChuyen == false) {
+              _isMovingStarted = false;
+            }
+          }
+        });
+      });
+    }).catchError((error) {
+      _btnController.error();
+      QuickAlert.show(
+        // ignore: use_build_context_synchronously
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      print("Error getting location: $error");
     });
   }
 
