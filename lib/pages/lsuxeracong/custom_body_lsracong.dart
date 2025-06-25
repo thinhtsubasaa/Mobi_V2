@@ -7,19 +7,28 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
+import '../../models/chuyenxe.dart';
+import '../../models/lsu_giaoxe.dart';
+import '../../services/app_service.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
 
 class CustomBodyLSRaCong extends StatelessWidget {
+  final String? maPin;
+
+  CustomBodyLSRaCong({this.maPin});
   @override
   Widget build(BuildContext context) {
-    return Container(child: BodyLSRaCongScreen());
+    return Container(child: BodyLSRaCongScreen(maPin: maPin));
   }
 }
 
 class BodyLSRaCongScreen extends StatefulWidget {
-  const BodyLSRaCongScreen({Key? key}) : super(key: key);
+  final String? maPin;
+  const BodyLSRaCongScreen({Key? key, this.maPin}) : super(key: key);
 
   @override
   _BodyLSRaCongScreenState createState() => _BodyLSRaCongScreenState();
@@ -45,18 +54,29 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController soKhungController = TextEditingController();
-
+  final TextEditingController _textController = TextEditingController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  LSX_GiaoXeModel? _data;
+  bool _option1 = false;
+  bool _option2 = false;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+  String? _message;
+  String? get message => _message;
   @override
   void initState() {
     super.initState();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    getDSXRaCong(selectedDate, soKhungController.text);
+    print("maPin: ${widget.maPin}");
+    getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
+
+    // getDSXRaCong(selectedDate, soKhungController.text);
   }
 
-  Future<void> getDSXRaCong(String? ngay, String? keyword) async {
+  Future<void> getDSXRaCong(String? ngay, String? maPin, String? keyword) async {
     _dn = [];
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCong?Ngay=$ngay&keyword=$keyword');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetDanhSachXeRaCong?Ngay=$ngay&MaPin=$maPin&keyword=$keyword');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         _dn = (decodedData as List).map((item) => DS_RaCongModel.fromJson(item)).toList();
@@ -86,12 +106,85 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
         _loading = false;
       });
       print("Selected Date: $selectedDate");
-      await getDSXRaCong(selectedDate, soKhungController.text);
+      await getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
 
       setState(() {
         _loading = false;
       });
     }
+  }
+
+  Future<void> postData(String? xeRaCong_Id, bool? trangThai, String? liDo) async {
+    _isLoading = true;
+
+    try {
+      final http.Response response = await requestHelper.postData('Kho/UpdateLSXeRaCong?XeRaCong_Id=$xeRaCong_Id&IsThanhCong=$trangThai&LiDo=$liDo', _data?.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+
+        notifyListeners();
+        _btnController.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Thành công",
+            text: "Điều chỉnh xe ra cổng thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
+            });
+
+        _btnController.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
+            });
+        _btnController.reset();
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  _onSave(String? xeRaCong_Id, bool? trangThai, String? liDo) {
+    AppService().checkInternet().then((hasInternet) {
+      if (!hasInternet!) {
+        // openSnackBar(context, 'no internet'.tr());
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Thất bại',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      } else {
+        postData(xeRaCong_Id ?? "", trangThai ?? false, _textController.text).then((_) {
+          print("loading: ${_loading}");
+          setState(() {
+            _loading = false;
+          });
+        });
+      }
+    });
   }
 
   Widget _buildTableOptions(BuildContext context) {
@@ -100,7 +193,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 4.5,
+        width: MediaQuery.of(context).size.width * 3.7,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -116,22 +209,29 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
               border: TableBorder.all(),
               columnWidths: const {
                 0: FlexColumnWidth(0.15),
-                1: FlexColumnWidth(0.3),
-                2: FlexColumnWidth(0.3),
-                3: FlexColumnWidth(0.3),
+                1: FlexColumnWidth(0.15),
+                2: FlexColumnWidth(0.15),
+                3: FlexColumnWidth(0.22),
                 4: FlexColumnWidth(0.3),
                 5: FlexColumnWidth(0.3),
                 6: FlexColumnWidth(0.3),
                 7: FlexColumnWidth(0.3),
-                8: FlexColumnWidth(0.3),
+                8: FlexColumnWidth(0.2),
                 9: FlexColumnWidth(0.3),
                 10: FlexColumnWidth(0.3),
                 11: FlexColumnWidth(0.3),
-                12: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
                   children: [
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Chỉnh sửa', textColor: Colors.white),
+                    ),
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Chi tiết', textColor: Colors.white),
+                    ),
                     Container(
                       color: Colors.red,
                       child: _buildTableCell('Giờ ra', textColor: Colors.white),
@@ -146,17 +246,11 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                     ),
                     Container(
                       color: Colors.red,
-                      child: _buildTableCell('Số khung', textColor: Colors.white),
+                      child: _buildTableCell('Số xe đã kiểm tra', textColor: Colors.white),
                     ),
                     Container(
-                      width: double.infinity,
                       color: Colors.red,
-                      child: _buildTableCell('Loại xe', textColor: Colors.white),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: Colors.red,
-                      child: _buildTableCell('Màu xe', textColor: Colors.white),
+                      child: _buildTableCell('Tên bảo vệ', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
@@ -166,12 +260,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                     Container(
                       width: double.infinity,
                       color: Colors.red,
-                      child: _buildTableCell('Nơi đi', textColor: Colors.white),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: Colors.red,
-                      child: _buildTableCell('Nơi đến', textColor: Colors.white),
+                      child: _buildTableCell('Hình ảnh tài xế', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
@@ -182,11 +271,6 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                       width: double.infinity,
                       color: Colors.red,
                       child: _buildTableCell('Lý do', textColor: Colors.white),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      color: Colors.red,
-                      child: _buildTableCell('Tên bảo vệ', textColor: Colors.white),
                     ),
                     Container(
                       width: double.infinity,
@@ -204,18 +288,17 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                   border: TableBorder.all(),
                   columnWidths: const {
                     0: FlexColumnWidth(0.15),
-                    1: FlexColumnWidth(0.3),
-                    2: FlexColumnWidth(0.3),
-                    3: FlexColumnWidth(0.3),
+                    1: FlexColumnWidth(0.15),
+                    2: FlexColumnWidth(0.15),
+                    3: FlexColumnWidth(0.22),
                     4: FlexColumnWidth(0.3),
                     5: FlexColumnWidth(0.3),
                     6: FlexColumnWidth(0.3),
                     7: FlexColumnWidth(0.3),
-                    8: FlexColumnWidth(0.3),
+                    8: FlexColumnWidth(0.2),
                     9: FlexColumnWidth(0.3),
                     10: FlexColumnWidth(0.3),
                     11: FlexColumnWidth(0.3),
-                    12: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -231,21 +314,186 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                             ),
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
+                              IconButton(
+                                icon: Icon(Icons.edit, color: item.isKiemTra == true ? Colors.red : Colors.grey), // Icon thùng rác
+                                onPressed: (item.isKiemTra == true)
+                                    ? () => showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return StatefulBuilder(
+                                              builder: (BuildContext context, StateSetter setState) {
+                                                return Scaffold(
+                                                  resizeToAvoidBottomInset: false,
+                                                  backgroundColor: Colors.transparent,
+                                                  body: Center(
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(20),
+                                                      margin: EdgeInsets.symmetric(horizontal: 20),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(15),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          const Center(
+                                                            child: Text(
+                                                              "Chỉnh sửa trạng thái chuyến xe",
+                                                              textAlign: TextAlign.left,
+                                                              style: TextStyle(
+                                                                fontFamily: 'Comfortaa',
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.w700,
+                                                                color: Colors.black,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            children: [
+                                                              Checkbox(
+                                                                value: _option1,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    _option1 = value ?? false;
+                                                                    if (_option1) {
+                                                                      _option2 = false; // Bỏ chọn _option2 khi _option1 được tick
+                                                                      print("option, option : $_option1, $_option2");
+                                                                    }
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const Text(
+                                                                "Xác nhận",
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'Comfortaa',
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.green,
+                                                                ),
+                                                              ),
+                                                              Checkbox(
+                                                                value: _option2,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    _option2 = value ?? false;
+                                                                    if (_option2) {
+                                                                      _option1 = false; // Bỏ chọn _option1 khi _option2 được tick
+                                                                      print("option, option : $_option1, $_option2");
+                                                                    }
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const Text(
+                                                                "Từ chối",
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'Comfortaa',
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.red,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Text(
+                                                            'Vui lòng nhập lí do chỉnh sửa của bạn?',
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 10),
+                                                          TextField(
+                                                            controller: _textController,
+                                                            onChanged: (text) {
+                                                              // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                                                              setState(() {});
+                                                            },
+                                                            decoration: InputDecoration(
+                                                              labelText: 'Nhập lí do',
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 20),
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: Colors.red,
+                                                                ),
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop();
+                                                                  _btnController.reset();
+                                                                },
+                                                                child: const Text(
+                                                                  'Không',
+                                                                  style: TextStyle(
+                                                                    fontFamily: 'Comfortaa',
+                                                                    fontSize: 13,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w700,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: Colors.green,
+                                                                ),
+                                                                onPressed: _textController.text.isNotEmpty ? () => _onSave(item.id, _option1, _textController.text) : null,
+                                                                child: const Text(
+                                                                  'Đồng ý',
+                                                                  style: TextStyle(
+                                                                    fontFamily: 'Comfortaa',
+                                                                    fontSize: 13,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w700,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        )
+                                    : null,
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.error, // Biểu tượng dấu chấm than
+                                    color: Colors.blue,
+                                    size: 20, // Kích thước biểu tượng
+                                  ),
+                                  onPressed: () {
+                                    _showDetailsDialog(context, item.chuyenXe ?? []);
+                                  },
+                                ),
+                              ),
                               _buildTableCell(item.gioRa ?? ""),
                               _buildTableCell(
                                 item.trangThaiChuyenXe ?? "",
                               ),
                               _buildTableCell(item.bienSo ?? ""),
-                              _buildTableCell(item.soKhung ?? ""),
-                              _buildTableCell(item.loaiXe ?? ""),
-                              _buildTableCell(item.mauXe ?? ""),
+                              _buildTableCell(item.tongXeDaCheck_TongXe ?? ""),
+                              _buildTableCell(item.tenBaoVe ?? ""),
                               _buildTableCell(item.tenTaiXe ?? ""),
-                              _buildTableCell(item.noiDi ?? ""),
-
-                              _buildTableCell(item.noiDen ?? ""),
+                              _buildTableHinhAnh_New(
+                                item.hinhAnhTaiXe ?? "",
+                              ),
                               _buildTableCell(item.ghiChu ?? ""),
                               _buildTableCell(item.lyDo ?? ""),
-                              _buildTableCell(item.tenBaoVe ?? ""),
                               _buildTableHinhAnh(
                                 item.hinhAnh ?? "",
                               ),
@@ -258,6 +506,203 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showDetailsDialog(BuildContext context, List<ChuyenXeModel> items) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: EdgeInsets.zero, // Loại bỏ khoảng cách viền
+          child: Container(
+            width: MediaQuery.of(context).size.width, // Full chiều rộng màn hình
+            height: MediaQuery.of(context).size.height, // Full chiều cao màn hình
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Chi tiết chuyến xe',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 4.2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Table(
+                            border: TableBorder.all(),
+                            columnWidths: const {
+                              0: FlexColumnWidth(0.3),
+                              1: FlexColumnWidth(0.3),
+                              2: FlexColumnWidth(0.3),
+                              3: FlexColumnWidth(0.3),
+                              4: FlexColumnWidth(0.3),
+                              5: FlexColumnWidth(0.3),
+                              6: FlexColumnWidth(0.3),
+                              7: FlexColumnWidth(0.3),
+                              8: FlexColumnWidth(0.3),
+                              9: FlexColumnWidth(0.3),
+                              10: FlexColumnWidth(0.3),
+                            },
+                            children: [
+                              TableRow(
+                                children: [
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Trạng thái', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Biển số', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Loại xe', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Số khung', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Số máy', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Màu xe', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Nơi đi', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Nơi đến', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Bên vận chuyển', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Tên tài xế', textColor: Colors.white),
+                                  ),
+                                  Container(
+                                    color: Colors.red,
+                                    child: _buildTableCell('Bảo vệ kiểm tra', textColor: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Table(
+                                border: TableBorder.all(),
+                                columnWidths: const {
+                                  0: FlexColumnWidth(0.3),
+                                  1: FlexColumnWidth(0.3),
+                                  2: FlexColumnWidth(0.3),
+                                  3: FlexColumnWidth(0.3),
+                                  4: FlexColumnWidth(0.3),
+                                  5: FlexColumnWidth(0.3),
+                                  6: FlexColumnWidth(0.3),
+                                  7: FlexColumnWidth(0.3),
+                                  8: FlexColumnWidth(0.3),
+                                  9: FlexColumnWidth(0.3),
+                                  10: FlexColumnWidth(0.3),
+                                },
+                                children: [
+                                  ...items?.map((item) {
+                                        return TableRow(
+                                          decoration: BoxDecoration(
+                                            color: item.trangThaiXe == "Đã hoàn thành kiểm tra" ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
+                                          ),
+                                          children: [
+                                            _buildTableCell(item.trangThaiXe ?? ""),
+                                            _buildTableCell(item.bienSo ?? ""),
+                                            _buildTableCell(item.loaiXe ?? ""),
+                                            _buildTableCell(item.soKhung ?? ""),
+                                            _buildTableCell(item.soMay ?? ""),
+                                            _buildTableCell(item.mauXe ?? ""),
+                                            _buildTableCell(item.noiDi ?? ""),
+                                            _buildTableCell(item.noiDen ?? ""),
+                                            _buildTableCell(item.donViVanChuyen ?? ""),
+                                            _buildTableCell(item.tenTaiXe ?? ""),
+                                            _buildTableCell(item.baoVeKiemTra ?? ""),
+                                          ],
+                                        );
+                                      }).toList() ??
+                                      [],
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTableHinhAnh_New(String content, {Color textColor = Colors.black}) {
+    List<String> imageUrls = content.split(',');
+
+    // Kiểm tra xem có ảnh nào trong danh sách không
+    if (imageUrls.isEmpty) {
+      return Container(); // Trả về Container rỗng nếu không có ảnh
+    }
+
+    // Lấy ảnh đầu tiên trong danh sách
+    String imageUrl = imageUrls[0];
+
+    return GestureDetector(
+      onTap: () {
+        _showFullImageDialog(imageUrls, 0); // Truyền danh sách ảnh và index 0 (ảnh đầu tiên)
+      },
+      child: Container(
+        width: 70, // Thiết lập chiều rộng của ảnh
+        height: 60, // Thiết lập chiều cao của ảnh
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.contain, // Đảm bảo ảnh không bị méo và có thể điều chỉnh đúng tỷ lệ
         ),
       ),
     );
@@ -381,7 +826,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        await getDSXRaCong(selectedDate, soKhungController.text);
+        await getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
       }, // Gọi hàm tải lại dữ liệu
       child: Container(
         child: Column(
@@ -509,7 +954,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                                               _loading = true;
                                             });
                                             // Gọi API với từ khóa tìm kiếm
-                                            getDSXRaCong(selectedDate, soKhungController.text);
+                                            getDSXRaCong(selectedDate, widget.maPin ?? "", soKhungController.text);
                                             setState(() {
                                               _loading = false;
                                             });
@@ -526,7 +971,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                                           height: 4,
                                         ),
                                         Text(
-                                          'Tổng số xe đã thực hiện: ${_dn?.length.toString() ?? ''}',
+                                          'Tổng số chuyến đã thực hiện: ${_dn?.length.toString() ?? ''}',
                                           style: const TextStyle(
                                             fontFamily: 'Comfortaa',
                                             fontSize: 16,

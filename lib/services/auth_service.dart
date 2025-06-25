@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:Thilogi/blocs/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:Thilogi/models/user.dart';
 import 'package:Thilogi/services/request_helper.dart';
+import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 
 class AuthService extends ChangeNotifier {
@@ -20,8 +22,8 @@ class AuthService extends ChangeNotifier {
   String? _errorCode;
   String? get errorCode => _errorCode;
 
-  Future login(BuildContext context, String userName, String password,
-      String domain) async {
+  Future login(BuildContext context, String userName, String password, String domain) async {
+    final UserBloc ub = context.read<UserBloc>();
     _isLoading = true;
     _user = null;
     try {
@@ -55,6 +57,21 @@ class AuthService extends ChangeNotifier {
           tenPhongBan: data['tenPhongBan'],
           congBaoVe: data['congBaoVe'],
         );
+        print("token: ${_user?.token}");
+        String apiUrl = ub.apiUrl2 ?? 'https://apimms.thilogi.vn';
+
+        final response2 = await http.get(
+          Uri.parse(apiUrl),
+          headers: {
+            'Authorization': 'Bearer ${_user?.token}',
+            'Content-Type': 'application/json',
+          },
+        );
+        if (response2.statusCode == 200) {
+          print('Success');
+        } else {
+          print('Lỗi khi gọi API thứ hai: ${response2.body}');
+        }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();

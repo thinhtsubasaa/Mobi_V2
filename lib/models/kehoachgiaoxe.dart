@@ -26,7 +26,8 @@ class KeHoachGiaoXeModel {
   String? noiden;
   String? mauXe;
   String? soXe;
-
+  String? noiDiKH;
+  String? noiDenKH;
   String? maSoNhanVien;
   String? keHoachGiaoXe_Id;
   String? nhaXeThayDoi_Id;
@@ -35,11 +36,14 @@ class KeHoachGiaoXeModel {
   String? taiXeYeuCau_Id;
   String? nhaXeYeuCau_Id;
   String? phuongTienYeuCau_Id;
+  String? tmS_DanhSachPhuongTien_Id;
   String? ngayYeuCau;
   String? thoiGianYC;
   String? thoiGianXacNhan;
   String? ngayTao;
   String? lyDoTuChoi;
+  String? noiDi_Id;
+  String? noiDen_Id;
 
   bool? isDiGap;
   bool? isYeuCau;
@@ -56,8 +60,12 @@ class KeHoachGiaoXeModel {
       this.taiXeYC,
       this.soKhung,
       this.taiXeTD,
+      this.noiDi_Id,
+      this.noiDen_Id,
       this.trangThai,
       this.lyDo,
+      this.noiDiKH,
+      this.noiDenKH,
       this.nguoiYeuCau,
       this.nguoiXacNhan,
       this.ghiChu,
@@ -92,6 +100,7 @@ class KeHoachGiaoXeModel {
       this.isThayDoi,
       this.isVenDer,
       this.isUndo,
+      this.tmS_DanhSachPhuongTien_Id,
       this.taiXeYeuCau_Id});
 
   factory KeHoachGiaoXeModel.fromJson(Map<String, dynamic> json) {
@@ -140,6 +149,11 @@ class KeHoachGiaoXeModel {
         isDiGap: json["isDiGap"],
         ngayTao: json["ngayTao"],
         isUndo: json["isUndo"],
+        noiDiKH: json['noiDiKH'],
+        noiDenKH: json['noiDenKH'],
+        noiDi_Id: json["noiDi_Id"],
+        noiDen_Id: json["noiDen_Id"],
+        tmS_DanhSachPhuongTien_Id: json["tmS_DanhSachPhuongTien_Id"],
         thoiGianYC: json["thoiGianYC"]);
   }
   Map<String, dynamic> toJson() => {
@@ -165,6 +179,8 @@ class KeHoachGiaoXeModel {
         "phuongThucVanChuyen_Id": phuongThucVanChuyen_Id,
         "bienSo_Id": bienSo_Id,
         "taiXe_Id": taiXe_Id,
+        "noiDiKH": noiDiKH,
+        "noiDenKH": noiDenKH,
         "tenDiaDiem": tenDiaDiem,
         "tenPhuongThucVanChuyen": tenPhuongThucVanChuyen,
         "benVanChuyen": benVanChuyen,
@@ -175,5 +191,8 @@ class KeHoachGiaoXeModel {
         "taiXeYeuCau_Id": taiXeYeuCau_Id,
         "nhaXeYeuCau_Id": nhaXeYeuCau_Id,
         "phuongTienYeuCau_Id": phuongTienYeuCau_Id,
+        "noiDi_Id": noiDi_Id,
+        "noiDen_Id": noiDen_Id,
+        "tmS_DanhSachPhuongTien_Id": tmS_DanhSachPhuongTien_Id,
       };
 }

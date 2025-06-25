@@ -27,11 +27,11 @@ class XeRaCongBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(BuildContext context, String qrcode) async {
+  Future<void> getData(BuildContext context, String qrcode, String? maPin) async {
     _isLoading = true;
     _xeracong = null;
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXeRaCong?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXeRaCong?SoKhung=$qrcode&MaPin=$maPin');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);

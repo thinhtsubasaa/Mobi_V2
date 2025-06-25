@@ -337,7 +337,7 @@ class _BodyHuyXuatKhoScreenState extends State<BodyHuyXuatKhoScreen> with Ticker
             confirmBtnText: 'Đồng ý',
           );
         } else {
-          HuyXuatKho(_data!, _data?.soKhung ?? "", _data?.toaDo ?? "").then((_) {
+          HuyXuatKho(_data!, _data?.soKhung ?? "", viTri ?? "").then((_) {
             setState(() {
               _data = null;
               barcodeScanResult = null;

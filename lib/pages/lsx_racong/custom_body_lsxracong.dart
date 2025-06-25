@@ -10,9 +10,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../models/chuyenxe.dart';
+import '../../models/lsu_giaoxe.dart';
+import '../../services/app_service.dart';
 import '../../widgets/loading.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +61,15 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
   String? get errorCode => _errorCode;
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController maNhanVienController = TextEditingController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final TextEditingController _textController = TextEditingController();
+  LSX_GiaoXeModel? _data;
+  bool _option1 = false;
+  bool _option2 = false;
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+  String? _message;
+  String? get message => _message;
 
   @override
   void initState() {
@@ -169,12 +182,85 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
     }
   }
 
+  Future<void> postData(String? xeRaCong_Id, bool? trangThai, String? liDo) async {
+    _isLoading = true;
+
+    try {
+      final http.Response response = await requestHelper.postData('Kho/UpdateLSXeRaCong?XeRaCong_Id=$xeRaCong_Id&IsThanhCong=$trangThai&LiDo=$liDo', _data?.toJson());
+      print("statusCode: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+
+        print("data: ${decodedData}");
+
+        notifyListeners();
+        _btnController.success();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Thành công",
+            text: "Điều chỉnh xe ra cổng thành công",
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXRaCong(selectedFromDate, selectedToDate, congBaoVe_Id ?? "", maNhanVienController.text);
+            });
+
+        _btnController.reset();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        _btnController.error();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: 'Thất bại',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              getDSXRaCong(selectedFromDate, selectedToDate, congBaoVe_Id ?? "", maNhanVienController.text);
+            });
+        _btnController.reset();
+      }
+    } catch (e) {
+      _message = e.toString();
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  _onSave(String? xeRaCong_Id, bool? trangThai, String? liDo) {
+    AppService().checkInternet().then((hasInternet) {
+      if (!hasInternet!) {
+        // openSnackBar(context, 'no internet'.tr());
+        QuickAlert.show(
+          // ignore: use_build_context_synchronously
+          context: context,
+          type: QuickAlertType.error,
+          title: 'Thất bại',
+          text: 'Không có kết nối internet. Vui lòng kiểm tra lại',
+          confirmBtnText: 'Đồng ý',
+        );
+      } else {
+        postData(xeRaCong_Id ?? "", trangThai ?? false, _textController.text).then((_) {
+          print("loading: ${_loading}");
+          setState(() {
+            _loading = false;
+          });
+        });
+      }
+    });
+  }
+
   Widget _buildTableOptions(BuildContext context) {
     int index = 0;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        width: MediaQuery.of(context).size.width * 3.8,
+        width: MediaQuery.of(context).size.width * 4.1,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -190,7 +276,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
               border: TableBorder.all(),
               columnWidths: const {
                 0: FlexColumnWidth(0.15),
-                1: FlexColumnWidth(0.3),
+                1: FlexColumnWidth(0.15),
                 2: FlexColumnWidth(0.3),
                 3: FlexColumnWidth(0.3),
                 4: FlexColumnWidth(0.3),
@@ -200,10 +286,15 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                 8: FlexColumnWidth(0.3),
                 9: FlexColumnWidth(0.3),
                 10: FlexColumnWidth(0.3),
+                11: FlexColumnWidth(0.3),
               },
               children: [
                 TableRow(
                   children: [
+                    Container(
+                      color: Colors.red,
+                      child: _buildTableCell('Chỉnh sửa', textColor: Colors.white),
+                    ),
                     Container(
                       color: Colors.red,
                       child: _buildTableCell('Chi tiết', textColor: Colors.white),
@@ -259,7 +350,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                   border: TableBorder.all(),
                   columnWidths: const {
                     0: FlexColumnWidth(0.15),
-                    1: FlexColumnWidth(0.3),
+                    1: FlexColumnWidth(0.15),
                     2: FlexColumnWidth(0.3),
                     3: FlexColumnWidth(0.3),
                     4: FlexColumnWidth(0.3),
@@ -269,6 +360,7 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                     8: FlexColumnWidth(0.3),
                     9: FlexColumnWidth(0.3),
                     10: FlexColumnWidth(0.3),
+                    11: FlexColumnWidth(0.3),
                   },
                   children: [
                     ..._dn?.map((item) {
@@ -284,6 +376,160 @@ class _BodyLSRaCongScreenState extends State<BodyLSRaCongScreen> with TickerProv
                             ),
                             children: [
                               // _buildTableCell(index.toString()), // Số thứ tự
+                              IconButton(
+                                icon: Icon(Icons.edit, color: item.isKiemTra == true ? Colors.red : Colors.grey), // Icon thùng rác
+                                onPressed: (item.isKiemTra == true)
+                                    ? () => showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return StatefulBuilder(
+                                              builder: (BuildContext context, StateSetter setState) {
+                                                return Scaffold(
+                                                  resizeToAvoidBottomInset: false,
+                                                  backgroundColor: Colors.transparent,
+                                                  body: Center(
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(20),
+                                                      margin: EdgeInsets.symmetric(horizontal: 20),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.circular(15),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          const Center(
+                                                            child: Text(
+                                                              "Chỉnh sửa trạng thái chuyến xe",
+                                                              textAlign: TextAlign.left,
+                                                              style: TextStyle(
+                                                                fontFamily: 'Comfortaa',
+                                                                fontSize: 18,
+                                                                fontWeight: FontWeight.w700,
+                                                                color: Colors.black,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            children: [
+                                                              Checkbox(
+                                                                value: _option1,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    _option1 = value ?? false;
+                                                                    if (_option1) {
+                                                                      _option2 = false; // Bỏ chọn _option2 khi _option1 được tick
+                                                                      print("option, option : $_option1, $_option2");
+                                                                    }
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const Text(
+                                                                "Xác nhận",
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'Comfortaa',
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.green,
+                                                                ),
+                                                              ),
+                                                              Checkbox(
+                                                                value: _option2,
+                                                                onChanged: (bool? value) {
+                                                                  setState(() {
+                                                                    _option2 = value ?? false;
+                                                                    if (_option2) {
+                                                                      _option1 = false; // Bỏ chọn _option1 khi _option2 được tick
+                                                                      print("option, option : $_option1, $_option2");
+                                                                    }
+                                                                  });
+                                                                },
+                                                              ),
+                                                              const Text(
+                                                                "Từ chối",
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'Comfortaa',
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  color: Colors.red,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Text(
+                                                            'Vui lòng nhập lí do chỉnh sửa của bạn?',
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 10),
+                                                          TextField(
+                                                            controller: _textController,
+                                                            onChanged: (text) {
+                                                              // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                                                              setState(() {});
+                                                            },
+                                                            decoration: InputDecoration(
+                                                              labelText: 'Nhập lí do',
+                                                              border: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(10),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 20),
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                            children: [
+                                                              ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: Colors.red,
+                                                                ),
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop();
+                                                                  _btnController.reset();
+                                                                },
+                                                                child: const Text(
+                                                                  'Không',
+                                                                  style: TextStyle(
+                                                                    fontFamily: 'Comfortaa',
+                                                                    fontSize: 13,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w700,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              ElevatedButton(
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: Colors.green,
+                                                                ),
+                                                                onPressed: _textController.text.isNotEmpty ? () => _onSave(item.id, _option1, _textController.text) : null,
+                                                                child: const Text(
+                                                                  'Đồng ý',
+                                                                  style: TextStyle(
+                                                                    fontFamily: 'Comfortaa',
+                                                                    fontSize: 13,
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.w700,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        )
+                                    : null,
+                              ),
                               Container(
                                 alignment: Alignment.center,
                                 child: IconButton(

@@ -3,16 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Thilogi/blocs/app_bloc.dart';
 import 'package:Thilogi/blocs/thaydoikehoach_bloc.dart';
 import 'package:Thilogi/models/checksheet.dart';
-import 'package:Thilogi/models/giaoxe.dart';
+
 import 'package:Thilogi/models/kehoachgiaoxe.dart';
 import 'package:Thilogi/models/lydo.dart';
 import 'package:Thilogi/models/noiden.dart';
 import 'package:Thilogi/models/taixe.dart';
-import 'package:Thilogi/pages/dsgiaoxe/ds_giaoxe.dart';
-import 'package:Thilogi/utils/delete_dialog.dart';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'package:flutter/material.dart';
@@ -20,21 +18,17 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_platform_interface/src/enums/location_accuracy.dart' as GeoLocationAccuracy;
 import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
-import 'package:responsive_grid/responsive_grid.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../blocs/giaoxe_bloc.dart';
 import '../../config/config.dart';
 import '../../models/diadiem.dart';
 import '../../models/doitac.dart';
@@ -42,7 +36,6 @@ import '../../models/kehoach.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
-import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 import '../lichsuyeucaucanhan/dsx_yeucaucanhan.dart';
 

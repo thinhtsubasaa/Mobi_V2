@@ -24,6 +24,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Dùng Face ID để xác thực danh tính của bạn</string>
 	<key>FLTEnableImpeller</key>
 	<false/>
 	<key>FirebaseAppDelegateProxyEnabled</key>

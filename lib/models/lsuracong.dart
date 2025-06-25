@@ -1,3 +1,5 @@
+import 'package:Thilogi/models/chuyenxe.dart';
+
 class DS_RaCongModel {
   String? id;
   String? soKhung;
@@ -15,6 +17,12 @@ class DS_RaCongModel {
   String? noiDi;
   String? bienSo;
   String? trangThaiChuyenXe;
+  String? tongXeDaCheck_TongXe;
+  String? hinhAnhTaiXe;
+  bool? isOke;
+  bool? isKiemTra;
+
+  List<ChuyenXeModel>? chuyenXe;
 
   DS_RaCongModel(
       {this.id,
@@ -28,12 +36,16 @@ class DS_RaCongModel {
       this.ngayRaCong,
       this.noiDen,
       this.ghiChu,
-      this.lyDo,
       this.hinhAnh,
       this.noiDi,
+      this.lyDo,
       this.bienSo,
-      this.trangThaiChuyenXe});
-
+      this.isOke,
+      this.isKiemTra,
+      this.chuyenXe,
+      this.trangThaiChuyenXe,
+      this.hinhAnhTaiXe,
+      this.tongXeDaCheck_TongXe});
   factory DS_RaCongModel.fromJson(Map<String, dynamic> json) {
     return DS_RaCongModel(
         id: json["id"].toString(),
@@ -47,10 +59,15 @@ class DS_RaCongModel {
         ngayRaCong: json["ngayRaCong"],
         noiDen: json["noiDen"],
         ghiChu: json["ghiChu"],
+        lyDo: json["lyDo"],
         hinhAnh: json["hinhAnh"],
-        noiDi: json["noiDi"],
         bienSo: json["bienSo"],
         trangThaiChuyenXe: json["trangThaiChuyenXe"],
-        lyDo: json["lyDo"]);
+        isOke: json["isOke"],
+        isKiemTra: json["isKiemTra"],
+        hinhAnhTaiXe: json["hinhAnhTaiXe"],
+        tongXeDaCheck_TongXe: json["tongXeDaCheck_TongXe"],
+        chuyenXe: (json['chuyenXe'] as List<dynamic>?)?.map((e) => ChuyenXeModel.fromJson(e as Map<String, dynamic>)).toList(),
+        noiDi: json["noiDi"]);
   }
 }

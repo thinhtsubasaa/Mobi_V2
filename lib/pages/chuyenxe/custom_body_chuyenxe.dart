@@ -116,6 +116,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
   PickedFile? _pickedFile;
   List<FileItem?> _lstFiles = [];
   final _picker = ImagePicker();
+  // String? toado;
 
   @override
   void initState() {
@@ -149,6 +150,30 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
       print(barcodeScanResult);
       _handleBarcodeScanResult(barcodeScanResult ?? "");
     });
+  }
+
+  void getLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low,
+      );
+      setState(() {
+        lat = "${position.latitude}";
+        long = "${position.longitude}";
+      });
+
+      print("Tọa độ hiện tại: $lat, $long");
+      // toado = "$lat,$long";
+    } catch (error) {
+      print("Error getting location: $error");
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Thất bại',
+        text: 'Bạn chưa có tọa độ vị trí. Vui lòng BẬT VỊ TRÍ',
+        confirmBtnText: 'Đồng ý',
+      );
+    }
   }
 
   void onKhoXeChanged(String? newValue) {
@@ -209,6 +234,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
       // Yêu cầu quyền truy cập vị trí
       await Geolocator.requestPermission();
+      // getLocation();
     }
   }
 
@@ -329,32 +355,6 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     }
   }
 
-  // Future imageSelector(BuildContext context, String pickerType) async {
-  //   switch (pickerType) {
-  //     case "gallery":
-
-  //       /// GALLERY IMAGE PICKER
-  //       _pickedFile = await _picker.getImage(source: ImageSource.gallery);
-  //       break;
-
-  //     case "camera":
-
-  //       /// CAMERA CAPTURE CODE
-  //       _pickedFile = await _picker.getImage(source: ImageSource.camera);
-  //       break;
-  //   }
-
-  //   if (_pickedFile != null) {
-  //     setState(() {
-  //       _lstFiles.add(FileItem(
-  //         uploaded: false,
-  //         file: _pickedFile!.path,
-  //         local: true,
-  //         isRemoved: false,
-  //       ));
-  //     });
-  //   }
-  // }
   Future imageSelector(BuildContext context, String pickerType) async {
     if (pickerType == "gallery") {
       // Chọn nhiều ảnh từ thư viện
@@ -552,7 +552,7 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
           Container(
             width: 20.w,
             height: 10.h,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(5),
                 bottomLeft: Radius.circular(5),
@@ -631,10 +631,11 @@ class _BodyChuyenXeScreenState extends State<BodyChuyenXeScreen> with TickerProv
     });
   }
 
-_onScan(value) {
+  _onScan(value) {
     setState(() {
       _loading = true;
     });
+
     Geolocator.getCurrentPosition(
       desiredAccuracy: GeoLocationAccuracy.LocationAccuracy.low,
     ).then((position) {
@@ -646,7 +647,6 @@ _onScan(value) {
       _bl.getData(context, value, toado).then((_) {
         setState(() {
           _qrData = value;
-
           if (_bl.dieuchuyen == null) {
             _loading = false;
             _qrData = '';

@@ -10,8 +10,6 @@ import 'package:sizer/sizer.dart';
 import '../../models/giaoxeho.dart';
 import '../../models/giaoxeho_ls.dart';
 import '../../models/kehoach.dart';
-import '../../models/kehoachgiaoxe.dart';
-import '../../models/kehoachgiaoxe_ls.dart';
 import '../../models/lydo.dart';
 import '../../services/app_service.dart';
 import '../../services/request_helper.dart';
@@ -47,6 +45,7 @@ class _DSXacNhanGiaoXeHoPage extends State<DSXacNhanGiaoXeHoPage> with SingleTic
   List<GiaoXeHoLSModel>? _kehoachlsList;
   List<GiaoXeHoLSModel>? get kehoachlsList => _kehoachlsList;
   bool _loading = false;
+  int? totalCount;
   String _qrData = '';
   final _qrDataController = TextEditingController();
   GiaoXeHoModel? _data;
@@ -121,7 +120,12 @@ class _DSXacNhanGiaoXeHoPage extends State<DSXacNhanGiaoXeHoPage> with SingleTic
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
-          _kehoachlsList = (decodedData as List).map((item) => GiaoXeHoLSModel.fromJson(item)).toList();
+          print("data: ${decodedData}");
+          totalCount = decodedData['totalCount'] ?? 0;
+          List<dynamic> dataList = decodedData['result'] ?? [];
+
+          // Chuyển đổi danh sách JSON thành danh sách model
+          _kehoachlsList = dataList.map((item) => GiaoXeHoLSModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -1070,7 +1074,7 @@ class _DSXacNhanGiaoXeHoPage extends State<DSXacNhanGiaoXeHoPage> with SingleTic
                                       ),
                                       child: Center(
                                         child: customTitle(
-                                          'DANH SÁCH CHỜ XÁC NHẬN HỘ',
+                                          'DANH SÁCH CHỜ XÁC NHẬN GIAO HỘ',
                                         ),
                                       ),
                                     ),
@@ -1192,8 +1196,10 @@ class _DSXacNhanGiaoXeHoPage extends State<DSXacNhanGiaoXeHoPage> with SingleTic
                   TabBar(
                     controller: _tabController,
                     tabs: [
+                      // Tab(text: 'Chờ xác nhận (${_kehoachList?.length.toString() ?? ""})'),
+                      // Tab(text: 'Đã xác nhận (${_kehoachlsList?.length.toString() ?? ""})'),
                       Tab(text: 'Chờ xác nhận (${_kehoachList?.length.toString() ?? ""})'),
-                      Tab(text: 'Đã xác nhận (${_kehoachlsList?.length.toString() ?? ""})'),
+                      Tab(text: 'Đã xác nhận (${totalCount ?? 0})'),
                     ],
                   ),
                 ],

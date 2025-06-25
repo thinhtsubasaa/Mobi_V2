@@ -241,6 +241,7 @@ import '../../widgets/custom_appbar.dart';
 import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 import '../blocs/user_bloc.dart';
+import '../services/face_idservice.dart';
 
 class AccountPage extends StatelessWidget {
   @override
@@ -318,6 +319,24 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
     }
   }
 
+  Future<void> _loginWithFaceID() async {
+    FaceAuthService faceAuth = FaceAuthService();
+
+    bool isAvailable = await faceAuth.isBiometricAvailable();
+    if (!isAvailable) {
+      print("Thiết bị không hỗ trợ Face ID");
+      return;
+    }
+
+    bool isAuthenticated = await faceAuth.authenticateWithBiometrics();
+    if (isAuthenticated) {
+      print("Xác thực thành công!");
+      // Chuyển hướng vào trang chính
+    } else {
+      print("Xác thực thất bại!");
+    }
+  }
+
   Future imageSelector(BuildContext context, String pickerType) async {
     switch (pickerType) {
       case "gallery":
@@ -344,6 +363,10 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
 
         _loading = true;
         print("loading: ${_loading}");
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context); // Đóng dialog cũ (nếu cần)
+          showMenu(context); // Mở dialog với dữ liệu mới
+        }
       });
 
       print("url: ${_lstFiles}");
@@ -547,6 +570,10 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
       }
 
       Navigator.pop(context);
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context); // Đóng dialog cũ (nếu cần)
+        showMenu(context); // Mở dialog với dữ liệu mới
+      }
     });
   }
 
@@ -797,6 +824,42 @@ class _BodyAccountScreenState extends State<BodyAccountScreen> with TickerProvid
                               ),
                               title: Text(
                                 ub?.email ?? "",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            ListTile(
+                              contentPadding: const EdgeInsets.all(0),
+                              leading: CircleAvatar(
+                                // backgroundColor: Colors.indigoAccent[100],
+                                radius: 18,
+                                // child: IconButton(
+                                //   icon: const Icon(
+                                //     Icons.filter_center_focus,
+                                //     size: 20,
+                                //     color: Colors.blueAccent,
+                                //   ),
+                                //   onPressed: () {
+                                //     _loginWithFaceID(); // Gọi hàm khi bấm vào icon
+                                //   },
+                                // ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _loginWithFaceID(); // Gọi hàm khi bấm vào ảnh
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/face_id.png', // Đường dẫn ảnh
+                                    width: 18, // Kích thước ảnh
+                                    height: 18,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                "",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,

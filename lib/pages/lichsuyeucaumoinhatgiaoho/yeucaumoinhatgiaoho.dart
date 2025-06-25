@@ -1,7 +1,4 @@
-import 'package:Thilogi/pages/lichsuyeucaumoinhat/custom_body_dsdaxacnhannew.dart';
-import 'package:Thilogi/pages/lichsuyeucaumoinhatdigap/custom_body_digapnew.dart';
 import 'package:Thilogi/pages/lichsuyeucaumoinhatgiaoho/custom_body_giaohonew.dart';
-import 'package:Thilogi/pages/lsx_giaoxe/custom_body_lsxgiaoxe.dart';
 import 'package:flutter/material.dart';
 import 'package:Thilogi/config/config.dart';
 import 'package:sizer/sizer.dart';
@@ -46,7 +43,7 @@ class BottomContent extends StatelessWidget {
       ),
       child: Center(
         child: customTitle(
-          'LỊCH SỬ YÊU CẦU MỚI NHẤT HỘ',
+          'LỊCH SỬ YÊU CẦU MỚI NHẤT GIAO HỘ',
         ),
       ),
     );

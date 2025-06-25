@@ -13,7 +13,6 @@ import 'package:Thilogi/models/xeraconglist.dart';
 import 'package:Thilogi/pages/lsuxeracong/ls_racong.dart';
 import 'package:Thilogi/utils/delete_dialog.dart';
 import 'package:Thilogi/widgets/custom_title.dart';
-import 'package:Thilogi/widgets/loading_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +37,7 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:sizer/sizer.dart';
 import '../../blocs/user_bloc.dart';
 import '../../config/config.dart';
+import '../../models/check.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
 import '../../widgets/loading.dart';
@@ -104,6 +104,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   List<LyDoModel>? get lydoList => _lydoList;
   List<XeRaCongModel>? _xeracongList;
   List<XeRaCongModel>? get xeracongList => _xeracongList;
+  CheckModel? _scan;
+  CheckModel? get scan => _scan;
+  CheckModel? _model;
   late UserBloc? _ub;
   XeRaCongListModel? _datalist;
   String? bienSo;
@@ -120,6 +123,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showConfirmationDialogXacNhanBV(context);
+    });
     for (var file in widget.lstFiles) {
       _lstFiles.add(FileItem(
         uploaded: true,
@@ -155,6 +161,61 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
       begin: 0.0, // Ẩn hoàn toàn
       end: 1.0, // Hiện hoàn toàn
     ).animate(_controller);
+  }
+
+  Future<void> getBaoVe(String? maPin) async {
+    _scan = null;
+    _isLoading = true;
+    try {
+      final http.Response response = await requestHelper.getData('Kho/GetBaoVe?MaPin=$maPin');
+
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        print("data2: ${decodedData}");
+        if (decodedData != null) {
+          _scan = CheckModel(
+            id: decodedData['id'],
+            fullName: decodedData['fullName'],
+            maNhanVien: decodedData['maNhanVien'],
+            maPin: decodedData['maPin'],
+          );
+        }
+        Navigator.of(context).pop();
+      } else {
+        String errorMessage = response.body.replaceAll('"', '');
+        notifyListeners();
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.info,
+            title: '',
+            text: errorMessage,
+            confirmBtnText: 'Đồng ý',
+            onConfirmBtnTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            });
+      }
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _hasError = true;
+      _errorCode = e.toString();
+    }
+  }
+
+  _onScanBV(value) {
+    getBaoVe(value).then((_) {
+      setState(() {
+        _qrData = value;
+        if (scan == null) {
+          _qrData = '';
+          _qrDataController.text = '';
+        }
+        _model = scan;
+        print("model: ${_model?.fullName}");
+      });
+    });
   }
 
   Future imageSelector(BuildContext context, String pickerType) async {
@@ -331,13 +392,13 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
     }
   }
 
-  Future<void> getListXeRaCong(String? BienSo) async {
+  Future<void> getListXeRaCong(String? BienSo, String? maPin) async {
     setState(() {
       _isLoading = true;
       _xeracongList = []; // Làm sạch danh sách cũ trước khi tải mới
     });
     try {
-      final http.Response response = await requestHelper.getData('Kho/GetThongTinXeRaCongList?BienSo=$BienSo');
+      final http.Response response = await requestHelper.getData('Kho/GetThongTinXeRaCongList?BienSo=$BienSo&MaPin=$maPin');
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
@@ -350,6 +411,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
+        errorMessage = errorMessage.replaceAll(';', '\n');
         notifyListeners();
         QuickAlert.show(
           // ignore: use_build_context_synchronously
@@ -380,15 +442,14 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
     super.dispose();
   }
 
-  Future<void> postData(String? SoKhung, String? BienSo, String? nhanvien, String? noiDi, String? noiDen, String? ghiChu, String? maPin, String? liDo, String? file, String? hinhAnh) async {
+  Future<void> postData(String? SoKhung, String? BienSo, String? nhanvien, String? noiDi, String? noiDen, String? ghiChu, String? maPin, String? liDo, bool? isThatBai, String? file, String? hinhAnh) async {
     _isLoading = true;
     XeRaCongModel? scanData;
     try {
       var newScanData = scanData;
       newScanData?.soKhung = newScanData.soKhung == 'null' ? null : newScanData.soKhung;
       print("print data: ${newScanData?.soKhung}");
-      final http.Response response = await requestHelper.postData(
-          'KhoThanhPham/XeRaCong?SoKhung=$SoKhung&BienSo=$BienSo&MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&File=$file&HinhAnh=$hinhAnh', newScanData?.toJson());
+      final http.Response response = await requestHelper.postData('KhoThanhPham/XeRaCong?SoKhung=$SoKhung&BienSo=$BienSo&MaNhanVien=$nhanvien&NoiDi=$noiDi&NoiDen=$noiDen&GhiChu=$ghiChu&MaPin=$maPin&LyDo=$liDo&IsThatBai=$isThatBai&File=$file&HinhAnh=$hinhAnh', newScanData?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -625,6 +686,130 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
     });
   }
 
+  void _showConfirmationDialogMaPinBV(BuildContext context) {
+    setState(() {
+      _onScanBV(_textController.text);
+    });
+
+    // Navigator.of(context).pop();
+  }
+
+  void _showConfirmationDialogXacNhanBV(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async {
+            // Ngăn đóng hộp thoại khi nhấn nút quay lại trên Android
+            return false;
+          },
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                backgroundColor: Colors.transparent,
+                body: Center(
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Vui lòng nhập mã pin của bạn?',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          controller: _textController,
+                          onChanged: (text) {
+                            // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                            setState(() {});
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Nhập mã pin',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                _btnController.reset();
+                              },
+                              child: const Text(
+                                'Không',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+
+                            // RoundedLoadingButton(
+                            //   child: Text(
+                            //     'Đồng ý',
+                            //     style: TextStyle(
+                            //       fontFamily: 'Comfortaa',
+                            //       fontSize: 13,
+                            //       color: Colors.white,
+                            //       fontWeight: FontWeight.w700,
+                            //     ),
+                            //   ),
+                            //   width: 40.w,
+                            //   controller: _btnController, // Controller cho nút
+                            //   color: Colors.green,
+                            //   onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPin(context) : null,
+                            // ),
+
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                              ),
+                              onPressed: _textController.text.isNotEmpty ? () => _showConfirmationDialogMaPinBV(context) : null,
+                              child: const Text(
+                                'Đồng ý',
+                                style: TextStyle(
+                                  fontFamily: 'Comfortaa',
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   void _onScan(value) {
     setState(() {
       _loading = true;
@@ -636,15 +821,26 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
     });
 
     // Kiểm tra điều kiện để gọi hàm phù hợp
-    if ((value != null && value?.length >= 3 && RegExp(r'[a-zA-Z]').hasMatch(value?[2])) || (value != null && value.isNotEmpty && value[0].toUpperCase() == 'T')) {
-      _fetchListXeRaCong(value);
+    // if ((value != null && value?.length >= 3 && RegExp(r'[a-zA-Z]').hasMatch(value?[2])) || (value != null && value.isNotEmpty && value[0].toUpperCase() == 'T')) {
+    //   _fetchListXeRaCong(value);
+    // } else {
+    //   _fetchData(context, value);
+    // }
+    //   if (value != null && (value?.length == 8 || value?.length == 9 || value?.length == 10)) {
+    //     _fetchListXeRaCong(value); // Nếu độ dài là 8 hoặc 9 ký tự
+    //   } else {
+    //     _fetchData(context, value); // Các trường hợp khác
+    //   }
+    // }
+    if (value != null && value?.length >= 7 && RegExp(r'[a-zA-Z]').hasMatch(value?[2])) {
+      _fetchListXeRaCong(value); // Nếu độ dài là 8 hoặc 9 ký tự
     } else {
-      _fetchData(context, value);
+      _fetchData(context, value); // Các trường hợp khác
     }
   }
 
   void _fetchListXeRaCong(String value) {
-    getListXeRaCong(value).then((_) {
+    getListXeRaCong(value, _model?.maPin ?? "").then((_) {
       setState(() {
         _qrData = value;
         _listData = _xeracongList;
@@ -708,7 +904,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
   }
 
   void _fetchData(BuildContext context, String value) {
-    _bl.getData(context, value).then((_) {
+    _bl.getData(context, value, _model?.maPin ?? "").then((_) {
       setState(() {
         _qrData = value;
         if (_bl.xeracong == null) {
@@ -744,11 +940,11 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
       _datalist = XeRaCongListModel(); // Reset _datalist
       _listData = [];
     });
-    _bl.getData(context, value).then((_) {
+    _bl.getData(context, value, _model?.maPin ?? "").then((_) {
       setState(() {
         _qrData = value;
         if (_bl.xeracong == null) {
-          getListXeRaCong(value).then((_) {
+          getListXeRaCong(value, _model?.maPin ?? "").then((_) {
             setState(() {
               _qrData = value;
               _listData = _xeracongList;
@@ -950,9 +1146,9 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
       _noiden.text = '';
     }
 
-    // if (_lido.text == 'Nhập lý do') {
-    //   _lido.text = '';
-    // }
+    if (_lido.text == 'Nhập lý do') {
+      _lido.text = '';
+    }
     _data?.hinhAnh = imageUrlsString;
 
     print("MaNhanVien: ${_data?.maNhanVien}");
@@ -968,8 +1164,8 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data?.soKhung ?? "", _datalist?.soXe, _data?.maNhanVien ?? _datalist?.maNhanVien ?? "", _data?.tencong ?? _datalist?.tencong ?? "", _data?.noiden ?? _datalist?.noiden ?? _noiden.text, _ghiChu.text,
-                _textController.text, _lido.text, imageUrlsString, _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "")
+        postData(_data?.soKhung ?? "", _datalist?.soXe, _data?.maNhanVien ?? _datalist?.maNhanVien ?? "", _data?.tencong ?? _datalist?.tencong ?? "", _data?.noiden ?? _datalist?.noiden ?? _noiden.text, _ghiChu.text, _model?.maPin ?? "", _lido.text, _IsThatbai, imageUrlsString,
+                _data?.hinhAnhUrl ?? _datalist?.hinhAnhUrl ?? "")
             .then((_) {
           print("loading: ${_loading}");
           setState(() {
@@ -1160,28 +1356,28 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                           ],
                         ),
                       ),
-                      SizedBox(height: 10),
-                      const Text(
-                        'Vui lòng nhập mã pin của bạn?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        controller: _textController,
-                        onChanged: (text) {
-                          // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
-                          setState(() {});
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Nhập mã pin',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
+                      // SizedBox(height: 10),
+                      // const Text(
+                      //   'Vui lòng nhập mã pin của bạn?',
+                      //   style: TextStyle(
+                      //     fontSize: 16,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                      // SizedBox(height: 10),
+                      // TextField(
+                      //   controller: _textController,
+                      //   onChanged: (text) {
+                      //     // Gọi setState để cập nhật giao diện khi giá trị TextField thay đổi
+                      //     setState(() {});
+                      //   },
+                      //   decoration: InputDecoration(
+                      //     labelText: 'Nhập mã pin',
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1208,7 +1404,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
                             ),
-                            onPressed: _textController.text.isNotEmpty ? () => {_IsThatbai = true, _showConfirmationDialogMaPin(context)} : null,
+                            onPressed: () => {_IsThatbai = true, _showConfirmationDialogMaPin(context)},
                             child: const Text(
                               'Đồng ý',
                               style: TextStyle(
@@ -1230,11 +1426,6 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
         );
       },
     );
-  }
-
-  void _showConfirmationDialogMaPin(BuildContext context) {
-    Navigator.of(context).pop();
-    _onSave();
   }
 
   void _showInputDialog(BuildContext context) {
@@ -1443,6 +1634,38 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
       }
     });
     ;
+  }
+
+  void _showConfirmationDialogMaPin(BuildContext context) {
+    Navigator.of(context).pop();
+    _onSave();
+  }
+
+  void _showConfirmationDialogXN(BuildContext context) {
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.confirm,
+        text: 'Bạn có muốn xác nhận không?',
+        title: '',
+        confirmBtnText: 'Đồng ý',
+        cancelBtnText: 'Không',
+        confirmBtnTextStyle: const TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+        ),
+        cancelBtnTextStyle: const TextStyle(
+          color: Colors.red,
+          fontSize: 19.0,
+          fontWeight: FontWeight.bold,
+        ),
+        onCancelBtnTap: () {
+          Navigator.of(context).pop();
+          _btnController.reset();
+        },
+        onConfirmBtnTap: () {
+          Navigator.of(context).pop();
+          _onSave();
+        });
   }
 
   void _showConfirmationDialogXacNhan(BuildContext context) {
@@ -1656,7 +1879,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                                                   icon: const Icon(Icons.visibility),
                                                   color: Colors.blue,
                                                   onPressed: () {
-                                                    nextScreen(context, LSRaCongPage());
+                                                    nextScreen(context, LSRaCongPage(maPin: _model?.maPin ?? ""));
                                                   },
                                                 ),
                                               ],
@@ -2188,10 +2411,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                             ),
                             minimumSize: Size(200, 50),
                           ),
-                          onPressed: (_data?.maNhanVien != null ||
-                                  (_datalist?.maNhanVien != null && (_xeracongList != null && _xeracongList!.isNotEmpty && (_xeracongList!.where((xe) => xe.isCheck == true).length == _xeracongList!.length))))
-                              ? () => _showConfirmationDialogXacNhan(context)
-                              : null,
+                          onPressed: (_data?.maNhanVien != null || (_datalist?.maNhanVien != null && (_xeracongList != null && _xeracongList!.isNotEmpty && (_xeracongList!.where((xe) => xe.isCheck == true).length == _xeracongList!.length)))) ? () => _showConfirmationDialogXN(context) : null,
                           child: const Text(
                             'Xác nhận',
                             style: TextStyle(
@@ -2230,7 +2450,7 @@ class _BodyXeRaCongScreenState extends State<BodyXeRaCongScreen> with TickerProv
                 ),
                 child: Center(
                   child: customTitle(
-                    _ub?.congBaoVe?.toUpperCase() ?? "",
+                    "${_ub?.congBaoVe?.toUpperCase() ?? ""}- ${_model?.fullName?.toUpperCase() ?? ""}",
                   ),
                 ),
               ),

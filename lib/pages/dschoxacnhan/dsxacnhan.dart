@@ -37,7 +37,7 @@ class _DSChoXacNhanPage extends State<DSXacNhanPage> with SingleTickerProviderSt
   bool get hasError => _hasError;
   String? _errorCode;
   String? get errorCode => _errorCode;
-
+  int? totalCount;
   List<KeHoachGiaoXeModel>? _kehoachList;
   List<KeHoachGiaoXeModel>? get kehoachList => _kehoachList;
   List<KeHoachGiaoXeLSModel>? _kehoachlsList;
@@ -104,7 +104,11 @@ class _DSChoXacNhanPage extends State<DSXacNhanPage> with SingleTickerProviderSt
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
         if (decodedData != null) {
-          _kehoachlsList = (decodedData as List).map((item) => KeHoachGiaoXeLSModel.fromJson(item)).toList();
+          totalCount = decodedData['totalCount'] ?? 0;
+          List<dynamic> dataList = decodedData['result'] ?? [];
+
+          // Chuyển đổi danh sách JSON thành danh sách model
+          _kehoachlsList = dataList.map((item) => KeHoachGiaoXeLSModel.fromJson(item)).toList();
 
           // Gọi setState để cập nhật giao diện
           setState(() {
@@ -1011,7 +1015,7 @@ class _DSChoXacNhanPage extends State<DSXacNhanPage> with SingleTickerProviderSt
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 12)
+                              SizedBox(height: 12)
                             ],
                           ),
                         ),
@@ -1132,7 +1136,7 @@ class _DSChoXacNhanPage extends State<DSXacNhanPage> with SingleTickerProviderSt
                     controller: _tabController,
                     tabs: [
                       Tab(text: 'Chờ xác nhận (${_kehoachList?.length.toString() ?? ""})'),
-                      Tab(text: 'Đã xác nhận (${_kehoachlsList?.length.toString() ?? ""})'),
+                      Tab(text: 'Đã xác nhận (${totalCount ?? 0})'),
                     ],
                   ),
                 ],

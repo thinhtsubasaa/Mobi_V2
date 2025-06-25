@@ -30,54 +30,57 @@ class XuatKhoBloc extends ChangeNotifier {
   String? _message;
   String? get message => _message;
 
-  Future<void> getData(BuildContext context, String qrcode) async {
+  Future<void> getData(BuildContext context, String qrcode, String? toaDo) async {
     _isLoading = true;
     _xuatkho = null;
     try {
-      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode');
+      final http.Response response = await requestHelper.getData('KhoThanhPham/GetThongTinXuatKho?SoKhung=$qrcode&ToaDo=$toaDo');
       print(response.statusCode);
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
 
         if (decodedData != null) {
           _xuatkho = XuatKhoModel(
-            key: decodedData["key"],
-            id: decodedData['id'],
-            soKhung: decodedData['soKhung'],
-            maSanPham: decodedData['maSanPham'],
-            tenSanPham: decodedData['tenSanPham'],
-            soMay: decodedData['soMay'],
-            maMau: decodedData['maMau'],
-            tenMau: decodedData['tenMau'],
-            tenKho: decodedData['tenKho'],
-            maViTri: decodedData['maViTri'],
-            tenViTri: decodedData['tenViTri'],
-            mauSon: decodedData['mauSon'],
-            ngayNhapKhoView: decodedData['ngayNhapKhoView'],
-            tenTaiXe: decodedData['tenTaiXe'],
-            ghiChu: decodedData['ghiChu'],
-            maKho: decodedData['maKho'],
-            kho_Id: decodedData['kho_Id'],
-            bienSo_Id: decodedData['bienSo_Id'],
-            taiXe_Id: decodedData['taiXe_Id'],
-            tenDiaDiem: decodedData['tenDiaDiem'],
-            tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
-            tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
-            tenPhuongTien: decodedData['tenPhuongTien'],
-            toaDo: decodedData['toaDo'],
-            noidi: decodedData['noidi'],
-            noiden: decodedData['noiden'],
-            benVanChuyen: decodedData['benVanChuyen'],
-            soXe: decodedData['soXe'],
-            maSoNhanVien: decodedData['maSoNhanVien'],
-            dangDiChuyen: decodedData['dangDiChuyen'],
-            nguoiPhuTrach: decodedData['nguoiPhuTrach'],
-            bienSoTam: decodedData['bienSoTam'],
-            isDiGap: decodedData['isDiGap'],
-            bienSoTamAo: decodedData['bienSoTamAo'],
-            xeCong: decodedData['xeCong'],
-            phuongThuc_Id: decodedData['phuongThuc_Id'],
-          );
+              key: decodedData["key"],
+              id: decodedData['id'],
+              soKhung: decodedData['soKhung'],
+              maSanPham: decodedData['maSanPham'],
+              tenSanPham: decodedData['tenSanPham'],
+              soMay: decodedData['soMay'],
+              maMau: decodedData['maMau'],
+              tenMau: decodedData['tenMau'],
+              tenKho: decodedData['tenKho'],
+              maViTri: decodedData['maViTri'],
+              tenViTri: decodedData['tenViTri'],
+              mauSon: decodedData['mauSon'],
+              ngayNhapKhoView: decodedData['ngayNhapKhoView'],
+              tenTaiXe: decodedData['tenTaiXe'],
+              ghiChu: decodedData['ghiChu'],
+              maKho: decodedData['maKho'],
+              kho_Id: decodedData['kho_Id'],
+              bienSo_Id: decodedData['bienSo_Id'],
+              taiXe_Id: decodedData['taiXe_Id'],
+              tenDiaDiem: decodedData['tenDiaDiem'],
+              tenPhuongThucVanChuyen: decodedData['tenPhuongThucVanChuyen'],
+              tenLoaiPhuongTien: decodedData['tenLoaiPhuongTien'],
+              tenPhuongTien: decodedData['tenPhuongTien'],
+              toaDo: decodedData['toaDo'],
+              noidi: decodedData['noidi'],
+              noiden: decodedData['noiden'],
+              benVanChuyen: decodedData['benVanChuyen'],
+              soXe: decodedData['soXe'],
+              maSoNhanVien: decodedData['maSoNhanVien'],
+              dangDiChuyen: decodedData['dangDiChuyen'],
+              nguoiPhuTrach: decodedData['nguoiPhuTrach'],
+              bienSoTam: decodedData['bienSoTam'],
+              isDiGap: decodedData['isDiGap'],
+              bienSoTamAo: decodedData['bienSoTamAo'],
+              xeCong: decodedData['xeCong'],
+              phuongThuc_Id: decodedData['phuongThuc_Id'],
+              isTrue: decodedData['isTrue'],
+              khoangCach: decodedData['khoangCach'],
+              noigiao: decodedData['noigiao'],
+              keHoachGiaoXe_Id: decodedData['keHoachGiaoXe_Id']);
         }
       } else {
         String errorMessage = response.body.replaceAll('"', '');

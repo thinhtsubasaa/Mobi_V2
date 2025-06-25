@@ -10,18 +10,16 @@ class UserBloc extends ChangeNotifier {
   UserBloc() {
     checkSignIn();
   }
-
+  String? _apiUrl2 = "https://apimms.thilogi.vn";
+  String? get apiUrl2 => _apiUrl2;
   bool _isSignedIn = false;
   bool get isSignedIn => _isSignedIn;
-
   String? _fullName;
   String? get name => _fullName;
   String? _accessRole;
   String? get accessRole => _accessRole;
-
   String? _id;
   String? get id => _id;
-
   String? _email;
   String? get email => _email;
 
@@ -63,6 +61,7 @@ class UserBloc extends ChangeNotifier {
       sp.setString('maNhanVien', userModel.maNhanVien ?? '');
       sp.setString('tenPhongBan', userModel.tenPhongBan ?? '');
       sp.setString('congBaoVe', userModel.congBaoVe ?? '');
+      sp.setString('apiUrl2', _apiUrl2 ?? '');
 
       _id = userModel.id;
       _fullName = userModel.fullName;
@@ -76,6 +75,7 @@ class UserBloc extends ChangeNotifier {
       _maNhanVien = userModel.maNhanVien;
       _tenPhongBan = userModel.tenPhongBan;
       _congBaoVe = userModel.congBaoVe;
+      _apiUrl2 = _apiUrl2;
       notifyListeners();
     }
   }
@@ -95,6 +95,7 @@ class UserBloc extends ChangeNotifier {
     _maNhanVien = sp.getString('maNhanVien');
     _tenPhongBan = sp.getString('tenPhongBan');
     _congBaoVe = sp.getString('congBaoVe');
+    _apiUrl2 = sp.getString('apiUrl2');
     notifyListeners();
   }
 

@@ -47,6 +47,10 @@ class ThayDoiKeHoachBloc extends ChangeNotifier {
             doiTac_Id: decodedData['doiTac_Id'],
             bienSo_Id: decodedData['bienSo_Id'],
             taiXe_Id: decodedData['taiXe_Id'],
+            noiDi_Id:  decodedData['noiDi_Id'],
+             noiDen_Id:  decodedData['noiDen_Id'],
+             noiDiKH: decodedData['noiDiKH'],
+             noiDenKH: decodedData['noiDenKH']
             
 
           );

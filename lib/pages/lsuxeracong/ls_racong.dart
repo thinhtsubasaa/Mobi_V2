@@ -7,6 +7,9 @@ import '../../widgets/custom_card.dart';
 import '../../widgets/custom_title.dart';
 
 class LSRaCongPage extends StatelessWidget {
+  final String? maPin;
+
+  LSRaCongPage({this.maPin});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +24,7 @@ class LSRaCongPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              child: CustomBodyLSRaCong(),
+              child: CustomBodyLSRaCong(maPin: maPin),
             ),
           ),
           BottomContent(),

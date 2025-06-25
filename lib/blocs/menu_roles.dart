@@ -28,7 +28,7 @@ class MenuRoleBloc extends ChangeNotifier {
   String? rule;
   String? url;
 
-  Future<void> getData(BuildContext context, DonVi_Id, String PhanMem_Id) async {
+  Future<void> getData(BuildContext context, String DonVi_Id, String PhanMem_Id) async {
     _isLoading = true;
 
     _menurole = null;
@@ -45,7 +45,7 @@ class MenuRoleBloc extends ChangeNotifier {
           _menurole = (decodedData as List).map((p) {
             return MenuRoleModel.fromJson(p);
           }).toList();
-          print(_menurole);
+          // print(_menurole);
         }
 
         notifyListeners();

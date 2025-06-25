@@ -15,6 +15,7 @@ import '../../../blocs/menu_roles.dart';
 import '../../../config/config.dart';
 import '../../../models/menurole.dart';
 import '../../../widgets/loading.dart';
+import '../capnhatkehoach/capnhatkh.dart';
 import '../dschoxacnhan/dsxacnhan.dart';
 import '../lichsuyeucaumoinhat/yeucaumoinhat.dart';
 import '../lichsuyeucaumoinhatdigap/yeucaumoinhatdigap.dart';
@@ -184,6 +185,21 @@ class _BodyQLThayDoiKeHoachScreenState extends State<BodyQLThayDoiKeHoachScreen>
                       ),
                       () {
                         _handleButtonTap(DSXacNhanDiGapPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'cap-nhat-ke-hoach-mobi'))
+                    CustomButton(
+                      'CẬP NHẬT KẾ HOẠCH',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Button_01_DieuPhoi_KeHoach.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(CapNhatKHPage());
                       },
                     ),
                 ],

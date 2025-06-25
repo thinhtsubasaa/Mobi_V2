@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:Thilogi/blocs/phienban_bloc.dart';
 import 'package:Thilogi/config/config.dart';
+import 'package:Thilogi/models/phienban.dart';
 import 'package:Thilogi/pages/Bms/bms.dart';
 import 'package:Thilogi/pages/Home.dart';
 import 'package:flutter/material.dart';
@@ -18,30 +20,62 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  late PhienBanBloc _pb;
+  PhienBanModel? _model;
   @override
   void initState() {
     super.initState();
+    _pb = Provider.of<PhienBanBloc>(context, listen: false);
+    _onScan();
     _afterSplash();
-    _checkVersion();
+    // _checkVersion();
   }
 
+  // void _checkVersion() async {
+  //   final newVersion = NewVersion(
+  //     iOSId: "com.thilogi.vn.logistics",
+  //     androidId: "com.thilogi.vn.logistics",
+  //   );
+  //   final status = await newVersion.getVersionStatus();
+  //   if (status != null) {
+  //     if (_isVersionLower(status.localVersion, status.storeVersion)) {
+  //       newVersion.showUpdateDialog(
+  //         context: context,
+  //         versionStatus: status,
+  //         dialogTitle: "CẬP NHẬT",
+  //         dismissButtonText: "Bỏ qua",
+  //         dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
+  //         dismissAction: () {
+  //           SystemNavigator.pop();
+  //         },
+  //         updateButtonText: "Cập nhật",
+  //         allowDismissal: false
+  //       );
+  //     }
+  //     print("DEVICE : " + status.localVersion);
+  //     print("STORE : " + status.storeVersion);
+  //   }
+  // }
+
   void _checkVersion() async {
+    print("BACKEND : ${_model?.maPhienBan}");
     final newVersion = NewVersion(
       iOSId: "com.thilogi.vn.logistics",
       androidId: "com.thilogi.vn.logistics",
     );
     final status = await newVersion.getVersionStatus();
     if (status != null) {
-      if (_isVersionLower(status.localVersion, status.storeVersion)) {
+      if (_isVersionLower(status.localVersion, _model?.maPhienBan ?? "")) {
         newVersion.showUpdateDialog(
           context: context,
           versionStatus: status,
           dialogTitle: "CẬP NHẬT",
           dismissButtonText: "Bỏ qua",
-          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
+          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${_model?.maPhienBan}",
           dismissAction: () {
             SystemNavigator.pop();
           },
+          allowDismissal: false,
           updateButtonText: "Cập nhật",
         );
       }
@@ -63,13 +97,21 @@ class _SplashPageState extends State<SplashPage> {
     return false;
   }
 
+  _onScan() {
+    _pb.getData(context).then((_) {
+      setState(() {
+        _model = _pb.phienban;
+      });
+    });
+  }
+
   Future _afterSplash() async {
     final UserBloc ub = context.read<UserBloc>();
     final AppBloc _ab = context.read<AppBloc>();
 
-    Future.delayed(const Duration(seconds: 3)).then((value) async {
+    Future.delayed(const Duration(seconds: 2)).then((value) async {
       _ab.getApiUrl();
-      _checkVersion();
+      // _checkVersion();
       if (ub.isSignedIn) {
         _checkVersion();
         ub.getUserData();

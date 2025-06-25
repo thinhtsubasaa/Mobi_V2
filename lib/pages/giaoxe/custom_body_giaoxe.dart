@@ -37,7 +37,6 @@ import '../../models/kehoach.dart';
 import '../../models/phuongthucvanchuyen.dart';
 import '../../services/app_service.dart';
 import '../../utils/next_screen.dart';
-import '../../widgets/checksheet_upload_anh.dart';
 import '../../widgets/loading.dart';
 
 class CustomBodyGiaoXe extends StatelessWidget {
@@ -92,6 +91,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
   String? _message;
   String? get message => _message;
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController2 = RoundedLoadingButtonController();
   final TextEditingController _ghiChu = TextEditingController();
   final TextEditingController _textController = TextEditingController();
   PickedFile? _pickedFile;
@@ -383,6 +383,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
               Navigator.of(context).pop();
             });
         _btnController.reset();
+        _btnController2.reset();
         await getListThayDoiKH();
         body = "Bạn đang có ${_kehoachList?.length.toString() ?? ""} yêu cầu giao xe hộ cần xác nhận ";
       } else {
@@ -401,6 +402,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
             });
 
         _btnController.reset();
+        _btnController2.reset();
       }
     } catch (e) {
       _message = e.toString();
@@ -702,6 +704,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
         confirmBtnText: 'Đồng ý',
       );
       _btnController.reset();
+
       setState(() {
         _loading = false;
       });
@@ -788,6 +791,7 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
         confirmBtnText: 'Đồng ý',
       );
       _btnController.reset();
+      _btnController2.reset();
       setState(() {
         _loading = false;
       });
@@ -995,19 +999,34 @@ class _BodyGiaoXeScreenState extends State<BodyGiaoXeScreen> with TickerProvider
                               ),
                             ),
                           ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: (selectedDate != null && _textController.text.isNotEmpty) ? () => _onSaveYC() : null,
-                            child: const Text(
-                              'Đồng ý',
-                              style: TextStyle(
-                                fontFamily: 'Comfortaa',
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          // ElevatedButton(
+                          //   style: ElevatedButton.styleFrom(
+                          //     backgroundColor: Colors.green,
+                          //   ),
+                          //   onPressed: (selectedDate != null && _textController.text.isNotEmpty) ? () => _onSaveYC() : null,
+                          //   child: const Text(
+                          //     'Đồng ý',
+                          //     style: TextStyle(
+                          //       fontFamily: 'Comfortaa',
+                          //       fontSize: 13,
+                          //       color: Colors.white,
+                          //       fontWeight: FontWeight.w700,
+                          //     ),
+                          //   ),
+                          // ),
+                          SizedBox(
+                            width: 120, // hoặc kích thước mong muốn
+                            height: 40,
+                            child: RoundedLoadingButton(
+                              child: Text('Đồng ý',
+                                  style: TextStyle(
+                                    fontFamily: 'Comfortaa',
+                                    color: AppConfig.textButton,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                  )),
+                              controller: _btnController2,
+                              onPressed: (selectedDate != null && _textController.text.isNotEmpty) ? () => _onSaveYC() : null,
                             ),
                           ),
                         ],

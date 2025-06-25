@@ -5,35 +5,39 @@ import 'package:Thilogi/models/lsu_giaoxe.dart';
 import 'package:Thilogi/pages/dschoxacnhan/dsxacnhan.dart';
 import 'package:Thilogi/pages/lichsuyeucaumoinhat/yeucaumoinhat.dart';
 import 'package:Thilogi/pages/login/Login.dart';
-
 import 'package:Thilogi/pages/nghiepvuchung/nghiepvuchung.dart';
-
 import 'package:Thilogi/pages/qlkho/QLKhoXe.dart';
-
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-
 import 'package:quickalert/quickalert.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-
 import '../../blocs/menu_roles.dart';
 import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
 import 'package:new_version/new_version.dart';
-
+import '../MMS_QuanLyPT_TB/lichsuyeucaumoinhatbaoduong/yeucaumoinhatbaoduong.dart';
+import '../MMS_QuanLyPT_TB/mms_danhsachphuongtien/dsphuongtien.dart';
+import '../MMS_QuanLyPT_TB/mms_ketquabaoduong/lsxbaoduong.dart';
+import '../MMS_QuanLyPT_TB/mms_quanlydanhsachphuongtien/qldsphuongtien.dart';
+import '../MMS_QuanLyPT_TB/mms_yeucaubaoduong/baoduong.dart';
+import '../MMS_QuanLyPT_TB/mms_yeucaunhapkm/NhapKM.dart';
+import '../MMS_QuanLyPT_TB/quanlyphuongtien_QLNew/quanlyphuongtien_canhan.dart';
+import '../MMS_QuanLyPT_TB/quanlyphuongtien_QLNew/quanlyphuongtien_qlnew.dart';
 import '../dschogiaoxeho/dsxacnhangiaoxeho.dart';
+import '../dschoxuatxeho/dsxacnhanxuatxeho.dart';
 import '../lichsuyeucaumoinhatdigap/yeucaumoinhatdigap.dart';
 import '../lichsuyeucaumoinhatgiaoho/yeucaumoinhatgiaoho.dart';
+import '../MMS_QuanLyPT_TB/mms/Mms.dart';
+import '../lichsuyeucaumoinhatxuatho/yeucaumoinhatxuatho.dart';
 import '../thaydoixedigap/dsxacnhandigap.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -52,8 +56,7 @@ class BodyBmsScreen extends StatefulWidget {
 }
 
 // ignore: use_key_in_widget_constructors, must_be_immutable
-class _BodyBmsScreenState extends State<BodyBmsScreen>
-    with TickerProviderStateMixin, ChangeNotifier {
+class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateMixin, ChangeNotifier {
   int currentPage = 0;
   int pageCount = 3;
   bool _loading = false;
@@ -79,8 +82,7 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
   String? url;
   late Future<List<MenuRoleModel>> _menuRoleFuture;
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -113,11 +115,26 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('Mở app từ thông báo: ${message.notification?.title}');
       String? body = message.notification?.body?.toLowerCase();
-        if (body != null) {
-        if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
+      Map<String, dynamic> data = message.data;
+      print("Data: $data");
+      String? listIds;
+      if (data.containsKey('listIds')) {
+        try {
+          listIds = data.containsKey('listIds') ? data['listIds'] : null;
+        } catch (e) {
+          print("Error decoding listIds: $e");
+        }
+      }
+      print("body: $body");
+      if (body != null) {
+        if (body.contains('đang có') && !body.contains('giao xe hộ cần') && !body.contains("xuất xe hộ cần")) {
           nextScreen(context, DSXacNhanPage());
-        } else if (body.contains('đã có')) {
+        } else if (body.contains('đã có') && !body.contains('yêu cầu bảo dưỡng') && !body.contains('yêu cầu sửa chữa') && !body.contains('lệnh hoàn thành')) {
           nextScreen(context, DSXacNhanDiGapPage());
+        } else if (body.contains('xuất xe hộ cần')) {
+          nextScreen(context, DSXacNhanXuatXeHoPage());
+        } else if (body.contains('xuất xe hộ') && !body.contains('cần')) {
+          nextScreen(context, LichSuYCMoiNhatXuatHoPage());
         } else if (body.contains('giao xe hộ cần')) {
           nextScreen(context, DSXacNhanGiaoXeHoPage());
         } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
@@ -125,6 +142,43 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
         } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
           // nextScreen(context, LichSuYCMoiNhatPage());
           nextScreen(context, LichSuYCMoiNhatDiGapPage());
+        } else if (body.contains('nhập số km')) {
+          // nextScreen(context, NhapKMPage());
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 0));
+        } else if (body.contains('model') && !body.contains('hệ thống')) {
+          // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+          nextScreen(context, DanhSachPhuongTienPage());
+        } else if (body.contains('hệ thống')) {
+          // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+          nextScreen(context, DanhSachPhuongTienQLPage());
+        } else if (body.contains('yêu cầu bảo dưỡng') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+          nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+        } else if (body.contains('lệnh hoàn thành bảo dưỡng phương tiện')) {
+          nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+        } else if (body.contains('vừa được xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('vừa bị huỷ 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, DanhSachPhuongTienPage());
+        } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành bảo dưỡng phương tiện')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành bảo dưỡng phương tiện') && !body.contains('đề xuất')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('yêu cầu sửa chữa') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+          nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('lệnh hoàn thành sửa chữa phương tiện')) {
+          nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+        } else if (body.contains('vừa được xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+        } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+        } else if (body.contains('vừa bị huỷ 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+          nextScreen(context, DanhSachPhuongTienPage());
+        } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành sửa chữa phương tiện')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+        } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành sửa chữa phương tiện') && !body.contains('đề xuất')) {
+          nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
         } else {
           nextScreen(context, LichSuYCMoiNhatPage());
         }
@@ -133,62 +187,106 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
         print("Không có thông tin body trong thông báo.");
       }
       // Xử lý sự kiện khi người dùng mở ứng dụng từ thông báo
-    //  if (message.notification?.body?.toLowerCase().contains('đang có') ?? false) {
-    //       nextScreen(context, DSXacNhanPage());
-    //     } else {
-    //       nextScreen(context, LichSuYCMoiNhatPage());
-    //     }
-        // nextScreen(context, DSXacNhanPage());
-      
-    });
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
-      if (message != null) {
-        print(
-            'Người dùng click vào thông báo khi ứng dụng được khởi động từ trạng thái tắt hoàn toàn: ${message.notification?.title}');
-            String? body = message.notification?.body?.toLowerCase();
-        if (body != null) {
-           if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
-          nextScreen(context, DSXacNhanPage());
-        } else if (body.contains('đã có')) {
-          nextScreen(context, DSXacNhanDiGapPage());
-        } else if (body.contains('giao xe hộ cần')) {
-          nextScreen(context, DSXacNhanGiaoXeHoPage());
-        } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
-          nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
-        } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
-          // nextScreen(context, LichSuYCMoiNhatPage());
-          nextScreen(context, LichSuYCMoiNhatDiGapPage());
-        } else {
-          nextScreen(context, LichSuYCMoiNhatPage());
-        }
-      } else {
-        // Trường hợp không có body trong thông báo
-        print("Không có thông tin body trong thông báo.");
-      }
       //  if (message.notification?.body?.toLowerCase().contains('đang có') ?? false) {
-      //     nextScreen(context, DSXacNhanPage());
-      //   } else {
-      //     nextScreen(context, LichSuYCMoiNhatPage());
-      //   }
+      //       nextScreen(context, DSXacNhanPage());
+      //     } else {
+      //       nextScreen(context, LichSuYCMoiNhatPage());
+      //     }
+      // nextScreen(context, DSXacNhanPage());
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        print('Người dùng click vào thông báo khi ứng dụng được khởi động từ trạng thái tắt hoàn toàn: ${message.notification?.title}');
+        String? body = message.notification?.body?.toLowerCase();
+        Map<String, dynamic> data = message.data;
+        print("Data: $data");
+        String? listIds;
+        if (data.containsKey('listIds')) {
+          try {
+            // listIds = List<String>.from(jsonDecode(data['listIds'])); // Decode JSON string
+            listIds = data.containsKey('listIds') ? data['listIds'] : null;
+          } catch (e) {
+            print("Error decoding listIds: $e");
+          }
+        }
+        if (body != null) {
+          print("Body:$body");
+          if (body.contains('đang có') && !body.contains('giao xe hộ cần') && !body.contains("xuất xe hộ cần")) {
+            nextScreen(context, DSXacNhanPage());
+          } else if (body.contains('đã có') && !body.contains('yêu cầu bảo dưỡng') && !body.contains('yêu cầu sửa chữa') && !body.contains('lệnh hoàn thành')) {
+            nextScreen(context, DSXacNhanDiGapPage());
+          } else if (body.contains('xuất xe hộ cần')) {
+            nextScreen(context, DSXacNhanXuatXeHoPage());
+          } else if (body.contains('xuất xe hộ') && !body.contains('cần')) {
+            nextScreen(context, LichSuYCMoiNhatXuatHoPage());
+          } else if (body.contains('giao xe hộ cần')) {
+            nextScreen(context, DSXacNhanGiaoXeHoPage());
+          } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
+            nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
+          } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
+            // nextScreen(context, LichSuYCMoiNhatPage());
+            nextScreen(context, LichSuYCMoiNhatDiGapPage());
+          } else if (body.contains('nhập số km')) {
+            // nextScreen(context, NhapKMPage());
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 0));
+          } else if (body.contains('model') && !body.contains('hệ thống')) {
+            // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+            nextScreen(context, DanhSachPhuongTienPage());
+          } else if (body.contains('hệ thống')) {
+            // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+            nextScreen(context, DanhSachPhuongTienQLPage());
+          } else if (body.contains('yêu cầu bảo dưỡng') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+            nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+          } else if (body.contains('lệnh hoàn thành bảo dưỡng phương tiện')) {
+            nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+          } else if (body.contains('vừa được xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('vừa bị huỷ 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, DanhSachPhuongTienPage());
+          } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành bảo dưỡng phương tiện')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành bảo dưỡng phương tiện') && !body.contains('đề xuất')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('yêu cầu sửa chữa') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+            nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('lệnh hoàn thành sửa chữa phương tiện')) {
+            nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+          } else if (body.contains('vừa được xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+          } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+          } else if (body.contains('vừa bị huỷ 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+            nextScreen(context, DanhSachPhuongTienPage());
+          } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành sửa chữa phương tiện')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+          } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành sửa chữa phương tiện') && !body.contains('đề xuất')) {
+            nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+          } else {
+            nextScreen(context, LichSuYCMoiNhatPage());
+          }
+        } else {
+          // Trường hợp không có body trong thông báo
+          print("Không có thông tin body trong thông báo.");
+        }
+        //  if (message.notification?.body?.toLowerCase().contains('đang có') ?? false) {
+        //     nextScreen(context, DSXacNhanPage());
+        //   } else {
+        //     nextScreen(context, LichSuYCMoiNhatPage());
+        //   }
         // nextScreen(context, DSXacNhanPage());
-      
       }
     });
   }
 
   void initializeNotifications() {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings(
-            'app_icon'); // Tên biểu tượng đúng cho Android.
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon'); // Tên biểu tượng đúng cho Android.
 
     // Cấu hình cho iOS mà không có 'onDidReceiveLocalNotification'
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings();
+    const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
+    final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
@@ -203,8 +301,7 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
 
   Future<void> postData(String? token) async {
     try {
-      final http.Response response = await requestHelper.postData(
-          'FireBase/FCMToken?token=$token', _data?.toJson());
+      final http.Response response = await requestHelper.postData('FireBase/FCMToken?token=$token', _data?.toJson());
       print("statusCode: ${response.statusCode}");
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -220,25 +317,81 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
   Future<void> onNotificationResponse(NotificationResponse response) async {
     print('Callback được gọi: onNotificationResponse');
     String? body = response.payload?.toLowerCase();
-        if (body != null) {
-           if (body.contains('đang có') && !body.contains('giao xe hộ cần')) {
-          nextScreen(context, DSXacNhanPage());
-        } else if (body.contains('đã có')) {
-          nextScreen(context, DSXacNhanDiGapPage());
-        } else if (body.contains('giao xe hộ cần')) {
-          nextScreen(context, DSXacNhanGiaoXeHoPage());
-        } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
-          nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
-        } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
-          // nextScreen(context, LichSuYCMoiNhatPage());
-          nextScreen(context, LichSuYCMoiNhatDiGapPage());
-        } else {
-          nextScreen(context, LichSuYCMoiNhatPage());
+    String? payload = response.payload; // Dữ liệu JSON được gửi từ thông báo
+    String? listIds;
+    if (payload != null) {
+      try {
+        Map<String, dynamic> data = jsonDecode(payload); // Parse JSON thành Map
+        print("Data: $data");
+
+        if (data.containsKey('listIds')) {
+          listIds = data['listIds'];
+          print("Datalisstid: $listIds");
         }
-      } else {
-        // Trường hợp không có body trong thông báo
-        print("Không có thông tin body trong thông báo.");
+      } catch (e) {
+        print("Error decoding payload: $e");
       }
+    }
+    if (body != null) {
+      if (body.contains('đang có') && !body.contains('giao xe hộ cần') && !body.contains("xuất xe hộ cần")) {
+        nextScreen(context, DSXacNhanPage());
+      } else if (body.contains('đã có') && !body.contains('yêu cầu bảo dưỡng') && !body.contains('yêu cầu sửa chữa') && !body.contains('lệnh hoàn thành')) {
+        nextScreen(context, DSXacNhanDiGapPage());
+      } else if (body.contains('xuất xe hộ cần')) {
+        nextScreen(context, DSXacNhanXuatXeHoPage());
+      } else if (body.contains('xuất xe hộ') && !body.contains('cần')) {
+        nextScreen(context, LichSuYCMoiNhatXuatHoPage());
+      } else if (body.contains('giao xe hộ cần')) {
+        nextScreen(context, DSXacNhanGiaoXeHoPage());
+      } else if (body.contains("giao xe hộ") && !body.contains('cần')) {
+        nextScreen(context, LichSuYCMoiNhatGiaoHoPage());
+      } else if (!body.contains('đang có') && !body.contains('đã có') && body.contains('trung chuyển đi gấp')) {
+        // nextScreen(context, LichSuYCMoiNhatPage());
+        nextScreen(context, LichSuYCMoiNhatDiGapPage());
+      } else if (body.contains('nhập số km')) {
+        // nextScreen(context, NhapKMPage());
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 0));
+      } else if (body.contains('model') && !body.contains('hệ thống')) {
+        // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+        nextScreen(context, DanhSachPhuongTienPage());
+      } else if (body.contains('hệ thống')) {
+        // nextScreen(context, YeuCauBaoDuongPage(listIds: listIds));
+        nextScreen(context, DanhSachPhuongTienQLPage());
+      } else if (body.contains('yêu cầu bảo dưỡng') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+        nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+      } else if (body.contains('lệnh hoàn thành bảo dưỡng phương tiện')) {
+        nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 2));
+      } else if (body.contains('vừa được xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('vừa bị huỷ 1 yêu cầu bảo dưỡng phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, DanhSachPhuongTienPage());
+      } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành bảo dưỡng phương tiện')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành bảo dưỡng phương tiện') && !body.contains('đề xuất')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('yêu cầu sửa chữa') && !body.contains('vừa được xác nhận') && !body.contains('huỷ')) {
+        nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('lệnh hoàn thành sửa chữa phương tiện')) {
+        nextScreen(context, QuanLyPhuongTienQLNewPage(id: listIds, tabIndex: 3));
+      } else if (body.contains('vừa được xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+      } else if (body.contains('vừa bị huỷ xác nhận 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+      } else if (body.contains('vừa bị huỷ 1 yêu cầu sửa chữa phương tiện') && !body.contains('hoàn thành')) {
+        nextScreen(context, DanhSachPhuongTienPage());
+      } else if (body.contains('vừa được xác nhận 1 đề xuất hoàn thành sửa chữa phương tiện')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+      } else if (body.contains('vừa bị huỷ xác nhận 1 hoàn thành sửa chữa phương tiện') && !body.contains('đề xuất')) {
+        nextScreen(context, QuanLyPhuongTienCaNhanNewPage(id: listIds, tabIndex: 4));
+      } else {
+        nextScreen(context, LichSuYCMoiNhatPage());
+      }
+    } else {
+      // Trường hợp không có body trong thông báo
+      print("Không có thông tin body trong thông báo.");
+    }
     // if (response.payload?.toLowerCase().contains('đang có') ?? false) {
     //   nextScreen(context, DSXacNhanPage());
     //     } else {
@@ -247,28 +400,25 @@ class _BodyBmsScreenState extends State<BodyBmsScreen>
   }
 
   Future foround() async {
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-            alert: true, badge: true, sound: true);
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
   }
 
   Future showNotification(RemoteMessage message) async {
     print("Đã thực hiện hành động mo poup");
 
-    const DarwinNotificationDetails iosPlatformChannelSpecifics =
-        DarwinNotificationDetails(
-            // presentAlert: true, // Hiển thị thông báo dạng banner
-            // presentBadge: true, // Hiển thị badge trên biểu tượng ứng dụng
-            // presentSound: true, // Phát âm thanh thông báo
-            );
+    const DarwinNotificationDetails iosPlatformChannelSpecifics = DarwinNotificationDetails(
+        // presentAlert: true, // Hiển thị thông báo dạng banner
+        // presentBadge: true, // Hiển thị badge trên biểu tượng ứng dụng
+        // presentSound: true, // Phát âm thanh thông báo
+        );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       iOS: iosPlatformChannelSpecifics,
     );
-int uniqueId = DateTime.now().second + Random().nextInt(1000);
+    int uniqueId = DateTime.now().second + Random().nextInt(1000);
     await flutterLocalNotificationsPlugin.show(
-    //  uniqueId,
-    0,
+      //  uniqueId,
+      0,
       message.notification?.title, // Tiêu đề thông báo
       message.notification?.body, // Nội dung thông báo
       platformChannelSpecifics,
@@ -289,13 +439,11 @@ int uniqueId = DateTime.now().second + Random().nextInt(1000);
           versionStatus: status,
           dialogTitle: "CẬP NHẬT",
           dismissButtonText: "Bỏ qua",
-          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " +
-              "${status.localVersion}" +
-              " lên " +
-              "${status.storeVersion}",
+          dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
           dismissAction: () {
             SystemNavigator.pop();
           },
+          allowDismissal: false,
           updateButtonText: "Cập nhật",
         );
       }
@@ -382,8 +530,7 @@ int uniqueId = DateTime.now().second + Random().nextInt(1000);
                 runSpacing: 20.0, // khoảng cách giữa các hàng
                 alignment: WrapAlignment.center,
                 children: [
-                  if (userHasPermission(
-                      menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
+                  if (userHasPermission(menuRoles, 'quan-ly-kho-thanh-pham-mobi'))
                     CustomButton(
                       'THILOTRANS\nAUTO',
                       Stack(
@@ -411,6 +558,21 @@ int uniqueId = DateTime.now().second + Random().nextInt(1000);
                       ),
                       () {
                         _handleButtonTap(NghiepVuChungPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'mms-mobi'))
+                    CustomButton(
+                      'MMS',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/MMS_Logo.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(MmsPage());
                       },
                     ),
                 ],
@@ -447,7 +609,7 @@ Widget CustomButton(String buttonText, Widget page, VoidCallback onTap) {
           Text(
             buttonText.tr(),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 14,
               fontWeight: FontWeight.w800,

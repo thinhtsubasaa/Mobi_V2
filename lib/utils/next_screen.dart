@@ -4,6 +4,13 @@ void nextScreen(context, page) {
   Navigator.push(context, MaterialPageRoute(builder: (builder) => page));
 }
 
+void nextScreenId(context, Widget page, {int? tabIndex}) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => page),
+  );
+}
+
 void nextScreenRoute(BuildContext context, String routeName) {
   Navigator.pushNamed(context, routeName);
 }

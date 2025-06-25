@@ -10,6 +10,7 @@ import 'package:Thilogi/blocs/huyxuatkho_bloc.dart';
 import 'package:Thilogi/blocs/khoxe_bloc.dart';
 import 'package:Thilogi/blocs/menu_roles.dart';
 import 'package:Thilogi/blocs/nhapbai.dart';
+import 'package:Thilogi/blocs/phienban_bloc.dart';
 import 'package:Thilogi/blocs/scan_bloc.dart';
 import 'package:Thilogi/blocs/scan_nhanvien_bloc.dart';
 import 'package:Thilogi/blocs/thaydoikehoach_bloc.dart';
@@ -19,10 +20,8 @@ import 'package:Thilogi/blocs/user_bloc.dart';
 import 'package:Thilogi/blocs/vitri_bloc.dart';
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/blocs/xuatkho_bloc.dart';
-import 'package:Thilogi/models/theme.dart';
 import 'package:Thilogi/pages/splash.dart';
 import 'package:Thilogi/services/auth_service.dart';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -105,6 +104,9 @@ class MyApp extends StatelessWidget {
                 ),
                 ChangeNotifierProvider<HuyGiaoXeBloc>(
                   create: (context) => HuyGiaoXeBloc(),
+                ),
+                ChangeNotifierProvider<PhienBanBloc>(
+                  create: (context) => PhienBanBloc(),
                 ),
               ],
               child: MaterialApp(

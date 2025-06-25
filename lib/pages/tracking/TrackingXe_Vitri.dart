@@ -483,8 +483,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                           children: _giaoxe!.map((item) {
                                             return buildRowItem(
                                               customImage: CustomImage1(),
-                                              textLine:
-                                                  (item.ngay != null ? formatDateTime(item.ngay ?? "") : "") + '\n' + (item.noiGiao ?? "") + '\n' + 'Số TBGX: ' + (item.soTBGX ?? "") + '\n' + (item.nguoiPhuTrach ?? ""),
+                                              textLine: (item.ngay != null ? formatDateTime(item.ngay ?? "") : "") + '\n' + (item.noiGiao ?? "") + '\n' + 'Số TBGX: ' + (item.soTBGX ?? "") + '\n' + (item.nguoiPhuTrach ?? ""),
                                             );
                                           }).toList(),
                                         ),
@@ -525,15 +524,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             return buildRowItem(
                                                 customImage: isNewKho ? CustomImage3() : SizedBox(width: 120),
                                                 // customImage: CustomImage3(),
-                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
-                                                    '\n' +
-                                                    (item.kho ?? "") +
-                                                    ' - ' +
-                                                    (item.baiXe ?? "") +
-                                                    " - Vị trí: " +
-                                                    (item.viTri ?? "") +
-                                                    '\n' +
-                                                    (item.nguoiNhapBai ?? ""));
+                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") + '\n' + (item.kho ?? "") + ' - ' + (item.baiXe ?? "") + " - Vị trí: " + (item.viTri ?? "") + '\n' + (item.nguoiNhapBai ?? ""));
                                           }).toList(),
                                         ),
                                       if (_xuatxe != null)
@@ -573,15 +564,7 @@ class _TrackingXeVitriPageState extends State<TrackingXeVitriPage> with SingleTi
                                             return buildRowItem(
                                                 customImage: isNewKho ? CustomImage5() : SizedBox(width: 100),
                                                 // customImage: CustomImage3(),
-                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") +
-                                                    '\n' +
-                                                    (item.kho ?? "") +
-                                                    ' - ' +
-                                                    (item.baiXe ?? "") +
-                                                    " - Vị trí: " +
-                                                    (item.viTri ?? "") +
-                                                    '\n' +
-                                                    (item.nguoiNhapBai ?? ""));
+                                                textLine: (item.thoiGianVao != null ? (item.thoiGianVao ?? "") : "") + '\n' + (item.kho ?? "") + ' - ' + (item.baiXe ?? "") + " - Vị trí: " + (item.viTri ?? "") + '\n' + (item.nguoiNhapBai ?? ""));
                                           }).toList(),
                                         ),
                                       if (_xequa != null)

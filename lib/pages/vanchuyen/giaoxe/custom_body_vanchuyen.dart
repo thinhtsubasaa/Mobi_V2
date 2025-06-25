@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Thilogi/pages/dsxchovanchuyen/dsx_chovc.dart';
 import 'package:Thilogi/pages/huyxuatkho/huyxuatkho.dart';
-import 'package:Thilogi/pages/lichsuyeucaumoinhatgiaoho/yeucaumoinhatgiaoho.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -19,6 +18,7 @@ import '../../../models/menurole.dart';
 import '../../../widgets/loading.dart';
 
 import '../../dschogiaoxeho/dsxacnhangiaoxeho.dart';
+import '../../dschoxuatxeho/dsxacnhanxuatxeho.dart';
 import '../../huygiaoxe/huygiaoxe.dart';
 import '../../khoxe/khoxe.dart';
 import '../../lichsugiaohocanhan/dsx_yeucaucanhangiaoho.dart';
@@ -93,27 +93,6 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
     });
   }
 
-  // bool userHasPermission(String? url1) {
-  //   print(_mb.menurole);
-  //   print('url5:$url1');
-  //   // Kiểm tra xem _mb.menurole có null không
-  //   if (_mb.menurole != null) {
-  //     url = _mb.menurole!
-  //         .firstWhere((menuRole) => menuRole.url == url1,
-  //             orElse: () => MenuRoleModel())
-  //         ?.url;
-  //     print('url1:$url');
-  //     if (url == url1) {
-  //       print("object:$url");
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else {
-  //     // Trả về false nếu _mb.menurole là null
-  //     return false;
-  //   }
-  // }
   bool userHasPermission(List<MenuRoleModel> menuRoles, String? url1) {
     // Kiểm tra xem menuRoles có chứa quyền truy cập đến url1 không
     return menuRoles.any((menuRole) => menuRole.url == url1);
@@ -230,6 +209,19 @@ class _BodyQLKhoXeScreenState extends State<BodyQLKhoXeScreen> with TickerProvid
                           ],
                         ), () {
                       _handleButtonTap(DSXacNhanGiaoXeHoPage());
+                    }),
+                  if (userHasPermission(menuRoles, 'danh-sach-xac-nhan-xuat-xe-ho-mobi'))
+                    CustomButton(
+                        'DANH SÁCH XÁC NHẬN XUẤT XE HỘ',
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/Button_02_QLBaiXe_XuatBai_DSChoXuat.png',
+                            ),
+                          ],
+                        ), () {
+                      _handleButtonTap(DSXacNhanXuatXeHoPage());
                     }),
                   if (userHasPermission(menuRoles, 'lich-su-yeu-cau-giao-xe-ho-mobi'))
                     CustomButton(

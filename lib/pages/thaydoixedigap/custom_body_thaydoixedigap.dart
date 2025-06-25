@@ -3,15 +3,11 @@ import 'dart:convert';
 
 import 'package:Thilogi/blocs/xeracong_bloc.dart';
 import 'package:Thilogi/models/kehoachgiaoxe.dart';
-import 'package:Thilogi/models/lydo.dart';
-import 'package:Thilogi/models/noiden.dart';
-import 'package:Thilogi/models/xeracong.dart';
 import 'package:Thilogi/pages/lichsuyeucaucanhandigap/dsx_yeucaucanhandigap.dart';
 import 'package:Thilogi/services/app_service.dart';
 import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
 import 'package:Thilogi/services/request_helper.dart';
 import 'package:flutter_datawedge/flutter_datawedge.dart';
 import 'package:flutter_datawedge/models/scan_result.dart';
@@ -985,7 +981,7 @@ class InfoColumn extends StatelessWidget {
                         textStyle: const TextStyle(
                           fontFamily: 'Comfortaa',
                           fontWeight: FontWeight.w700,
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(13), // Bo góc

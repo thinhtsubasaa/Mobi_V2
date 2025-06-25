@@ -37,7 +37,11 @@ class XuatKhoModel {
   String? bienSoTam;
   String? bienSoTamAo;
   String? phuongThuc_Id;
+  double? khoangCach;
+  String? noigiao;
   bool? isDiGap;
+  bool? isTrue;
+  String? keHoachGiaoXe_Id;
 
   XuatKhoModel(
       {this.key,
@@ -77,6 +81,10 @@ class XuatKhoModel {
       this.isDiGap,
       this.bienSoTamAo,
       this.xeCong,
+      this.isTrue,
+      this.khoangCach,
+      this.noigiao,
+      this.keHoachGiaoXe_Id,
       this.phuongThuc_Id,
       this.nguoiPhuTrach});
 
@@ -119,6 +127,10 @@ class XuatKhoModel {
       bienSoTam: json["bienSoTam"],
       phuongThuc_Id: json["phuongThuc_Id"],
       xeCong: json["xeCong"],
+      isTrue: json["isTrue"],
+      khoangCach: json["khoangCach"],
+      noigiao: json["noigiao"],
+      keHoachGiaoXe_Id: json["keHoachGiaoXe_Id"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -153,5 +165,6 @@ class XuatKhoModel {
         "hinhAnh": hinhAnh,
         "bienSoTam": bienSoTam,
         "bienSoTamAo": bienSoTamAo,
+        "keHoachGiaoXe_Id": keHoachGiaoXe_Id,
       };
 }
