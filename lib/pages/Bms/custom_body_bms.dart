@@ -426,8 +426,8 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
 
   void _checkVersion() async {
     final newVersion = NewVersion(
-      iOSId: "com.thilogi.vn.logistics",
-      androidId: "com.thilogi.vn.logistics",
+      iOSId: "",
+      androidId: "",
     );
     final status = await newVersion.getVersionStatus();
     if (status != null) {

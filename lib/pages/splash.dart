@@ -31,37 +31,11 @@ class _SplashPageState extends State<SplashPage> {
     // _checkVersion();
   }
 
-  // void _checkVersion() async {
-  //   final newVersion = NewVersion(
-  //     iOSId: "com.thilogi.vn.logistics",
-  //     androidId: "com.thilogi.vn.logistics",
-  //   );
-  //   final status = await newVersion.getVersionStatus();
-  //   if (status != null) {
-  //     if (_isVersionLower(status.localVersion, status.storeVersion)) {
-  //       newVersion.showUpdateDialog(
-  //         context: context,
-  //         versionStatus: status,
-  //         dialogTitle: "CẬP NHẬT",
-  //         dismissButtonText: "Bỏ qua",
-  //         dialogText: "Ứng dụng đã có phiên bản mới, vui lòng cập nhật " + "${status.localVersion}" + " lên " + "${status.storeVersion}",
-  //         dismissAction: () {
-  //           SystemNavigator.pop();
-  //         },
-  //         updateButtonText: "Cập nhật",
-  //         allowDismissal: false
-  //       );
-  //     }
-  //     print("DEVICE : " + status.localVersion);
-  //     print("STORE : " + status.storeVersion);
-  //   }
-  // }
-
   void _checkVersion() async {
     print("BACKEND : ${_model?.maPhienBan}");
     final newVersion = NewVersion(
-      iOSId: "com.thilogi.vn.logistics",
-      androidId: "com.thilogi.vn.logistics",
+      iOSId: "",
+      androidId: "",
     );
     final status = await newVersion.getVersionStatus();
     if (status != null) {
