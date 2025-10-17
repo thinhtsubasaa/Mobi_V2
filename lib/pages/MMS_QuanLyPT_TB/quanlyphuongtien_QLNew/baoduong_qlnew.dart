@@ -75,6 +75,7 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController soKhungController = TextEditingController();
   final TextEditingController _ghiChu = TextEditingController();
+  final TextEditingController _ghiChu2 = TextEditingController();
   final TextEditingController _chiphi = TextEditingController();
   Map<String, TextEditingController> chiphiControllers = {};
   bool _IsTuChoi = false;
@@ -526,6 +527,8 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
     _data?.phuongTien_Id = item?.phuongTien_Id;
     _data?.soKM = item?.soKM;
     _data?.diaDiem_Id = DiaDiem_Id;
+    _data?.ketQua = _ghiChu2.text;
+    print("data ghi chus = ${_data?.ketQua}");
     // _data?.keHoachGiaoXe_Id = item?.keHoachGiaoXe_Id;
     // _data?.nguoiYeuCau = item?.nguoiYeuCau;
 
@@ -552,6 +555,7 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
           setState(() {
             _IsTuChoi = false;
             _IsXacNhan = false;
+            _ghiChu2.text = "";
             selectedIds = [];
             _qrDataController.text = '';
             getListThayDoiKH(widget.id, soKhungController.text);
@@ -1053,6 +1057,7 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
   void _showHangMucPopup(BuildContext context, StateSetter parentSetState, TextEditingController controller) {
     bool isExpanded = true; // trạng thái mở rộng danh sách
     bool isExpanded2 = true; // trạng thái mở rộng danh sách
+
     showDialog(
       context: context,
       barrierDismissible: false, // Ngăn bấm ra ngoài để đóng
@@ -1075,8 +1080,9 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Header với dấu X đóng
+
                     Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -1226,6 +1232,10 @@ class _BodyBaoDuongQLNewScreenState extends State<BodyBaoDuongQLNewScreen> with 
                             ),
                         ],
                       ),
+                    ),
+                    ItemNhapGhiChu(
+                      title: 'Ghi chú: ',
+                      controller: _ghiChu2,
                     ),
                     // Nút Xong
                     Padding(
@@ -3259,6 +3269,57 @@ class ItemNhapChiPhi extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF818180),
+              ),
+            ),
+            const SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: const TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: const InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  // contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemNhapGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemNhapGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 6.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.textInput,
               ),
             ),
             const SizedBox(width: 10), // Khoảng cách giữa title và text field

@@ -118,10 +118,12 @@ class _SplashPageState extends State<SplashPage> {
         _ab.getData();
         _goToHomePage();
         print(("API: ${_ab.apiUrl}"));
+        print(("API_MMS: ${ub.apiUrl2}"));
       } else {
         _goToLoginPage();
         _checkVersion();
         print(("API: ${_ab.apiUrl}"));
+        print(("API_MMS: ${ub.apiUrl2}"));
       }
     });
   }

@@ -20,7 +20,7 @@ class MmsPage extends StatelessWidget {
       appBar: customAppBar(context),
       body: Column(
         children: [
-          CustomCardMMS(),
+          CustomCard_New(title: "MMS"),
           Expanded(
             child: Container(
               width: 100.w,

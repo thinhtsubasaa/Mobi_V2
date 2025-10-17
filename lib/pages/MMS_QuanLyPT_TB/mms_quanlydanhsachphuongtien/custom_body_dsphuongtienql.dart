@@ -68,6 +68,7 @@ class _BodyDanhSachPhuongTienQLScreenState extends State<BodyDanhSachPhuongTienQ
   final TextEditingController textEditingController = TextEditingController();
   final TextEditingController soKhungController = TextEditingController();
   final TextEditingController _ghiChu = TextEditingController();
+  final TextEditingController _ghiChu2 = TextEditingController();
   final TextEditingController _chiphi = TextEditingController();
   Map<String, TextEditingController> chiphiControllers = {};
   String? body;
@@ -563,6 +564,8 @@ class _BodyDanhSachPhuongTienQLScreenState extends State<BodyDanhSachPhuongTienQ
     _data?.phuongTien_Id = item?.id;
     _data?.soKM = item?.soKM;
     _data?.diaDiem_Id = DiaDiem_Id;
+    _data?.ketQua = _ghiChu2.text;
+    print("data ghi chus = ${_data?.ketQua}");
     // _data?.keHoachGiaoXe_Id = item?.keHoachGiaoXe_Id;
     // _data?.nguoiYeuCau = item?.nguoiYeuCau;
 
@@ -589,6 +592,8 @@ class _BodyDanhSachPhuongTienQLScreenState extends State<BodyDanhSachPhuongTienQ
           setState(() {
             _IsTuChoi = false;
             _IsXacNhan = false;
+            _ghiChu2.text = "";
+
             selectedIds = [];
             getBienSo(DonVi_Id ?? "", TinhTrang_Id ?? "", soKhungController.text);
             postDataFireBase(_thongbao, body ?? "", _data?.nguoiYeuCau ?? "", item?.id);
@@ -2573,16 +2578,19 @@ class _BodyDanhSachPhuongTienQLScreenState extends State<BodyDanhSachPhuongTienQ
           PaginatedDataTable(
             columns: const [
               DataColumn(label: Text('STT')),
-              DataColumn(label: Text('Hành động')),
+              // DataColumn(label: Text('Hành động')),
               DataColumn(label: Text('Chi tiết')),
               DataColumn(label: Text('Trạng thái')),
               DataColumn(label: Text('Biển số 1')),
-              DataColumn(label: Text('Biển số 2')),
-              DataColumn(label: Text('Số khung')),
+              // DataColumn(label: Text('Biển số 2')),
+              // DataColumn(label: Text('Số khung')),
+              DataColumn(label: Text('Số KM')),
+              DataColumn(label: Text('Số KM_Adsun')),
               DataColumn(label: Text('Model')),
-              DataColumn(label: Text('Model_Option')),
+              // DataColumn(label: Text('Model_Option')),
               DataColumn(label: Text('Người phụ trách')),
-              DataColumn(label: Text('Mã nhân viên')),
+              // DataColumn(label: Text('Mã nhân viên')),
+              DataColumn(label: Text('Bộ phận')),
               DataColumn(label: Text('Đơn vị')),
             ],
             source: dataSource,
@@ -2767,6 +2775,10 @@ class _BodyDanhSachPhuongTienQLScreenState extends State<BodyDanhSachPhuongTienQ
                             ),
                         ],
                       ),
+                    ),
+                    ItemNhapGhiChu(
+                      title: 'Ghi chú: ',
+                      controller: _ghiChu2,
                     ),
                     // Nút Xong
                     Padding(
@@ -3550,6 +3562,57 @@ class ItemNhapChiPhi extends StatelessWidget {
   }
 }
 
+class ItemNhapGhiChu extends StatelessWidget {
+  final String title;
+  final TextEditingController controller;
+
+  const ItemNhapGhiChu({
+    Key? key,
+    required this.title,
+    required this.controller,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 6.h,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: Center(
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Comfortaa',
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppConfig.textInput,
+              ),
+            ),
+            const SizedBox(width: 10), // Khoảng cách giữa title và text field
+            Expanded(
+              child: TextField(
+                controller: controller,
+                style: const TextStyle(
+                  fontFamily: 'Comfortaa',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppConfig.primaryColor,
+                ),
+                decoration: const InputDecoration(
+                  border: InputBorder.none, // Loại bỏ đường viền mặc định
+                  hintText: '',
+                  // contentPadding: EdgeInsets.symmetric(vertical: 9),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class KeHoachDataSource extends DataTableSource {
   final List<PhuongTienModel> keHoachList;
   final List<bool> selectedItems;
@@ -3582,64 +3645,70 @@ class KeHoachDataSource extends DataTableSource {
     bool isHoanThanh = item.isHoanThanh == true;
     return DataRow.byIndex(
       index: index,
+      onSelectChanged: (value) {
+        onChiTietClick(index); // chuyển sang trang chi tiết
+      },
       cells: [
         DataCell(Text(
           (index + 1).toString(),
           textAlign: TextAlign.center,
         )), // STT
-        DataCell(Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isEligible)
-              Checkbox(
-                value: item.isYeuCau ?? false,
-                onChanged: (val) => onDuyet1(index),
-                activeColor: item.isYeuCau == true ? Colors.green : Colors.grey,
-              ),
-            if (isDaDuyet)
-              Row(
-                children: [
-                  Checkbox(
-                    value: isHoanThanh && isEligible ? false : (isDuyet2 ? true : selectedItems[index]),
-                    onChanged: (val) {
-                      if (isDuyet2 && val == false) {
-                        onHuyDuyet(index);
-                      } else {
-                        onDuyet2(index);
-                      }
-                    },
-                    activeColor: isDuyet2
-                        ? Colors.green
-                        : selectedItems[index]
-                            ? Colors.blue
-                            : Colors.grey,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close, color: isDuyet ? Colors.red : Colors.grey),
-                    onPressed: isDuyet ? () => onHuy(index) : null,
-                  ),
-                ],
-              ),
-            if (isDuyetHoanThanh)
-              Checkbox(
-                value: isHoanThanh,
-                onChanged: (val) => onHoanThanh(index),
-                activeColor: isHoanThanh ? Colors.green : Colors.grey,
-              ),
-          ],
-        )),
+        // DataCell(Column(
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: [
+        //     if (isEligible)
+        //       Checkbox(
+        //         value: item.isYeuCau ?? false,
+        //         onChanged: (val) => onDuyet1(index),
+        //         activeColor: item.isYeuCau == true ? Colors.green : Colors.grey,
+        //       ),
+        //     if (isDaDuyet)
+        //       Row(
+        //         children: [
+        //           Checkbox(
+        //             value: isHoanThanh && isEligible ? false : (isDuyet2 ? true : selectedItems[index]),
+        //             onChanged: (val) {
+        //               if (isDuyet2 && val == false) {
+        //                 onHuyDuyet(index);
+        //               } else {
+        //                 onDuyet2(index);
+        //               }
+        //             },
+        //             activeColor: isDuyet2
+        //                 ? Colors.green
+        //                 : selectedItems[index]
+        //                     ? Colors.blue
+        //                     : Colors.grey,
+        //           ),
+        //           IconButton(
+        //             icon: Icon(Icons.close, color: isDuyet ? Colors.red : Colors.grey),
+        //             onPressed: isDuyet ? () => onHuy(index) : null,
+        //           ),
+        //         ],
+        //       ),
+        //     if (isDuyetHoanThanh)
+        //       Checkbox(
+        //         value: isHoanThanh,
+        //         onChanged: (val) => onHoanThanh(index),
+        //         activeColor: isHoanThanh ? Colors.green : Colors.grey,
+        //       ),
+        //   ],
+        // )),
         DataCell(IconButton(
           icon: Icon(Icons.info, color: Colors.blue),
           onPressed: () => onChiTietClick(index),
         )),
         DataCell(Text(item.tinhTrang ?? '')),
         DataCell(Text(item.bienSo1 ?? '')),
-        DataCell(Text(item.bienSo2 ?? '')),
-        DataCell(Text(item.soKhung ?? '')),
+        // DataCell(Text(item.bienSo2 ?? '')),
+        // DataCell(Text(item.soKhung ?? '')),
+        DataCell(Text(item.soKM ?? '')),
+        DataCell(Text(item.soKM_Adsun ?? '')),
         DataCell(Text(item.model ?? '')),
-        DataCell(Text(item.model_Option ?? '')),
+        // DataCell(Text(item.model_Option ?? '')),
         DataCell(Text(item.nguoiPhuTrach ?? '')),
-        DataCell(Text(item.maNhanVien ?? '')),
+        // DataCell(Text(item.maNhanVien ?? '')),
+        DataCell(Text(item.boPhan ?? '')),
         DataCell(Text(item.donViSuDung ?? '')),
       ],
     );
@@ -3658,8 +3727,8 @@ class KeHoachDataSource extends DataTableSource {
 Widget _cellWithBorder(Widget child) {
   return Container(
     alignment: Alignment.center,
-    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-    decoration: BoxDecoration(
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+    decoration: const BoxDecoration(
       border: Border(
         right: BorderSide(color: Colors.black, width: 1), // viền đen
       ),

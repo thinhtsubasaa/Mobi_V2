@@ -136,7 +136,6 @@ class _BodyNhapKMScreenState extends State<BodyNhapKMScreen> with TickerProvider
             final tempDir = await getTemporaryDirectory();
             final file = await File('${tempDir.path}/${asset.name}').create();
             file.writeAsBytesSync(imageData);
-
             print('file: ${file.path}');
             setState(() {
               _lstFiles.add(FileItem(
@@ -167,6 +166,49 @@ class _BodyNhapKMScreenState extends State<BodyNhapKMScreen> with TickerProvider
       }
     }
   }
+
+  // Future imageSelector(BuildContext context, String pickerType) async {
+  //   if (pickerType == "gallery") {
+  //     // Sử dụng file_picker để chọn nhiều ảnh từ thư viện
+  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.image,
+  //       allowMultiple: true,
+  //     );
+
+  //     if (result != null) {
+  //       for (var file in result.files) {
+  //         if (file.path != null) {
+  //           print('file: ${file.path}');
+
+  //           setState(() {
+  //             _lstFiles.add(FileItem(
+  //               uploaded: false,
+  //               file: file.path!, // Đường dẫn file
+  //               local: true,
+  //               isRemoved: false,
+  //             ));
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       print('No images selected');
+  //     }
+  //   } else if (pickerType == "camera") {
+  //     // Sử dụng image_picker để chụp ảnh từ camera
+  //     _pickedFile = await _picker.getImage(source: ImageSource.camera);
+
+  //     if (_pickedFile != null) {
+  //       setState(() {
+  //         _lstFiles.add(FileItem(
+  //           uploaded: false,
+  //           file: _pickedFile!.path,
+  //           local: true,
+  //           isRemoved: false,
+  //         ));
+  //       });
+  //     }
+  //   }
+  // }
 
   // Upload image to server and return path(url)
   Future<void> _uploadAnh() async {

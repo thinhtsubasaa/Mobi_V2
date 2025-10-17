@@ -276,7 +276,7 @@ class _BodyCVVanChuyenScreenState extends State<BodyCVVanChuyenScreen> with Tick
                             children: [
                               Container(
                                 padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
                                   // border: Border.all(color: Colors.black, width: 2),
                                 ),

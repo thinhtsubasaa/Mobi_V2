@@ -24,14 +24,12 @@ import '../../config/config.dart';
 import '../../models/menurole.dart';
 import '../../widgets/loading.dart';
 import 'package:new_version/new_version.dart';
-import '../MMS_QuanLyPT_TB/lichsuyeucaumoinhatbaoduong/yeucaumoinhatbaoduong.dart';
+import '../KPI_QuanLyKPI/KPI/KPI.dart';
 import '../MMS_QuanLyPT_TB/mms_danhsachphuongtien/dsphuongtien.dart';
-import '../MMS_QuanLyPT_TB/mms_ketquabaoduong/lsxbaoduong.dart';
 import '../MMS_QuanLyPT_TB/mms_quanlydanhsachphuongtien/qldsphuongtien.dart';
-import '../MMS_QuanLyPT_TB/mms_yeucaubaoduong/baoduong.dart';
-import '../MMS_QuanLyPT_TB/mms_yeucaunhapkm/NhapKM.dart';
 import '../MMS_QuanLyPT_TB/quanlyphuongtien_QLNew/quanlyphuongtien_canhan.dart';
 import '../MMS_QuanLyPT_TB/quanlyphuongtien_QLNew/quanlyphuongtien_qlnew.dart';
+import '../SIS_ThiTracNghiem/sis/sis.dart';
 import '../dschogiaoxeho/dsxacnhangiaoxeho.dart';
 import '../dschoxuatxeho/dsxacnhanxuatxeho.dart';
 import '../lichsuyeucaumoinhatdigap/yeucaumoinhatdigap.dart';
@@ -573,6 +571,36 @@ class _BodyBmsScreenState extends State<BodyBmsScreen> with TickerProviderStateM
                       ),
                       () {
                         _handleButtonTap(MmsPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'sis-mobi'))
+                    CustomButton(
+                      'SIS',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/SIS_Logo.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(SisPage());
+                      },
+                    ),
+                  if (userHasPermission(menuRoles, 'kpi-mobi'))
+                    CustomButton(
+                      'KPI',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/KPI_Logo_New.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(KPIPage());
                       },
                     ),
                 ],

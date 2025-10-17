@@ -111,6 +111,7 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
   String? _previousPhuongTienId;
   bool _errorHinhAnh = false;
   bool _errorChiPhiSC = false;
+  bool _errorNhapKM = false;
 
   @override
   void initState() {
@@ -589,8 +590,25 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            file = await compressImage(file);
+          }
         }
 
         var response = await RequestHelperMMS().uploadFile(file);
@@ -669,6 +687,7 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
             _tongChiPhi.text = '';
             _errorChiPhiSC = false;
             _errorHinhAnh = false;
+            _errorNhapKM = false;
             _lstFiles.clear();
             getListThayDoiKH(widget.id, textEditingController.text);
             _data = null;
@@ -787,6 +806,7 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
                               setState(() {
                                 _errorChiPhiSC = false;
                                 _errorHinhAnh = false;
+                                _errorNhapKM = false;
                               });
                               Navigator.of(context).pop();
                             },
@@ -822,9 +842,14 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
                                             controller: _ghiChu,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          ItemGhiChu(
+                                          // ItemGhiChu(
+                                          //   title: 'Nhập số KM hiện tại: ',
+                                          //   controller: soKMController,
+                                          // ),
+                                          buildInputWithError(
                                             title: 'Nhập số KM hiện tại: ',
                                             controller: soKMController,
+                                            showError: _errorNhapKM,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           // ItemGhiChu(
@@ -1010,9 +1035,10 @@ class _BodySuaChuaScreenState extends State<BodySuaChuaScreen> with TickerProvid
                               setState(() {
                                 _errorChiPhiSC = _tongChiPhi.text.isEmpty;
                                 _errorHinhAnh = lstFilesNotifier.value.isEmpty;
+                                _errorNhapKM = soKMController.text.isEmpty;
                               });
 
-                              if (_errorChiPhiSC || _errorHinhAnh) {
+                              if (_errorChiPhiSC || _errorHinhAnh || _errorNhapKM) {
                                 _btnController.reset();
                                 return;
                               }

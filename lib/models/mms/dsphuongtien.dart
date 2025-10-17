@@ -63,6 +63,10 @@ class PhuongTienModel {
   String? chiPhiSC2;
   String? vatTuThayThe;
   String? danhSachHangMuc;
+  String? maThietBi;
+  String? name;
+  String? loaiTB;
+  String? boPhan;
 
   List<HangMucModel>? lichSu;
 
@@ -129,6 +133,10 @@ class PhuongTienModel {
       this.chiPhiBD2,
       this.chiPhiSC2,
       this.vatTuThayThe,
+      this.maThietBi,
+      this.name,
+      this.loaiTB,
+      this.boPhan,
       this.isHoanThanh});
   factory PhuongTienModel.fromJson(Map<String, dynamic> json) {
     return PhuongTienModel(
@@ -193,9 +201,25 @@ class PhuongTienModel {
         chiPhiBD2: json['chiPhiBD2'],
         chiPhiSC2: json['chiPhiSC2'],
         vatTuThayThe: json['vatTuThayThe'],
+        maThietBi: json['maThietBi'],
+        name: json['name'],
+        loaiTB: json['loaiTB'],
+        boPhan: json['boPhan'],
         lichSu: (json['lichSu'] as List<dynamic>?)?.map((e) => HangMucModel.fromJson(e as Map<String, dynamic>)).toList(),
         isHoanThanh: json["isHoanThanh"]);
   }
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'noiDung': noiDung, 'ketQua': ketQua, 'lichSuSuaChua_Id': lichSuSuaChua_Id, 'lichSuBaoDuong_Id': lichSuBaoDuong_Id, 'phuongTien_Id': phuongTien_Id, 'phuongTien2_Id': phuongTien2_Id, 'nguoiGhep': nguoiGhep, 'nguoiThao': nguoiThao, 'diaDiem_Id': diaDiem_Id, 'tenDiaDien': tenDiaDiem};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'noiDung': noiDung,
+        'model_Id': model_Id,
+        'ketQua': ketQua,
+        'lichSuSuaChua_Id': lichSuSuaChua_Id,
+        'lichSuBaoDuong_Id': lichSuBaoDuong_Id,
+        'phuongTien_Id': phuongTien_Id,
+        'phuongTien2_Id': phuongTien2_Id,
+        'nguoiGhep': nguoiGhep,
+        'nguoiThao': nguoiThao,
+        'diaDiem_Id': diaDiem_Id,
+        'tenDiaDien': tenDiaDiem
+      };
 }

@@ -17,8 +17,6 @@ import '../../../models/menurole.dart';
 import '../../../widgets/loading.dart';
 import '../capnhatkehoach/capnhatkh.dart';
 import '../dschoxacnhan/dsxacnhan.dart';
-import '../lichsuyeucaumoinhat/yeucaumoinhat.dart';
-import '../lichsuyeucaumoinhatdigap/yeucaumoinhatdigap.dart';
 import '../thaydoixedigap/dsxacnhandigap.dart';
 import '../thaydoixedigap/thaydoixedigap.dart';
 

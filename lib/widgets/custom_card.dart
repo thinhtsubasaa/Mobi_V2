@@ -198,7 +198,7 @@ class _CustomCardBmsState extends State<CustomCardBms> with SingleTickerProvider
               children: [
                 Container(
                   padding: EdgeInsets.only(right: 2.w),
-                  child:const Center(
+                  child: const Center(
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
@@ -270,7 +270,6 @@ class _CustomCardBmsState extends State<CustomCardBms> with SingleTickerProvider
                     icon: Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
-                      
                     ),
                   ),
                 ),
@@ -282,15 +281,20 @@ class _CustomCardBmsState extends State<CustomCardBms> with SingleTickerProvider
     );
   }
 }
-class CustomCardMMS extends StatefulWidget {
-  const CustomCardMMS({super.key});
+
+// ignore: must_be_immutable
+class CustomCard_New extends StatefulWidget {
+  String? title;
+
+  CustomCard_New({super.key, this.title});
 
   @override
-  State<CustomCardMMS> createState() => _CustomCardMMSState();
+  State<CustomCard_New> createState() => _CustomCard_NewState();
 }
 
-class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProviderStateMixin {
+class _CustomCard_NewState extends State<CustomCard_New> with SingleTickerProviderStateMixin {
   late UserBloc? _ub;
+  String? title;
 
   @override
   void initState() {
@@ -320,7 +324,7 @@ class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProvider
           Container(
             padding: EdgeInsets.only(left: 3.w),
             child: Text(
-              'MMS',
+              widget.title ?? "",
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 22.sp,
@@ -334,7 +338,7 @@ class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProvider
               children: [
                 Container(
                   padding: EdgeInsets.only(right: 2.w),
-                  child:const Center(
+                  child: const Center(
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
@@ -376,8 +380,8 @@ class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProvider
                         value: MenuOption.Settings,
                         child: Row(
                           children: [
-                            Icon(Icons.settings),
-                            SizedBox(width: 8.0),
+                            const Icon(Icons.settings),
+                            const SizedBox(width: 8.0),
                             Text('Cài đặt'.tr()),
                           ],
                         ),
@@ -386,8 +390,8 @@ class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProvider
                         value: MenuOption.Profile,
                         child: Row(
                           children: [
-                            Icon(Icons.person),
-                            SizedBox(width: 8.0),
+                            const Icon(Icons.person),
+                            const SizedBox(width: 8.0),
                             Text('Thông tin cá nhân'.tr()),
                           ],
                         ),
@@ -396,17 +400,16 @@ class _CustomCardMMSState extends State<CustomCardMMS> with SingleTickerProvider
                         value: MenuOption.Logout,
                         child: Row(
                           children: [
-                            Icon(Icons.logout),
-                            SizedBox(width: 8.0),
+                            const Icon(Icons.logout),
+                            const SizedBox(width: 8.0),
                             Text('Đăng xuất'.tr()),
                           ],
                         ),
                       ),
                     ],
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_drop_down,
                       color: Colors.white,
-                      
                     ),
                   ),
                 ),

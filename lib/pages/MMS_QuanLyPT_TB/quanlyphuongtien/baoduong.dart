@@ -113,6 +113,7 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
   bool _errorChiPhiBD = false;
   bool _errorHinhAnh = false;
   bool _errorChiPhiSC = false;
+  bool _errorNhapKM = false;
 
   @override
   void initState() {
@@ -591,8 +592,25 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            file = await compressImage(file);
+          }
         }
 
         var response = await RequestHelperMMS().uploadFile(file);
@@ -676,6 +694,7 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
             _errorChiPhiBD = false;
             _errorChiPhiSC = false;
             _errorHinhAnh = false;
+            _errorNhapKM = false;
             _lstFiles.clear();
             getListThayDoiKH(widget.id, textEditingController.text);
             _data = null;
@@ -795,6 +814,7 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
                                 _errorChiPhiBD = false;
                                 _errorChiPhiSC = false;
                                 _errorHinhAnh = false;
+                                _errorNhapKM = false;
                               });
                               Navigator.of(context).pop();
                             },
@@ -830,9 +850,14 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
                                             controller: _ghiChu,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          ItemGhiChu(
+                                          // ItemGhiChu(
+                                          //   title: 'Nhập số KM hiện tại: ',
+                                          //   controller: soKMController,
+                                          // ),
+                                          buildInputWithError(
                                             title: 'Nhập số KM hiện tại: ',
                                             controller: soKMController,
+                                            showError: _errorNhapKM,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           // ItemGhiChu(
@@ -1031,10 +1056,11 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
                               setState(() {
                                 _errorChiPhiBD = _tongChiPhiBD.text.isEmpty;
                                 _errorChiPhiSC = _tongChiPhiSC.text.isEmpty;
+                                _errorNhapKM = soKMController.text.isEmpty;
                                 _errorHinhAnh = lstFilesNotifier.value.isEmpty;
                               });
 
-                              if (_errorChiPhiBD || _errorChiPhiSC || _errorHinhAnh) {
+                              if (_errorChiPhiBD || _errorChiPhiSC || _errorHinhAnh || _errorNhapKM) {
                                 _btnController.reset();
                                 return;
                               }
@@ -1521,7 +1547,7 @@ class _BodyBaoDuongScreenState extends State<BodyBaoDuongScreen> with TickerProv
                                         isYeuCau: item?.isYeuCau ?? false,
                                         isHoanThanh: item?.isHoanThanh ?? false,
                                         noiDung: item?.noiDung ?? "",
-                                        ketQua: item?.ketQua ?? "",
+                                        ketQua: item?.soKM ?? "",
                                         chiPhi: item?.tongChiPhi ?? "",
                                         tenDiaDiem: item?.tenDiaDiem ?? "",
                                         isLenhHoanThanh: item?.isLenhHoanThanh ?? false,
@@ -1778,7 +1804,7 @@ class InfoColumn extends StatelessWidget {
               ),
 
             InfoRow(
-              title: "Ghi chú:",
+              title: "Số KM:",
               contentYC: ketQua,
             ),
             InfoRow(

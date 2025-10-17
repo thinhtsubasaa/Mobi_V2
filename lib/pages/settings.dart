@@ -73,7 +73,7 @@ class _SettingPageState extends State<SettingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Bản quyền thuộc về THACO THILOGI © ${DateTime.now().year}',
+                  'Bản quyền thuộc về THILOGI © ${DateTime.now().year}',
                   style: const TextStyle(
                     fontSize: 14,
                     letterSpacing: -0.7,

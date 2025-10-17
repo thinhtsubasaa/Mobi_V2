@@ -6,6 +6,7 @@ import 'package:Thilogi/utils/next_screen.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -72,6 +73,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
   bool _errorChiPhiBD = false;
   bool _errorHinhAnh = false;
   bool _errorChiPhiSC = false;
+  bool _errorNhapKM = false;
   bool _IsKhac = false;
 
   List<PhuongTienModel>? _kehoachList;
@@ -278,14 +280,23 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     return isRemoved;
   }
 
-  Future<File> compressImage(File file) async {
+  Future<File?> compressImage(File file) async {
     setState(() {
       _loading = true;
     });
     print("1");
 
     final bytes = await file.readAsBytes();
-    final String extension = file.path.split('.').last.toLowerCase();
+    String extension = file.path.split('.').last.toLowerCase();
+    if (extension == 'heic' || extension == 'heif') {
+      final jpgPath = await HeicToJpg.convert(file.path);
+      if (jpgPath != null) {
+        file = File(jpgPath);
+        extension = 'jpg';
+      } else {
+        print("Không thể convert HEIC, gửi file gốc");
+      }
+    }
     CompressFormat format;
 
     // Xác định định dạng dựa trên phần mở rộng của tệp
@@ -303,7 +314,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         break;
 
       default:
-        throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+        print("loại file: ${extension}");
+        // throw Exception('Unsupported file format'); // Nếu không hỗ trợ
+        return null;
     }
 
     try {
@@ -314,7 +327,6 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         quality: 90,
         format: format, // Sử dụng định dạng đã xác định
       );
-
       final newFile = File(file.path)..writeAsBytesSync(compressedBytes);
       return newFile;
     } catch (e) {
@@ -380,7 +392,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         var decodedData = jsonDecode(response.body);
         _hangmucList = (decodedData as List).map((item) => HangMucModel.fromJson(item)).toList();
         setState(() {
-          _selectedItems = List.from(_hangmucList!.where((item) => item.isDenHan == true));
+          // _selectedItems = List.from(_hangmucList!.where((item) => item.isDenHan == true));
           _loading = false;
         });
         dialogSetState(() {
@@ -603,14 +615,15 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     }
   }
 
-  Future<void> postData(LichSuBaoDuongModel? scanData, String? ngayDiBaoDuong, List<String> selectedIds, String? file, List<String> addHangMuc, bool? isKhac) async {
+  Future<void> postData(LichSuBaoDuongModel? scanData, String? ngayDiBaoDuong, List<String?> selectedIds, String? file, List<String> addHangMuc, int? soKM, bool? isKhac) async {
     _isLoading = true;
     try {
       var newScanData = scanData;
       newScanData?.bienSo1 = newScanData.bienSo1 == 'null' ? null : newScanData.bienSo1;
       var dataList = [newScanData];
       final http.Response response = await requestHelper.postData(
-          'MMS_BaoCao/YeuCauBaoDuong?ids=${selectedIds.join("&ids=")}&addHangMuc=${addHangMuc.join("&addHangMuc=")}&TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&NgayDiBaoDuong=$ngayDiBaoDuong&HinhAnh=$file&IsKhac=$isKhac', dataList.map((e) => e?.toJson()).toList());
+          'MMS_BaoCao/YeuCauBaoDuong?ids=${selectedIds.join("&ids=")}&addHangMuc=${addHangMuc.join("&addHangMuc=")}&TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&NgayDiBaoDuong=$ngayDiBaoDuong&HinhAnh=$file&SoKM=$soKM&IsKhac=$isKhac',
+          dataList.map((e) => e?.toJson()).toList());
       print("code: ${response.statusCode}");
       print("Response body: ${response.body}");
       print("Dữ liệu gửi lên:");
@@ -662,9 +675,40 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
-
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            final convertedOrCompressed = await compressImage(file);
+            if (convertedOrCompressed == null) {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.info,
+                title: 'Định dạng không hỗ trợ',
+                text: 'Ảnh HEIC không đọc được. Vui lòng chọn JPG/PNG.',
+              );
+              _btnController.reset(); // Bỏ qua file lỗi
+              setState(() {
+                _loading = false;
+              });
+              return;
+            }
+            file = convertedOrCompressed;
+            // file = await compressImage(file);
+          }
         }
 
         var response = await RequestHelperMMS().uploadFile(file);
@@ -695,6 +739,37 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     String? imageUrlsString = imageUrls.join(',');
     print("image:$imageUrlsString");
     List<String> selectedIds = selectedItems.map((e) => e.hangMuc_Id.toString()).toList();
+
+    if (selectedIds.isEmpty && addedHangMuc.isEmpty) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Lỗi dữ liệu',
+        text: 'Không có hạng mục nào được yêu cầu. Vui lòng kiểm tra lại.',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
+
+    // if (selectedIds.isEmpty || selectedIds.contains('')) {
+    //   QuickAlert.show(
+    //     context: context,
+    //     type: QuickAlertType.error,
+    //     title: 'Lỗi dữ liệu',
+    //     text: 'Danh sách hạng mục không hợp lệ hoặc đang trống. Vui lòng kiểm tra lại.',
+    //     confirmBtnText: 'Đồng ý',
+    //   );
+    //   _btnController.reset();
+    //   setState(() {
+    //     _loading = false;
+    //   });
+    //   return;
+    // }
+
     print("Danh sách ID đã chọn: $selectedIds");
     print("Hạng mục nhập tay thêm: $addedHangMuc");
     PhuongTienModel? item;
@@ -711,7 +786,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     // _data?.id = item?.id;
     _data?.phuongTien_Id = item?.id;
     _data?.baoDuong_Id = item?.model_Id;
-    _data?.soKM = item?.soKM_Adsun;
+    // _data?.soKM = item?.soKM_Adsun;
     _data?.diaDiem_Id = DiaDiem_Id;
 
     AppService().checkInternet().then((hasInternet) {
@@ -726,11 +801,13 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postData(_data!, selectedDate, selectedIds, imageUrlsString, addedHangMuc, isKhac).then((_) {
+        postData(_data!, selectedDate, selectedIds, imageUrlsString, addedHangMuc, int.parse(soKMController.text), isKhac).then((_) {
           setState(() {
             _IsXacNhan = false;
             _IsKhac = false;
             PhuongTien_Id = null;
+            soKMController.text = '';
+            _errorNhapKM = false;
             getBienSo();
             postDataFireBase(_thongbao, body ?? "", _data?.phuongTien_Id);
             _data = null;
@@ -739,10 +816,60 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
             _loading = false;
             _addedHangMuc = [];
             selectedIds = [];
+            _lstFiles.clear();
+            lstFilesNotifier.value = [];
           });
         });
+        // .catchError((e) {
+        //   print("Lỗi postData: $e");
+        //   QuickAlert.show(
+        //     context: context,
+        //     type: QuickAlertType.error,
+        //     title: 'Lỗi',
+        //     text: 'Gửi dữ liệu thất bại. Vui lòng thử lại sau.',
+        //     confirmBtnText: 'Đồng ý',
+        //   );
+        //   _btnController.reset(); // Bỏ qua file lỗi
+        //   setState(() {
+        //     _loading = false;
+        //   });
+        // });
       }
     });
+  }
+
+  void _openGallery(int initialIndex, List<FileItem> visibleItems) {
+    final controller = PageController(initialPage: initialIndex); // tạo 1 lần
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        final size = MediaQuery.of(context).size;
+        return Dialog(
+          insetPadding: const EdgeInsets.all(8),
+          child: SizedBox(
+            width: size.width,
+            height: size.height * 0.7,
+            child: PhotoViewGallery.builder(
+              itemCount: visibleItems.length,
+              pageController: controller, // dùng controller đã tạo
+              builder: (context, index) {
+                final img = visibleItems[index];
+                final ImageProvider provider = img.local == true ? FileImage(File(img.file!)) : NetworkImage('${_ub?.apiUrl2}/${img.file}') as ImageProvider;
+                return PhotoViewGalleryPageOptions(
+                  imageProvider: provider,
+                  // minScale: PhotoViewComputedScale.contained,
+                  // maxScale: PhotoViewComputedScale.covered * 3,
+                );
+              },
+              scrollPhysics: const BouncingScrollPhysics(),
+              backgroundDecoration: const BoxDecoration(color: Colors.black),
+              loadingBuilder: (context, _) => const Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _showDetailsDialog(BuildContext context, int index, bool? isKhac, String? id) {
@@ -753,9 +880,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            if (_hangmucscList == null || _hangmucscList!.isEmpty) {
-              getHangMucSC(setState);
-            }
+            // if (_hangmucscList == null || _hangmucscList!.isEmpty) {
+            //   getHangMucSC(setState);
+            // }
             if (_hangmucList == null || _hangmucList!.isEmpty) {
               getHangMuc(phuongTienId ?? "", setState);
               getDiaDiem(setState);
@@ -781,362 +908,389 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                   ),
                   padding: EdgeInsets.all(20),
                   margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'YÊU CẦU BẢO DƯỠNG',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.close, color: Colors.red, size: 30),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _selectedController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          labelText: "Danh sách hạng mục",
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                        ),
-                        onTap: () {
-                          // _showHangMucPopup(context, setState, _selectedController);
-                          if (_hangmucList != null && _hangmucList!.isNotEmpty) {
-                            _showHangMucPopup(context, setState, _selectedController);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đang tải danh sách hạng mục...")));
-                          }
-                        },
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: const Color(0xFFBC2925),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 30.w,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFF6C6C7),
-                                border: Border(
-                                  right: BorderSide(
-                                    color: Color(0xFF818180),
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: const Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Expanded(
                                 child: Text(
-                                  "TT Bảo dưỡng",
-                                  textAlign: TextAlign.left,
+                                  'YÊU CẦU BẢO DƯỠNG',
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppConfig.textInput,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.blue,
                                   ),
                                 ),
                               ),
+                              IconButton(
+                                icon: Icon(Icons.close, color: Colors.red, size: 30),
+                                onPressed: () {
+                                  setState(() {
+                                    _errorNhapKM = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextField(
+                          controller: _selectedController,
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            labelText: "Danh sách hạng mục",
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                          ),
+                          onTap: () {
+                            // _showHangMucPopup(context, setState, _selectedController);
+                            if (_hangmucList != null && _hangmucList!.isNotEmpty) {
+                              _showHangMucPopup(context, setState, _selectedController);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đang tải danh sách hạng mục...")));
+                            }
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: const Color(0xFFBC2925),
+                              width: 1.5,
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      items: _dn?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                item.tenDiaDiem ?? "",
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Comfortaa',
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppConfig.textInput,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 30.w,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFF6C6C7),
+                                  border: Border(
+                                    right: BorderSide(
+                                      color: Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "TT Bảo dưỡng",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppConfig.textInput,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        isExpanded: true,
+                                        items: _dn?.map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item.id,
+                                            child: Container(
+                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Text(
+                                                  item.tenDiaDiem ?? "",
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppConfig.textInput,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: DiaDiem_Id,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            DiaDiem_Id = newValue;
+                                          });
+                                        },
+                                        buttonStyleData: const ButtonStyleData(
+                                          padding: EdgeInsets.symmetric(horizontal: 16),
+                                          height: 40,
+                                          width: 200,
+                                        ),
+                                        dropdownStyleData: const DropdownStyleData(
+                                          maxHeight: 200,
+                                        ),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          height: 40,
+                                        ),
+                                        dropdownSearchData: DropdownSearchData(
+                                          searchController: textEditingController,
+                                          searchInnerWidgetHeight: 50,
+                                          searchInnerWidget: Container(
+                                            height: 50,
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 4,
+                                              right: 8,
+                                              left: 8,
+                                            ),
+                                            child: TextFormField(
+                                              expands: true,
+                                              maxLines: null,
+                                              controller: textEditingController,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                contentPadding: const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 8,
+                                                ),
+                                                hintText: 'Tìm địa điểm',
+                                                hintStyle: const TextStyle(fontSize: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }).toList(),
-                                      value: DiaDiem_Id,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          DiaDiem_Id = newValue;
-                                        });
-                                      },
-                                      buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.symmetric(horizontal: 16),
-                                        height: 40,
-                                        width: 200,
-                                      ),
-                                      dropdownStyleData: const DropdownStyleData(
-                                        maxHeight: 200,
-                                      ),
-                                      menuItemStyleData: const MenuItemStyleData(
-                                        height: 40,
-                                      ),
-                                      dropdownSearchData: DropdownSearchData(
-                                        searchController: textEditingController,
-                                        searchInnerWidgetHeight: 50,
-                                        searchInnerWidget: Container(
-                                          height: 50,
-                                          padding: const EdgeInsets.only(
-                                            top: 8,
-                                            bottom: 4,
-                                            right: 8,
-                                            left: 8,
-                                          ),
-                                          child: TextFormField(
-                                            expands: true,
-                                            maxLines: null,
-                                            controller: textEditingController,
-                                            decoration: InputDecoration(
-                                              isDense: true,
-                                              contentPadding: const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 8,
-                                              ),
-                                              hintText: 'Tìm địa điểm',
-                                              hintStyle: const TextStyle(fontSize: 12),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
+                                          searchMatchFn: (item, searchValue) {
+                                            if (item is DropdownMenuItem<String>) {
+                                              // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                              String itemId = item.value ?? "";
+                                              // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                              return _dn?.any((baiXe) => baiXe.id == itemId && baiXe.tenDiaDiem?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                            } else {
+                                              return false;
+                                            }
+                                          },
                                         ),
-                                        searchMatchFn: (item, searchValue) {
-                                          if (item is DropdownMenuItem<String>) {
-                                            // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                            String itemId = item.value ?? "";
-                                            // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                            return _dn?.any((baiXe) => baiXe.id == itemId && baiXe.tenDiaDiem?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
-                                          } else {
-                                            return false;
+                                        onMenuStateChange: (isOpen) {
+                                          if (!isOpen) {
+                                            textEditingController.clear();
                                           }
                                         },
                                       ),
-                                      onMenuStateChange: (isOpen) {
-                                        if (!isOpen) {
-                                          textEditingController.clear();
-                                        }
-                                      },
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Ngày đi bảo dưỡng',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 16,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () async {
-                              DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(), // Không cho chọn ngày trong quá khứ
-                                lastDate: DateTime(2100),
-                              );
-
-                              if (picked != null) {
-                                setState(() {
-                                  // Cập nhật UI ngay lập tức
-                                  selectedDate = DateFormat('dd/MM/yyyy').format(picked);
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFFBC2925)),
-                                borderRadius: BorderRadius.circular(8),
+                                    )),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.calendar_today, color: Color(0xFFBC2925)),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    selectedDate ?? 'Chọn ngày',
-                                    style: TextStyle(color: Color(0xFFBC2925)),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 5),
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                            const Text(
+                              'Ngày đi bảo dưỡng',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: () async {
+                                DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  // firstDate: DateTime.now(), // Không cho chọn ngày trong quá khứ
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (picked != null) {
+                                  setState(() {
+                                    // Cập nhật UI ngay lập tức
+                                    selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Color(0xFFBC2925)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orangeAccent,
-                                      ),
-                                      onPressed: () => imageSelector(context, 'gallery'),
-                                      icon: const Icon(Icons.photo_library),
-                                      label: const Text(""),
+                                    Icon(Icons.calendar_today, color: Color(0xFFBC2925)),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      selectedDate ?? 'Chọn ngày',
+                                      style: TextStyle(color: Color(0xFFBC2925)),
                                     ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                          // backgroundColor: Theme.of(context).primaryColor,
-                                          ),
-                                      onPressed: () => imageSelector(context, 'camera'),
-                                      icon: const Icon(Icons.camera_alt),
-                                      label: const Text(""),
-                                    ),
-                                    const SizedBox(width: 10),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Ảnh đã chọn",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            if (_isEmptyLstFile())
-                              const SizedBox(
-                                height: 100,
-                                // child: Center(child: Text("Chưa có ảnh nào")),
-                              ),
-                            // Display list image
-                            ValueListenableBuilder<List<FileItem>>(
-                              valueListenable: lstFilesNotifier,
-                              builder: (context, lstFiles, _) {
-                                return ResponsiveGridRow(
-                                  children: _lstFiles.map((image) {
-                                    if (image!.isRemoved == false) {
-                                      return ResponsiveGridCol(
-                                        xs: 6,
-                                        md: 3,
-                                        child: InkWell(
-                                          onLongPress: () {
-                                            deleteDialog(
-                                              context,
-                                              "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
-                                              "Xoá ảnh",
-                                              () => _removeImage(image),
-                                            );
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(left: 5),
-                                            child: image.local == true
-                                                ? Image.file(File(image.file!))
-                                                : Image.network(
-                                                    '${_ub?.apiUrl2}/${image.file}',
-                                                    errorBuilder: ((context, error, stackTrace) {
-                                                      return Container(
-                                                        height: 100,
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(color: Colors.redAccent),
-                                                        ),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "Error Image (404)",
-                                                          style: TextStyle(color: Colors.redAccent),
-                                                        )),
-                                                      );
-                                                    }),
-                                                  ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return ResponsiveGridCol(
-                                      child: const SizedBox.shrink(),
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(5),
-                        child: RoundedLoadingButton(
-                          child: Text(
-                            'Xác nhận',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              color: AppConfig.textButton,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                          controller: _btnController,
-                          onPressed: (selectedDate != null && DiaDiem_Id != null) ? () => _onSave(index, _selectedItems, _addedHangMuc, isKhac) : null,
+                        buildInputWithError(
+                          title: 'Nhập số KM hiện tại:',
+                          controller: soKMController,
+                          showError: _errorNhapKM,
                         ),
-                      ),
-                    ],
+                        Container(
+                          margin: const EdgeInsets.only(right: 5),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orangeAccent,
+                                        ),
+                                        onPressed: () => imageSelector(context, 'gallery'),
+                                        icon: const Icon(Icons.photo_library),
+                                        label: const Text(""),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                            // backgroundColor: Theme.of(context).primaryColor,
+                                            ),
+                                        onPressed: () => imageSelector(context, 'camera'),
+                                        icon: const Icon(Icons.camera_alt),
+                                        label: const Text(""),
+                                      ),
+                                      const SizedBox(width: 10),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Ảnh đã chọn",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              if (_isEmptyLstFile())
+                                const SizedBox(
+                                  height: 100,
+                                  // child: Center(child: Text("Chưa có ảnh nào")),
+                                ),
+                              // Display list image
+                              ValueListenableBuilder<List<FileItem>>(
+                                valueListenable: lstFilesNotifier,
+                                builder: (context, lstFiles, _) {
+                                  final visibleItems = _lstFiles.where((e) => e?.isRemoved == false).cast<FileItem>().toList();
+                                  return ResponsiveGridRow(
+                                    children: visibleItems.asMap().entries.map((entry) {
+                                      final i = entry.key;
+                                      final image = entry.value;
+                                      if (image!.isRemoved == false) {
+                                        return ResponsiveGridCol(
+                                          xs: 6,
+                                          md: 3,
+                                          child: InkWell(
+                                            onTap: () => _openGallery(i, visibleItems),
+                                            onLongPress: () {
+                                              deleteDialog(
+                                                context,
+                                                "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                "Xoá ảnh",
+                                                () => _removeImage(image),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(left: 5),
+                                              child: image.local == true
+                                                  ? Image.file(File(image.file!))
+                                                  : Image.network(
+                                                      '${_ub?.apiUrl2}/${image.file}',
+                                                      errorBuilder: ((context, error, stackTrace) {
+                                                        return Container(
+                                                          height: 100,
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.redAccent),
+                                                          ),
+                                                          child: const Center(
+                                                              child: Text(
+                                                            "Error Image (404)",
+                                                            style: TextStyle(color: Colors.redAccent),
+                                                          )),
+                                                        );
+                                                      }),
+                                                    ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return ResponsiveGridCol(
+                                        child: const SizedBox.shrink(),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(5),
+                          child: RoundedLoadingButton(
+                            child: Text(
+                              'Xác nhận',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                color: AppConfig.textButton,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
+                            ),
+                            controller: _btnController,
+                            onPressed: (selectedDate != null && DiaDiem_Id != null)
+                                ? () {
+                                    setState(() {
+                                      _errorNhapKM = soKMController.text.isEmpty;
+                                    });
+
+                                    if (_errorNhapKM) {
+                                      _btnController.reset();
+                                      return;
+                                    }
+                                    _onSave(index, _selectedItems, _addedHangMuc, isKhac);
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1259,7 +1413,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     _data ??= LichSuBaoDuongModel();
     _data?.id = item?.lichSuBaoDuong_Id;
     _data?.phuongTien_Id = item?.id;
-    _data?.soKM = item?.soKM;
+    // _data?.soKM = item?.soKM;
     _data?.diaDiem_Id = DiaDiem_Id;
     // _data?.keHoachGiaoXe_Id = item?.keHoachGiaoXe_Id;
     // _data?.nguoiYeuCau = item?.nguoiYeuCau;
@@ -1321,9 +1475,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
               _previousPhuongTienId = baoduongId;
               getListChiTietHangMuc2(baoduongId ?? "", setStateDialog);
             }
-            if (_hangmucscList == null || _hangmucscList!.isEmpty) {
-              getHangMucSC(setStateDialog);
-            }
+            // if (_hangmucscList == null || _hangmucscList!.isEmpty) {
+            //   getHangMucSC(setStateDialog);
+            // }
 
             // text
             TextEditingController _selectedController = TextEditingController(
@@ -1375,6 +1529,11 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                         ),
                         onTap: () {
                           _showHangMucPopup2(context, setStateDialog, _selectedController);
+                          //   if (_hangmucListnew == null || _hangmucListnew!.isEmpty) {
+                          //   _showHangMucPopup2(context, setStateDialog, _selectedController);
+                          // } else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đang tải danh sách hạng mục...")));
+                          // }
                         },
                       ),
                       SizedBox(height: 10),
@@ -1679,7 +1838,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateDialog) {
-            final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
+            // final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
@@ -1874,6 +2033,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                       },
                     ),
                     if (isExpanded2)
+
+                      // SizedBox(
+                      //   height: 5.h,
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
@@ -1900,49 +2062,49 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                   );
                                 }).toList(),
                               ),
-                              Container(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: filteredList.map((item) {
-                                        bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
-                                        return CheckboxListTile(
-                                            title: Text(item.noiDungBaoDuong ?? ""),
-                                            value: isChecked,
-                                            onChanged: (bool? value) {
-                                              setStateDialog(() {
-                                                if (value == true) {
-                                                  _selectedSCItems.add(item);
-                                                  if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
-                                                    _addedHangMuc.add(item.noiDungBaoDuong ?? "");
-                                                  }
-                                                } else {
-                                                  _selectedSCItems.removeWhere((e) => e.id == item.id);
-                                                  _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
-                                                }
+                              // Container(
+                              //   child: SingleChildScrollView(
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.all(10),
+                              //       child: Column(
+                              //         crossAxisAlignment: CrossAxisAlignment.start,
+                              //         children: filteredList.map((item) {
+                              //           bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
+                              //           return CheckboxListTile(
+                              //               title: Text(item.noiDungBaoDuong ?? ""),
+                              //               value: isChecked,
+                              //               onChanged: (bool? value) {
+                              //                 setStateDialog(() {
+                              //                   if (value == true) {
+                              //                     _selectedSCItems.add(item);
+                              //                     if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
+                              //                       _addedHangMuc.add(item.noiDungBaoDuong ?? "");
+                              //                     }
+                              //                   } else {
+                              //                     _selectedSCItems.removeWhere((e) => e.id == item.id);
+                              //                     _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
+                              //                   }
 
-                                                // Cập nhật lại controller text cho field chính
-                                                parentSetState(() {
-                                                  controller.text = [
-                                                    ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                    ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                  ].where((e) => e.isNotEmpty).join(', ');
-                                                });
+                              //                   // Cập nhật lại controller text cho field chính
+                              //                   parentSetState(() {
+                              //                     controller.text = [
+                              //                       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                              //                       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                              //                     ].where((e) => e.isNotEmpty).join(', ');
+                              //                   });
 
-                                                // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
-                                                // newHangMucController.text = [
-                                                //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                // ].where((e) => e.isNotEmpty).join(', ');
-                                              });
-                                            });
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //                   // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
+                              //                   // newHangMucController.text = [
+                              //                   //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                              //                   //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                              //                   // ].where((e) => e.isNotEmpty).join(', ');
+                              //                 });
+                              //               });
+                              //         }).toList(),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -1981,7 +2143,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateDialog) {
-            final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
+            // final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
             final filteredList2 = _hangmucList!.where((item) => searchTerm2.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm2.toLowerCase()) ?? false)).toList();
             return Dialog(
               shape: RoundedRectangleBorder(
@@ -2089,86 +2251,6 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                           ),
                         ),
                       ),
-                    // Thêm hạng mục sửa chữa
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       const Text("Thêm hạng mục sửa chữa:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    //       SizedBox(height: 5),
-                    //       // TextField(
-                    //       //   controller: newHangMucController,
-                    //       //   decoration: const InputDecoration(
-                    //       //     border: OutlineInputBorder(),
-                    //       //     hintText: "Nhập hạng mục mới",
-                    //       //   ),
-                    //       //   onSubmitted: (value) {
-                    //       //     // Tùy chọn: bạn có thể thêm vào danh sách _hangmucList ở đây
-                    //       //     // hoặc xử lý logic khác theo nhu cầu.
-                    //       //     print("Đã nhập hạng mục mới: $value");
-                    //       //   },
-                    //       // ),
-                    //       TextField(
-                    //         controller: newHangMucController,
-                    //         decoration: const InputDecoration(
-                    //           border: OutlineInputBorder(),
-                    //           hintText: "Nhập hạng mục mới",
-                    //         ),
-                    //         onSubmitted: (value) {
-                    //           if (value.trim().isNotEmpty) {
-                    //             List<String> items = value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-
-                    //             setStateDialog(() {
-                    //               _addedHangMuc = items;
-                    //               // newHangMucController.clear();
-                    //               print("Danh sách hạng mục thêm tay:");
-                    //               print(_addedHangMuc);
-                    //               print(_selectedItems.map((e) => e.noiDungBaoDuong));
-                    //             });
-
-                    //             parentSetState(() {
-                    //               controller.text = [..._selectedItems.map((e) => e.noiDungBaoDuong), ..._addedHangMuc].join(', ');
-                    //             });
-                    //             print(controller.text);
-                    //           }
-                    //         },
-                    //       ),
-
-                    //       if (_addedHangMuc.isNotEmpty)
-                    //         // Padding(
-                    //         //   padding: const EdgeInsets.only(top: 10),
-                    //         //   child: Wrap(
-                    //         //     spacing: 6,
-                    //         //     children: _addedHangMuc.map((e) =>
-                    //         //      Chip(label: Text(e))).toList(),
-                    //         //   ),
-                    //         // ),
-                    //         Padding(
-                    //           padding: const EdgeInsets.only(top: 10),
-                    //           child: Wrap(
-                    //             spacing: 6,
-                    //             children: _addedHangMuc.map((e) {
-                    //               return Chip(
-                    //                 label: Text(e),
-                    //                 onDeleted: () {
-                    //                   setStateDialog(() {
-                    //                     _addedHangMuc.remove(e);
-                    //                     final currentText = newHangMucController.text;
-                    //                     final updatedText = currentText.split(',').map((s) => s.trim()).where((word) => word != e && word.isNotEmpty).join(', ');
-                    //                     newHangMucController.text = updatedText;
-                    //                   });
-                    //                   parentSetState(() {
-                    //                     controller.text = [..._selectedItems.map((e) => e.noiDungBaoDuong), ..._addedHangMuc].join(', ');
-                    //                   });
-                    //                 },
-                    //               );
-                    //             }).toList(),
-                    //           ),
-                    //         ),
-                    //     ],
-                    //   ),
-                    // ),
 
                     Padding(
                       padding: const EdgeInsets.all(10),
@@ -2233,6 +2315,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                     ),
                     if (isExpanded2)
                       Expanded(
+                        // SizedBox(
+                        //   height: 15.h,
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2258,73 +2342,73 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                   );
                                 }).toList(),
                               ),
-                              Container(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: filteredList.map((item) {
-                                        bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
-                                        return CheckboxListTile(
-                                            title: Text(item.noiDungBaoDuong ?? ""),
-                                            value: isChecked,
-                                            // onChanged: (bool? value) {
-                                            //   setStateDialog(() {
-                                            //     if (value == true) {
-                                            //       _selectedSCItems.add(item);
-                                            //       if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
-                                            //         _addedHangMuc.add(item.noiDungBaoDuong ?? "");
-                                            //       }
-                                            //     } else {
-                                            //       _selectedSCItems.removeWhere((e) => e.id == item.id);
-                                            //       _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
-                                            //     }
-                                            //   });
+                              // Container(
+                              //   child: SingleChildScrollView(
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.all(10),
+                              //       child: Column(
+                              //         crossAxisAlignment: CrossAxisAlignment.start,
+                              //         children: filteredList.map((item) {
+                              //           bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
+                              //           return CheckboxListTile(
+                              //               title: Text(item.noiDungBaoDuong ?? ""),
+                              //               value: isChecked,
+                              //               // onChanged: (bool? value) {
+                              //               //   setStateDialog(() {
+                              //               //     if (value == true) {
+                              //               //       _selectedSCItems.add(item);
+                              //               //       if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
+                              //               //         _addedHangMuc.add(item.noiDungBaoDuong ?? "");
+                              //               //       }
+                              //               //     } else {
+                              //               //       _selectedSCItems.removeWhere((e) => e.id == item.id);
+                              //               //       _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
+                              //               //     }
+                              //               //   });
 
-                                            //   // Cập nhật UI của dialog chính
-                                            //   // parentSetState(() {
-                                            //   //   controller.text = _selectedSCItems.map((e) => e.noiDungBaoDuong).join(', ');
-                                            //   // });
-                                            //   parentSetState(() {
-                                            //     controller.text = [
-                                            //       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                            //       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                            //     ].where((e) => e.isNotEmpty).join(', ');
-                                            //   });
-                                            // },
-                                            onChanged: (bool? value) {
-                                              setStateDialog(() {
-                                                if (value == true) {
-                                                  _selectedSCItems.add(item);
-                                                  if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
-                                                    _addedHangMuc.add(item.noiDungBaoDuong ?? "");
-                                                  }
-                                                } else {
-                                                  _selectedSCItems.removeWhere((e) => e.id == item.id);
-                                                  _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
-                                                }
+                              //               //   // Cập nhật UI của dialog chính
+                              //               //   // parentSetState(() {
+                              //               //   //   controller.text = _selectedSCItems.map((e) => e.noiDungBaoDuong).join(', ');
+                              //               //   // });
+                              //               //   parentSetState(() {
+                              //               //     controller.text = [
+                              //               //       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                              //               //       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                              //               //     ].where((e) => e.isNotEmpty).join(', ');
+                              //               //   });
+                              //               // },
+                              //               onChanged: (bool? value) {
+                              //                 setStateDialog(() {
+                              //                   if (value == true) {
+                              //                     _selectedSCItems.add(item);
+                              //                     if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
+                              //                       _addedHangMuc.add(item.noiDungBaoDuong ?? "");
+                              //                     }
+                              //                   } else {
+                              //                     _selectedSCItems.removeWhere((e) => e.id == item.id);
+                              //                     _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
+                              //                   }
 
-                                                // Cập nhật lại controller text cho field chính
-                                                parentSetState(() {
-                                                  controller.text = [
-                                                    ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                    ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                  ].where((e) => e.isNotEmpty).join(', ');
-                                                });
+                              //                   // Cập nhật lại controller text cho field chính
+                              //                   parentSetState(() {
+                              //                     controller.text = [
+                              //                       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                              //                       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                              //                     ].where((e) => e.isNotEmpty).join(', ');
+                              //                   });
 
-                                                // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
-                                                // newHangMucController.text = [
-                                                //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                // ].where((e) => e.isNotEmpty).join(', ');
-                                              });
-                                            });
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              //                   // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
+                              //                   // newHangMucController.text = [
+                              //                   //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                              //                   //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                              //                   // ].where((e) => e.isNotEmpty).join(', ');
+                              //                 });
+                              //               });
+                              //         }).toList(),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -2354,14 +2438,14 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     );
   }
 
-  Future<void> postDataSC(LichSuBaoDuongModel? scanData, String? ngayDiBaoDuong, String? file, List<String> addHangMuc, bool? isKhac) async {
+  Future<void> postDataSC(LichSuBaoDuongModel? scanData, String? ngayDiBaoDuong, String? file, List<String> addHangMuc, int? soKM, bool? isKhac) async {
     _isLoading = true;
     try {
       var newScanData = scanData;
       newScanData?.bienSo1 = newScanData.bienSo1 == 'null' ? null : newScanData.bienSo1;
       var dataList = [newScanData];
-      final http.Response response =
-          await requestHelper.postData('MMS_SuaChua/YeuCauSuaChua?addHangMuc=${addHangMuc.join("&addHangMuc=")}&TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&NgayDiSuaChua=$ngayDiBaoDuong&HinhAnh=$file&IsKhac=$isKhac', dataList.map((e) => e?.toJson()).toList());
+      final http.Response response = await requestHelper.postData(
+          'MMS_SuaChua/YeuCauSuaChua?addHangMuc=${addHangMuc.join("&addHangMuc=")}&TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&NgayDiSuaChua=$ngayDiBaoDuong&HinhAnh=$file&SoKM=$soKM&IsKhac=$isKhac', dataList.map((e) => e?.toJson()).toList());
       print("code: ${response.statusCode}");
 
       print("Response body: ${response.body}");
@@ -2381,6 +2465,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
               Navigator.pop(context); // Đóng dialog cũ (nếu cần)
               Navigator.pop(context);
             });
+
         _selectedItems.clear();
         _btnController.reset();
         await getListYeuCauSC();
@@ -2396,6 +2481,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
           text: errorMessage,
           confirmBtnText: 'Đồng ý',
         );
+
         _btnController.reset();
       }
     } catch (e) {
@@ -2416,8 +2502,40 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         File file = File(fileItem!.file!);
 
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            final convertedOrCompressed = await compressImage(file);
+            if (convertedOrCompressed == null) {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.info,
+                title: 'Định dạng không hỗ trợ',
+                text: 'Ảnh HEIC không đọc được. Vui lòng chọn JPG/PNG.',
+              );
+              _btnController.reset(); // Bỏ qua file lỗi
+              setState(() {
+                _loading = false;
+              });
+              return;
+            }
+            file = convertedOrCompressed;
+            // file = await compressImage(file);
+          }
         }
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
 
         var response = await RequestHelperMMS().uploadFile(file);
         print("Response: $response");
@@ -2446,6 +2564,21 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     print("image:$imageUrlsString");
     print("Hạng mục nhập tay thêm: $addedHangMuc");
 
+    if (addedHangMuc.isEmpty) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: 'Lỗi dữ liệu',
+        text: 'Không có hạng mục nào được yêu cầu. Vui lòng kiểm tra lại.',
+        confirmBtnText: 'Đồng ý',
+      );
+      _btnController.reset();
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
+
     // final item = _kehoachList?[index];
     PhuongTienModel? item;
     if (isKhac == false) {
@@ -2460,7 +2593,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     // _data?.id = item?.id;
     _data?.phuongTien_Id = item?.id;
     _data?.baoDuong_Id = item?.model_Id;
-    _data?.soKM = item?.soKM_Adsun;
+    // _data?.soKM = item?.soKM_Adsun;
     _data?.diaDiem_Id = DiaDiem_Id;
 
     AppService().checkInternet().then((hasInternet) {
@@ -2475,18 +2608,22 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postDataSC(_data!, selectedDate, imageUrlsString, addedHangMuc, isKhac).then((_) {
+        postDataSC(_data!, selectedDate, imageUrlsString, addedHangMuc, int.parse(soKMController.text), isKhac).then((_) {
           setState(() {
             _IsXacNhan = false;
             _IsKhac = false;
             PhuongTien_Id = null;
             _phuongtienList = null;
+            soKMController.text = '';
+            _errorNhapKM = false;
             getBienSo();
             postDataFireBaseSC(_thongbao, body ?? "", _data?.phuongTien_Id);
             _data = null;
             DiaDiem_Id = null;
             _loading = false;
             _addedHangMuc = [];
+            _lstFiles.clear();
+            lstFilesNotifier.value = [];
           });
         });
       }
@@ -2509,12 +2646,12 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                 getDiaDiem(setState);
               });
             }
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!_isFetching && _dialogIsStillOpen && (_hangmucscList == null || _hangmucscList!.isEmpty)) {
-                _isFetching = true;
-                getHangMucSC(setState);
-              }
-            });
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
+            //   if (!_isFetching && _dialogIsStillOpen && (_hangmucscList == null || _hangmucscList!.isEmpty)) {
+            //     _isFetching = true;
+            //     getHangMucSC(setState);
+            //   }
+            // });
             // if (_hangmucscList == null || _hangmucscList!.isEmpty) {
             //   getHangMucSC(setState);
             // }
@@ -2534,363 +2671,390 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                   ),
                   padding: EdgeInsets.all(20),
                   margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Container(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'YÊU CẦU SỬA CHỮA',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: 'Comfortaa',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.close, color: Colors.red, size: 30),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      TextField(
-                        controller: _selectedController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          labelText: "Danh sách hạng mục",
-                          suffixIcon: Icon(Icons.arrow_drop_down),
-                        ),
-                        onTap: () {
-                          // _showHangMucPopupSC(context, setState, _selectedController);
-                          if (_hangmucscList != null && _hangmucscList!.isNotEmpty) {
-                            _showHangMucPopupSC(context, setState, _selectedController);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đang tải danh sách hạng mục...")));
-                          }
-                        },
-                      ),
-
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: const Color(0xFFBC2925),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 30.w,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFF6C6C7),
-                                border: Border(
-                                  right: BorderSide(
-                                    color: Color(0xFF818180),
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: const Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Expanded(
                                 child: Text(
-                                  "TT Sửa chữa",
-                                  textAlign: TextAlign.left,
+                                  'YÊU CẦU SỬA CHỮA',
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontFamily: 'Comfortaa',
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppConfig.textInput,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.blue,
                                   ),
                                 ),
                               ),
+                              IconButton(
+                                icon: Icon(Icons.close, color: Colors.red, size: 30),
+                                onPressed: () {
+                                  setState(() {
+                                    _errorNhapKM = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        TextField(
+                          controller: _selectedController,
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            labelText: "Danh sách hạng mục",
+                            suffixIcon: Icon(Icons.arrow_drop_down),
+                          ),
+                          onTap: () {
+                            _showHangMucPopupSC(context, setState, _selectedController);
+                            // if (_hangmucscList != null && _hangmucscList!.isNotEmpty) {
+                            //   _showHangMucPopupSC(context, setState, _selectedController);
+                            // } else {
+                            //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Đang tải danh sách hạng mục...")));
+                            // }
+                          },
+                        ),
+
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height < 600 ? 10.h : 6.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: const Color(0xFFBC2925),
+                              width: 1.5,
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                  padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton2<String>(
-                                      isExpanded: true,
-                                      items: _dn?.map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.id,
-                                          child: Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Text(
-                                                item.tenDiaDiem ?? "",
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Comfortaa',
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppConfig.textInput,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 30.w,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFF6C6C7),
+                                  border: Border(
+                                    right: BorderSide(
+                                      color: Color(0xFF818180),
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    "TT Sửa chữa",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontFamily: 'Comfortaa',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppConfig.textInput,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.height < 600 ? 0 : 5),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton2<String>(
+                                        isExpanded: true,
+                                        items: _dn?.map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item.id,
+                                            child: Container(
+                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.9),
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: Text(
+                                                  item.tenDiaDiem ?? "",
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Comfortaa',
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppConfig.textInput,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        value: DiaDiem_Id,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            DiaDiem_Id = newValue;
+                                          });
+                                        },
+                                        buttonStyleData: const ButtonStyleData(
+                                          padding: EdgeInsets.symmetric(horizontal: 16),
+                                          height: 40,
+                                          width: 200,
+                                        ),
+                                        dropdownStyleData: const DropdownStyleData(
+                                          maxHeight: 200,
+                                        ),
+                                        menuItemStyleData: const MenuItemStyleData(
+                                          height: 40,
+                                        ),
+                                        dropdownSearchData: DropdownSearchData(
+                                          searchController: textEditingController,
+                                          searchInnerWidgetHeight: 50,
+                                          searchInnerWidget: Container(
+                                            height: 50,
+                                            padding: const EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 4,
+                                              right: 8,
+                                              left: 8,
+                                            ),
+                                            child: TextFormField(
+                                              expands: true,
+                                              maxLines: null,
+                                              controller: textEditingController,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                contentPadding: const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 8,
+                                                ),
+                                                hintText: 'Tìm địa điểm',
+                                                hintStyle: const TextStyle(fontSize: 12),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        );
-                                      }).toList(),
-                                      value: DiaDiem_Id,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          DiaDiem_Id = newValue;
-                                        });
-                                      },
-                                      buttonStyleData: const ButtonStyleData(
-                                        padding: EdgeInsets.symmetric(horizontal: 16),
-                                        height: 40,
-                                        width: 200,
-                                      ),
-                                      dropdownStyleData: const DropdownStyleData(
-                                        maxHeight: 200,
-                                      ),
-                                      menuItemStyleData: const MenuItemStyleData(
-                                        height: 40,
-                                      ),
-                                      dropdownSearchData: DropdownSearchData(
-                                        searchController: textEditingController,
-                                        searchInnerWidgetHeight: 50,
-                                        searchInnerWidget: Container(
-                                          height: 50,
-                                          padding: const EdgeInsets.only(
-                                            top: 8,
-                                            bottom: 4,
-                                            right: 8,
-                                            left: 8,
-                                          ),
-                                          child: TextFormField(
-                                            expands: true,
-                                            maxLines: null,
-                                            controller: textEditingController,
-                                            decoration: InputDecoration(
-                                              isDense: true,
-                                              contentPadding: const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 8,
-                                              ),
-                                              hintText: 'Tìm địa điểm',
-                                              hintStyle: const TextStyle(fontSize: 12),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                          ),
+                                          searchMatchFn: (item, searchValue) {
+                                            if (item is DropdownMenuItem<String>) {
+                                              // Truy cập vào thuộc tính value để lấy ID của ViTriModel
+                                              String itemId = item.value ?? "";
+                                              // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
+                                              return _dn?.any((baiXe) => baiXe.id == itemId && baiXe.tenDiaDiem?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
+                                            } else {
+                                              return false;
+                                            }
+                                          },
                                         ),
-                                        searchMatchFn: (item, searchValue) {
-                                          if (item is DropdownMenuItem<String>) {
-                                            // Truy cập vào thuộc tính value để lấy ID của ViTriModel
-                                            String itemId = item.value ?? "";
-                                            // Kiểm tra ID của item có tồn tại trong _vl.vitriList không
-                                            return _dn?.any((baiXe) => baiXe.id == itemId && baiXe.tenDiaDiem?.toLowerCase().contains(searchValue.toLowerCase()) == true) ?? false;
-                                          } else {
-                                            return false;
+                                        onMenuStateChange: (isOpen) {
+                                          if (!isOpen) {
+                                            textEditingController.clear();
                                           }
                                         },
                                       ),
-                                      onMenuStateChange: (isOpen) {
-                                        if (!isOpen) {
-                                          textEditingController.clear();
-                                        }
-                                      },
-                                    ),
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Ngày đi sửa chữa',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              fontSize: 16,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          GestureDetector(
-                            onTap: () async {
-                              DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(), // Không cho chọn ngày trong quá khứ
-                                lastDate: DateTime(2100),
-                              );
-
-                              if (picked != null) {
-                                setState(() {
-                                  // Cập nhật UI ngay lập tức
-                                  selectedDate = DateFormat('dd/MM/yyyy').format(picked);
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFFBC2925)),
-                                borderRadius: BorderRadius.circular(8),
+                                    )),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.calendar_today, color: Color(0xFFBC2925)),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    selectedDate ?? 'Chọn ngày',
-                                    style: TextStyle(color: Color(0xFFBC2925)),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 5),
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
-                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
+                            const Text(
+                              'Ngày đi sửa chữa',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: () async {
+                                DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  // firstDate: DateTime.now(), // Không cho chọn ngày trong quá khứ
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime(2100),
+                                );
+
+                                if (picked != null) {
+                                  setState(() {
+                                    // Cập nhật UI ngay lập tức
+                                    selectedDate = DateFormat('dd/MM/yyyy').format(picked);
+                                  });
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 6),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Color(0xFFBC2925)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orangeAccent,
-                                      ),
-                                      onPressed: () => imageSelector(context, 'gallery'),
-                                      icon: const Icon(Icons.photo_library),
-                                      label: const Text(""),
+                                    Icon(Icons.calendar_today, color: Color(0xFFBC2925)),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      selectedDate ?? 'Chọn ngày',
+                                      style: TextStyle(color: Color(0xFFBC2925)),
                                     ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                          // backgroundColor: Theme.of(context).primaryColor,
-                                          ),
-                                      onPressed: () => imageSelector(context, 'camera'),
-                                      icon: const Icon(Icons.camera_alt),
-                                      label: const Text(""),
-                                    ),
-                                    const SizedBox(width: 10),
                                   ],
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Ảnh đã chọn",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            if (_isEmptyLstFile())
-                              const SizedBox(
-                                height: 100,
-                                // child: Center(child: Text("Chưa có ảnh nào")),
-                              ),
-                            // Display list image
-                            ValueListenableBuilder<List<FileItem>>(
-                              valueListenable: lstFilesNotifier,
-                              builder: (context, lstFiles, _) {
-                                return ResponsiveGridRow(
-                                  children: _lstFiles.map((image) {
-                                    if (image!.isRemoved == false) {
-                                      return ResponsiveGridCol(
-                                        xs: 6,
-                                        md: 3,
-                                        child: InkWell(
-                                          onLongPress: () {
-                                            deleteDialog(
-                                              context,
-                                              "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
-                                              "Xoá ảnh",
-                                              () => _removeImage(image),
-                                            );
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(left: 5),
-                                            child: image.local == true
-                                                ? Image.file(File(image.file!))
-                                                : Image.network(
-                                                    '${_ub?.apiUrl2}/${image.file}',
-                                                    errorBuilder: ((context, error, stackTrace) {
-                                                      return Container(
-                                                        height: 100,
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(color: Colors.redAccent),
-                                                        ),
-                                                        child: const Center(
-                                                            child: Text(
-                                                          "Error Image (404)",
-                                                          style: TextStyle(color: Colors.redAccent),
-                                                        )),
-                                                      );
-                                                    }),
-                                                  ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return ResponsiveGridCol(
-                                      child: const SizedBox.shrink(),
-                                    );
-                                  }).toList(),
-                                );
-                              },
-                            ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(5),
-                        child: RoundedLoadingButton(
-                          child: Text(
-                            'Xác nhận',
-                            style: TextStyle(
-                              fontFamily: 'Comfortaa',
-                              color: AppConfig.textButton,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                          controller: _btnController,
-                          onPressed: (selectedDate != null && DiaDiem_Id != null) ? () => _onSaveSC(index, _addedHangMuc, isKhac) : null,
+                        buildInputWithError(
+                          title: 'Nhập số KM hiện tại:',
+                          controller: soKMController,
+                          showError: _errorNhapKM,
                         ),
-                      ),
-                    ],
+                        Container(
+                          margin: const EdgeInsets.only(right: 5),
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.87),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orangeAccent,
+                                        ),
+                                        onPressed: () => imageSelector(context, 'gallery'),
+                                        icon: const Icon(Icons.photo_library),
+                                        label: const Text(""),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                            // backgroundColor: Theme.of(context).primaryColor,
+                                            ),
+                                        onPressed: () => imageSelector(context, 'camera'),
+                                        icon: const Icon(Icons.camera_alt),
+                                        label: const Text(""),
+                                      ),
+                                      const SizedBox(width: 10),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Ảnh đã chọn",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              if (_isEmptyLstFile())
+                                const SizedBox(
+                                  height: 100,
+                                  // child: Center(child: Text("Chưa có ảnh nào")),
+                                ),
+                              // Display list image
+                              ValueListenableBuilder<List<FileItem>>(
+                                valueListenable: lstFilesNotifier,
+                                builder: (context, lstFiles, _) {
+                                  final visibleItems = _lstFiles.where((e) => e?.isRemoved == false).cast<FileItem>().toList();
+                                  return ResponsiveGridRow(
+                                    children: visibleItems.asMap().entries.map((entry) {
+                                      final i = entry.key;
+                                      final image = entry.value;
+                                      if (image!.isRemoved == false) {
+                                        return ResponsiveGridCol(
+                                          xs: 6,
+                                          md: 3,
+                                          child: InkWell(
+                                            onTap: () => _openGallery(i, visibleItems),
+                                            onLongPress: () {
+                                              deleteDialog(
+                                                context,
+                                                "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                "Xoá ảnh",
+                                                () => _removeImage(image),
+                                              );
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(left: 5),
+                                              child: image.local == true
+                                                  ? Image.file(File(image.file!))
+                                                  : Image.network(
+                                                      '${_ub?.apiUrl2}/${image.file}',
+                                                      errorBuilder: ((context, error, stackTrace) {
+                                                        return Container(
+                                                          height: 100,
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(color: Colors.redAccent),
+                                                          ),
+                                                          child: const Center(
+                                                              child: Text(
+                                                            "Error Image (404)",
+                                                            style: TextStyle(color: Colors.redAccent),
+                                                          )),
+                                                        );
+                                                      }),
+                                                    ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return ResponsiveGridCol(
+                                        child: const SizedBox.shrink(),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(5),
+                          child: RoundedLoadingButton(
+                            child: Text(
+                              'Xác nhận',
+                              style: TextStyle(
+                                fontFamily: 'Comfortaa',
+                                color: AppConfig.textButton,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
+                            ),
+                            controller: _btnController,
+                            onPressed: (selectedDate != null && DiaDiem_Id != null)
+                                ? () {
+                                    setState(() {
+                                      _errorNhapKM = soKMController.text.isEmpty;
+                                    });
+
+                                    if (_errorNhapKM) {
+                                      _btnController.reset();
+                                      return;
+                                    }
+                                    _onSaveSC(index, _addedHangMuc, isKhac);
+                                  }
+                                : null,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -2911,7 +3075,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateDialog) {
-            final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
+            // final filteredList = _hangmucscList!.where((item) => searchTerm.isEmpty || (item.noiDungBaoDuong?.toLowerCase().contains(searchTerm.toLowerCase()) ?? false)).toList();
 
             return Dialog(
               shape: RoundedRectangleBorder(
@@ -2928,7 +3092,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return SingleChildScrollView(
-                    reverse: true, // giúp cuộn ngược lên khi bàn phím mở
+                    // reverse: true, // giúp cuộn ngược lên khi bàn phím mở
                     padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -3017,73 +3181,73 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                           }).toList(),
                                         ),
                                       ),
-                                    Container(
-                                      child: SingleChildScrollView(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: filteredList.map((item) {
-                                              bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
-                                              return CheckboxListTile(
-                                                  title: Text(item.noiDungBaoDuong ?? ""),
-                                                  value: isChecked,
-                                                  // onChanged: (bool? value) {
-                                                  //   setStateDialog(() {
-                                                  //     if (value == true) {
-                                                  //       _selectedSCItems.add(item);
-                                                  //       if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
-                                                  //         _addedHangMuc.add(item.noiDungBaoDuong ?? "");
-                                                  //       }
-                                                  //     } else {
-                                                  //       _selectedSCItems.removeWhere((e) => e.id == item.id);
-                                                  //       _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
-                                                  //     }
-                                                  //   });
+                                    // Container(
+                                    //   child: SingleChildScrollView(
+                                    //     child: Padding(
+                                    //       padding: const EdgeInsets.all(10),
+                                    //       child: Column(
+                                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                                    //         children: filteredList.map((item) {
+                                    //           bool isChecked = _selectedSCItems.any((e) => e.id == item.id);
+                                    //           return CheckboxListTile(
+                                    //               title: Text(item.noiDungBaoDuong ?? ""),
+                                    //               value: isChecked,
+                                    //               // onChanged: (bool? value) {
+                                    //               //   setStateDialog(() {
+                                    //               //     if (value == true) {
+                                    //               //       _selectedSCItems.add(item);
+                                    //               //       if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
+                                    //               //         _addedHangMuc.add(item.noiDungBaoDuong ?? "");
+                                    //               //       }
+                                    //               //     } else {
+                                    //               //       _selectedSCItems.removeWhere((e) => e.id == item.id);
+                                    //               //       _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
+                                    //               //     }
+                                    //               //   });
 
-                                                  //   // Cập nhật UI của dialog chính
-                                                  //   // parentSetState(() {
-                                                  //   //   controller.text = _selectedSCItems.map((e) => e.noiDungBaoDuong).join(', ');
-                                                  //   // });
-                                                  //   parentSetState(() {
-                                                  //     controller.text = [
-                                                  //       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                  //       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                  //     ].where((e) => e.isNotEmpty).join(', ');
-                                                  //   });
-                                                  // },
-                                                  onChanged: (bool? value) {
-                                                    setStateDialog(() {
-                                                      if (value == true) {
-                                                        _selectedSCItems.add(item);
-                                                        if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
-                                                          _addedHangMuc.add(item.noiDungBaoDuong ?? "");
-                                                        }
-                                                      } else {
-                                                        _selectedSCItems.removeWhere((e) => e.id == item.id);
-                                                        _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
-                                                      }
+                                    //               //   // Cập nhật UI của dialog chính
+                                    //               //   // parentSetState(() {
+                                    //               //   //   controller.text = _selectedSCItems.map((e) => e.noiDungBaoDuong).join(', ');
+                                    //               //   // });
+                                    //               //   parentSetState(() {
+                                    //               //     controller.text = [
+                                    //               //       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                                    //               //       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                                    //               //     ].where((e) => e.isNotEmpty).join(', ');
+                                    //               //   });
+                                    //               // },
+                                    //               onChanged: (bool? value) {
+                                    //                 setStateDialog(() {
+                                    //                   if (value == true) {
+                                    //                     _selectedSCItems.add(item);
+                                    //                     if (!_addedHangMuc.contains(item.noiDungBaoDuong)) {
+                                    //                       _addedHangMuc.add(item.noiDungBaoDuong ?? "");
+                                    //                     }
+                                    //                   } else {
+                                    //                     _selectedSCItems.removeWhere((e) => e.id == item.id);
+                                    //                     _addedHangMuc.remove(item.noiDungBaoDuong ?? "");
+                                    //                   }
 
-                                                      // Cập nhật lại controller text cho field chính
-                                                      parentSetState(() {
-                                                        controller.text = [
-                                                          ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                          ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                        ].where((e) => e.isNotEmpty).join(', ');
-                                                      });
+                                    //                   // Cập nhật lại controller text cho field chính
+                                    //                   parentSetState(() {
+                                    //                     controller.text = [
+                                    //                       ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                                    //                       ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                                    //                     ].where((e) => e.isNotEmpty).join(', ');
+                                    //                   });
 
-                                                      // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
-                                                      // newHangMucController.text = [
-                                                      //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
-                                                      //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
-                                                      // ].where((e) => e.isNotEmpty).join(', ');
-                                                    });
-                                                  });
-                                            }).toList(),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    //                   // 👇 Cập nhật luôn newHangMucController để hiển thị text trên ô nhập
+                                    //                   // newHangMucController.text = [
+                                    //                   //   ..._selectedSCItems.map((e) => e.noiDungBaoDuong),
+                                    //                   //   ..._addedHangMuc.where((e) => !_selectedSCItems.any((s) => s.noiDungBaoDuong == e)),
+                                    //                   // ].where((e) => e.isNotEmpty).join(', ');
+                                    //                 });
+                                    //               });
+                                    //         }).toList(),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -3293,9 +3457,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     }
   }
 
-  Future<void> postDataHoanThanh(LichSuBaoDuongModel? scanData, int? soKM, String? file, List<Map<String, dynamic>> danhSachChiPhi, int index, int tongChiPhiBD, int tongChiPhiSC) async {
+  Future<void> postDataHoanThanh(LichSuBaoDuongModel? scanData, int? soKM, String? file, List<Map<String, dynamic>> danhSachChiPhi, int index, int tongChiPhiBD, int tongChiPhiSC, bool? isKhac) async {
     _isLoading = true;
-    final item = _kehoachList?[index];
+    // final item = _kehoachList?[index];
     print("dschiphi: ${danhSachChiPhi}");
     try {
       var newScanData = scanData;
@@ -3310,7 +3474,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                 })
             .toList(),
       };
-      final http.Response response = await requestHelper.postData('MMS_BaoCao/LenhHoanThanhBaoDuong?TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&SoKM=$soKM&File=$file&TongChiPhiBD=$tongChiPhiBD&TongChiPhiSC=$tongChiPhiSC', requestBody);
+      final http.Response response = await requestHelper.postData('MMS_BaoCao/LenhHoanThanhBaoDuong?TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&SoKM=$soKM&File=$file&TongChiPhiBD=$tongChiPhiBD&TongChiPhiSC=$tongChiPhiSC&IsKhac=$isKhac', requestBody);
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -3354,7 +3518,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     }
   }
 
-  _onSaveHoanThanhHT(int index) async {
+  _onSaveHoanThanhHT(int index, bool? isKhac) async {
     setState(() {
       _loading = true;
     });
@@ -3363,8 +3527,40 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            final convertedOrCompressed = await compressImage(file);
+            if (convertedOrCompressed == null) {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.info,
+                title: 'Định dạng không hỗ trợ',
+                text: 'Ảnh HEIC không đọc được. Vui lòng chọn JPG/PNG.',
+              );
+              _btnController.reset(); // Bỏ qua file lỗi
+              setState(() {
+                _loading = false;
+              });
+              return;
+            }
+            file = convertedOrCompressed;
+            // file = await compressImage(file);
+          }
         }
         var response = await RequestHelperMMS().uploadFile(file);
         print("Response: $response");
@@ -3394,7 +3590,13 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
 // Chuyển đổi danh sách URL thành chuỗi cách nhau bởi dấu phẩy
     String? imageUrlsString = imageUrls.join(',');
 
-    final item = _kehoachList?[index];
+    // final item = _kehoachList?[index];
+    PhuongTienModel? item;
+    if (isKhac == false) {
+      item = _kehoachList?[index];
+    } else {
+      item = _phuongtienList?[index];
+    }
     print("data kehoach = ${item?.id}");
     _data ??= LichSuBaoDuongModel();
     _data?.id = item?.lichSuBaoDuong_Id;
@@ -3433,7 +3635,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postDataHoanThanh(_data!, int.parse(soKMController.text), imageUrlsString, danhSachChiPhi, index, tongChiPhiBD, tongChiPhiSC).then((_) {
+        postDataHoanThanh(_data!, int.parse(soKMController.text), imageUrlsString, danhSachChiPhi, index, tongChiPhiBD, tongChiPhiSC, isKhac).then((_) {
           setState(() {
             _IsXacNhan = false;
             getBienSo();
@@ -3447,6 +3649,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
             _errorChiPhiBD = false;
             _errorChiPhiSC = false;
             _errorHinhAnh = false;
+            _errorNhapKM = false;
+            _IsKhac = false;
             _lstFiles.clear();
             // getListThayDoiKH(item?.id, textEditingCRontroller.text);
             _data = null;
@@ -3457,7 +3661,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     });
   }
 
-  void _showConfirmationDialogHoanThanh(BuildContext context, int index) {
+  void _showConfirmationDialogHoanThanh(BuildContext context, int index, bool? isKhac) {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
@@ -3480,12 +3684,13 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         },
         onConfirmBtnTap: () {
           Navigator.of(context).pop();
-          _onSaveHoanThanhHT(index);
+          _onSaveHoanThanhHT(index, isKhac);
         });
   }
 
-  void _showDetailsDialogHT(BuildContext context, int index) {
-    final baoduongId = _kehoachList?[index].lichSuBaoDuong_Id;
+  void _showDetailsDialogHT(BuildContext context, int index, String? id, bool? isKhac) {
+    // final baoduongId = _kehoachList?[index].lichSuBaoDuong_Id;
+    final baoduongId = id;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -3545,6 +3750,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                 _errorChiPhiBD = false;
                                 _errorChiPhiSC = false;
                                 _errorHinhAnh = false;
+                                _errorNhapKM = false;
                               });
                               Navigator.of(context).pop();
                             },
@@ -3580,9 +3786,14 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                             controller: _ghiChu,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          ItemGhiChu(
-                                            title: 'Nhập số KM hiện tại: ',
+                                          // ItemGhiChu(
+                                          //   title: 'Nhập số KM hiện tại: ',
+                                          //   controller: soKMController,
+                                          // ),
+                                          buildInputWithError(
+                                            title: 'Nhập số KM hiện tại:',
                                             controller: soKMController,
+                                            showError: _errorNhapKM,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           buildInputWithError(
@@ -3699,13 +3910,17 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                 ValueListenableBuilder<List<FileItem>>(
                                                   valueListenable: lstFilesNotifier,
                                                   builder: (context, lstFiles, _) {
+                                                    final visibleItems = _lstFiles.where((e) => e?.isRemoved == false).cast<FileItem>().toList();
                                                     return ResponsiveGridRow(
-                                                      children: _lstFiles.map((image) {
+                                                      children: visibleItems.asMap().entries.map((entry) {
+                                                        final i = entry.key;
+                                                        final image = entry.value;
                                                         if (image!.isRemoved == false) {
                                                           return ResponsiveGridCol(
                                                             xs: 6,
                                                             md: 3,
                                                             child: InkWell(
+                                                              onTap: () => _openGallery(i, visibleItems),
                                                               onLongPress: () {
                                                                 deleteDialog(
                                                                   context,
@@ -3714,6 +3929,21 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                                   () => _removeImage2(image, index),
                                                                 );
                                                               },
+                                                              // return ResponsiveGridRow(
+                                                              //   children: _lstFiles.map((image) {
+                                                              //     if (image!.isRemoved == false) {
+                                                              //       return ResponsiveGridCol(
+                                                              //         xs: 6,
+                                                              //         md: 3,
+                                                              //         child: InkWell(
+                                                              //           onLongPress: () {
+                                                              //             deleteDialog(
+                                                              //               context,
+                                                              //               "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                              //               "Xoá ảnh",
+                                                              //               () => _removeImage2(image, index),
+                                                              //             );
+                                                              //           },
                                                               child: Container(
                                                                 margin: const EdgeInsets.only(left: 5),
                                                                 child: image.local == true
@@ -3780,15 +4010,16 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                               setState(() {
                                 _errorChiPhiBD = _tongChiPhiBD.text.isEmpty;
                                 _errorChiPhiSC = _tongChiPhiSC.text.isEmpty;
+                                _errorNhapKM = soKMController.text.isEmpty;
                                 _errorHinhAnh = lstFilesNotifier.value.isEmpty;
                               });
 
-                              if (_errorChiPhiBD || _errorChiPhiSC || _errorHinhAnh) {
+                              if (_errorChiPhiBD || _errorChiPhiSC || _errorHinhAnh || _errorNhapKM) {
                                 _btnController.reset();
                                 return;
                               }
                               ;
-                              _showConfirmationDialogHoanThanh(context, index);
+                              _showConfirmationDialogHoanThanh(context, index, isKhac);
                             },
                           ),
                         ],
@@ -3916,9 +4147,9 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         });
   }
 
-  Future<void> postDataHoanThanhSC(LichSuBaoDuongModel? scanData, int? soKM, String? file, List<Map<String, dynamic>> danhSachChiPhi, int index, int tongChiPhi) async {
+  Future<void> postDataHoanThanhSC(LichSuBaoDuongModel? scanData, int? soKM, String? file, List<Map<String, dynamic>> danhSachChiPhi, int index, int tongChiPhi, bool? isKhac) async {
     _isLoading = true;
-    final item = _kehoachList?[index];
+    // final item = _kehoachList?[index];
     print("dschiphi: ${danhSachChiPhi}");
     try {
       var newScanData = scanData;
@@ -3933,7 +4164,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                 })
             .toList(),
       };
-      final http.Response response = await requestHelper.postData('MMS_SuaChua/LenhHoanThanhSuaChua?TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&SoKM=$soKM&File=$file&TongChiPhi=$tongChiPhi', requestBody);
+      final http.Response response = await requestHelper.postData('MMS_SuaChua/LenhHoanThanhSuaChua?TenNhanVien=${_ub?.name}&MaNhanVien=${_ub?.maNhanVien}&User_Id=${_ub?.id}&SoKM=$soKM&File=$file&TongChiPhi=$tongChiPhi&IsKhac=$isKhac', requestBody);
 
       if (response.statusCode == 200) {
         var decodedData = jsonDecode(response.body);
@@ -4009,7 +4240,10 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     }
   }
 
-  _onSaveHoanThanhHTSC(int index) async {
+  _onSaveHoanThanhHTSC(
+    int index,
+    bool? isKhac,
+  ) async {
     setState(() {
       _loading = true;
     });
@@ -4018,8 +4252,40 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     for (var fileItem in _lstFiles) {
       if (fileItem?.uploaded == false && fileItem?.isRemoved == false) {
         File file = File(fileItem!.file!);
+        // if (file.existsSync()) {
+        //   file = await compressImage(file);
+        // }
         if (file.existsSync()) {
-          file = await compressImage(file);
+          if (file.path.toLowerCase().endsWith(".mov") || file.path.toLowerCase().endsWith(".mp4")) {
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.info,
+              title: 'Lỗi',
+              text: 'Không thể gửi ảnh dạng Live Photo. Vui lòng chọn ảnh tĩnh',
+            );
+            _btnController.reset(); // Bỏ qua file lỗi
+            setState(() {
+              _loading = false;
+            });
+            return;
+          } else {
+            final convertedOrCompressed = await compressImage(file);
+            if (convertedOrCompressed == null) {
+              QuickAlert.show(
+                context: context,
+                type: QuickAlertType.info,
+                title: 'Định dạng không hỗ trợ',
+                text: 'Ảnh HEIC không đọc được. Vui lòng chọn JPG/PNG.',
+              );
+              _btnController.reset(); // Bỏ qua file lỗi
+              setState(() {
+                _loading = false;
+              });
+              return;
+            }
+            file = convertedOrCompressed;
+            // file = await compressImage(file);
+          }
         }
 
         var response = await RequestHelperMMS().uploadFile(file);
@@ -4050,7 +4316,13 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
 // Chuyển đổi danh sách URL thành chuỗi cách nhau bởi dấu phẩy
     String? imageUrlsString = imageUrls.join(',');
 
-    final item = _kehoachList?[index];
+    // final item = _kehoachList?[index];
+    PhuongTienModel? item;
+    if (isKhac == false) {
+      item = _kehoachList?[index];
+    } else {
+      item = _phuongtienList?[index];
+    }
     print("data kehoach = ${item?.id}");
     _data ??= LichSuBaoDuongModel();
     _data?.id = item?.lichSuSuaChua_Id;
@@ -4085,7 +4357,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
           confirmBtnText: 'Đồng ý',
         );
       } else {
-        postDataHoanThanhSC(_data!, int.parse(soKMController.text), imageUrlsString, danhSachChiPhi, index, tongChiPhi).then((_) {
+        postDataHoanThanhSC(_data!, int.parse(soKMController.text), imageUrlsString, danhSachChiPhi, index, tongChiPhi, isKhac).then((_) {
           setState(() {
             _IsXacNhan = false;
             getBienSo();
@@ -4099,6 +4371,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
             _tongChiPhi.text = '';
             _errorChiPhiSC = false;
             _errorHinhAnh = false;
+            _errorNhapKM = false;
+            _IsKhac = false;
             _lstFiles.clear();
             // getListThayDoiKH(item?.id, textEditingController.text);
             _data = null;
@@ -4109,7 +4383,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
     });
   }
 
-  void _showConfirmationDialogHoanThanhSC(BuildContext context, int index) {
+  void _showConfirmationDialogHoanThanhSC(BuildContext context, int index, bool? isKhac) {
     QuickAlert.show(
         context: context,
         type: QuickAlertType.confirm,
@@ -4132,12 +4406,13 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
         },
         onConfirmBtnTap: () {
           Navigator.of(context).pop();
-          _onSaveHoanThanhHTSC(index);
+          _onSaveHoanThanhHTSC(index, isKhac);
         });
   }
 
-  void _showDetailsDialogHTSC(BuildContext context, int index) {
-    final baoduongId = _kehoachList?[index].lichSuSuaChua_Id;
+  void _showDetailsDialogHTSC(BuildContext context, int index, String? id, bool? isKhac) {
+    // final baoduongId = _kehoachList?[index].lichSuSuaChua_Id;
+    final baoduongId = id;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -4195,6 +4470,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                               setState(() {
                                 _errorChiPhiSC = false;
                                 _errorHinhAnh = false;
+                                _errorNhapKM = false;
                               });
                               Navigator.of(context).pop();
                             },
@@ -4230,9 +4506,14 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                             controller: _ghiChu,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
-                                          ItemGhiChu(
+                                          // ItemGhiChu(
+                                          //   title: 'Nhập số KM hiện tại: ',
+                                          //   controller: soKMController,
+                                          // ),
+                                          buildInputWithError(
                                             title: 'Nhập số KM hiện tại: ',
                                             controller: soKMController,
+                                            showError: _errorNhapKM,
                                           ),
                                           const Divider(height: 1, color: Color(0xFFCCCCCC)),
                                           // ItemGhiChu(
@@ -4337,13 +4618,17 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                 ValueListenableBuilder<List<FileItem>>(
                                                   valueListenable: lstFilesNotifier,
                                                   builder: (context, lstFiles, _) {
+                                                    final visibleItems = _lstFiles.where((e) => e?.isRemoved == false).cast<FileItem>().toList();
                                                     return ResponsiveGridRow(
-                                                      children: _lstFiles.map((image) {
+                                                      children: visibleItems.asMap().entries.map((entry) {
+                                                        final i = entry.key;
+                                                        final image = entry.value;
                                                         if (image!.isRemoved == false) {
                                                           return ResponsiveGridCol(
                                                             xs: 6,
                                                             md: 3,
                                                             child: InkWell(
+                                                              onTap: () => _openGallery(i, visibleItems),
                                                               onLongPress: () {
                                                                 deleteDialog(
                                                                   context,
@@ -4352,6 +4637,21 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                                   () => _removeImage2(image, index),
                                                                 );
                                                               },
+                                                              // return ResponsiveGridRow(
+                                                              //   children: _lstFiles.map((image) {
+                                                              //     if (image!.isRemoved == false) {
+                                                              //       return ResponsiveGridCol(
+                                                              //         xs: 6,
+                                                              //         md: 3,
+                                                              //         child: InkWell(
+                                                              //           onLongPress: () {
+                                                              //             deleteDialog(
+                                                              //               context,
+                                                              //               "Bạn có muốn xoá ảnh này? Việc xoá sẽ không thể quay lại.",
+                                                              //               "Xoá ảnh",
+                                                              //               () => _removeImage2(image, index),
+                                                              //             );
+                                                              //           },
                                                               child: Container(
                                                                 margin: const EdgeInsets.only(left: 5),
                                                                 child: image.local == true
@@ -4417,14 +4717,15 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                             onPressed: () {
                               setState(() {
                                 _errorChiPhiSC = _tongChiPhi.text.isEmpty;
+                                _errorNhapKM = soKMController.text.isEmpty;
                                 _errorHinhAnh = lstFilesNotifier.value.isEmpty;
                               });
 
-                              if (_errorChiPhiSC) {
+                              if (_errorChiPhiSC || _errorNhapKM || _errorHinhAnh) {
                                 _btnController.reset();
                                 return;
                               }
-                              _showConfirmationDialogHoanThanhSC(context, index);
+                              _showConfirmationDialogHoanThanhSC(context, index, isKhac);
                             },
                           ),
                         ],
@@ -4524,7 +4825,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                 isBaoDuong: item?.isBaoDuong ?? false,
                                                 isLenhHoanThanh: item?.isLenhHoanThanh ?? false,
                                                 isDuyet: item?.isDuyet ?? false,
-                                                soKhung: item?.soKhung ?? "",
+                                                dvsd: item?.donViSuDung ?? "",
                                                 bienSo1: item?.bienSo1 ?? "",
                                                 soKM: item?.soKM ?? "",
                                                 giaTri: item?.giaTri ?? "",
@@ -4544,7 +4845,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                   } else if (item?.isYeuCau == true && item?.isDuyet == false) {
                                                     _showConfirmationDialogYeuCau2(context, index);
                                                   } else {
-                                                    _showDetailsDialogHT(context, index);
+                                                    _IsKhac = false;
+                                                    _showDetailsDialogHT(context, index, item?.lichSuBaoDuong_Id, _IsKhac);
                                                   }
                                                 },
                                                 onSuaChua: () {
@@ -4557,7 +4859,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                     _showConfirmationDialogDiSC(context, index, _IsKhac);
                                                   } else {
                                                     print("Sc1: ${item?.isYeuCauSC} ${item?.isDuyetSC} ${item?.isSuaChua} ");
-                                                    _showDetailsDialogHTSC(context, index);
+                                                    _IsKhac = false;
+                                                    _showDetailsDialogHTSC(context, index, item?.lichSuSuaChua_Id, _IsKhac);
                                                   }
                                                 }),
                                           ],
@@ -4710,6 +5013,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                       itemCount: _phuongtienList?.length,
                                       itemBuilder: (context, index) {
                                         final item = _phuongtienList?[index];
+                                        print("item: ${item?.id} - ${item?.donViSuDung}");
                                         return Container(
                                           margin: const EdgeInsets.only(bottom: 5),
                                           decoration: BoxDecoration(
@@ -4734,7 +5038,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                   isBaoDuong: item?.isBaoDuong ?? false,
                                                   isLenhHoanThanh: item?.isLenhHoanThanh ?? false,
                                                   isDuyet: item?.isDuyet ?? false,
-                                                  soKhung: item?.soKhung ?? "",
+                                                  dvsd: item?.donViSuDung ?? "",
                                                   bienSo1: item?.bienSo1 ?? "",
                                                   soKM: item?.soKM ?? "",
                                                   giaTri: item?.giaTri ?? "",
@@ -4754,7 +5058,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                     } else if (item?.isYeuCau == true && item?.isDuyet == false) {
                                                       _showConfirmationDialogYeuCau2(context, index);
                                                     } else {
-                                                      _showDetailsDialogHT(context, index);
+                                                      _IsKhac = true;
+                                                      _showDetailsDialogHT(context, index, item?.lichSuBaoDuong_Id, _IsKhac);
                                                     }
                                                   },
                                                   onSuaChua: () {
@@ -4767,7 +5072,8 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
                                                       _showConfirmationDialogDiSC(context, index, _IsKhac);
                                                     } else {
                                                       print("Sc1: ${item?.isYeuCauSC} ${item?.isDuyetSC} ${item?.isSuaChua} ");
-                                                      _showDetailsDialogHTSC(context, index);
+                                                      _IsKhac = true;
+                                                      _showDetailsDialogHTSC(context, index, item?.lichSuSuaChua_Id, _IsKhac);
                                                     }
                                                   }),
                                             ],
@@ -4791,7 +5097,7 @@ class _BodyDanhSachPhuongTienScreenState extends State<BodyDanhSachPhuongTienScr
 }
 
 class InfoColumn extends StatelessWidget {
-  final String bienSo1, soKhung;
+  final String bienSo1, dvsd;
   final String model; // Thời gian yêu cầu
   final String lyDo; // Lý do đổi
   final String model_Option, tinhTrang; // Nhà xe
@@ -4802,7 +5108,7 @@ class InfoColumn extends StatelessWidget {
   const InfoColumn({
     Key? key,
     required this.isDenHan,
-    required this.soKhung,
+    required this.dvsd,
     required this.lyDo,
     required this.bienSo1,
     required this.model,
@@ -4883,8 +5189,8 @@ class InfoColumn extends StatelessWidget {
 
             // Các dòng thông tin chính: Nhà xe, Biển số, Tài xế
             InfoRow(
-              title: "Số khung:",
-              contentYC: soKhung,
+              title: "Đơn vị sử dụng:",
+              contentYC: dvsd,
             ),
             const SizedBox(height: 4),
             InfoRow(

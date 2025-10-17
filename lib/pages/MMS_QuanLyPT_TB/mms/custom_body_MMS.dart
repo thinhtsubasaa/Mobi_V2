@@ -227,7 +227,6 @@ class _BodyMMSScreenState extends State<BodyMMSScreen> with TickerProviderStateM
                         }
                       },
                     ),
-
                   if (userHasPermission(menuRoles, 'quan-ly-phuong-tien-admin-mobi'))
                     CustomButton(
                       'QUẢN LÝ PHƯƠNG TIỆN (QL)',
@@ -243,7 +242,21 @@ class _BodyMMSScreenState extends State<BodyMMSScreen> with TickerProviderStateM
                         _handleButtonTap(DanhSachPhuongTienQLPage());
                       },
                     ),
-
+                  if (userHasPermission(menuRoles, 'quan-ly-phuong-tien-tai-xe-mobi'))
+                    CustomButton(
+                      'QUẢN LÝ PHƯƠNG TIỆN (TX)',
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/Main_button_THILOTrans.png',
+                          ),
+                        ],
+                      ),
+                      () {
+                        _handleButtonTap(DanhSachPhuongTienPage());
+                      },
+                    ),
                   // if (userHasPermission(menuRoles, 'quan-ly-thiet-bi-mobi'))
                   //   CustomButton(
                   //     'QUẢN LÝ THIẾT BỊ',
@@ -256,7 +269,7 @@ class _BodyMMSScreenState extends State<BodyMMSScreen> with TickerProviderStateM
                   //       ],
                   //     ),
                   //     () {
-                  //       _handleButtonTap(QLyThietBiPage());
+                  //       _handleButtonTap(DanhSachThietBiPage());
                   //     },
                   //   ),
                 ],

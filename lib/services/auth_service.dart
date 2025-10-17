@@ -58,20 +58,20 @@ class AuthService extends ChangeNotifier {
           congBaoVe: data['congBaoVe'],
         );
         print("token: ${_user?.token}");
-        String apiUrl = ub.apiUrl2 ?? 'https://apimms.thilogi.vn';
+        // String apiUrl = ub.apiUrl2 ?? 'https://apimms.thilogi.vn';
 
-        final response2 = await http.get(
-          Uri.parse(apiUrl),
-          headers: {
-            'Authorization': 'Bearer ${_user?.token}',
-            'Content-Type': 'application/json',
-          },
-        );
-        if (response2.statusCode == 200) {
-          print('Success');
-        } else {
-          print('Lỗi khi gọi API thứ hai: ${response2.body}');
-        }
+        // final response2 = await http.get(
+        //   Uri.parse(apiUrl),
+        //   headers: {
+        //     'Authorization': 'Bearer ${_user?.token}',
+        //     'Content-Type': 'application/json',
+        //   },
+        // );
+        // if (response2.statusCode == 200) {
+        //   print('Success');
+        // } else {
+        //   print('Lỗi khi gọi API thứ hai: ${response2.body}');
+        // }
       } else {
         String errorMessage = response.body.replaceAll('"', '');
         notifyListeners();
